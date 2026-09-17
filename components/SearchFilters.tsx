@@ -17,7 +17,7 @@ export type Filters = {
 function SearchIcon() {
   return (
     <svg
-      className="w-5 h-5 text-[#64748B]"
+      className="w-5 h-5 text-slate-400"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -27,6 +27,47 @@ function SearchIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+      />
+    </svg>
+  );
+}
+
+function LocationIcon() {
+  return (
+    <svg
+      className="w-5 h-5 text-slate-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.75}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 10.5c0 7.14-7.5 11.25-7.5 11.25S4.5 17.64 4.5 10.5a7.5 7.5 0 1115 0z"
+      />
+    </svg>
+  );
+}
+
+function RoleIcon() {
+  return (
+    <svg
+      className="w-5 h-5 text-slate-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.75}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
       />
     </svg>
   );
@@ -66,46 +107,54 @@ export default function SearchFilters({
     ...TECH_TRACKS,
   ] as const;
 
+  const pillBase =
+    "px-3.5 py-1.5 rounded-lg text-[13px] font-semibold transition-all whitespace-nowrap";
+  const pillInactive =
+    "text-slate-600 hover:bg-slate-100 hover:text-slate-900";
+  const pillActive = "bg-blue-600 text-white shadow-sm";
+
   return (
-    <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-2xl p-4 sm:p-5 shadow-[0_4px_12px_rgba(15,23,42,0.08)]">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-card">
       <form
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit();
         }}
-        className="flex flex-col sm:flex-row gap-2"
+        className="flex flex-col lg:flex-row gap-2.5"
       >
-        <label className="flex items-center gap-2.5 flex-1 px-4 rounded-lg bg-white dark:bg-[#060D1D] border border-[#E2E8F0] dark:border-white/10 focus-within:border-[#2563EB] focus-within:ring-2 focus-within:ring-[#2563EB]/15 transition-all">
+        <label className="flex items-center gap-2.5 flex-1 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
           <SearchIcon />
           <span className="sr-only">Search engineering and AI roles</span>
           <input
             value={filters.q}
             onChange={(e) => onChange({ q: e.target.value })}
-            placeholder="Search SDE, React, ML, data\u2026"
-            className="w-full py-2.5 bg-transparent outline-none text-[15px] text-[#0F172A] dark:text-white placeholder:text-[#94A3B8]"
+            placeholder="Search SDE, React, ML, data…"
+            className="w-full py-2.5 bg-transparent outline-none text-[15px] text-slate-900 placeholder:text-slate-400"
           />
         </label>
-        <label className="flex items-center gap-2 px-4 rounded-lg bg-white dark:bg-[#060D1D] border border-[#E2E8F0] dark:border-white/10 focus-within:border-[#2563EB] transition-all sm:w-52">
+        <label className="flex items-center gap-2 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all sm:w-52">
+          <LocationIcon />
           <span className="sr-only">Location</span>
           <input
             value={filters.city}
             onChange={(e) => onChange({ city: e.target.value })}
             placeholder="Location"
-            className="w-full py-2.5 bg-transparent outline-none text-[15px] text-[#0F172A] dark:text-white placeholder:text-[#94A3B8]"
+            className="w-full py-2.5 bg-transparent outline-none text-[15px] text-slate-900 placeholder:text-slate-400"
           />
         </label>
-        <label className="flex items-center gap-2 px-4 rounded-lg bg-white dark:bg-[#060D1D] border border-[#E2E8F0] dark:border-white/10 focus-within:border-[#2563EB] transition-all sm:w-52">
+        <label className="flex items-center gap-2 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all sm:w-52">
+          <RoleIcon />
           <span className="sr-only">Role (e.g. Backend Engineer)</span>
           <input
             value={filters.techRole}
             onChange={(e) => onChange({ techRole: e.target.value })}
             placeholder="Role"
-            className="w-full py-2.5 bg-transparent outline-none text-[15px] text-[#0F172A] dark:text-white placeholder:text-[#94A3B8]"
+            className="w-full py-2.5 bg-transparent outline-none text-[15px] text-slate-900 placeholder:text-slate-400"
           />
         </label>
         <button
           type="submit"
-          className="px-8 py-2.5 bg-[#2563EB] text-white rounded-lg text-[15px] font-semibold hover:bg-[#1D4ED8] active:bg-[#1E40AF] transition-all"
+          className="px-8 py-2.5 bg-blue-600 text-white rounded-xl text-[15px] font-semibold hover:bg-blue-500 active:bg-blue-700 transition-all shadow-sm"
         >
           Search
         </button>
@@ -124,10 +173,8 @@ export default function SearchFilters({
                 onSubmit({ techTrack: opt.value as Filters["techTrack"] })
               }
               aria-pressed={filters.techTrack === opt.value}
-              className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all whitespace-nowrap ${
-                filters.techTrack === opt.value
-                  ? "bg-[#2563EB] text-white dark:bg-[#2563EB]"
-                  : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
+              className={`${pillBase} ${
+                filters.techTrack === opt.value ? pillActive : pillInactive
               }`}
             >
               {opt.label}
@@ -136,30 +183,28 @@ export default function SearchFilters({
         </div>
 
         <span
-          className="w-px h-5 bg-[#E2E8F0] dark:bg-white/10 mx-1 hidden sm:block"
+          className="w-px h-5 bg-slate-200 mx-1.5 hidden sm:block"
           aria-hidden
         />
 
         <button
           onClick={() => onSubmit({ companyId: "" })}
           aria-pressed={!filters.companyId}
-          className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all ${
-            !filters.companyId
-              ? "bg-[#EFF6FF] text-[#2563EB] dark:bg-[#2563EB]/15 dark:text-[#60A5FA]"
-              : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
+          className={`${pillBase} ${
+            !filters.companyId ? pillActive : pillInactive
           }`}
         >
           All companies
         </button>
         {useCompanySelect ? (
-          <label className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-white dark:bg-[#060D1D] border border-[#E2E8F0] dark:border-white/10 text-[13px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-[13px] font-semibold text-slate-600">
             <span className="sr-only">Company</span>
             <select
               value={filters.companyId}
               onChange={(e) => onSubmit({ companyId: e.target.value })}
-              className="bg-transparent outline-none max-w-52 cursor-pointer text-[#0F172A] dark:text-white"
+              className="bg-transparent outline-none max-w-52 cursor-pointer text-slate-900"
             >
-              <option value="">Select company\u2026</option>
+              <option value="">Select company…</option>
               {companies.map((c) => (
                 <option key={c._id} value={c._id}>
                   {c.name}
@@ -176,15 +221,17 @@ export default function SearchFilters({
                 key={c._id}
                 onClick={() => onSubmit({ companyId: active ? "" : c._id })}
                 aria-pressed={active}
-                className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all inline-flex items-center gap-1.5 ${
-                  active
-                    ? "bg-[#EFF6FF] text-[#2563EB] dark:bg-[#2563EB]/15 dark:text-[#60A5FA]"
-                    : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
+                className={`${pillBase} inline-flex items-center gap-1.5 ${
+                  active ? pillActive : pillInactive
                 }`}
               >
                 {c.name}
                 {typeof c.activeJobs === "number" && (
-                  <span className="text-xs font-medium opacity-70">
+                  <span
+                    className={`text-xs font-medium ${
+                      active ? "text-blue-100" : "text-slate-400"
+                    }`}
+                  >
                     {c.activeJobs}
                   </span>
                 )}
@@ -194,7 +241,7 @@ export default function SearchFilters({
         )}
 
         <span
-          className="w-px h-5 bg-[#E2E8F0] dark:bg-white/10 mx-1 hidden sm:block"
+          className="w-px h-5 bg-slate-200 mx-1.5 hidden sm:block"
           aria-hidden
         />
 
@@ -208,10 +255,8 @@ export default function SearchFilters({
               key={opt.value}
               onClick={() => onSubmit({ remoteType: opt.value })}
               aria-pressed={filters.remoteType === opt.value}
-              className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all ${
-                filters.remoteType === opt.value
-                  ? "bg-[#EFF6FF] text-[#2563EB] dark:bg-[#2563EB]/15 dark:text-[#60A5FA]"
-                  : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
+              className={`${pillBase} ${
+                filters.remoteType === opt.value ? pillActive : pillInactive
               }`}
             >
               {opt.label}
@@ -223,19 +268,19 @@ export default function SearchFilters({
           onClick={() => onSubmit({ indiaOnly: !filters.indiaOnly })}
           aria-pressed={filters.indiaOnly}
           title="India-first feed: hide non-India roles"
-          className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all ${
+          className={`${pillBase} ${
             filters.indiaOnly
-              ? "bg-[#ECFDF5] text-[#047857] dark:bg-[#10B981]/10 dark:text-[#34D399]"
-              : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
+              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+              : pillInactive
           }`}
         >
-          {filters.indiaOnly ? "India only \u2713" : "India only"}
+          {filters.indiaOnly ? "India only ✓" : "India only"}
         </button>
 
         {hasActive && (
           <button
             onClick={onClear}
-            className="ml-auto text-[13px] font-semibold text-[#64748B] dark:text-[#94A3B8] hover:text-[#EF4444] transition-colors underline underline-offset-4"
+            className="ml-auto text-[13px] font-semibold text-slate-500 hover:text-red-500 transition-colors underline underline-offset-4"
           >
             Clear all
           </button>

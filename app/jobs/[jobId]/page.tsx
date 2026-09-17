@@ -53,11 +53,9 @@ async function fetchRelatedJobs(companyId: string, excludeId: string) {
 function Fact({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
   return (
-    <div className="flex items-start justify-between gap-4 py-2.5 border-b border-[#F1F5F9] dark:border-white/10 last:border-0">
-      <dt className="text-[13px] text-[#64748B] dark:text-[#94A3B8]">
-        {label}
-      </dt>
-      <dd className="text-[13px] text-[#0F172A] dark:text-white font-semibold text-right">
+    <div className="flex items-start justify-between gap-4 py-2.5 border-b border-slate-100 last:border-0">
+      <dt className="text-[13px] text-slate-500">{label}</dt>
+      <dd className="text-[13px] text-slate-900 font-semibold text-right">
         {value}
       </dd>
     </div>
@@ -113,38 +111,39 @@ export default async function JobDetailPage({
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <nav
-        className="text-[13px] font-medium text-[#64748B] dark:text-[#94A3B8] mb-6 flex items-center gap-2"
+        className="text-[13px] font-medium text-slate-500 mb-6 flex items-center gap-2 flex-wrap"
         aria-label="Breadcrumb"
       >
-        <Link
-          href="/"
-          className="hover:text-[#2563EB] dark:hover:text-[#60A5FA] transition-colors"
-        >
+        <Link href="/" className="hover:text-blue-600 transition-colors">
           Jobs
         </Link>
-        <span aria-hidden>/</span>
+        <span aria-hidden className="text-slate-300">
+          /
+        </span>
         {company.slug ? (
           <Link
             href={`/companies/${company.slug}`}
-            className="hover:text-[#2563EB] dark:hover:text-[#60A5FA] transition-colors"
+            className="hover:text-blue-600 transition-colors"
           >
             {companyName}
           </Link>
         ) : (
           <span>{companyName}</span>
         )}
-        <span aria-hidden>/</span>
-        <span className="text-[#0F172A] dark:text-white font-semibold truncate max-w-52 sm:max-w-xs">
+        <span aria-hidden className="text-slate-300">
+          /
+        </span>
+        <span className="text-slate-900 font-semibold truncate max-w-52 sm:max-w-xs">
           {job.title}
         </span>
       </nav>
 
       <div className="grid lg:grid-cols-[1fr_340px] gap-5 items-start">
         <article className="min-w-0">
-          <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6 sm:p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04)] mb-4">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
             <div className="flex items-center gap-4 mb-5">
               <span
-                className={`w-12 h-12 rounded-[10px] ${companyTile()} flex items-center justify-center font-bold text-xl shrink-0`}
+                className={`w-12 h-12 rounded-xl ${companyTile()} flex items-center justify-center font-bold text-xl shrink-0 shadow-sm`}
                 aria-hidden
               >
                 {companyName.charAt(0).toUpperCase()}
@@ -153,31 +152,31 @@ export default async function JobDetailPage({
                 {company.slug ? (
                   <Link
                     href={`/companies/${company.slug}`}
-                    className="text-sm font-semibold text-[#2563EB] dark:text-[#60A5FA] hover:underline"
+                    className="text-sm font-semibold text-blue-600 hover:text-blue-500"
                   >
                     {companyName}
                   </Link>
                 ) : (
-                  <p className="text-sm font-semibold text-[#2563EB] dark:text-[#60A5FA]">
+                  <p className="text-sm font-semibold text-blue-600">
                     {companyName}
                   </p>
                 )}
                 {posted && (
-                  <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     Posted {posted.toLowerCase()}
                   </p>
                 )}
               </div>
-              <span className="ml-auto inline-flex items-center gap-1.5 text-xs font-semibold text-[#047857] dark:text-[#34D399] bg-[#ECFDF5] dark:bg-[#10B981]/10 px-2.5 py-1 rounded-md shrink-0">
+              <span className="ml-auto inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg shrink-0">
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-[#10B981]"
+                  className="w-1.5 h-1.5 rounded-full bg-emerald-500"
                   aria-hidden
                 />
                 Active
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-[32px] leading-[1.25] font-bold text-[#0F172A] dark:text-white tracking-tight mb-4">
+            <h1 className="text-2xl sm:text-[32px] leading-[1.25] font-bold text-slate-900 tracking-tight mb-4">
               {job.title}
             </h1>
 
@@ -186,7 +185,7 @@ export default async function JobDetailPage({
                 (loc: { city?: string; state?: string; country?: string }) => (
                   <span
                     key={[loc.city, loc.state, loc.country].join(",")}
-                    className="px-2.5 py-1 rounded-md bg-[#F1F5F9] dark:bg-white/5 text-[#475569] dark:text-[#B6C2D2] text-[13px] font-medium"
+                    className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-[13px] font-medium"
                   >
                     {[loc.city, loc.state].filter(Boolean).join(", ") ||
                       "India"}
@@ -194,17 +193,17 @@ export default async function JobDetailPage({
                 ),
               )}
               {job.employmentType && (
-                <span className="px-2.5 py-1 rounded-md bg-[#F1F5F9] dark:bg-white/5 text-[#475569] dark:text-[#B6C2D2] text-[13px] font-medium">
+                <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-[13px] font-medium">
                   {job.employmentType}
                 </span>
               )}
               {job.department && (
-                <span className="px-2.5 py-1 rounded-md bg-[#F1F5F9] dark:bg-white/5 text-[#475569] dark:text-[#B6C2D2] text-[13px] font-medium">
+                <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-[13px] font-medium">
                   {job.department}
                 </span>
               )}
               {job.remoteType && job.remoteType !== "unknown" && (
-                <span className="px-2.5 py-1 rounded-md bg-[#EFF6FF] dark:bg-[#2563EB]/15 text-[#2563EB] dark:text-[#60A5FA] text-[13px] font-semibold capitalize">
+                <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[13px] font-semibold capitalize">
                   {job.remoteType}
                 </span>
               )}
@@ -212,15 +211,15 @@ export default async function JobDetailPage({
           </div>
 
           {job.skills?.length > 0 && (
-            <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6 sm:p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04)] mb-4">
-              <h2 className="font-bold text-[#0F172A] dark:text-white text-[15px] mb-4">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
+              <h2 className="font-bold text-slate-900 text-[15px] mb-4">
                 Skills
               </h2>
               <div className="flex flex-wrap gap-1.5">
                 {job.skills.map((skill: string) => (
                   <span
                     key={skill}
-                    className="px-2.5 py-1 rounded-md bg-[#F1F5F9] dark:bg-white/5 text-[#475569] dark:text-[#B6C2D2] text-[13px] font-medium"
+                    className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[13px] font-medium"
                   >
                     {skill}
                   </span>
@@ -230,8 +229,8 @@ export default async function JobDetailPage({
           )}
 
           {sanitizedDescription && (
-            <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6 sm:p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04)] mb-4">
-              <h2 className="font-bold text-[#0F172A] dark:text-white text-[15px] mb-4">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
+              <h2 className="font-bold text-slate-900 text-[15px] mb-4">
                 About this role
               </h2>
               <div
@@ -242,13 +241,13 @@ export default async function JobDetailPage({
           )}
 
           {job.sourceUrl && (
-            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] px-1">
+            <p className="text-xs text-slate-500 px-1">
               Sourced from the{" "}
               <a
                 href={job.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#2563EB] dark:text-[#60A5FA] font-semibold underline underline-offset-2"
+                className="text-blue-600 font-semibold underline underline-offset-2"
               >
                 official listing
               </a>
@@ -259,7 +258,7 @@ export default async function JobDetailPage({
 
           {relatedJobs.length > 0 && (
             <section className="mt-8">
-              <h2 className="font-bold text-[#0F172A] dark:text-white text-xl mb-4">
+              <h2 className="font-bold text-slate-900 text-xl mb-4">
                 More from {companyName}
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -275,8 +274,8 @@ export default async function JobDetailPage({
 
         <aside className="lg:sticky lg:top-24 space-y-4">
           {job.applicationUrl && (
-            <div className="bg-[#07152E] text-white rounded-xl p-6 shadow-[0_4px_12px_rgba(15,23,42,0.08)]">
-              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#2DD4BF] mb-2">
+            <div className="bg-[#0B1730] text-white rounded-2xl p-6 shadow-card-hover">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-teal-300 mb-2">
                 Official application
               </p>
               <p className="text-sm text-white/70 leading-relaxed mb-5">
@@ -287,7 +286,7 @@ export default async function JobDetailPage({
                 href={job.applicationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-[#2563EB] text-white rounded-lg font-semibold text-[15px] hover:bg-[#3B82F6] active:bg-[#1E40AF] transition-all"
+                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold text-[15px] hover:bg-blue-500 active:bg-blue-700 transition-all shadow-[0_8px_20px_rgba(59,130,246,0.35)]"
               >
                 Apply Now
                 <svg
@@ -307,8 +306,8 @@ export default async function JobDetailPage({
             </div>
           )}
 
-          <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-            <h2 className="font-bold text-[#0F172A] dark:text-white text-[15px] mb-2">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card">
+            <h2 className="font-bold text-slate-900 text-[15px] mb-2">
               At a glance
             </h2>
             <dl>
@@ -319,7 +318,7 @@ export default async function JobDetailPage({
             {company.slug && (
               <Link
                 href={`/companies/${company.slug}`}
-                className="mt-4 flex items-center justify-center w-full px-6 py-2.5 bg-white dark:bg-transparent border border-[#E2E8F0] dark:border-white/15 rounded-lg font-semibold text-sm text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#F8FAFC] dark:hover:bg-white/5 transition-all"
+                className="mt-4 flex items-center justify-center w-full px-6 py-2.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl font-semibold text-sm hover:bg-blue-100 transition-all"
               >
                 More from {companyName}
               </Link>

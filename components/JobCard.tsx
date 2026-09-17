@@ -52,26 +52,26 @@ export default function JobCard({ job }: { job: Job }) {
   return (
     <Link
       href={`/jobs/${job._id}`}
-      className="group flex flex-col bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_4px_12px_rgba(15,23,42,0.08)] hover:border-[#CBD5E1] dark:hover:border-white/20 transition-all duration-150"
+      className="group flex flex-col bg-white border border-slate-200/80 rounded-2xl p-5 shadow-card hover:shadow-card-hover hover:border-slate-300 hover:-translate-y-0.5 transition-all duration-200"
     >
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-3 mb-3">
         <span
-          className={`w-12 h-12 rounded-[10px] ${companyTile()} flex items-center justify-center font-bold text-xl shrink-0`}
+          className={`w-11 h-11 rounded-xl ${companyTile()} flex items-center justify-center font-bold text-lg shrink-0 shadow-sm`}
           aria-hidden
         >
           {companyName.charAt(0).toUpperCase()}
         </span>
         <div className="min-w-0">
-          <h3 className="font-bold text-[#0F172A] dark:text-white text-[17px] leading-snug line-clamp-2 group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors">
+          <h3 className="font-bold text-slate-900 text-[16px] leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
             {job.title}
           </h3>
-          <p className="text-sm text-[#475569] dark:text-[#94A3B8] font-medium truncate mt-0.5">
+          <p className="text-sm text-slate-500 font-medium truncate mt-0.5">
             {companyName}
           </p>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-[#64748B] dark:text-[#94A3B8] mb-4">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] text-slate-500 mb-3.5">
         <span className="inline-flex items-center gap-1.5">
           <PinIcon />
           {locationLabel(job)}
@@ -94,26 +94,26 @@ export default function JobCard({ job }: { job: Job }) {
         (job.skills && job.skills.length > 0)) && (
         <div className="flex flex-wrap gap-1.5 mb-4">
           {job.techRole && (
-            <span className="px-2.5 py-1 rounded-md bg-[#EFF6FF] dark:bg-[#2563EB]/15 text-[#2563EB] dark:text-[#60A5FA] text-xs font-semibold">
+            <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-semibold">
               {job.seniority
                 ? `${job.seniority} · ${job.techRole}`
                 : job.techRole}
             </span>
           )}
           {trackLabel && (
-            <span className="px-2.5 py-1 rounded-md bg-[#F1F5F9] dark:bg-white/5 text-[#475569] dark:text-[#B6C2D2] text-xs font-medium">
+            <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium">
               {trackLabel}
             </span>
           )}
           {job.department && (
-            <span className="px-2.5 py-1 rounded-md bg-[#F1F5F9] dark:bg-white/5 text-[#475569] dark:text-[#B6C2D2] text-xs font-medium">
+            <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium">
               {job.department}
             </span>
           )}
           {(job.skills || []).slice(0, 3).map((skill) => (
             <span
               key={skill}
-              className="px-2.5 py-1 rounded-md bg-[#F1F5F9] dark:bg-white/5 text-[#475569] dark:text-[#B6C2D2] text-xs font-medium"
+              className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium"
             >
               {skill}
             </span>
@@ -121,11 +121,11 @@ export default function JobCard({ job }: { job: Job }) {
         </div>
       )}
 
-      <div className="mt-auto pt-4 border-t border-[#E2E8F0] dark:border-white/10 flex items-center justify-between gap-2">
-        <span className="text-xs text-[#64748B] dark:text-[#94A3B8]">
+      <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+        <span className="text-xs text-slate-400 font-medium">
           {posted ? `Posted ${posted.toLowerCase()}` : "Recently posted"}
         </span>
-        <span className="shrink-0 text-sm font-semibold text-[#2563EB] dark:text-[#60A5FA] inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+        <span className="shrink-0 text-sm font-semibold text-blue-600 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
           View job
           <svg
             className="w-4 h-4"

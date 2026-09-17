@@ -10,10 +10,10 @@ export default async function CompaniesPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-      <h1 className="text-4xl font-bold text-[#0F172A] dark:text-white tracking-tight mb-3">
+      <h1 className="text-4xl font-bold text-slate-900 tracking-tight mb-3">
         Tech companies
       </h1>
-      <p className="text-[#64748B] dark:text-[#94A3B8] mb-10">
+      <p className="text-slate-500 mb-10">
         {companies.length} product companies · {totalRoles} open tech roles ·
         refreshed daily from official pages.
       </p>
@@ -23,34 +23,32 @@ export default async function CompaniesPage() {
           <Link
             key={company._id}
             href={`/companies/${company.slug}`}
-            className="group bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_4px_12px_rgba(15,23,42,0.08)] transition-all duration-150"
+            className="group bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
           >
             <div className="flex items-center gap-4 mb-5">
               <span
-                className={`w-12 h-12 rounded-[10px] ${companyTile()} flex items-center justify-center font-bold text-xl shrink-0`}
+                className={`w-12 h-12 rounded-xl ${companyTile()} flex items-center justify-center font-bold text-xl shrink-0 shadow-sm`}
                 aria-hidden
               >
                 {company.name.charAt(0).toUpperCase()}
               </span>
               <div className="min-w-0">
-                <h2 className="font-bold text-[#0F172A] dark:text-white text-lg leading-tight truncate group-hover:text-[#2563EB] dark:group-hover:text-[#60A5FA] transition-colors">
+                <h2 className="font-bold text-slate-900 text-lg leading-tight truncate group-hover:text-blue-600 transition-colors">
                   {company.name}
                 </h2>
                 {company.industry && (
-                  <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
-                    {company.industry}
-                  </p>
+                  <p className="text-xs text-slate-500">{company.industry}</p>
                 )}
               </div>
             </div>
-            <div className="flex items-center justify-between pt-4 border-t border-[#E2E8F0] dark:border-white/10">
-              <span className="text-sm font-semibold text-[#0F172A] dark:text-white">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+              <span className="text-sm font-semibold text-slate-900">
                 {company.activeJobs ?? 0}{" "}
-                <span className="font-normal text-[#64748B] dark:text-[#94A3B8]">
+                <span className="font-normal text-slate-500">
                   open {(company.activeJobs ?? 0) === 1 ? "role" : "roles"}
                 </span>
               </span>
-              <span className="text-sm font-semibold text-[#2563EB] dark:text-[#60A5FA] inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span className="text-sm font-semibold text-blue-600 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
                 View roles
                 <svg
                   className="w-4 h-4"

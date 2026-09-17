@@ -28,9 +28,9 @@ const FILTER_KEYS: (keyof Filters)[] = [
 
 function SkeletonCard() {
   return (
-    <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-5">
       <div className="flex items-center gap-3 mb-4">
-        <div className="skeleton w-12 h-12 rounded-[10px]" />
+        <div className="skeleton w-11 h-11 rounded-xl" />
         <div className="flex-1">
           <div className="skeleton h-4 w-3/4 rounded mb-2" />
           <div className="skeleton h-3 w-1/3 rounded" />
@@ -43,16 +43,32 @@ function SkeletonCard() {
 
 function EmptyState({ onClear }: { onClear: () => void }) {
   return (
-    <div className="col-span-full text-center py-16 px-6 bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl">
-      <h2 className="font-bold text-[#0F172A] dark:text-white text-lg mb-2">
+    <div className="col-span-full text-center py-16 px-6 bg-white border border-slate-200/80 rounded-2xl shadow-card">
+      <div className="mx-auto w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-5">
+        <svg
+          className="w-7 h-7 text-slate-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          aria-hidden
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
+          />
+        </svg>
+      </div>
+      <h2 className="font-bold text-slate-900 text-lg mb-1.5">
         No tech roles match those filters
       </h2>
-      <p className="text-[#64748B] dark:text-[#94A3B8] text-[15px] mb-6">
+      <p className="text-slate-500 text-[15px] mb-6">
         Try a shorter keyword, another city, or browse everything.
       </p>
       <button
         onClick={onClear}
-        className="px-6 py-2.5 bg-[#2563EB] text-white rounded-lg text-sm font-semibold hover:bg-[#1D4ED8] transition-all"
+        className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-500 transition-all shadow-sm"
       >
         Clear filters
       </button>
@@ -230,11 +246,11 @@ export default function JobBrowser({
         />
       )}
       <div className="flex items-end justify-between mb-5 mt-10">
-        <h2 className="text-2xl font-bold text-[#0F172A] dark:text-white">
+        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
           {searched ? "Results" : heading}
         </h2>
         {!loading && jobs.length > 0 && (
-          <p className="text-sm text-[#64748B] dark:text-[#94A3B8]">
+          <p className="text-sm text-slate-500">
             {total} {total === 1 ? "role" : "roles"}
           </p>
         )}
@@ -249,15 +265,20 @@ export default function JobBrowser({
         )}
       </div>
       {!loading && page < totalPages && (
-        <div className="text-center mt-8">
+        <div className="text-center mt-9">
           <button
             onClick={() => fetchJobs(page + 1, filtersRef.current, true)}
             disabled={loadingMore}
-            className="px-8 py-3 bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-lg font-semibold text-[#0F172A] dark:text-white text-[15px] hover:bg-[#F8FAFC] dark:hover:bg-white/5 transition-all disabled:opacity-50"
+            className="px-8 py-3 bg-white border border-slate-200 rounded-xl font-semibold text-slate-900 text-[15px] hover:border-slate-300 hover:shadow-card transition-all disabled:opacity-50 inline-flex items-center gap-2"
           >
-            {loadingMore
-              ? "Loading\u2026"
-              : `Load more (${total - jobs.length} left)`}
+            {loadingMore ? (
+              <>
+                <span className="w-4 h-4 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin" />
+                Loading…
+              </>
+            ) : (
+              `Load more (${total - jobs.length} left)`
+            )}
           </button>
         </div>
       )}

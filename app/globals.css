@@ -1,43 +1,31 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme inline {
-  /* REERHUB BRAND TOKENS — see docs/design/design-system.md */
+  /* REERHUB BRAND TOKENS — light theme only (see docs/design/design-system.md) */
   --color-primary: #2563eb; /* Bright blue: primary actions */
   --color-primary-dark: #1d4ed8; /* Hover */
   --color-primary-deep: #1e40af; /* Active */
   --color-brand-light: #3b82f6;
-  --color-brand-cyan: #2dd4bf;
+  --color-brand-cyan: #0d9488; /* Accent (teal-600, WCAG-safe on light) */
   --color-brand-purple: #6366f1;
-  --color-navy: #07152e; /* Dark sections: hero, footer accents */
-  --color-navy-deep: #0b1f3a; /* Footer */
-  --color-secondary: #0f172a; /* Headings, nav */
-  --color-ink: #475569; /* Body text */
-  --color-accent: #eff6ff; /* Selected filter bg */
-  --color-cream: #f8fafc; /* Page background */
+  --color-navy: #0b1730; /* Hero + CTA sections */
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
 
-  --shadow-glass: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
-  --shadow-lift: 0 4px 12px 0 rgba(15, 23, 42, 0.08);
-  --shadow-glow: 0 4px 12px 0 rgba(37, 99, 235, 0.25);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-card-hover: 0 4px 8px rgba(15, 23, 42, 0.06),
+    0 12px 28px rgba(15, 23, 42, 0.1);
+  --shadow-pop: 0 6px 24px rgba(15, 23, 42, 0.12);
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #475569;
+  --background: #f7f9fc;
+  --foreground: #334155;
   color-scheme: light;
-}
-
-/* ReerHub dark theme — deep-navy "own style" take on the dark dev-tool look */
-.dark {
-  --background: #060d1d;
-  --foreground: #b6c2d2;
-  color-scheme: dark;
 }
 
 html {
@@ -84,18 +72,9 @@ body {
   }
 }
 .skeleton {
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background: linear-gradient(90deg, #eef2f7 25%, #e2e8f0 50%, #eef2f7 75%);
   background-size: 800px 100%;
   animation: shimmer 1.4s ease-in-out infinite;
-}
-.dark .skeleton {
-  background: linear-gradient(
-    90deg,
-    #0f2242 25%,
-    #1a3358 50%,
-    #0f2242 75%
-  );
-  background-size: 800px 100%;
 }
 
 @keyframes rise-in {
@@ -114,7 +93,7 @@ body {
 
 /* ATS job-description typography (uncontrolled HTML from boards) */
 .job-description {
-  color: #475569;
+  color: #334155;
   font-size: 0.95rem;
   line-height: 1.75;
   overflow-wrap: break-word;
@@ -180,27 +159,4 @@ body {
   border: 1px solid #e2e8f0;
   padding: 0.5rem 0.75rem;
   text-align: left;
-}
-
-/* Dark theme for uncontrolled ATS HTML */
-.dark .job-description {
-  color: #b6c2d2;
-}
-.dark .job-description h1,
-.dark .job-description h2,
-.dark .job-description h3,
-.dark .job-description h4,
-.dark .job-description strong,
-.dark .job-description b {
-  color: #f1f5f9;
-}
-.dark .job-description li::marker {
-  color: #2dd4bf;
-}
-.dark .job-description a {
-  color: #60a5fa;
-}
-.dark .job-description td,
-.dark .job-description th {
-  border-color: rgba(255, 255, 255, 0.1);
 }

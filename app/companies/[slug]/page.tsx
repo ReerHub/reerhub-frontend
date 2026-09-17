@@ -32,39 +32,41 @@ export default async function CompanyDetailPage({
 
   return (
     <div>
-      <section className="border-b border-[#E2E8F0] dark:border-white/10 bg-white dark:bg-[#0B1A33]">
+      <section className="border-b border-slate-200 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
           <nav
-            className="text-[13px] text-[#64748B] dark:text-[#94A3B8] mb-6 flex items-center gap-2"
+            className="text-[13px] text-slate-500 mb-6 flex items-center gap-2"
             aria-label="Breadcrumb"
           >
             <Link
               href="/companies"
-              className="hover:text-[#2563EB] dark:hover:text-[#60A5FA] transition-colors font-medium"
+              className="hover:text-blue-600 transition-colors font-medium"
             >
               Companies
             </Link>
-            <span aria-hidden>/</span>
-            <span className="text-[#0F172A] dark:text-white font-semibold">
+            <span aria-hidden className="text-slate-300">
+              /
+            </span>
+            <span className="text-slate-900 font-semibold">
               {company.name}
             </span>
           </nav>
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">
             <span
-              className={`w-16 h-16 rounded-[10px] ${companyTile()} flex items-center justify-center font-bold text-3xl shrink-0`}
+              className={`w-16 h-16 rounded-2xl ${companyTile()} flex items-center justify-center font-bold text-3xl shrink-0 shadow-sm`}
               aria-hidden
             >
               {company.name.charAt(0).toUpperCase()}
             </span>
             <div className="min-w-0">
-              <h1 className="text-3xl sm:text-4xl font-bold text-[#0F172A] dark:text-white tracking-tight">
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
                 {company.name}
               </h1>
-              <p className="text-[#64748B] dark:text-[#94A3B8] text-[15px] mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <p className="text-slate-500 text-[15px] mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                 {company.industry && <span>{company.industry}</span>}
-                <span className="inline-flex items-center gap-1.5 text-[#047857] font-semibold">
+                <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
                   <span
-                    className="w-1.5 h-1.5 rounded-full bg-[#10B981]"
+                    className="w-1.5 h-1.5 rounded-full bg-emerald-500"
                     aria-hidden
                   />
                   {openCount} open roles
@@ -76,7 +78,7 @@ export default async function CompanyDetailPage({
                 href={company.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 bg-white dark:bg-transparent text-[#2563EB] dark:text-[#60A5FA] border border-[#E2E8F0] dark:border-white/15 rounded-lg text-sm font-semibold hover:bg-[#F8FAFC] dark:hover:bg-white/5 transition-all"
+                className="px-5 py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-all"
               >
                 Website
               </a>
@@ -84,7 +86,7 @@ export default async function CompanyDetailPage({
                 href={company.careersUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 bg-[#2563EB] text-white rounded-lg text-sm font-semibold hover:bg-[#1D4ED8] transition-all"
+                className="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-500 transition-all shadow-sm"
               >
                 Official careers page
               </a>
@@ -101,7 +103,7 @@ export default async function CompanyDetailPage({
                 }) => (
                   <span
                     key={s.name}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#F1F5F9] dark:bg-white/5 rounded-md text-xs font-medium text-[#64748B] dark:text-[#94A3B8]"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600"
                     title={
                       s.lastSuccessfulSyncAt
                         ? `Last synced ${new Date(s.lastSuccessfulSyncAt).toLocaleString("en-IN")}`
@@ -118,11 +120,9 @@ export default async function CompanyDetailPage({
       </section>
 
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <h2 className="font-bold text-[#0F172A] dark:text-white text-xl mb-5">
+        <h2 className="font-bold text-slate-900 text-xl mb-5">
           Open roles{" "}
-          <span className="text-[#64748B] dark:text-[#94A3B8] font-medium">
-            ({openCount})
-          </span>
+          <span className="text-slate-500 font-medium">({openCount})</span>
         </h2>
         {jobs.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -131,11 +131,11 @@ export default async function CompanyDetailPage({
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl">
-            <p className="font-semibold text-[#0F172A] dark:text-white mb-1">
+          <div className="text-center py-16 bg-white border border-slate-200/80 rounded-2xl">
+            <p className="font-semibold text-slate-900 mb-1">
               No open roles right now
             </p>
-            <p className="text-sm text-[#64748B] dark:text-[#94A3B8]">
+            <p className="text-sm text-slate-500">
               Check back tomorrow — we sync daily.
             </p>
           </div>

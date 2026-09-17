@@ -11,9 +11,6 @@ const inter = Inter({
   display: "swap",
 });
 
-// Applied before first paint so the saved theme never flashes.
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("reerhub-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}}catch(e){}})();`;
-
 export const metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
@@ -47,10 +44,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-      </head>
+    <html lang="en">
       <body className={`${inter.className} antialiased`}>
         <Navbar />
         <main className="min-h-screen relative pt-16">{children}</main>
