@@ -105,6 +105,24 @@ function filtersToSearchParams(filters: Filters): URLSearchParams {
   return sp;
 }
 
+function buildJobQuery(
+  activeFilters: Filters,
+  pageToLoad: number,
+): Record<string, string | number> {
+  return {
+    q: activeFilters.q,
+    companyId: activeFilters.companyId,
+    city: activeFilters.city,
+    remoteType: activeFilters.remoteType,
+    techTrack: activeFilters.techTrack,
+    techRole: activeFilters.techRole,
+    skills: activeFilters.skills,
+    ...(activeFilters.indiaOnly ? {} : { indiaOnly: "false" }),
+    page: pageToLoad,
+    limit: PAGE_SIZE,
+  };
+}
+
 export default function JobBrowser({
   initialCategory = "",
   heading = "Latest tech roles",
@@ -118,14 +136,25 @@ export default function JobBrowser({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const searchParamsKey = searchParams.toString();
+
   const INITIAL: Filters = useMemo(
-    () => filtersFromSearchParams(searchParams, initialCategory),
-    // Re-derive only when the serialised query changes (e.g. back/forward).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchParams.toString(), initialCategory],
+    () =>
+      filtersFromSearchParams(
+        new URLSearchParams(searchParamsKey),
+        initialCategory,
+      ),
+    [searchParamsKey, initialCategory],
   );
 
   const [filters, setFilters] = useState<Filters>(INITIAL);
+  const [prevInitial, setPrevInitial] = useState<Filters>(INITIAL);
+
+  // Keep filters in sync when the URL-derived INITIAL changes (back/forward).
+  if (INITIAL !== prevInitial) {
+    setPrevInitial(INITIAL);
+    setFilters(INITIAL);
+  }
   const [companies, setCompanies] = useState<Company[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [total, setTotal] = useState(0);
@@ -136,7 +165,10 @@ export default function JobBrowser({
   const [searched, setSearched] = useState(false);
 
   const filtersRef = useRef(filters);
-  filtersRef.current = filters;
+
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
 
   // Push filter changes into the URL (shallow, no re-render beyond
   // the hooks that depend on searchParams).
@@ -156,21 +188,10 @@ export default function JobBrowser({
       append = false,
       signal?: AbortSignal,
     ) => {
-      if (append) setLoadingMore(true);
-      else setLoading(true);
       try {
-        const result = await listJobsWithMeta({
-          q: activeFilters.q,
-          companyId: activeFilters.companyId,
-          city: activeFilters.city,
-          remoteType: activeFilters.remoteType,
-          techTrack: activeFilters.techTrack,
-          techRole: activeFilters.techRole,
-          skills: activeFilters.skills,
-          ...(activeFilters.indiaOnly ? {} : { indiaOnly: "false" }),
-          page: pageToLoad,
-          limit: PAGE_SIZE,
-        });
+        const result = await listJobsWithMeta(
+          buildJobQuery(activeFilters, pageToLoad),
+        );
         if (signal?.aborted) return;
         setJobs((prev) => (append ? [...prev, ...result.jobs] : result.jobs));
         setTotal(result.total);
@@ -205,10 +226,23 @@ export default function JobBrowser({
   // Initial jobs fetch when INITIAL changes (URL back/forward).
   useEffect(() => {
     const ac = new AbortController();
-    setFilters(INITIAL);
-    fetchJobs(1, INITIAL, false, ac.signal);
+    listJobsWithMeta(buildJobQuery(INITIAL, 1))
+      .then((result) => {
+        if (ac.signal.aborted) return;
+        setJobs(result.jobs);
+        setTotal(result.total);
+        setTotalPages(result.totalPages);
+        setPage(1);
+      })
+      .catch(() => {
+        if (!ac.signal.aborted)
+          toast.error("Could not load jobs. Is the backend running?");
+      })
+      .finally(() => {
+        if (!ac.signal.aborted) setLoading(false);
+      });
     return () => ac.abort();
-  }, [fetchJobs, INITIAL]);
+  }, [INITIAL]);
 
   const clearAll = () => {
     const next = filtersFromSearchParams(
@@ -217,6 +251,7 @@ export default function JobBrowser({
     );
     setFilters(next);
     setSearched(false);
+    setLoading(true);
     pushToUrl(next);
     fetchJobs(1, next, false);
   };
@@ -224,6 +259,7 @@ export default function JobBrowser({
   const submit = useCallback(
     (overrides?: Partial<Filters>) => {
       setSearched(true);
+      setLoading(true);
       const next = overrides
         ? { ...filtersRef.current, ...overrides }
         : filtersRef.current;
@@ -267,7 +303,10 @@ export default function JobBrowser({
       {!loading && page < totalPages && (
         <div className="text-center mt-9">
           <button
-            onClick={() => fetchJobs(page + 1, filtersRef.current, true)}
+            onClick={() => {
+              setLoadingMore(true);
+              fetchJobs(page + 1, filtersRef.current, true);
+            }}
             disabled={loadingMore}
             className="px-8 py-3 bg-white border border-slate-200 rounded-xl font-semibold text-slate-900 text-[15px] hover:border-slate-300 hover:shadow-card transition-all disabled:opacity-50 inline-flex items-center gap-2"
           >
