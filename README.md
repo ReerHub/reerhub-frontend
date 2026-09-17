@@ -26,6 +26,17 @@ npm run build
 npm run lint
 ```
 
+## Deploy (Vercel)
+
+- Vercel builds this repo directly from `main` (auto-deploy) at **`https://www.reerhub.com`** (apex `reerhub.com` 308-redirects to `www`). There is no staging environment.
+- Project → Settings → Environment Variables (Production):
+  - `NEXT_PUBLIC_API_URL=https://api.reerhub.com/api/v1`
+  - `NEXT_PUBLIC_SITE_URL=https://www.reerhub.com`
+- Both are **build-time** values — redeploy after changing them.
+- The backend permits this origin through its `CORS_FRONTEND_URL`; the browser sends `Origin: https://www.reerhub.com`.
+- CI (`.github/workflows/ci.yml`): lint + `next build`. Requires Node ≥ 22 (see `.nvmrc`).
+- Full guide: workspace `docs/DEPLOYMENT.md`.
+
 ## Design
 
 Follow `docs/design/design-system.md` (v2, navy `#07152E` / blue `#2563EB` / cyan `#2DD4BF` / purple `#6366F1`, Inter, `60-70%` light surfaces). Do not invent new brand colors.
