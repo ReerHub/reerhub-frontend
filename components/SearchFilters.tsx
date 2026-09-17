@@ -60,6 +60,9 @@ export default function SearchFilters({
     { value: "hybrid", label: "Hybrid" },
     { value: "remote", label: "Remote" },
   ];
+  // Scale guardrail: per-company pills break past ~10 companies, so large
+  // corpuses get a compact dropdown instead. Same filter semantics.
+  const useCompanySelect = companies.length > 10;
   const categoryOptions = [
     { value: "", label: "All tracks" },
     ...TECH_TRACKS,
@@ -154,31 +157,53 @@ export default function SearchFilters({
         >
           All companies
         </button>
-        {companies.map((c) => {
-          const active = filters.companyId === c._id;
-          return (
-            <button
-              key={c._id}
-              onClick={() => {
-                onChange({ companyId: active ? "" : c._id });
+        {useCompanySelect ? (
+          <label className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-white dark:bg-[#060D1D] border border-[#E2E8F0] dark:border-white/10 text-[13px] font-semibold text-[#64748B] dark:text-[#94A3B8]">
+            <span className="sr-only">Company</span>
+            <select
+              value={filters.companyId}
+              onChange={(e) => {
+                onChange({ companyId: e.target.value });
                 onSubmit();
               }}
-              aria-pressed={active}
-              className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all inline-flex items-center gap-1.5 ${
-                active
-                  ? "bg-[#EFF6FF] text-[#2563EB] dark:bg-[#2563EB]/15 dark:text-[#60A5FA]"
-                  : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
-              }`}
+              className="bg-transparent outline-none max-w-52 cursor-pointer text-[#0F172A] dark:text-white"
             >
-              {c.name}
-              {typeof c.activeJobs === "number" && (
-                <span className="text-xs font-medium opacity-70">
-                  {c.activeJobs}
-                </span>
-              )}
-            </button>
-          );
-        })}
+              <option value="">Select company…</option>
+              {companies.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                  {typeof c.activeJobs === "number" ? ` (${c.activeJobs})` : ""}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          companies.map((c) => {
+            const active = filters.companyId === c._id;
+            return (
+              <button
+                key={c._id}
+                onClick={() => {
+                  onChange({ companyId: active ? "" : c._id });
+                  onSubmit();
+                }}
+                aria-pressed={active}
+                className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all inline-flex items-center gap-1.5 ${
+                  active
+                    ? "bg-[#EFF6FF] text-[#2563EB] dark:bg-[#2563EB]/15 dark:text-[#60A5FA]"
+                    : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
+                }`}
+              >
+                {c.name}
+                {typeof c.activeJobs === "number" && (
+                  <span className="text-xs font-medium opacity-70">
+                    {c.activeJobs}
+                  </span>
+                )}
+              </button>
+            );
+          })
+        )}
 
         <span
           className="w-px h-5 bg-[#E2E8F0] dark:bg-white/10 mx-1 hidden sm:block"

@@ -1,5 +1,7 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import JobCard from "@/components/JobCard";
 import { API_BASE, TECH_TRACKS } from "@/lib/reerhub";
 import { companyTile, locationLabel, timeAgo } from "@/lib/format";
 
@@ -9,6 +11,41 @@ async function fetchJob(jobId: string) {
   if (!res.ok) throw new Error("Could not load job");
   const json = await res.json();
   return json.data;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ jobId: string }>;
+}): Promise<Metadata> {
+  try {
+    const { jobId } = await params;
+    const job = await fetchJob(jobId);
+    const companyName = job.companyId?.name || "Company";
+    const title = `${job.title} at ${companyName} | ReerHub`;
+    const description =
+      `${job.title} (${job.techRole || "tech role"}) at ${companyName}` +
+      `${job.locations?.[0]?.city ? ` in ${job.locations[0].city}` : ""}. ` +
+      `Apply directly on the company's official site.`;
+    return { title, description };
+  } catch {
+    return { title: "Job | ReerHub" };
+  }
+}
+
+async function fetchRelatedJobs(companyId: string, excludeId: string) {
+  try {
+    const res = await fetch(`${API_BASE}/jobs?companyId=${companyId}&limit=4`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return (json.data ?? [])
+      .filter((j: { _id: string }) => j._id !== excludeId)
+      .slice(0, 3);
+  } catch {
+    return [];
+  }
 }
 
 function Fact({ label, value }: { label: string; value?: string }) {
@@ -35,6 +72,9 @@ export default async function JobDetailPage({
   const company = job.companyId || {};
   const companyName: string = company.name || "Company";
   const posted = timeAgo(job.postedAt || job.firstSeenAt);
+  const relatedJobs = company._id
+    ? await fetchRelatedJobs(company._id, job._id || jobId)
+    : [];
 
   const facts: { label: string; value?: string }[] = [
     {
@@ -209,6 +249,21 @@ export default async function JobDetailPage({
             . Details may have changed — the company page is the source of
             truth.
           </p>
+
+          {relatedJobs.length > 0 && (
+            <section className="mt-8">
+              <h2 className="font-bold text-[#0F172A] dark:text-white text-xl mb-4">
+                More from {companyName}
+              </h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {relatedJobs.map(
+                  (related: React.ComponentProps<typeof JobCard>["job"]) => (
+                    <JobCard key={related._id} job={related} />
+                  ),
+                )}
+              </div>
+            </section>
+          )}
         </article>
 
         <aside className="lg:sticky lg:top-24 space-y-4">
