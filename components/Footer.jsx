@@ -119,8 +119,8 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-slate-500 leading-relaxed mt-4 max-w-xs">
-              Real Effective Engineering Roles Hub — tech jobs in India,
-              indexed daily from official company career pages.
+              Real Effective Engineering Roles Hub — tech jobs in India, indexed
+              daily from official company career pages.
             </p>
             <p className="text-xs text-slate-400 mt-4">
               Applications happen on official company sites.

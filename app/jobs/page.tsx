@@ -54,8 +54,7 @@ export default function JobsPage() {
   return (
     <div>
       <SubHero title="All tech jobs">
-        Every open engineering and AI role, indexed from official company
-        pages.
+        Every open engineering and AI role, indexed from official company pages.
       </SubHero>
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         <Suspense fallback={<FiltersBarSkeleton />}>

@@ -109,8 +109,7 @@ export default function SearchFilters({
 
   const pillBase =
     "px-3.5 py-1.5 rounded-lg text-[13px] font-semibold transition-all whitespace-nowrap";
-  const pillInactive =
-    "text-slate-600 hover:bg-slate-100 hover:text-slate-900";
+  const pillInactive = "text-slate-600 hover:bg-slate-100 hover:text-slate-900";
   const pillActive = "bg-blue-600 text-white shadow-sm";
 
   return (

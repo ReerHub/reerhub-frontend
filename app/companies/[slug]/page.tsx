@@ -47,9 +47,7 @@ export default async function CompanyDetailPage({
             <span aria-hidden className="text-slate-300">
               /
             </span>
-            <span className="text-slate-900 font-semibold">
-              {company.name}
-            </span>
+            <span className="text-slate-900 font-semibold">{company.name}</span>
           </nav>
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">
             <span
