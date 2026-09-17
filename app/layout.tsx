@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { AuthProvider } from "@/components/AuthProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -46,9 +47,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <Navbar />
-        <main className="min-h-screen relative pt-16">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Navbar />
+          <main className="min-h-screen relative pt-16">{children}</main>
+          <Footer />
+        </AuthProvider>
         <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>

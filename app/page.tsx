@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import JobBrowser from "@/components/JobBrowser";
+import CompanyLogo from "@/components/CompanyLogo";
 import { listCompanies, type Company } from "@/lib/reerhub";
-import { companyTile } from "@/lib/format";
 
 const WHY = [
   {
@@ -106,12 +105,12 @@ export default function Home() {
             from official career pages. Apply directly on the company site.
           </p>
           <div className="rise-in flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
-            <a
-              href="#jobs"
-              className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 active:bg-blue-700 transition-all shadow-[0_8px_24px_rgba(59,130,246,0.35)]"
+            <Link
+              href="/signup"
+              className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 active:bg-blue-700 transition-all shadow-[0_8px_24px_rgba(59,130,246,0.35)] text-center"
             >
-              Explore Tech Roles
-            </a>
+              Get matched roles
+            </Link>
             <div className="flex w-full sm:w-auto gap-3">
               <Link
                 href="/engineering"
@@ -194,12 +193,7 @@ export default function Home() {
                 href={`/companies/${c.slug}`}
                 className="group flex items-center gap-4 bg-white border border-slate-200/80 rounded-2xl p-5 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
               >
-                <span
-                  className={`w-12 h-12 rounded-xl ${companyTile()} flex items-center justify-center font-bold text-xl shrink-0 shadow-sm`}
-                  aria-hidden
-                >
-                  {c.name.charAt(0).toUpperCase()}
-                </span>
+                <CompanyLogo name={c.name} logoUrl={c.logoUrl} />
                 <span className="min-w-0">
                   <span className="block font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
                     {c.name}
@@ -215,12 +209,68 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── Latest jobs ── */}
-      <section
-        id="jobs"
-        className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 scroll-mt-20"
-      >
-        <JobBrowser heading="Latest tech roles" />
+      {/* ── How it works (marketing; jobs live behind login) ── */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-14">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+            How ReerHub works
+          </h2>
+          <p className="text-sm text-slate-500 mt-1">
+            Three steps from signup to shortlist.
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            {
+              step: "1",
+              title: "Create your profile",
+              body: "Tell us your current role, track, skills, and preferred cities. Takes two minutes.",
+            },
+            {
+              step: "2",
+              title: "Get recommended roles",
+              body: "Your dashboard prefills filters from your profile and shows matching India tech roles daily.",
+            },
+            {
+              step: "3",
+              title: "Apply on the company site",
+              body: "Save roles to revisit, then apply directly on the official careers page. No middlemen.",
+            },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card"
+            >
+              <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-blue-600 text-white font-bold text-sm mb-4">
+                {item.step}
+              </span>
+              <h3 className="font-bold text-slate-900 text-[16px] mb-1.5">
+                {item.title}
+              </h3>
+              <p className="text-slate-500 text-[15px] leading-relaxed">
+                {item.body}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-8">
+          <Link
+            href="/signup"
+            className="inline-block px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition-all shadow-[0_8px_24px_rgba(59,130,246,0.35)]"
+          >
+            Create free account
+          </Link>
+          <p className="text-sm text-slate-500 mt-3">
+            Already a member?{" "}
+            <Link href="/login" className="text-blue-600 font-semibold">
+              Log in
+            </Link>{" "}
+            ·{" "}
+            <Link href="/jobs" className="text-blue-600 font-semibold">
+              Browse public roles
+            </Link>
+          </p>
+        </div>
       </section>
 
       {/* ── Why ReerHub ── */}
@@ -274,12 +324,12 @@ export default function Home() {
             Engineering and AI openings from top product companies — always on
             their official pages.
           </p>
-          <a
-            href="#jobs"
+          <Link
+            href="/signup"
             className="relative inline-block px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition-all shadow-[0_8px_24px_rgba(59,130,246,0.35)]"
           >
-            Explore Tech Roles
-          </a>
+            Get started free
+          </Link>
         </div>
       </section>
     </div>

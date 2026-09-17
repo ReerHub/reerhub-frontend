@@ -1,6 +1,6 @@
 import Link from "next/link";
+import CompanyLogo from "@/components/CompanyLogo";
 import { listCompanies } from "@/lib/reerhub";
-import { companyTile } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +26,7 @@ export default async function CompaniesPage() {
             className="group bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200"
           >
             <div className="flex items-center gap-4 mb-5">
-              <span
-                className={`w-12 h-12 rounded-xl ${companyTile()} flex items-center justify-center font-bold text-xl shrink-0 shadow-sm`}
-                aria-hidden
-              >
-                {company.name.charAt(0).toUpperCase()}
-              </span>
+              <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
               <div className="min-w-0">
                 <h2 className="font-bold text-slate-900 text-lg leading-tight truncate group-hover:text-blue-600 transition-colors">
                   {company.name}

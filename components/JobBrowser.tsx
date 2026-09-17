@@ -127,10 +127,20 @@ export default function JobBrowser({
   initialCategory = "",
   heading = "Latest tech roles",
   showFilters = true,
+  initialFilters,
+  savedOnly,
+  savedIds,
+  showSave,
+  onToggleSave,
 }: {
   initialCategory?: "" | TechTrack;
   heading?: string;
   showFilters?: boolean;
+  initialFilters?: Partial<Filters>;
+  savedOnly?: boolean;
+  savedIds?: string[];
+  showSave?: boolean;
+  onToggleSave?: (jobId: string, saved: boolean) => void;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -138,14 +148,21 @@ export default function JobBrowser({
 
   const searchParamsKey = searchParams.toString();
 
-  const INITIAL: Filters = useMemo(
-    () =>
-      filtersFromSearchParams(
-        new URLSearchParams(searchParamsKey),
-        initialCategory,
-      ),
-    [searchParamsKey, initialCategory],
-  );
+  const INITIAL: Filters = useMemo(() => {
+    const fromUrl = filtersFromSearchParams(
+      new URLSearchParams(searchParamsKey),
+      initialCategory,
+    );
+    if (!initialFilters) return fromUrl;
+    // Prefill empty slots from profile; explicit URL params always win.
+    const merged: Filters = { ...fromUrl };
+    for (const key of FILTER_KEYS) {
+      if (key === "indiaOnly") continue;
+      const preset = initialFilters[key];
+      if (!merged[key] && preset) merged[key] = preset as never;
+    }
+    return merged;
+  }, [searchParamsKey, initialCategory, initialFilters]);
 
   const [filters, setFilters] = useState<Filters>(INITIAL);
   const [prevInitial, setPrevInitial] = useState<Filters>(INITIAL);
@@ -270,6 +287,13 @@ export default function JobBrowser({
     [fetchJobs, pushToUrl],
   );
 
+  const savedSet = useMemo(() => new Set(savedIds || []), [savedIds]);
+
+  const visibleJobs = useMemo(() => {
+    if (!savedOnly || !savedIds) return jobs;
+    return jobs.filter((j) => savedSet.has(j._id));
+  }, [jobs, savedOnly, savedIds, savedSet]);
+
   return (
     <div>
       {showFilters && (
@@ -294,8 +318,16 @@ export default function JobBrowser({
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-        ) : jobs.length > 0 ? (
-          jobs.map((job) => <JobCard key={job._id} job={job} />)
+        ) : visibleJobs.length > 0 ? (
+          visibleJobs.map((job) => (
+            <JobCard
+              key={job._id}
+              job={job}
+              saved={savedSet.has(job._id)}
+              showSave={showSave}
+              onToggleSave={onToggleSave}
+            />
+          ))
         ) : (
           <EmptyState onClear={clearAll} />
         )}

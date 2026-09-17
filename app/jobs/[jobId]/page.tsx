@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
+import CompanyLogo from "@/components/CompanyLogo";
 import JobCard from "@/components/JobCard";
 import {
   getJob,
@@ -10,7 +11,7 @@ import {
   TECH_TRACKS,
   type Job,
 } from "@/lib/reerhub";
-import { companyTile, locationLabel, timeAgo } from "@/lib/format";
+import { locationLabel, timeAgo } from "@/lib/format";
 
 async function fetchJob(jobId: string): Promise<Job> {
   try {
@@ -142,12 +143,10 @@ export default async function JobDetailPage({
         <article className="min-w-0">
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
             <div className="flex items-center gap-4 mb-5">
-              <span
-                className={`w-12 h-12 rounded-xl ${companyTile()} flex items-center justify-center font-bold text-xl shrink-0 shadow-sm`}
-                aria-hidden
-              >
-                {companyName.charAt(0).toUpperCase()}
-              </span>
+              <CompanyLogo
+                name={companyName}
+                logoUrl={job.companyId?.logoUrl}
+              />
               <div className="min-w-0">
                 {company.slug ? (
                   <Link
