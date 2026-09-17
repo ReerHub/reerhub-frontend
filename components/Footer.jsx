@@ -43,58 +43,24 @@ function FooterLink({ href, label, external = false }) {
 }
 
 function SubscribeBox() {
-  const [email, setEmail] = useState("");
-  const [done, setDone] = useState(false);
-  const [error, setError] = useState("");
-
-  const submit = (e) => {
-    e.preventDefault();
-    const value = email.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setError("Enter a valid email address.");
-      return;
-    }
-    setError("");
-    // NOTE: front-end only for now — wire to a newsletter/alerts endpoint later.
-    setDone(true);
-  };
-
   return (
     <div>
       <ColumnHeading>Get job alerts</ColumnHeading>
-      {done ? (
-        <p className="text-sm text-[#2DD4BF] font-semibold border border-[#2DD4BF]/25 bg-[#2DD4BF]/5 rounded-lg px-4 py-3">
-          You&apos;re on the list. New roles, in your inbox.
-        </p>
-      ) : (
-        <form onSubmit={submit} className="flex gap-2">
-          <label className="sr-only" htmlFor="footer-email">
-            Email address
-          </label>
-          <input
-            id="footer-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="youremail@domain.com"
-            className="min-w-0 flex-1 px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-sm text-white placeholder:text-[#64748B] outline-none focus:border-[#2DD4BF]/60 focus:ring-2 focus:ring-[#2DD4BF]/15 transition-all"
-          />
-          <button
-            type="submit"
-            className="shrink-0 px-5 py-2.5 bg-white/[0.07] border border-white/10 text-white rounded-lg text-sm font-semibold hover:bg-[#2563EB] hover:border-[#2563EB] transition-all"
-          >
-            Subscribe
-          </button>
-        </form>
-      )}
-      {error && !done && (
-        <p className="text-xs text-[#F87171] mt-2" role="alert">
-          {error}
-        </p>
-      )}
+      <p className="text-sm text-[#CBD5E1] leading-relaxed rounded-lg px-4 py-3 border border-white/10 bg-white/5">
+        Weekly tech-role alerts are{" "}
+        <span className="font-semibold text-[#2DD4BF]">coming soon</span>.
+        Meanwhile, browse the latest roles on the{" "}
+        <Link
+          href="/jobs"
+          className="text-[#2DD4BF] hover:underline underline-offset-2 font-medium"
+        >
+          jobs page
+        </Link>
+        .
+      </p>
       <p className="text-[11px] leading-relaxed text-[#64748B] mt-3 max-w-xs">
-        One email when new roles land at your companies. No spam, unsubscribe
-        anytime.
+        No spam, no middlemen — once alerts launch you&apos;ll get one email
+        when new roles land at your companies.
       </p>
     </div>
   );
