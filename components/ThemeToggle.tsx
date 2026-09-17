@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-const STORAGE_KEY = "wareers-theme";
+const STORAGE_KEY = "reerhub-theme";
 
 function getInitial(): "light" | "dark" {
   if (

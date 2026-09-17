@@ -1,7 +1,7 @@
 "use client";
 
-import type { Company, TechTrack } from "@/lib/wareers";
-import { TECH_TRACKS } from "@/lib/wareers";
+import type { Company, TechTrack } from "@/lib/reerhub";
+import { TECH_TRACKS } from "@/lib/reerhub";
 
 export type Filters = {
   q: string;
@@ -9,7 +9,9 @@ export type Filters = {
   city: string;
   remoteType: string;
   techTrack: "" | TechTrack;
+  techRole: string;
   skills: string;
+  indiaOnly: boolean;
 };
 
 function SearchIcon() {
@@ -49,7 +51,9 @@ export default function SearchFilters({
     filters.city ||
     filters.remoteType ||
     filters.techTrack ||
-    filters.skills;
+    filters.techRole ||
+    filters.skills ||
+    !filters.indiaOnly;
   const remoteOptions = [
     { value: "", label: "Any mode" },
     { value: "onsite", label: "Onsite" },
@@ -86,6 +90,15 @@ export default function SearchFilters({
             value={filters.city}
             onChange={(e) => onChange({ city: e.target.value })}
             placeholder="Location"
+            className="w-full py-2.5 bg-transparent outline-none text-[15px] text-[#0F172A] dark:text-white placeholder:text-[#94A3B8]"
+          />
+        </label>
+        <label className="flex items-center gap-2 px-4 rounded-lg bg-white dark:bg-[#060D1D] border border-[#E2E8F0] dark:border-white/10 focus-within:border-[#2563EB] transition-all sm:w-52">
+          <span className="sr-only">Role (e.g. Backend Engineer)</span>
+          <input
+            value={filters.techRole}
+            onChange={(e) => onChange({ techRole: e.target.value })}
+            placeholder="Role"
             className="w-full py-2.5 bg-transparent outline-none text-[15px] text-[#0F172A] dark:text-white placeholder:text-[#94A3B8]"
           />
         </label>
@@ -195,6 +208,22 @@ export default function SearchFilters({
             </button>
           ))}
         </div>
+
+        <button
+          onClick={() => {
+            onChange({ indiaOnly: !filters.indiaOnly });
+            onSubmit();
+          }}
+          aria-pressed={filters.indiaOnly}
+          title="India-first feed: hide non-India roles"
+          className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all ${
+            filters.indiaOnly
+              ? "bg-[#ECFDF5] text-[#047857] dark:bg-[#10B981]/10 dark:text-[#34D399]"
+              : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
+          }`}
+        >
+          {filters.indiaOnly ? "India only ✓" : "India only"}
+        </button>
 
         {hasActive && (
           <button

@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  /* WAREERS BRAND TOKENS — see docs/design/design-system.md */
+  /* REERHUB BRAND TOKENS — see docs/design/design-system.md */
   --color-primary: #2563eb; /* Bright blue: primary actions */
   --color-primary-dark: #1d4ed8; /* Hover */
   --color-primary-deep: #1e40af; /* Active */
@@ -33,7 +33,7 @@
   color-scheme: light;
 }
 
-/* Wareers dark theme — deep-navy "own style" take on the dark dev-tool look */
+/* ReerHub dark theme — deep-navy "own style" take on the dark dev-tool look */
 .dark {
   --background: #060d1d;
   --foreground: #b6c2d2;

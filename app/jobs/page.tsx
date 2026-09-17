@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import JobBrowser from "@/components/JobBrowser";
 
 export const metadata: Metadata = {
-  title: "AI & ML Jobs in India | ReerHub",
+  title: "All Tech Jobs in India | ReerHub",
   description:
-    "AI, machine learning, and data science roles from India's top product companies, indexed from official career pages.",
+    "Browse all engineering and AI roles from India's top product companies — indexed daily from official career pages.",
 };
 
-export default function AIPage() {
+export default function JobsPage() {
   return (
     <div>
       <section className="relative overflow-hidden bg-[#07152E]">
@@ -21,16 +21,16 @@ export default function AIPage() {
         />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8 text-center">
           <h1 className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-white tracking-tight mb-3">
-            AI & ML jobs
+            All tech jobs
           </h1>
           <p className="text-white/70 text-base sm:text-lg max-w-xl mx-auto">
-            Machine learning, LLM, and data science roles from top product
-            companies.
+            Every open engineering and AI role, indexed from official company
+            pages.
           </p>
         </div>
       </section>
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <JobBrowser initialCategory="ai-ml" heading="AI & ML roles" />
+        <JobBrowser heading="All open roles" />
       </section>
     </div>
   );

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import JobBrowser from "@/components/JobBrowser";
 
 export const metadata: Metadata = {
-  title: "Engineering Jobs in India | Wareers",
+  title: "Engineering Jobs in India | ReerHub",
   description:
     "Software engineering roles — SDE, backend, frontend, DevOps, data — from India's top product companies, indexed from official career pages.",
 };

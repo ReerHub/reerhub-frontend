@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import JobBrowser from "@/components/JobBrowser";
-import { listCompanies, type Company } from "@/lib/wareers";
+import { listCompanies, type Company } from "@/lib/reerhub";
 import { companyTile } from "@/lib/format";
 
 const WHY = [
@@ -128,13 +128,13 @@ export default function Home() {
         <JobBrowser heading="Latest tech roles" />
       </section>
 
-      {/* ── Why Wareers ── */}
+      {/* ── Why ReerHub ── */}
       <section
         id="why"
         className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 scroll-mt-20"
       >
         <h2 className="text-2xl font-bold text-[#0F172A] dark:text-white mb-5">
-          Why Wareers
+          Why ReerHub
         </h2>
         <div className="grid gap-4 md:grid-cols-3">
           {WHY.map((item) => (
@@ -162,7 +162,7 @@ export default function Home() {
             aria-hidden
           />
           <p className="relative text-xs font-bold uppercase tracking-[0.2em] text-[#2DD4BF] mb-3">
-            Every tech opportunity. One place.
+            Real Effective Engineering Roles Hub.
           </p>
           <h2 className="relative text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
             Find roles. Build what&apos;s next.

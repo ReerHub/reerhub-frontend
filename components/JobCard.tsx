@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { Job } from "@/lib/wareers";
-import { TECH_TRACKS } from "@/lib/wareers";
+import type { Job } from "@/lib/reerhub";
+import { TECH_TRACKS } from "@/lib/reerhub";
 import { companyTile, locationLabel, timeAgo } from "@/lib/format";
 
 function PinIcon() {

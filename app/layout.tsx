@@ -12,17 +12,17 @@ const inter = Inter({
 });
 
 // Applied before first paint so the saved theme never flashes.
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("wareers-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}}catch(e){}})();`;
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("reerhub-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}}catch(e){}})();`;
 
 export const metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   ),
-  title: "Wareers | Engineering & AI jobs in India",
+  title: "ReerHub | Engineering & AI jobs in India",
   description:
     "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages. Apply on the company site.",
   keywords: [
-    "Wareers",
+    "ReerHub",
     "India tech jobs",
     "engineering jobs India",
     "AI jobs India",
@@ -30,18 +30,18 @@ export const metadata = {
     "product company careers India",
   ],
   icons: {
-    icon: "/wareers-logo-64.png",
-    apple: "/wareers-logo-180.png",
+    icon: "/reerhub-logo-64.png",
+    apple: "/reerhub-logo-180.png",
   },
   openGraph: {
-    title: "Wareers | Engineering & AI jobs in India",
+    title: "ReerHub | Engineering & AI jobs in India",
     description:
       "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages.",
-    images: ["/wareers-text-logo-640.png"],
+    images: ["/reerhub-text-logo-640.png"],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/wareers-text-logo-640.png"],
+    images: ["/reerhub-text-logo-640.png"],
   },
 };
 

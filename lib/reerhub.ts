@@ -1,6 +1,13 @@
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
+// Single source of truth for the API origin. NEXT_PUBLIC_SERVER_URL is kept
+// as a deprecated alias so old imports keep working.
+export const SERVER_URL =
+  process.env.NEXT_PUBLIC_SERVER_URL ||
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/, "") ||
+  "http://localhost:8000";
+
 export type TechTrack =
   | "software"
   | "ai-ml"
@@ -28,6 +35,7 @@ export type Job = {
   _id: string;
   title: string;
   normalizedTitle?: string;
+  description?: string;
   department?: string;
   employmentType?: string;
   remoteType?: string;
@@ -46,6 +54,13 @@ export type Job = {
   companyId: { _id: string; name: string; slug: string; logoUrl?: string };
 };
 
+export type CompanySource = {
+  name: string;
+  type: string;
+  careersUrl: string;
+  lastSuccessfulSyncAt?: string;
+};
+
 export type Company = {
   _id: string;
   name: string;
@@ -56,7 +71,7 @@ export type Company = {
   industry?: string;
   activeJobs?: number;
   totalJobs?: number;
-  sources?: { name: string; type: string; careersUrl: string }[];
+  sources?: CompanySource[];
 };
 
 async function get<T>(path: string, init?: RequestInit): Promise<T> {

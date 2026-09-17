@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { API_BASE, TECH_TRACKS } from "@/lib/wareers";
+import { API_BASE, TECH_TRACKS } from "@/lib/reerhub";
 import { companyTile, locationLabel, timeAgo } from "@/lib/format";
 
 async function fetchJob(jobId: string) {
@@ -218,7 +218,7 @@ export default async function JobDetailPage({
             </p>
             <p className="text-sm text-white/70 leading-relaxed mb-5">
               You&apos;ll finish your application on {companyName}&apos;s own
-              site. Wareers never takes a cut or holds your data.
+              site. ReerHub never takes a cut or holds your data.
             </p>
             <a
               href={job.applicationUrl}

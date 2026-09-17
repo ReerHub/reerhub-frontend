@@ -1,4 +1,4 @@
-import type { Job } from "./wareers";
+import type { Job } from "./reerhub";
 
 /** "2d ago", "3w ago", "Just now" — friendly recency for listings. */
 export function timeAgo(iso?: string): string {

@@ -3,14 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { listCompanies } from "@/lib/wareers";
+import { listCompanies } from "@/lib/reerhub";
 
 const DISCOVER_LINKS = [
   { href: "/", label: "All tech roles" },
   { href: "/engineering", label: "Engineering jobs" },
   { href: "/ai", label: "AI / ML jobs" },
   { href: "/companies", label: "All companies" },
-  { href: "/#why", label: "Why Wareers" },
+  { href: "/#why", label: "Why ReerHub" },
 ];
 
 function ColumnHeading({ children }) {
@@ -133,17 +133,17 @@ export default function Footer() {
           <Link
             href="/"
             className="flex items-center gap-2"
-            aria-label="Wareers home"
+            aria-label="ReerHub home"
           >
             <Image
-              src="/wareers-logo-64.png"
-              alt="Wareers logo"
+              src="/reerhub-logo-64.png"
+              alt="ReerHub logo"
               width={32}
               height={32}
               className="w-8 h-8 rounded-lg bg-white"
             />
             <span className="font-bold text-white text-[17px] tracking-tight">
-              Wareers
+              ReerHub
             </span>
           </Link>
         </div>
@@ -207,7 +207,7 @@ export default function Footer() {
           >
             <defs>
               <linearGradient
-                id="wareers-foot-stroke"
+                id="reerhub-foot-stroke"
                 x1="0"
                 y1="0"
                 x2="1"
@@ -227,18 +227,18 @@ export default function Footer() {
               fontSize={148}
               letterSpacing={-6}
               fill="none"
-              stroke="url(#wareers-foot-stroke)"
+              stroke="url(#reerhub-foot-stroke)"
               strokeWidth={1.5}
               opacity={0.55}
             >
-              wareers
+              reerhub
             </text>
           </svg>
         </div>
 
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-[#94A3B8]">
-            © {currentYear} Wareers. All rights reserved.
+            © {currentYear} ReerHub. All rights reserved.
           </p>
           <p className="text-xs text-[#64748B]">
             Applications happen on official company sites.

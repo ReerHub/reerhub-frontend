@@ -21,18 +21,18 @@ export default function Navbar() {
         <Link
           href="/"
           className="flex items-center gap-2"
-          aria-label="Wareers home"
+          aria-label="ReerHub home"
         >
           <Image
-            src="/wareers-logo-64.png"
-            alt="Wareers logo"
+            src="/reerhub-logo-64.png"
+            alt="ReerHub logo"
             width={32}
             height={32}
             className="w-8 h-8 rounded-lg bg-white"
             priority
           />
           <span className="font-bold text-[#0F172A] dark:text-white text-[17px] tracking-tight">
-            Wareers
+            ReerHub
           </span>
         </Link>
         <div className="flex items-center gap-1.5">

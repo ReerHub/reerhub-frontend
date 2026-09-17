@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { listCompanies } from "@/lib/wareers";
+import { listCompanies } from "@/lib/reerhub";
 import { companyTile } from "@/lib/format";
 
 export const dynamic = "force-dynamic";

@@ -10,7 +10,7 @@ import {
   type Company,
   type Job,
   type TechTrack,
-} from "@/lib/wareers";
+} from "@/lib/reerhub";
 
 const PAGE_SIZE = 21;
 
@@ -64,7 +64,9 @@ export default function JobBrowser({
       city: "",
       remoteType: "",
       techTrack: initialCategory,
+      techRole: "",
       skills: "",
+      indiaOnly: true,
     }),
     [initialCategory],
   );
@@ -89,7 +91,10 @@ export default function JobBrowser({
           city: activeFilters.city,
           remoteType: activeFilters.remoteType,
           techTrack: activeFilters.techTrack,
+          techRole: activeFilters.techRole,
           skills: activeFilters.skills,
+          // Backend defaults to indiaOnly=true; only send false to opt out.
+          ...(activeFilters.indiaOnly ? {} : { indiaOnly: "false" }),
           page: pageToLoad,
           limit: PAGE_SIZE,
         });

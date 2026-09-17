@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import JobCard from "@/components/JobCard";
-import { API_BASE } from "@/lib/wareers";
+import { API_BASE } from "@/lib/reerhub";
 import { companyTile } from "@/lib/format";
 
 async function fetchCompany(slug: string) {
@@ -18,7 +18,11 @@ async function fetchCompanyJobs(companyId: string) {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Could not load jobs");
-  return (await res.json()).data;
+  const json = await res.json();
+  return {
+    jobs: json.data,
+    total: json.pagination?.total ?? json.data?.length ?? 0,
+  };
 }
 
 export default async function CompanyDetailPage({
@@ -28,7 +32,10 @@ export default async function CompanyDetailPage({
 }) {
   const { slug } = await params;
   const company = await fetchCompany(slug);
-  const jobs = await fetchCompanyJobs(company._id);
+  const { jobs, total } = await fetchCompanyJobs(company._id);
+  // Backend counts and job lists both default to indiaOnly=true, so these
+  // always agree. Use the server count as the source of truth.
+  const openCount = company.activeJobs ?? total ?? jobs.length;
 
   return (
     <div>
@@ -67,7 +74,7 @@ export default async function CompanyDetailPage({
                     className="w-1.5 h-1.5 rounded-full bg-[#10B981]"
                     aria-hidden
                   />
-                  {company.activeJobs ?? jobs.length} open roles
+                  {openCount} open roles
                 </span>
               </p>
             </div>
@@ -121,7 +128,7 @@ export default async function CompanyDetailPage({
         <h2 className="font-bold text-[#0F172A] dark:text-white text-xl mb-5">
           Open roles{" "}
           <span className="text-[#64748B] dark:text-[#94A3B8] font-medium">
-            ({jobs.length})
+            ({openCount})
           </span>
         </h2>
         {jobs.length > 0 ? (
