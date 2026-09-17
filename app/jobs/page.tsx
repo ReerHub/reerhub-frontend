@@ -1,5 +1,19 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import JobBrowser from "@/components/JobBrowser";
+
+function FiltersBarSkeleton() {
+  return (
+    <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-2xl p-4 sm:p-5">
+      <div className="skeleton h-10 w-full rounded-lg" />
+      <div className="flex gap-2 mt-3">
+        <div className="skeleton h-8 w-24 rounded-md" />
+        <div className="skeleton h-8 w-24 rounded-md" />
+        <div className="skeleton h-8 w-24 rounded-md" />
+      </div>
+    </div>
+  );
+}
 
 export const metadata: Metadata = {
   title: "All Tech Jobs in India | ReerHub",
@@ -30,7 +44,9 @@ export default function JobsPage() {
         </div>
       </section>
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <JobBrowser heading="All open roles" />
+        <Suspense fallback={<FiltersBarSkeleton />}>
+          <JobBrowser heading="All open roles" />
+        </Suspense>
       </section>
     </div>
   );

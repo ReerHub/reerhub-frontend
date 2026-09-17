@@ -1,29 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import JobCard from "@/components/JobCard";
-import { API_BASE } from "@/lib/reerhub";
+import { getCompany, listCompanyJobs, NotFoundError } from "@/lib/reerhub";
 import { companyTile } from "@/lib/format";
-
-async function fetchCompany(slug: string) {
-  const res = await fetch(`${API_BASE}/companies/${slug}`, {
-    cache: "no-store",
-  });
-  if (res.status === 404) notFound();
-  if (!res.ok) throw new Error("Could not load company");
-  return (await res.json()).data;
-}
-
-async function fetchCompanyJobs(companyId: string) {
-  const res = await fetch(`${API_BASE}/jobs?companyId=${companyId}&limit=50`, {
-    cache: "no-store",
-  });
-  if (!res.ok) throw new Error("Could not load jobs");
-  const json = await res.json();
-  return {
-    jobs: json.data,
-    total: json.pagination?.total ?? json.data?.length ?? 0,
-  };
-}
 
 export default async function CompanyDetailPage({
   params,
@@ -31,8 +10,22 @@ export default async function CompanyDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const company = await fetchCompany(slug);
-  const { jobs, total } = await fetchCompanyJobs(company._id);
+  let company;
+  try {
+    company = await getCompany(slug);
+  } catch (err) {
+    if (err instanceof NotFoundError) notFound();
+    throw err;
+  }
+  let jobs: React.ComponentProps<typeof JobCard>["job"][] = [];
+  let total = 0;
+  try {
+    const result = await listCompanyJobs(company._id, 50);
+    jobs = result.jobs;
+    total = result.total;
+  } catch {
+    // Jobs failing must not 404 the company page; count falls back below.
+  }
   // Backend counts and job lists both default to indiaOnly=true, so these
   // always agree. Use the server count as the source of truth.
   const openCount = company.activeJobs ?? total ?? jobs.length;
@@ -98,7 +91,7 @@ export default async function CompanyDetailPage({
             </div>
           </div>
 
-          {company.sources?.length > 0 && (
+          {company.sources?.length ? (
             <div className="flex flex-wrap gap-1.5 mt-6">
               {company.sources.map(
                 (s: {
@@ -120,7 +113,7 @@ export default async function CompanyDetailPage({
                 ),
               )}
             </div>
-          )}
+          ) : null}
         </div>
       </section>
 

@@ -74,11 +74,22 @@ export type Company = {
   sources?: CompanySource[];
 };
 
+export class NotFoundError extends Error {
+  status: number;
+
+  constructor(status: number, path: string) {
+    super(`API ${status}: ${path}`);
+    this.name = "NotFoundError";
+    this.status = status;
+  }
+}
+
 async function get<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
     headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
   });
+  if (res.status === 404) throw new NotFoundError(404, path);
   if (!res.ok) throw new Error(`API ${res.status}: ${path}`);
   const json = await res.json();
   return json.data as T;

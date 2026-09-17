@@ -42,7 +42,7 @@ export default function SearchFilters({
   filters: Filters;
   companies: Company[];
   onChange: (patch: Partial<Filters>) => void;
-  onSubmit: () => void;
+  onSubmit: (patch?: Partial<Filters>) => void;
   onClear: () => void;
 }) {
   const hasActive =
@@ -60,8 +60,6 @@ export default function SearchFilters({
     { value: "hybrid", label: "Hybrid" },
     { value: "remote", label: "Remote" },
   ];
-  // Scale guardrail: per-company pills break past ~10 companies, so large
-  // corpuses get a compact dropdown instead. Same filter semantics.
   const useCompanySelect = companies.length > 10;
   const categoryOptions = [
     { value: "", label: "All tracks" },
@@ -83,7 +81,7 @@ export default function SearchFilters({
           <input
             value={filters.q}
             onChange={(e) => onChange({ q: e.target.value })}
-            placeholder="Search SDE, React, ML, data…"
+            placeholder="Search SDE, React, ML, data\u2026"
             className="w-full py-2.5 bg-transparent outline-none text-[15px] text-[#0F172A] dark:text-white placeholder:text-[#94A3B8]"
           />
         </label>
@@ -122,10 +120,9 @@ export default function SearchFilters({
           {categoryOptions.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => {
-                onChange({ techTrack: opt.value as Filters["techTrack"] });
-                onSubmit();
-              }}
+              onClick={() =>
+                onSubmit({ techTrack: opt.value as Filters["techTrack"] })
+              }
               aria-pressed={filters.techTrack === opt.value}
               className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all whitespace-nowrap ${
                 filters.techTrack === opt.value
@@ -144,10 +141,7 @@ export default function SearchFilters({
         />
 
         <button
-          onClick={() => {
-            onChange({ companyId: "" });
-            onSubmit();
-          }}
+          onClick={() => onSubmit({ companyId: "" })}
           aria-pressed={!filters.companyId}
           className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all ${
             !filters.companyId
@@ -162,13 +156,10 @@ export default function SearchFilters({
             <span className="sr-only">Company</span>
             <select
               value={filters.companyId}
-              onChange={(e) => {
-                onChange({ companyId: e.target.value });
-                onSubmit();
-              }}
+              onChange={(e) => onSubmit({ companyId: e.target.value })}
               className="bg-transparent outline-none max-w-52 cursor-pointer text-[#0F172A] dark:text-white"
             >
-              <option value="">Select company…</option>
+              <option value="">Select company\u2026</option>
               {companies.map((c) => (
                 <option key={c._id} value={c._id}>
                   {c.name}
@@ -183,10 +174,7 @@ export default function SearchFilters({
             return (
               <button
                 key={c._id}
-                onClick={() => {
-                  onChange({ companyId: active ? "" : c._id });
-                  onSubmit();
-                }}
+                onClick={() => onSubmit({ companyId: active ? "" : c._id })}
                 aria-pressed={active}
                 className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all inline-flex items-center gap-1.5 ${
                   active
@@ -218,10 +206,7 @@ export default function SearchFilters({
           {remoteOptions.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => {
-                onChange({ remoteType: opt.value });
-                onSubmit();
-              }}
+              onClick={() => onSubmit({ remoteType: opt.value })}
               aria-pressed={filters.remoteType === opt.value}
               className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all ${
                 filters.remoteType === opt.value
@@ -235,10 +220,7 @@ export default function SearchFilters({
         </div>
 
         <button
-          onClick={() => {
-            onChange({ indiaOnly: !filters.indiaOnly });
-            onSubmit();
-          }}
+          onClick={() => onSubmit({ indiaOnly: !filters.indiaOnly })}
           aria-pressed={filters.indiaOnly}
           title="India-first feed: hide non-India roles"
           className={`px-3.5 py-1.5 rounded-md text-[13px] font-semibold transition-all ${
@@ -247,7 +229,7 @@ export default function SearchFilters({
               : "text-[#64748B] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5"
           }`}
         >
-          {filters.indiaOnly ? "India only ✓" : "India only"}
+          {filters.indiaOnly ? "India only \u2713" : "India only"}
         </button>
 
         {hasActive && (

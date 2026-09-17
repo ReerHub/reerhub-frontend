@@ -1,16 +1,24 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import DOMPurify from "isomorphic-dompurify";
 import JobCard from "@/components/JobCard";
-import { API_BASE, TECH_TRACKS } from "@/lib/reerhub";
+import {
+  getJob,
+  listJobsWithMeta,
+  NotFoundError,
+  TECH_TRACKS,
+  type Job,
+} from "@/lib/reerhub";
 import { companyTile, locationLabel, timeAgo } from "@/lib/format";
 
-async function fetchJob(jobId: string) {
-  const res = await fetch(`${API_BASE}/jobs/${jobId}`, { cache: "no-store" });
-  if (res.status === 404) notFound();
-  if (!res.ok) throw new Error("Could not load job");
-  const json = await res.json();
-  return json.data;
+async function fetchJob(jobId: string): Promise<Job> {
+  try {
+    return await getJob(jobId);
+  } catch (err) {
+    if (err instanceof NotFoundError) notFound();
+    throw err;
+  }
 }
 
 export async function generateMetadata({
@@ -35,14 +43,8 @@ export async function generateMetadata({
 
 async function fetchRelatedJobs(companyId: string, excludeId: string) {
   try {
-    const res = await fetch(`${API_BASE}/jobs?companyId=${companyId}&limit=4`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return (json.data ?? [])
-      .filter((j: { _id: string }) => j._id !== excludeId)
-      .slice(0, 3);
+    const jobs = await listJobsWithMeta({ companyId, limit: 4 });
+    return jobs.jobs.filter((j) => j._id !== excludeId).slice(0, 3);
   } catch {
     return [];
   }
@@ -75,6 +77,9 @@ export default async function JobDetailPage({
   const relatedJobs = company._id
     ? await fetchRelatedJobs(company._id, job._id || jobId)
     : [];
+  const sanitizedDescription = job.description
+    ? DOMPurify.sanitize(job.description)
+    : "";
 
   const facts: { label: string; value?: string }[] = [
     {
@@ -178,9 +183,9 @@ export default async function JobDetailPage({
 
             <div className="flex flex-wrap gap-1.5">
               {(job.locations || []).map(
-                (loc: { city?: string; state?: string }, i: number) => (
+                (loc: { city?: string; state?: string; country?: string }) => (
                   <span
-                    key={i}
+                    key={[loc.city, loc.state, loc.country].join(",")}
                     className="px-2.5 py-1 rounded-md bg-[#F1F5F9] dark:bg-white/5 text-[#475569] dark:text-[#B6C2D2] text-[13px] font-medium"
                   >
                     {[loc.city, loc.state].filter(Boolean).join(", ") ||
@@ -224,31 +229,33 @@ export default async function JobDetailPage({
             </div>
           )}
 
-          {job.description && (
+          {sanitizedDescription && (
             <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6 sm:p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04)] mb-4">
               <h2 className="font-bold text-[#0F172A] dark:text-white text-[15px] mb-4">
                 About this role
               </h2>
               <div
                 className="job-description"
-                dangerouslySetInnerHTML={{ __html: job.description }}
+                dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
               />
             </div>
           )}
 
-          <p className="text-xs text-[#64748B] dark:text-[#94A3B8] px-1">
-            Sourced from the{" "}
-            <a
-              href={job.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#2563EB] dark:text-[#60A5FA] font-semibold underline underline-offset-2"
-            >
-              official listing
-            </a>
-            . Details may have changed — the company page is the source of
-            truth.
-          </p>
+          {job.sourceUrl && (
+            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] px-1">
+              Sourced from the{" "}
+              <a
+                href={job.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2563EB] dark:text-[#60A5FA] font-semibold underline underline-offset-2"
+              >
+                official listing
+              </a>
+              . Details may have changed &mdash; the company page is the source
+              of truth.
+            </p>
+          )}
 
           {relatedJobs.length > 0 && (
             <section className="mt-8">
@@ -267,36 +274,38 @@ export default async function JobDetailPage({
         </article>
 
         <aside className="lg:sticky lg:top-24 space-y-4">
-          <div className="bg-[#07152E] text-white rounded-xl p-6 shadow-[0_4px_12px_rgba(15,23,42,0.08)]">
-            <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#2DD4BF] mb-2">
-              Official application
-            </p>
-            <p className="text-sm text-white/70 leading-relaxed mb-5">
-              You&apos;ll finish your application on {companyName}&apos;s own
-              site. ReerHub never takes a cut or holds your data.
-            </p>
-            <a
-              href={job.applicationUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-[#2563EB] text-white rounded-lg font-semibold text-[15px] hover:bg-[#3B82F6] active:bg-[#1E40AF] transition-all"
-            >
-              Apply Now
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
+          {job.applicationUrl && (
+            <div className="bg-[#07152E] text-white rounded-xl p-6 shadow-[0_4px_12px_rgba(15,23,42,0.08)]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#2DD4BF] mb-2">
+                Official application
+              </p>
+              <p className="text-sm text-white/70 leading-relaxed mb-5">
+                You&apos;ll finish your application on {companyName}&apos;s own
+                site. ReerHub never takes a cut or holds your data.
+              </p>
+              <a
+                href={job.applicationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-[#2563EB] text-white rounded-lg font-semibold text-[15px] hover:bg-[#3B82F6] active:bg-[#1E40AF] transition-all"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                />
-              </svg>
-            </a>
-          </div>
+                Apply Now
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                  />
+                </svg>
+              </a>
+            </div>
+          )}
 
           <div className="bg-white dark:bg-[#0B1A33] border border-[#E2E8F0] dark:border-white/10 rounded-xl p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
             <h2 className="font-bold text-[#0F172A] dark:text-white text-[15px] mb-2">
