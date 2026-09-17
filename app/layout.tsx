@@ -1,70 +1,61 @@
 import "./globals.css";
-import { AppProvider } from "@/context/appContext";
+import { Inter } from "next/font/google";
 import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Applied before first paint so the saved theme never flashes.
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("wareers-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}}catch(e){}})();`;
+
 export const metadata = {
-  // Simple, powerful title
-  title: "Amanox Pro | The World's Most Accurate AI Resume Audit",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  ),
+  title: "Wareers | Engineering & AI jobs in India",
   description:
-    "Audit your resume with Amanox Pro Intelligence. Get deep-reasoning ATS scores, precision job matching, and recruiter-level insights to land more interviews.",
+    "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages. Apply on the company site.",
   keywords: [
-    "AI resume audit",
-    "Amanox Pro",
-    "ATS resume checker",
-    "professional resume analysis",
-    "resume keyword audit",
-    "job description match",
-    "AI career coach",
-    "resume score checker",
-    "Amanox AI",
+    "Wareers",
+    "India tech jobs",
+    "engineering jobs India",
+    "AI jobs India",
+    "SDE jobs",
+    "product company careers India",
   ],
+  icons: {
+    icon: "/wareers-logo-64.png",
+    apple: "/wareers-logo-180.png",
+  },
+  openGraph: {
+    title: "Wareers | Engineering & AI jobs in India",
+    description:
+      "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages.",
+    images: ["/wareers-text-logo-640.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/wareers-text-logo-640.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="antialiased">
-        <AppProvider>
-          <Navbar />
-          {/* Main container with Turquoise selection color */}
-          <main className="min-h-screen relative selection:bg-primary/20">
-            {children}
-          </main>
-          <Footer />
-        </AppProvider>
-
-        {/* Premium Styled Toaster */}
-        <Toaster
-          position="top-right"
-          reverseOrder={false}
-          toastOptions={{
-            duration: 4000,
-            // Updated to match your Turquoise and Charcoal theme
-            className:
-              "!bg-white/90 !backdrop-blur-xl !border !border-gray-100 !shadow-2xl !rounded-[1.5rem] !px-6 !py-4 !text-sm !font-black !text-secondary !font-sans",
-
-            style: {
-              color: "#373643",
-            },
-
-            success: {
-              iconTheme: {
-                primary: "#18cb96", // Your Turquoise
-                secondary: "white",
-              },
-            },
-
-            error: {
-              iconTheme: {
-                primary: "#EF4444",
-                secondary: "white",
-              },
-            },
-          }}
-        />
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
+      <body className={`${inter.className} antialiased`}>
+        <Navbar />
+        <main className="min-h-screen relative pt-16">{children}</main>
+        <Footer />
+        <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>
   );

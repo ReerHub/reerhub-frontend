@@ -1,122 +1,70 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { AppData } from "@/context/appContext";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/ThemeToggle";
+
+const LINKS = [
+  { href: "/", label: "All Roles" },
+  { href: "/engineering", label: "Engineering" },
+  { href: "/ai", label: "AI / ML" },
+  { href: "/companies", label: "Companies" },
+];
 
 export default function Navbar() {
-  const { isAuth, user, logoutUser } = AppData();
-
-  const handleLogout = async () => {
-    await logoutUser();
-  };
+  const pathname = usePathname();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 transition-all duration-300 supports-backdrop-filter:bg-white/60">
-      {/* Container - Aligned with Hero Section max-width */}
-      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-transparent via-primary to-transparent opacity-50"></div>
-
-      <div className="max-w-[1440px] mx-auto h-20 px-6 flex items-center justify-between">
-        {/* LOGO - Left Side */}
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#060D1D]/90 backdrop-blur border-b border-[#E2E8F0] dark:border-white/10">
+      <div className="max-w-6xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between gap-4">
         <Link
           href="/"
-          className="flex items-center group relative bg-transparent"
+          className="flex items-center gap-2"
+          aria-label="Wareers home"
         >
           <Image
-            // Added ?v=2 to force browser to ignore cache
-            src="/amanox-logo.png?v=2"
-            alt="Amanox Logo"
-            width={0}
-            height={0}
-            sizes="100vw"
-            style={{ width: "auto", height: "48px" }}
-            // REMOVED mix-blend-multiply entirely
-            className="object-contain opacity-100 group-hover:opacity-80 transition-opacity duration-300 bg-transparent"
+            src="/wareers-logo-64.png"
+            alt="Wareers logo"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-lg bg-white"
             priority
-            unoptimized={true} // Optional: Skips Next.js optimization cache if issues persist
           />
+          <span className="font-bold text-[#0F172A] dark:text-white text-[17px] tracking-tight">
+            Wareers
+          </span>
         </Link>
-
-        {/* NAVIGATION ACTIONS - Right Side */}
-        <div className="flex items-center gap-4 sm:gap-6">
-          {!isAuth ? (
-            <>
-              <Link
-                href="/login"
-                className="hidden sm:block text-sm font-semibold text-gray-500 hover:text-secondary transition-colors"
-              >
-                Log In
-              </Link>
-
-              <Link
-                href="/register"
-                className="bg-secondary hover:bg-black text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-secondary/10 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
-              >
-                Get Started
-              </Link>
-            </>
-          ) : (
-            <div className="flex items-center gap-4">
-              {/* Dashboard Button (Primary Action for Logged In) */}
-              <Link
-                href="/dashboard"
-                className="hidden sm:flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary px-5 py-2 rounded-full text-sm font-bold transition-all duration-300"
-              >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+        <div className="flex items-center gap-1.5">
+          <nav className="flex items-center gap-1" aria-label="Primary">
+            {LINKS.map((link) => {
+              const active =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`px-2.5 sm:px-4 py-2 rounded-lg text-[13px] sm:text-sm font-semibold transition-all whitespace-nowrap ${
+                    active
+                      ? "bg-[#EFF6FF] text-[#2563EB] dark:bg-[#2563EB]/15 dark:text-[#60A5FA]"
+                      : "text-[#475569] hover:bg-[#F1F5F9] dark:text-[#94A3B8] dark:hover:bg-white/5 dark:hover:text-white"
+                  }`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                  />
-                </svg>
-                Dashboard
-              </Link>
-
-              {/* User Profile / Logout */}
-              <div className="flex items-center gap-3 pl-2 sm:border-l border-gray-200">
-                {/* Mobile-only avatar placeholder or name */}
-                {user && (
-                  <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-xs font-bold sm:hidden">
-                    {user.name?.charAt(0)}
-                  </div>
-                )}
-
-                <span className="hidden md:block text-sm font-medium text-gray-500">
-                  <span className="text-secondary font-bold">
-                    {user?.name?.split(" ")[0]}
-                  </span>
-                </span>
-
-                <button
-                  onClick={handleLogout}
-                  className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all duration-200"
-                  title="Sign out"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          )}
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <span
+            className="w-px h-6 bg-[#E2E8F0] dark:bg-white/10 mx-1"
+            aria-hidden
+          />
+          <ThemeToggle />
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
