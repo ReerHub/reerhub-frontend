@@ -1,4 +1,4 @@
-# ReerHub Frontend
+# reerhub-frontend
 
 Next.js 16 + React 19 tech-job discovery UI for ReerHub (Real Effective Engineering Roles Hub), an India-first platform for engineering and AI roles that indexes official company career pages and links out to official application URLs.
 
