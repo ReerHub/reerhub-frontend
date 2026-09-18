@@ -44,12 +44,14 @@ async function ensureCsrf(): Promise<string | null> {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const method = (init?.method || "GET").toUpperCase();
   const res = await doFetch(path, init);
   if (res.status === 401 && !path.startsWith("/auth/")) {
     // Access cookie may have expired while the refresh cookie is still
     // valid — rotate once and retry instead of forcing a re-login.
-    const csrf = method === "GET" ? null : await ensureCsrf();
+    // NOTE: the refresh call itself is a POST and always needs a CSRF
+    // token, even when the original request was a GET (e.g. GET /users/me
+    // on page load — the most common refresh trigger).
+    const csrf = await ensureCsrf();
     const refreshed = await fetch(`${API_BASE}/auth/refresh`, {
       method: "POST",
       credentials: "include",
