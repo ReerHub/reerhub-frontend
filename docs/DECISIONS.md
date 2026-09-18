@@ -2,9 +2,13 @@
 
 Durable choices. Shared with backend where noted; UI consequences live here.
 
-## ADR-005 — Direct-to-production, no staging (2026-09-17, shared)
+## ADR-005 — Direct-to-production, no staging (2026-09-17, SUPERSEDED by ADR-010)
 
-Vercel auto-deploys `main`; no staging env. Consequence: keep `main` green, branches + PRs (branch protection on), CI as the gate.
+Vercel auto-deploys `main`; no staging env. (Kept for history; staging now exists.)
+
+## ADR-010 — Staging promotion flow (2026-09-19, supersedes ADR-005)
+
+Branches merge to `develop` (auto-deploys staging: `staging.reerhub.com` + `staging-api`); after verification, `develop` merges to `main` (prod). Reason: PRs need a live proving ground. Consequence: staging is publicly reachable (SSO off) so `robots.ts` disallows everything there; staging env mirrors prod with staging hosts.
 
 ## ADR-006 — Single global navbar (2026-09-18)
 
