@@ -30,6 +30,10 @@ export default function GoogleButton({ next }: { next: string }) {
   const { refresh } = useAuth();
   const safe = safeNext(next);
   const ref = useRef<HTMLDivElement>(null);
+  // GIS allows a single initialize() per button element: guard it so
+  // StrictMode double-effects (dev) or re-renders never double-init,
+  // which Google logs as "initialize() is called multiple times".
+  const doneRef = useRef(false);
   const [ready, setReady] = useState(
     () =>
       typeof document !== "undefined" &&
@@ -49,7 +53,16 @@ export default function GoogleButton({ next }: { next: string }) {
   }, [clientId, ready]);
 
   useEffect(() => {
-    if (!ready || !ref.current || !window.google || !clientId) return;
+    if (
+      !ready ||
+      !ref.current ||
+      !window.google ||
+      !clientId ||
+      doneRef.current
+    ) {
+      return;
+    }
+    doneRef.current = true;
     window.google.accounts.id.initialize({
       client_id: clientId,
       callback: async (res) => {
