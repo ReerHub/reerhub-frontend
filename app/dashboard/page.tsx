@@ -207,6 +207,7 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [ids, setIds] = useState<string[]>([]);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const savedOnly = view === "saved";
 
@@ -618,8 +619,8 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
 
         {/* ── Body ── */}
         <div className="grid lg:grid-cols-[290px_1fr] gap-5 mt-5 items-start">
-          <aside className="space-y-5">
-            <div className="relative overflow-hidden rounded-3xl bg-[#060B18] p-6 min-h-64 flex flex-col">
+          <aside className="space-y-5 order-2 lg:order-none">
+            <div className="relative overflow-hidden rounded-3xl bg-[#060B18] p-6 min-h-64 hidden lg:flex flex-col">
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
@@ -642,54 +643,83 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
             <div className="bg-white rounded-3xl border border-slate-200/70 p-5">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="font-bold text-slate-900 text-lg">Filters</h2>
-                <button
-                  onClick={() => commit(EMPTY)}
-                  className="text-[13px] font-semibold text-slate-400 hover:text-red-500 underline underline-offset-4"
-                >
-                  Clear
-                </button>
+                <span className="flex items-center gap-3">
+                  <button
+                    onClick={() => commit(EMPTY)}
+                    className="text-[13px] font-semibold text-slate-400 hover:text-red-500 underline underline-offset-4"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    onClick={() => setFiltersOpen((v) => !v)}
+                    aria-expanded={filtersOpen}
+                    aria-label={
+                      filtersOpen ? "Collapse filters" : "Expand filters"
+                    }
+                    className="lg:hidden w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500"
+                  >
+                    <svg
+                      className={`w-4 h-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                      />
+                    </svg>
+                  </button>
+                </span>
               </div>
-              <p className="text-xs text-slate-400 mb-1">
-                Changes apply instantly.
-              </p>
-              <p className="text-[13px] font-medium text-slate-400 mt-3 mb-1">
-                Work mode
-              </p>
-              {WORK_MODES.map((m) => (
+              <div className={filtersOpen ? "block" : "hidden lg:block"}>
+                <p className="text-xs text-slate-400 mb-1">
+                  Changes apply instantly.
+                </p>
+                <p className="text-[13px] font-medium text-slate-400 mt-3 mb-1">
+                  Work mode
+                </p>
+                {WORK_MODES.map((m) => (
+                  <Check
+                    key={m.value}
+                    label={m.label}
+                    checked={filters.remoteType.includes(m.value)}
+                    onChange={() =>
+                      commit({
+                        remoteType: toggle(filters.remoteType, m.value),
+                      })
+                    }
+                  />
+                ))}
+                <p className="text-[13px] font-medium text-slate-400 mt-4 mb-1">
+                  Employment
+                </p>
                 <Check
-                  key={m.value}
-                  label={m.label}
-                  checked={filters.remoteType.includes(m.value)}
-                  onChange={() =>
-                    commit({ remoteType: toggle(filters.remoteType, m.value) })
-                  }
+                  label="Full time"
+                  checked={filters.fullTime}
+                  onChange={() => commit({ fullTime: !filters.fullTime })}
                 />
-              ))}
-              <p className="text-[13px] font-medium text-slate-400 mt-4 mb-1">
-                Employment
-              </p>
-              <Check
-                label="Full time"
-                checked={filters.fullTime}
-                onChange={() => commit({ fullTime: !filters.fullTime })}
-              />
-              <p className="text-[13px] font-medium text-slate-400 mt-4 mb-1">
-                Level
-              </p>
-              {LEVELS.map((l) => (
-                <Check
-                  key={l}
-                  label={l}
-                  checked={filters.seniority.includes(l)}
-                  onChange={() =>
-                    commit({ seniority: toggle(filters.seniority, l) })
-                  }
-                />
-              ))}
+                <p className="text-[13px] font-medium text-slate-400 mt-4 mb-1">
+                  Level
+                </p>
+                {LEVELS.map((l) => (
+                  <Check
+                    key={l}
+                    label={l}
+                    checked={filters.seniority.includes(l)}
+                    onChange={() =>
+                      commit({ seniority: toggle(filters.seniority, l) })
+                    }
+                  />
+                ))}
+              </div>
             </div>
           </aside>
 
-          <section>
+          <section className="order-1 lg:order-none">
             <div className="flex items-center justify-between flex-wrap gap-3 mb-4 px-1">
               <h1 className="text-[28px] font-bold text-slate-900 tracking-tight flex items-center gap-3">
                 {savedOnly ? "Saved roles" : "Recommended jobs"}

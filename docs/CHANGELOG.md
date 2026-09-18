@@ -1,5 +1,11 @@
 # Changelog (frontend)
 
+## Unreleased — Redesign PR 4: hero, motion, mobile (on `ui/redesign-p4`)
+
+- Home hero rebuilt around live search (role + track → `/jobs`); stat boxes replaced by one live proof line; quick links simplified.
+- Motion: single hero entrance only; `prefers-reduced-motion` disables entrances/skeletons/smooth scroll; `min-h-dvh`; Google button sized for 320px screens.
+- Mobile: dashboard results first with collapsible filter card; navbar pills get fade affordance + hidden scrollbars.
+
 ## Unreleased — Auth/detail/profile flows (PR 3)
 
 - Login: Turnstile, show-password, inline errors. Signup inbox: edit-email + resend. Verify page: public resend form (kills the logged-out dead loop). Reset + profile passwords: show toggles.

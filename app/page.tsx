@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import CompanyLogo from "@/components/CompanyLogo";
-import { listCompanies, type Company } from "@/lib/reerhub";
+import { listCompanies, TECH_TRACKS, type Company } from "@/lib/reerhub";
 
 const WHY = [
   {
@@ -70,7 +71,10 @@ const WHY = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [hq, setHq] = useState("");
+  const [htrack, setHtrack] = useState("");
 
   useEffect(() => {
     listCompanies()
@@ -80,6 +84,15 @@ export default function Home() {
 
   const hiring = companies.filter((c) => (c.activeJobs ?? 0) > 0);
   const totalRoles = companies.reduce((sum, c) => sum + (c.activeJobs ?? 0), 0);
+
+  const searchJobs = (e: React.FormEvent) => {
+    e.preventDefault();
+    const sp = new URLSearchParams();
+    if (hq.trim()) sp.set("q", hq.trim());
+    if (htrack) sp.set("techTrack", htrack);
+    const qs = sp.toString();
+    router.push(`/jobs${qs ? `?${qs}` : ""}`);
+  };
 
   return (
     <div>
@@ -104,51 +117,95 @@ export default function Home() {
             SDE, AI/ML, data, cloud, mobile, security, and more — indexed daily
             from official career pages. Apply directly on the company site.
           </p>
-          <div className="rise-in flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
+          <form
+            onSubmit={searchJobs}
+            role="search"
+            aria-label="Search tech roles"
+            className="rise-in max-w-2xl mx-auto flex flex-col sm:flex-row gap-2.5 p-2.5 rounded-2xl bg-white/[0.07] border border-white/15 backdrop-blur-sm mb-4"
+          >
+            <label className="flex items-center gap-2.5 flex-1 px-4 rounded-xl bg-transparent focus-within:bg-white/5 transition-colors">
+              <svg
+                className="w-5 h-5 text-white/50 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+              <span className="sr-only">Search roles or skills</span>
+              <input
+                value={hq}
+                onChange={(e) => setHq(e.target.value)}
+                placeholder="Try Backend, React, ML…"
+                className="w-full py-3 bg-transparent outline-none text-white placeholder:text-white/40 text-[15px]"
+              />
+            </label>
+            <label className="flex items-center gap-2 sm:w-48 px-4 rounded-xl bg-transparent focus-within:bg-white/5 transition-colors">
+              <span className="sr-only">Tech track</span>
+              <select
+                value={htrack}
+                onChange={(e) => setHtrack(e.target.value)}
+                className="w-full py-3 bg-transparent outline-none text-white text-[15px] [&>option]:text-slate-900 cursor-pointer"
+              >
+                <option value="">All tracks</option>
+                {TECH_TRACKS.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="submit"
+              className="px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark active:bg-electric-deep transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)]"
+            >
+              Search roles
+            </button>
+          </form>
+          <p className="rise-in text-white/50 text-sm mb-10 tabular-nums">
+            {companies.length > 0 ? (
+              <>
+                {totalRoles} open India roles · {companies.length} companies ·
+                refreshed daily
+              </>
+            ) : (
+              <span
+                className="inline-block h-4 w-56 rounded bg-white/10 animate-pulse"
+                aria-hidden
+              />
+            )}
+          </p>
+          <div className="rise-in flex items-center justify-center gap-5 text-sm">
+            <Link
+              href="/engineering"
+              className="text-white/70 hover:text-white font-semibold transition-colors"
+            >
+              Engineering
+            </Link>
+            <span aria-hidden className="text-white/25">
+              /
+            </span>
+            <Link
+              href="/ai"
+              className="text-white/70 hover:text-white font-semibold transition-colors"
+            >
+              AI / ML
+            </Link>
+            <span aria-hidden className="text-white/25">
+              /
+            </span>
             <Link
               href="/signup"
-              className="w-full sm:w-auto px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark active:bg-electric-deep transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)] text-center"
+              className="text-white/70 hover:text-white font-semibold transition-colors"
             >
-              Get matched roles
+              Get matched →
             </Link>
-            <div className="flex w-full sm:w-auto gap-3">
-              <Link
-                href="/engineering"
-                className="flex-1 sm:flex-none px-6 py-3 bg-white/5 text-white border border-white/20 rounded-xl font-semibold hover:bg-white/10 transition-all text-center backdrop-blur-sm"
-              >
-                Engineering
-              </Link>
-              <Link
-                href="/ai"
-                className="flex-1 sm:flex-none px-6 py-3 bg-white/5 text-white border border-white/20 rounded-xl font-semibold hover:bg-white/10 transition-all text-center backdrop-blur-sm"
-              >
-                AI / ML
-              </Link>
-            </div>
-          </div>
-
-          {/* Live stat strip */}
-          <div className="rise-in max-w-2xl mx-auto grid grid-cols-3 gap-3">
-            {[
-              {
-                k: companies.length > 0 ? String(totalRoles) : "—",
-                label: "Open India roles",
-              },
-              { k: String(companies.length), label: "Companies" },
-              { k: "9", label: "Tech tracks" },
-            ].map((s) => (
-              <div
-                key={s.label}
-                className="rounded-xl bg-white/5 border border-white/10 px-4 py-3 backdrop-blur-sm"
-              >
-                <p className="text-xl sm:text-2xl font-bold text-white">
-                  {s.k}
-                </p>
-                <p className="text-[11px] uppercase tracking-wider text-white/50 mt-0.5">
-                  {s.label}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>

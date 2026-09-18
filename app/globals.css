@@ -98,6 +98,30 @@ body {
   animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Hide scrollbars on scrollable pill rails (nav still scrolls by touch). */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* One orchestrated entrance lives on the marketing hero only.
+   Everywhere else, motion answers user actions (hover, expand, toggle).
+   Honor reduced-motion: stillness, static skeletons, native scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
+  .skeleton {
+    animation: none;
+    background: #e2e8f0;
+  }
+  html[data-scroll-behavior="smooth"] {
+    scroll-behavior: auto;
+  }
+}
+
 /* ATS job-description typography (uncontrolled HTML from boards) */
 .job-description {
   color: #334155;
