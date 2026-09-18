@@ -40,7 +40,7 @@ export default async function CompanyDetailPage({
           >
             <Link
               href="/companies"
-              className="hover:text-blue-600 transition-colors font-medium"
+              className="hover:text-electric transition-colors font-medium"
             >
               Companies
             </Link>
@@ -83,7 +83,7 @@ export default async function CompanyDetailPage({
                 href={company.careersUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-500 transition-all shadow-sm"
+                className="px-5 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark transition-all shadow-sm"
               >
                 Official careers page
               </a>

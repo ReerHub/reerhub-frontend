@@ -28,7 +28,7 @@ export default async function CompaniesPage() {
             <div className="flex items-center gap-4 mb-5">
               <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
               <div className="min-w-0">
-                <h2 className="font-bold text-slate-900 text-lg leading-tight truncate group-hover:text-blue-600 transition-colors">
+                <h2 className="font-bold text-slate-900 text-lg leading-tight truncate group-hover:text-electric transition-colors">
                   {company.name}
                 </h2>
                 {company.industry && (
@@ -43,7 +43,7 @@ export default async function CompaniesPage() {
                   open {(company.activeJobs ?? 0) === 1 ? "role" : "roles"}
                 </span>
               </span>
-              <span className="text-sm font-semibold text-blue-600 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span className="text-sm font-semibold text-electric inline-flex items-center gap-1 group-hover:gap-2 transition-all">
                 View roles
                 <svg
                   className="w-4 h-4"

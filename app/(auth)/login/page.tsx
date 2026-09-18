@@ -9,7 +9,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { login, safeNext } from "@/lib/auth";
 
 const inputCls =
-  "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all";
+  "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft transition-all";
 
 function LoginForm() {
   const router = useRouter();
@@ -88,7 +88,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-all disabled:opacity-50"
+          className="w-full px-4 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all disabled:opacity-50"
         >
           {busy ? "Logging in…" : "Log in"}
         </button>
@@ -100,11 +100,11 @@ function LoginForm() {
       </div>
       <GoogleButton next={next} />
       <div className="mt-6 flex items-center justify-between text-sm">
-        <Link href="/forgot-password" className="text-blue-600 font-semibold">
+        <Link href="/forgot-password" className="text-electric font-semibold">
           Forgot password?
         </Link>
         <Link href="/signup" className="text-slate-500">
-          New here? <span className="text-blue-600 font-semibold">Sign up</span>
+          New here? <span className="text-electric font-semibold">Sign up</span>
         </Link>
       </div>
     </div>

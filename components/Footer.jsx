@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { listCompanies } from "@/lib/reerhub";
 
 const DISCOVER_LINKS = [
-  { href: "/", label: "All tech roles" },
+  { href: "/jobs", label: "All tech roles" },
   { href: "/engineering", label: "Engineering jobs" },
   { href: "/ai", label: "AI / ML jobs" },
   { href: "/companies", label: "All companies" },
@@ -23,7 +23,7 @@ function ColumnHeading({ children }) {
 
 function FooterLink({ href, label, external = false }) {
   const classes =
-    "text-sm text-slate-600 hover:text-blue-600 transition-colors leading-relaxed";
+    "text-sm text-slate-600 hover:text-electric transition-colors leading-relaxed";
   if (external) {
     return (
       <a
@@ -67,16 +67,16 @@ function SubscribeBox() {
     <div>
       <ColumnHeading>Get job alerts</ColumnHeading>
       <p className="text-sm text-slate-600 leading-relaxed rounded-xl px-4 py-3 bg-slate-50 border border-slate-200 inline-flex items-start gap-2.5">
-        <span className="text-blue-600 mt-0.5">
+        <span className="text-electric mt-0.5">
           <MailIcon />
         </span>
         <span>
           Weekly alerts are{" "}
-          <span className="font-semibold text-blue-600">coming soon</span>.
+          <span className="font-semibold text-electric">coming soon</span>.
           Meanwhile, browse the latest roles on the{" "}
           <Link
             href="/jobs"
-            className="text-blue-600 hover:underline underline-offset-2 font-medium"
+            className="text-electric hover:underline underline-offset-2 font-medium"
           >
             jobs page
           </Link>

@@ -32,7 +32,7 @@ function ResetInner() {
         <h1 className="text-2xl font-bold text-slate-900 mb-2">
           Invalid reset link
         </h1>
-        <Link href="/forgot-password" className="text-blue-600 font-semibold">
+        <Link href="/forgot-password" className="text-electric font-semibold">
           Request a new one
         </Link>
       </div>
@@ -47,7 +47,7 @@ function ResetInner() {
         </h1>
         <Link
           href="/login"
-          className="inline-block mt-4 px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500"
+          className="inline-block mt-4 px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark"
         >
           Log in
         </Link>
@@ -70,7 +70,7 @@ function ResetInner() {
           </label>
           <input
             id="rp-password"
-            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-[15px] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft"
             type="password"
             required
             minLength={8}
@@ -83,7 +83,7 @@ function ResetInner() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 disabled:opacity-50"
+          className="w-full px-4 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark disabled:opacity-50"
         >
           {busy ? "Updating…" : "Reset password"}
         </button>

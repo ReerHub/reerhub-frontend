@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
+
 export default function GlobalError({
-  error,
   reset,
 }: {
-  error: Error & { digest?: string };
+  error?: Error & { digest?: string };
   reset: () => void;
 }) {
   return (
@@ -29,14 +30,22 @@ export default function GlobalError({
         Something went wrong
       </h1>
       <p className="text-slate-500 mb-6">
-        {error.message || "Could not load this page. Please try again."}
+        This page hit a snag. Try again, or head back to browse roles.
       </p>
-      <button
-        onClick={reset}
-        className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-500 transition-all shadow-sm"
-      >
-        Try again
-      </button>
+      <div className="flex items-center justify-center gap-3">
+        <button
+          onClick={reset}
+          className="px-6 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark transition-all shadow-sm"
+        >
+          Try again
+        </button>
+        <Link
+          href="/jobs"
+          className="px-6 py-2.5 bg-white border border-slate-200 text-slate-900 rounded-xl text-sm font-semibold hover:border-slate-300 transition-all"
+        >
+          Browse roles
+        </Link>
+      </div>
     </div>
   );
 }
