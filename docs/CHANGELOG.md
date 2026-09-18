@@ -1,5 +1,10 @@
 # Changelog (frontend)
 
+## Unreleased — Security hardening (on `sec/hardening`)
+
+- Invisible Turnstile on signup + forgot-password (no site key locally → submits without token, backend bypasses in dev).
+- `SECURITY.md`, `.env.example` committable again (gitignore negation), Gitleaks + least-privilege Actions in CI.
+
 ## 2026-09-18 — Hardening + single navbar (on `main`)
 
 - `/privacy` + `/terms` + footer links + consent banner; robots disallow auth; canonical/OG/Twitter; `JobPosting` JSON-LD; `global-error.tsx`.
