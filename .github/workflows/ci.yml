@@ -16,5 +16,10 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
-      - run: npm run lint
+      - run: npm audit --audit-level=high
+      - run: npx eslint .
+      - run: npx tsc --noEmit
       - run: npm run build
+
+# Production is deployed directly from GitHub by Vercel (auto-deploy on push to
+# main) — no staging environment here (ADR-005).

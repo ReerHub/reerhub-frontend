@@ -162,6 +162,20 @@ export default function Footer() {
           <p className="text-xs text-slate-500">
             © {currentYear} ReerHub. All rights reserved.
           </p>
+          <nav aria-label="Legal" className="flex items-center gap-4 text-xs">
+            <Link
+              href="/privacy"
+              className="text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              Terms
+            </Link>
+          </nav>
           <p className="text-xs text-slate-400">
             Built for engineers. Updated daily.
           </p>

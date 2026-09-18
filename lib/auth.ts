@@ -21,14 +21,42 @@ export type AuthUser = {
   createdAt?: string;
 };
 
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const hit = document.cookie
+    .split("; ")
+    .find((part) => part.startsWith(`${name}=`));
+  return hit ? decodeURIComponent(hit.slice(name.length + 1)) : null;
+}
+
+async function ensureCsrf(): Promise<string | null> {
+  const existing = getCookie("csrfToken");
+  if (existing) return existing;
+  try {
+    const res = await fetch(`${API_BASE}/auth/csrf`, {
+      credentials: "include",
+    });
+    const json = await res.json().catch(() => ({}));
+    return json.data?.csrfToken || getCookie("csrfToken");
+  } catch {
+    return null;
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const method = (init?.method || "GET").toUpperCase();
   const res = await doFetch(path, init);
   if (res.status === 401 && !path.startsWith("/auth/")) {
     // Access cookie may have expired while the refresh cookie is still
     // valid — rotate once and retry instead of forcing a re-login.
+    const csrf = method === "GET" ? null : await ensureCsrf();
     const refreshed = await fetch(`${API_BASE}/auth/refresh`, {
       method: "POST",
       credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...(csrf ? { "x-csrf-token": csrf } : {}),
+      },
     });
     if (refreshed.ok) {
       const retry = await doFetch(path, init);
@@ -39,10 +67,16 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 async function doFetch(path: string, init?: RequestInit) {
+  const method = (init?.method || "GET").toUpperCase();
+  const csrf = method === "GET" ? null : await ensureCsrf();
   return fetch(`${API_BASE}${path}`, {
     ...init,
     credentials: "include",
-    headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
+    headers: {
+      "Content-Type": "application/json",
+      ...(csrf ? { "x-csrf-token": csrf } : {}),
+      ...(init?.headers || {}),
+    },
   });
 }
 
@@ -127,3 +161,20 @@ export const saveJob = (jobId: string) =>
 
 export const unsaveJob = (jobId: string) =>
   request<{ saved: boolean }>(`/users/me/saved/${jobId}`, { method: "DELETE" });
+
+export const changePassword = (currentPassword: string, newPassword: string) =>
+  request<{ changed: boolean }>("/users/me/password", {
+    method: "POST",
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+
+export const exportMyData = () =>
+  request<{
+    user: AuthUser;
+    savedJobs: unknown[];
+    counts: { savedJobs: number };
+    exportedAt: string;
+  }>("/users/me/export");
+
+export const deleteAccount = () =>
+  request<{ deleted: boolean }>("/users/me", { method: "DELETE" });

@@ -51,7 +51,14 @@ export type Job = {
   postedAt?: string;
   firstSeenAt: string;
   status: string;
-  companyId: { _id: string; name: string; slug: string; logoUrl?: string };
+  companyId: {
+    _id: string;
+    name: string;
+    slug: string;
+    logoUrl?: string;
+    website?: string;
+    careersUrl?: string;
+  };
 };
 
 export type CompanySource = {

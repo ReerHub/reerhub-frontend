@@ -14,6 +14,8 @@ const LINKS = [
   { href: "/companies", label: "Companies" },
 ];
 
+const AUTH_LINKS = [{ href: "/dashboard", label: "Dashboard" }];
+
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -27,9 +29,11 @@ export default function Navbar() {
     router.refresh();
   };
 
+  const links = user ? [...LINKS, ...AUTH_LINKS] : LINKS;
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-200/80">
-      <div className="max-w-6xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between gap-4">
+      <div className="max-w-6xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
         <Link
           href="/"
           className="flex items-center gap-2.5"
@@ -48,10 +52,10 @@ export default function Navbar() {
           </span>
         </Link>
         <nav
-          className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 rounded-full p-1"
+          className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 rounded-full p-1 overflow-x-auto max-w-full"
           aria-label="Primary"
         >
-          {LINKS.map((link) => {
+          {links.map((link) => {
             const active =
               link.href === "/"
                 ? pathname === "/"
@@ -98,28 +102,44 @@ export default function Navbar() {
                   user.name.charAt(0).toUpperCase()}
               </button>
               {menuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-card-hover py-2 text-sm">
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMenuOpen(false)}
-                    className="block px-4 py-2 hover:bg-slate-50 font-semibold text-slate-900"
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/profile"
-                    onClick={() => setMenuOpen(false)}
-                    className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
-                  >
-                    Profile
-                  </Link>
+                <>
                   <button
-                    onClick={onLogout}
-                    className="block w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600"
-                  >
-                    Log out
-                  </button>
-                </div>
+                    aria-hidden
+                    tabIndex={-1}
+                    onClick={() => setMenuOpen(false)}
+                    className="fixed inset-0 z-10 cursor-default"
+                  />
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-card-hover py-2 text-sm z-20">
+                    <p className="px-4 pt-1 pb-2 border-b border-slate-100 mb-1 min-w-0">
+                      <span className="block font-bold text-slate-900 truncate">
+                        {user.name}
+                      </span>
+                      <span className="block text-xs text-slate-500 truncate">
+                        {user.email}
+                      </span>
+                    </p>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMenuOpen(false)}
+                      className="block px-4 py-2 hover:bg-slate-50 font-semibold text-slate-900"
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/profile"
+                      onClick={() => setMenuOpen(false)}
+                      className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={onLogout}
+                      className="block w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600"
+                    >
+                      Log out
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           ) : (

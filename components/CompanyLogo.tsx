@@ -1,7 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { companyTile } from "@/lib/format";
+
+const DIMS = { sm: 44, md: 48, lg: 64 } as const;
 
 export default function CompanyLogo({
   name,
@@ -13,17 +16,16 @@ export default function CompanyLogo({
   size?: "sm" | "md" | "lg";
 }) {
   const [failed, setFailed] = useState(false);
-  const dims =
-    size === "sm"
-      ? "w-11 h-11 rounded-xl text-lg"
-      : size === "lg"
-        ? "w-16 h-16 rounded-2xl text-3xl"
-        : "w-12 h-12 rounded-xl text-xl";
+  const px = DIMS[size];
+  const radius = size === "lg" ? "rounded-2xl" : "rounded-xl";
+  const text =
+    size === "sm" ? "text-lg" : size === "lg" ? "text-3xl" : "text-xl";
 
   if (!logoUrl || failed) {
     return (
       <span
-        className={`${dims} ${companyTile()} flex items-center justify-center font-bold shrink-0 shadow-sm`}
+        className={`${radius} ${companyTile()} flex items-center justify-center font-bold ${text} shrink-0 shadow-sm`}
+        style={{ width: px, height: px }}
         aria-hidden
       >
         {(name || "C").charAt(0).toUpperCase()}
@@ -32,13 +34,14 @@ export default function CompanyLogo({
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={logoUrl}
       alt={`${name} logo`}
+      width={px}
+      height={px}
       loading="lazy"
       onError={() => setFailed(true)}
-      className={`${dims} object-contain bg-white border border-slate-200/80 shrink-0 shadow-sm p-1`}
+      className={`${radius} object-contain bg-white border border-slate-200/80 shrink-0 shadow-sm p-1`}
     />
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { Job } from "@/lib/reerhub";
 import { locationLabel, timeAgo } from "@/lib/format";
@@ -100,12 +101,13 @@ export default function DashboardJobCard({
           </h3>
           <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden">
             {job.companyId?.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={job.companyId.logoUrl}
-                alt=""
+                alt={`${companyName} logo`}
+                width={28}
+                height={28}
                 loading="lazy"
-                className="w-7 h-7 object-contain"
+                className="object-contain"
               />
             ) : (
               <span className="font-bold text-slate-900">

@@ -49,24 +49,42 @@ function LoginForm() {
         Log in to see your recommended tech roles.
       </p>
       <form onSubmit={submit} className="space-y-4">
-        <input
-          className={inputCls}
-          type="email"
-          required
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-        />
-        <input
-          className={inputCls}
-          type="password"
-          required
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
-        />
+        <div>
+          <label
+            htmlFor="login-email"
+            className="text-sm font-semibold text-slate-700"
+          >
+            Email
+          </label>
+          <input
+            id="login-email"
+            className={inputCls}
+            type="email"
+            required
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="login-password"
+            className="text-sm font-semibold text-slate-700"
+          >
+            Password
+          </label>
+          <input
+            id="login-password"
+            className={inputCls}
+            type="password"
+            required
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+          />
+        </div>
         <button
           type="submit"
           disabled={busy}

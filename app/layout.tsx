@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
 
 const inter = Inter({
@@ -27,11 +28,12 @@ export const metadata = {
     "SDE jobs",
     "product company careers India",
   ],
-  icons: {
-    icon: "/reerhub-logo-64.png",
-    apple: "/reerhub-logo-180.png",
-  },
+  alternates: { canonical: "/" },
   openGraph: {
+    type: "website",
+    siteName: "ReerHub",
+    locale: "en_IN",
+    url: "/",
     title: "ReerHub | Engineering & AI jobs in India",
     description:
       "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages.",
@@ -39,7 +41,14 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    title: "ReerHub | Engineering & AI jobs in India",
+    description:
+      "Engineering, data, and AI roles from India's top product companies.",
     images: ["/reerhub-text-logo-640.png"],
+  },
+  icons: {
+    icon: "/reerhub-logo-64.png",
+    apple: "/reerhub-logo-180.png",
   },
 };
 
@@ -52,6 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <main className="min-h-screen relative pt-16">{children}</main>
           <Footer />
         </AuthProvider>
+        <CookieConsent />
         <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>

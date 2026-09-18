@@ -68,33 +68,60 @@ export default function SignupPage() {
         Get recommended India tech roles matched to your profile.
       </p>
       <form onSubmit={submit} className="space-y-4">
-        <input
-          className={inputCls}
-          required
-          placeholder="Full name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          autoComplete="name"
-        />
-        <input
-          className={inputCls}
-          type="email"
-          required
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-        />
-        <input
-          className={inputCls}
-          type="password"
-          required
-          minLength={8}
-          placeholder="Password (min 8 characters)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="new-password"
-        />
+        <div>
+          <label
+            htmlFor="su-name"
+            className="text-sm font-semibold text-slate-700"
+          >
+            Full name
+          </label>
+          <input
+            id="su-name"
+            className={inputCls}
+            required
+            placeholder="Asha Sharma"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="su-email"
+            className="text-sm font-semibold text-slate-700"
+          >
+            Email
+          </label>
+          <input
+            id="su-email"
+            className={inputCls}
+            type="email"
+            required
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="su-password"
+            className="text-sm font-semibold text-slate-700"
+          >
+            Password (min 8 characters)
+          </label>
+          <input
+            id="su-password"
+            className={inputCls}
+            type="password"
+            required
+            minLength={8}
+            placeholder="Choose a strong password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+        </div>
         <button
           type="submit"
           disabled={busy}
