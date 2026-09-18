@@ -1,5 +1,9 @@
 # Changelog (frontend)
 
+## Unreleased — Docs trim
+
+- Collapsed `docs/` to DECISIONS + CHANGELOG + deployment + design system; roadmap folded into README; deleted TODO/KNOWN_ISSUES/specs (history preserved in git). New rule: no new doc files without a triggering requirement.
+
 ## Unreleased — Security hardening (on `sec/hardening`)
 
 - Invisible Turnstile on signup + forgot-password (no site key locally → submits without token, backend bypasses in dev).
