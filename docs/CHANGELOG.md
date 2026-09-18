@@ -1,5 +1,9 @@
 # Changelog (frontend)
 
+## Unreleased — Staging guards (on `ui/staging-robots`)
+
+- `robots.ts` returns disallow-all on staging hosts (SSO off, crawlers must stay out). ADR-010 adopts the staging promotion flow.
+
 ## Unreleased — Redesign PR 4: hero, motion, mobile (on `ui/redesign-p4`)
 
 - Home hero rebuilt around live search (role + track → `/jobs`); stat boxes replaced by one live proof line; quick links simplified.
