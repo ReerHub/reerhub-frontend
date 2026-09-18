@@ -24,6 +24,12 @@
       "sourceType": "github",
       "skillPath": "plugins/frontend-mobile-development/skills/nextjs-app-router-patterns/SKILL.md",
       "computedHash": "b4fea42eecf1f803155ef7fa133d5286ee8f2dbba3e616954e9e43c6f0ffc144"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "4080ff883b26b670a5a224fb332e89ecc15319535f4d14279947ad7812fec558"
     }
   }
 }

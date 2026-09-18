@@ -17,6 +17,11 @@
       "scope": "project"
     },
     {
+      "name": "ui-ux-pro-max",
+      "source": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "scope": "project"
+    },
+    {
       "name": "code-review",
       "source": "mattpocock/skills",
       "scope": "project"
