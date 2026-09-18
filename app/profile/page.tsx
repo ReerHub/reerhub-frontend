@@ -15,7 +15,7 @@ import {
 import { TECH_TRACKS } from "@/lib/reerhub";
 
 const inputCls =
-  "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all";
+  "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft transition-all";
 
 export default function ProfilePage() {
   const { user, loading, refresh } = useAuth();
@@ -254,7 +254,7 @@ function ProfileForm({
         <button
           type="submit"
           disabled={busy}
-          className="px-8 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 disabled:opacity-50"
+          className="px-8 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark disabled:opacity-50"
         >
           {busy ? "Saving…" : "Save profile"}
         </button>
@@ -330,7 +330,7 @@ function SecuritySection({ isEmailAccount }: { isEmailAccount: boolean }) {
         <button
           type="submit"
           disabled={busy}
-          className="px-6 py-2.5 bg-slate-950 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 disabled:opacity-50"
+          className="px-6 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark disabled:opacity-50"
         >
           {busy ? "Updating…" : "Change password"}
         </button>
@@ -387,14 +387,14 @@ function DataSection() {
       <div className="flex flex-wrap gap-3">
         <button
           onClick={download}
-          className="px-6 py-2.5 bg-white border border-slate-200 text-slate-900 rounded-lg text-sm font-semibold hover:border-slate-300"
+          className="px-6 py-2.5 bg-white border border-slate-200 text-slate-900 rounded-xl text-sm font-semibold hover:border-slate-300"
         >
           Download my data
         </button>
         {!confirming ? (
           <button
             onClick={() => setConfirming(true)}
-            className="px-6 py-2.5 bg-white border border-red-200 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-50"
+            className="px-6 py-2.5 bg-white border border-red-200 text-red-600 rounded-xl text-sm font-semibold hover:bg-red-50"
           >
             Delete account
           </button>
@@ -406,13 +406,13 @@ function DataSection() {
             <button
               onClick={remove}
               disabled={busy}
-              className="px-6 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-500 disabled:opacity-50"
+              className="px-6 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-500 disabled:opacity-50"
             >
               {busy ? "Deleting…" : "Yes, delete"}
             </button>
             <button
               onClick={() => setConfirming(false)}
-              className="px-6 py-2.5 bg-white border border-slate-200 rounded-lg text-sm font-semibold"
+              className="px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold"
             >
               Cancel
             </button>

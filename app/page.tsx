@@ -84,20 +84,20 @@ export default function Home() {
   return (
     <div>
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-[#0B1730]">
+      <section className="relative overflow-hidden bg-[#060B18]">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(700px 340px at 8% -80px, rgba(59,130,246,0.28), transparent), radial-gradient(620px 300px at 92% 12%, rgba(45,212,191,0.16), transparent), radial-gradient(480px 320px at 60% 120%, rgba(99,102,241,0.18), transparent)",
+              "radial-gradient(700px 340px at 8% -80px, rgba(46,107,255,0.28), transparent), radial-gradient(620px 300px at 92% 12%, rgba(45,212,191,0.16), transparent), radial-gradient(480px 320px at 60% 120%, rgba(99,102,241,0.18), transparent)",
           }}
           aria-hidden
         />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-16 text-center">
-          <p className="rise-in inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-teal-300 border border-teal-300/25 bg-teal-300/10 rounded-full px-4 py-1.5 mb-6">
+          <p className="rise-in inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 border border-white/15 bg-white/5 rounded-full px-4 py-1.5 mb-6">
             Engineering & AI roles only
           </p>
-          <h1 className="rise-in text-4xl sm:text-[52px] leading-[1.08] font-bold text-white tracking-tight mb-5 max-w-3xl mx-auto">
+          <h1 className="rise-in font-display text-4xl sm:text-[52px] leading-[1.08] font-bold text-white tracking-tight mb-5 max-w-3xl mx-auto">
             Tech jobs from India&apos;s top product companies.
           </h1>
           <p className="rise-in text-white/70 text-base sm:text-lg mb-9 max-w-xl mx-auto leading-relaxed">
@@ -107,7 +107,7 @@ export default function Home() {
           <div className="rise-in flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
             <Link
               href="/signup"
-              className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 active:bg-blue-700 transition-all shadow-[0_8px_24px_rgba(59,130,246,0.35)] text-center"
+              className="w-full sm:w-auto px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark active:bg-electric-deep transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)] text-center"
             >
               Get matched roles
             </Link>
@@ -167,7 +167,7 @@ export default function Home() {
             </div>
             <Link
               href="/companies"
-              className="text-sm font-semibold text-blue-600 hover:text-blue-500 inline-flex items-center gap-1"
+              className="text-sm font-semibold text-electric hover:text-electric-dark inline-flex items-center gap-1"
             >
               All companies
               <svg
@@ -195,7 +195,7 @@ export default function Home() {
               >
                 <CompanyLogo name={c.name} logoUrl={c.logoUrl} />
                 <span className="min-w-0">
-                  <span className="block font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
+                  <span className="block font-bold text-slate-900 group-hover:text-electric transition-colors truncate">
                     {c.name}
                   </span>
                   <span className="block text-sm text-slate-500">
@@ -241,7 +241,7 @@ export default function Home() {
               key={item.step}
               className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card"
             >
-              <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-blue-600 text-white font-bold text-sm mb-4">
+              <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-electric text-white font-bold text-sm mb-4">
                 {item.step}
               </span>
               <h3 className="font-bold text-slate-900 text-[16px] mb-1.5">
@@ -256,17 +256,17 @@ export default function Home() {
         <div className="text-center mt-8">
           <Link
             href="/signup"
-            className="inline-block px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition-all shadow-[0_8px_24px_rgba(59,130,246,0.35)]"
+            className="inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)]"
           >
             Create free account
           </Link>
           <p className="text-sm text-slate-500 mt-3">
             Already a member?{" "}
-            <Link href="/login" className="text-blue-600 font-semibold">
+            <Link href="/login" className="text-electric font-semibold">
               Log in
             </Link>{" "}
             ·{" "}
-            <Link href="/jobs" className="text-blue-600 font-semibold">
+            <Link href="/jobs" className="text-electric font-semibold">
               Browse public roles
             </Link>
           </p>
@@ -292,7 +292,7 @@ export default function Home() {
               key={item.title}
               className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card"
             >
-              <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-blue-50 text-blue-600 mb-4">
+              <span className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-electric-soft text-electric mb-4">
                 {item.icon}
               </span>
               <h3 className="font-bold text-slate-900 text-[16px] mb-1.5">
@@ -308,13 +308,13 @@ export default function Home() {
 
       {/* ── CTA ── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-        <div className="bg-[#0B1730] rounded-3xl px-6 sm:px-12 py-12 sm:py-16 text-center relative overflow-hidden">
+        <div className="bg-[#060B18] rounded-3xl px-6 sm:px-12 py-12 sm:py-16 text-center relative overflow-hidden">
           <div
             className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-52 rounded-full blur-3xl pointer-events-none"
-            style={{ background: "rgba(59,130,246,0.22)" }}
+            style={{ background: "rgba(46,107,255,0.22)" }}
             aria-hidden
           />
-          <p className="relative text-xs font-bold uppercase tracking-[0.2em] text-teal-300 mb-3">
+          <p className="relative text-xs font-semibold uppercase tracking-[0.2em] text-white/60 mb-3">
             Real Effective Engineering Roles Hub.
           </p>
           <h2 className="relative text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
@@ -326,7 +326,7 @@ export default function Home() {
           </p>
           <Link
             href="/signup"
-            className="relative inline-block px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500 transition-all shadow-[0_8px_24px_rgba(59,130,246,0.35)]"
+            className="relative inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)]"
           >
             Get started free
           </Link>
