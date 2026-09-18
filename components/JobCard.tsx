@@ -71,7 +71,7 @@ export default function JobCard({
           }}
           aria-label={saved ? "Remove saved job" : "Save job"}
           aria-pressed={!!saved}
-          className={`absolute top-4 right-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+          className={`absolute top-3 right-3 z-10 min-w-11 min-h-11 w-11 h-11 rounded-full flex items-center justify-center transition-all ${
             saved
               ? "bg-electric text-white"
               : "bg-slate-100 text-slate-500 hover:text-slate-900"

@@ -1,5 +1,9 @@
 # Changelog (frontend)
 
+## Unreleased — Dashboard unification (PR 2, on `ui/redesign-p2`)
+
+- Single URL-synced filter state (header + sidebar write the same state; refresh/share/back-button safe), instant sidebar, removable prefill chips (incl. skills-bias toggle), Saved deep-link (`?view=saved`) with pagination, server-side sort (Title A–Z), 44px save targets, clickable card titles.
+
 ## Unreleased — Docs trim
 
 - Collapsed `docs/` to DECISIONS + CHANGELOG + deployment + design system; roadmap folded into README; deleted TODO/KNOWN_ISSUES/specs (history preserved in git). New rule: no new doc files without a triggering requirement.
