@@ -34,7 +34,7 @@ Self-contained repo: product/routes/design/decisions/changelog/skills live here 
 
 ## Skills (`.agents/skills/`)
 
-`find-skills` · `frontend-design` (Anthropic UI taste) · `nextjs-app-router-patterns` · `code-review`. Pinned in `skills.json`.
+`find-skills` · `frontend-design` (Anthropic UI taste) · `nextjs-app-router-patterns` · `ui-ux-pro-max` (systematic rules: palette/a11y/touch/responsive) · `code-review`. Pinned in `skills.json`. UI work uses both design skills: `frontend-design` for direction first, `ui-ux-pro-max` rules pass before finishing.
 
 ## Docs discipline (minimal by design)
 
