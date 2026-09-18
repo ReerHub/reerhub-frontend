@@ -108,11 +108,11 @@ export default function Footer() {
               aria-label="ReerHub home"
             >
               <Image
-                src="/reerhub-logo-64.png"
+                src="/reerhub-logo.png"
                 alt="ReerHub logo"
-                width={32}
-                height={32}
-                className="w-8 h-8"
+                width={96}
+                height={64}
+                className="h-8 w-auto"
               />
               <span className="font-bold text-slate-900 text-[17px] tracking-tight">
                 ReerHub
