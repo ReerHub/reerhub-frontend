@@ -113,7 +113,11 @@ export const signup = (body: {
     body: JSON.stringify(body),
   });
 
-export const login = (body: { email: string; password: string }) =>
+export const login = (body: {
+  email: string;
+  password: string;
+  turnstileToken?: string;
+}) =>
   request<AuthUser>("/auth/login", {
     method: "POST",
     body: JSON.stringify(body),
@@ -138,6 +142,12 @@ export const updateMe = (body: Record<string, unknown>) =>
 
 export const requestVerifyEmail = () =>
   request<{ sent: boolean }>("/auth/verify-email/request", { method: "POST" });
+
+export const resendVerifyPublic = (email: string, turnstileToken?: string) =>
+  request<{ sent: boolean }>("/auth/verify-email/resend", {
+    method: "POST",
+    body: JSON.stringify({ email, turnstileToken }),
+  });
 
 export const verifyEmail = (token: string) =>
   request<{ verified: boolean }>("/auth/verify-email", {

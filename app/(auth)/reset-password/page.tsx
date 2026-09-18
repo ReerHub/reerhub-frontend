@@ -10,6 +10,7 @@ function ResetInner() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -68,17 +69,27 @@ function ResetInner() {
           >
             New password (min 8 characters)
           </label>
-          <input
-            id="rp-password"
-            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft"
-            type="password"
-            required
-            minLength={8}
-            placeholder="Choose a strong password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-          />
+          <div className="relative">
+            <input
+              id="rp-password"
+              className="w-full px-4 py-2.5 pr-16 bg-white border border-slate-200 rounded-xl text-[15px] outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft"
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={8}
+              placeholder="Choose a strong password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-500 hover:text-slate-900"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
         <button
           type="submit"

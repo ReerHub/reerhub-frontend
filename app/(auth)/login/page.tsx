@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import GoogleButton from "@/components/GoogleButton";
+import Turnstile, { type TurnstileHandle } from "@/components/Turnstile";
 import { useAuth } from "@/components/AuthProvider";
 import { login, safeNext } from "@/lib/auth";
 
@@ -18,7 +19,10 @@ function LoginForm() {
   const next = safeNext(searchParams.get("next"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
 
   useEffect(() => {
     if (!loading && user) router.replace(next);
@@ -27,14 +31,29 @@ function LoginForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
+    setFormError(null);
     try {
-      const me = await login({ email, password });
+      const turnstileToken = await turnstileRef.current?.execute();
+      const me = await login({
+        email,
+        password,
+        ...(turnstileToken ? { turnstileToken } : {}),
+      });
       await refresh();
       toast.success(`Welcome back, ${me.name.split(" ")[0]}`);
       router.push(next);
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Login failed");
+      const message = err instanceof Error ? err.message : "Login failed";
+      setFormError(message);
+      if (
+        err instanceof Error &&
+        "status" in err &&
+        (err as { status?: number }).status !== 401 &&
+        (err as { status?: number }).status !== 429
+      ) {
+        toast.error(message);
+      }
     } finally {
       setBusy(false);
     }
@@ -74,17 +93,35 @@ function LoginForm() {
           >
             Password
           </label>
-          <input
-            id="login-password"
-            className={inputCls}
-            type="password"
-            required
-            placeholder="Your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-          />
+          <div className="relative">
+            <input
+              id="login-password"
+              className={`${inputCls} pr-16`}
+              type={showPassword ? "text" : "password"}
+              required
+              placeholder="Your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-500 hover:text-slate-900"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
+        {formError && (
+          <p
+            role="alert"
+            className="text-sm font-medium text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-2.5"
+          >
+            {formError}
+          </p>
+        )}
         <button
           type="submit"
           disabled={busy}
@@ -92,6 +129,7 @@ function LoginForm() {
         >
           {busy ? "Logging in…" : "Log in"}
         </button>
+        <Turnstile ref={turnstileRef} />
       </form>
       <div className="my-6 flex items-center gap-3 text-xs text-slate-400">
         <span className="flex-1 h-px bg-slate-200" />

@@ -149,6 +149,11 @@ export default function Footer() {
                   />
                 </li>
               ))}
+              {companies.length === 0 && (
+                <li className="text-sm text-slate-400">
+                  Company list is loading…
+                </li>
+              )}
             </ul>
             <p className="mt-3 pt-3 border-t border-slate-100">
               <FooterLink href="/companies" label="View all →" />

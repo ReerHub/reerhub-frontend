@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/AuthProvider";
@@ -42,16 +42,35 @@ function ProfileForm({
   onSaved: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({
+  const initial = {
     name: user.name || "",
     headline: user.profile.headline || "",
     currentRole: user.profile.currentRole || "",
     techTrack: user.profile.techTrack || "",
-    skills: (user.profile.skills || []).join(", "),
     city: user.profile.city || "",
     experienceYears: user.profile.experienceYears?.toString() || "",
     remoteType: user.profile.remoteType || "unknown",
-  });
+  };
+  const [form, setForm] = useState(initial);
+  const [skills, setSkills] = useState<string[]>(
+    (user.profile.skills || []).slice(0, 10),
+  );
+  const [skillInput, setSkillInput] = useState("");
+
+  const dirty =
+    JSON.stringify({ ...form, skills }) !==
+    JSON.stringify({ ...initial, skills: user.profile.skills || [] });
+
+  const addSkill = (raw: string) => {
+    const value = raw.trim().replace(/,+$/, "");
+    if (!value) return;
+    setSkills((prev) =>
+      prev.length >= 10 ||
+      prev.some((s) => s.toLowerCase() === value.toLowerCase())
+        ? prev
+        : [...prev, value],
+    );
+  };
 
   const set =
     (key: keyof typeof form) =>
@@ -67,11 +86,7 @@ function ProfileForm({
         headline: form.headline || undefined,
         currentRole: form.currentRole || undefined,
         techTrack: form.techTrack || undefined,
-        skills: form.skills
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-          .slice(0, 10),
+        skills,
         city: form.city || undefined,
         experienceYears: form.experienceYears
           ? Number(form.experienceYears)
@@ -85,6 +100,12 @@ function ProfileForm({
     } finally {
       setBusy(false);
     }
+  };
+
+  const resetForm = () => {
+    setForm(initial);
+    setSkills((user.profile.skills || []).slice(0, 10));
+    setSkillInput("");
   };
 
   const resend = async () => {
@@ -188,14 +209,65 @@ function ProfileForm({
             htmlFor="pf-skills"
             className="text-sm font-semibold text-slate-700"
           >
-            Skills (comma separated, max 10)
+            Skills ({skills.length}/10) — type and press Enter
           </label>
+          {skills.length > 0 && (
+            <div
+              className="flex flex-wrap gap-1.5 mb-2"
+              aria-label="Your skills"
+            >
+              {skills.map((skill) => (
+                <span
+                  key={skill.toLowerCase()}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-electric-soft text-electric-deep text-[13px] font-semibold"
+                >
+                  {skill}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setSkills((prev) => prev.filter((s) => s !== skill))
+                    }
+                    aria-label={`Remove ${skill}`}
+                    className="hover:opacity-70 font-bold"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
           <input
             id="pf-skills"
             className={inputCls}
-            placeholder="React, Node.js, Python"
-            value={form.skills}
-            onChange={set("skills")}
+            placeholder={
+              skills.length >= 10
+                ? "Maximum 10 skills"
+                : "React, Node.js, Python"
+            }
+            value={skillInput}
+            disabled={skills.length >= 10}
+            onChange={(e) => {
+              const v = e.target.value;
+              if (v.endsWith(",") || v.endsWith(" ")) {
+                addSkill(v);
+                setSkillInput("");
+              } else {
+                setSkillInput(v);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addSkill(skillInput);
+                setSkillInput("");
+              }
+            }}
+            onBlur={() => {
+              if (skillInput.trim()) {
+                addSkill(skillInput);
+                setSkillInput("");
+              }
+            }}
           />
         </div>
         <div className="grid sm:grid-cols-3 gap-4">
@@ -251,13 +323,24 @@ function ProfileForm({
             </select>
           </div>
         </div>
-        <button
-          type="submit"
-          disabled={busy}
-          className="px-8 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark disabled:opacity-50"
-        >
-          {busy ? "Saving…" : "Save profile"}
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="submit"
+            disabled={busy || !dirty}
+            title={dirty ? "Save changes" : "No changes yet"}
+            className="px-8 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark disabled:opacity-50"
+          >
+            {busy ? "Saving…" : "Save profile"}
+          </button>
+          <button
+            type="button"
+            onClick={resetForm}
+            disabled={busy || !dirty}
+            className="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-semibold hover:border-slate-300 disabled:opacity-50"
+          >
+            Reset
+          </button>
+        </div>
       </form>
       <SecuritySection isEmailAccount={user.authProvider === "email"} />
       <DataSection />
@@ -268,9 +351,21 @@ function ProfileForm({
 function SecuritySection({ isEmailAccount }: { isEmailAccount: boolean }) {
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNext, setShowNext] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  if (!isEmailAccount) return null;
+  if (!isEmailAccount) {
+    return (
+      <section className="mt-10 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card">
+        <h2 className="font-bold text-slate-900 text-lg mb-1">Security</h2>
+        <p className="text-sm text-slate-500">
+          You sign in with Google, so there&apos;s no ReerHub password to
+          change. Manage access from your Google account security settings.
+        </p>
+      </section>
+    );
+  }
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -299,15 +394,25 @@ function SecuritySection({ isEmailAccount }: { isEmailAccount: boolean }) {
           >
             Current password
           </label>
-          <input
-            id="pw-current"
-            type="password"
-            required
-            value={current}
-            onChange={(e) => setCurrent(e.target.value)}
-            autoComplete="current-password"
-            className={inputCls}
-          />
+          <div className="relative">
+            <input
+              id="pw-current"
+              type={showCurrent ? "text" : "password"}
+              required
+              value={current}
+              onChange={(e) => setCurrent(e.target.value)}
+              autoComplete="current-password"
+              className={`${inputCls} pr-16`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowCurrent((v) => !v)}
+              aria-label={showCurrent ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-500 hover:text-slate-900"
+            >
+              {showCurrent ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
         <div>
           <label
@@ -316,16 +421,26 @@ function SecuritySection({ isEmailAccount }: { isEmailAccount: boolean }) {
           >
             New password (min 8 characters)
           </label>
-          <input
-            id="pw-next"
-            type="password"
-            required
-            minLength={8}
-            value={next}
-            onChange={(e) => setNext(e.target.value)}
-            autoComplete="new-password"
-            className={inputCls}
-          />
+          <div className="relative">
+            <input
+              id="pw-next"
+              type={showNext ? "text" : "password"}
+              required
+              minLength={8}
+              value={next}
+              onChange={(e) => setNext(e.target.value)}
+              autoComplete="new-password"
+              className={`${inputCls} pr-16`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowNext((v) => !v)}
+              aria-label={showNext ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-500 hover:text-slate-900"
+            >
+              {showNext ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
         <button
           type="submit"
@@ -344,6 +459,15 @@ function DataSection() {
   const { logout } = useAuth();
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!confirming) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setConfirming(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [confirming]);
 
   const download = async () => {
     try {
@@ -391,34 +515,55 @@ function DataSection() {
         >
           Download my data
         </button>
-        {!confirming ? (
-          <button
-            onClick={() => setConfirming(true)}
-            className="px-6 py-2.5 bg-white border border-red-200 text-red-600 rounded-xl text-sm font-semibold hover:bg-red-50"
-          >
-            Delete account
-          </button>
-        ) : (
-          <span className="inline-flex flex-wrap items-center gap-3">
-            <span className="text-sm text-slate-600">
-              Are you sure? This cannot be undone.
-            </span>
-            <button
-              onClick={remove}
-              disabled={busy}
-              className="px-6 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-500 disabled:opacity-50"
-            >
-              {busy ? "Deleting…" : "Yes, delete"}
-            </button>
-            <button
-              onClick={() => setConfirming(false)}
-              className="px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold"
-            >
-              Cancel
-            </button>
-          </span>
-        )}
+        <button
+          onClick={() => setConfirming(true)}
+          className="px-6 py-2.5 bg-white border border-red-200 text-red-600 rounded-xl text-sm font-semibold hover:bg-red-50"
+        >
+          Delete account
+        </button>
       </div>
+      {confirming && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-title"
+        >
+          <button
+            aria-label="Cancel"
+            onClick={() => setConfirming(false)}
+            className="absolute inset-0 bg-slate-950/50 cursor-default"
+          />
+          <div className="relative bg-white rounded-2xl p-6 max-w-sm w-full shadow-card-hover">
+            <h3
+              id="delete-title"
+              className="font-bold text-slate-900 text-lg mb-2"
+            >
+              Delete your account?
+            </h3>
+            <p className="text-sm text-slate-500 mb-6">
+              Your profile and all saved jobs go away permanently. This cannot
+              be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirming(false)}
+                className="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold hover:border-slate-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={remove}
+                disabled={busy}
+                autoFocus
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-500 disabled:opacity-50"
+              >
+                {busy ? "Deleting…" : "Yes, delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
