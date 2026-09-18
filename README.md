@@ -1,42 +1,34 @@
 # reerhub-frontend
 
-Next.js 16 + React 19 tech-job discovery UI for ReerHub (Real Effective Engineering Roles Hub), an India-first platform for engineering and AI roles that indexes official company career pages and links out to official application URLs.
+Next.js 16 + React 19 UI for **ReerHub** (Real Effective Engineering Roles Hub, reerhub.com) — India-first tech-job discovery. Marketing home, SEO listings with official Apply links, protected personalized dashboard, accounts, profiles, saved jobs.
 
-## Routes
+Live: `https://www.reerhub.com` (Vercel, auto-deploy on `main` push — no staging).
 
-- `/` — tech home: hero, 9-track pills, keyword (`q`), company, city, remoteType, techRole, skills, India-only filters, paginated results (21/page, load-more), skeletons + empty state
-- `/jobs` — full listing with the same filters
-- `/engineering` — software-track page; `/ai` — ai-ml track page (own SEO metadata, shared `JobBrowser`)
-- `/jobs/[jobId]` — job detail with track/role/seniority chips + facts and official **Apply on company site** button (`applicationUrl`, new tab)
-- `/companies` — company list with live `activeJobs` counts
-- `/companies/[slug]` — company detail with open-role count, sources, jobs grid
-
-## API layer
-
-`lib/reerhub.ts` (`NEXT_PUBLIC_API_URL`, default `http://localhost:8000/api/v1`, `cache: no-store`): `listJobsWithMeta`, `getJob`, `listCompanies`, `getCompany`, `listCompanyJobs`. `NEXT_PUBLIC_SERVER_URL` is a deprecated alias — set only `NEXT_PUBLIC_API_URL` in new setups.
-
-Legacy auth/resume routes, middleware, and context have been removed.
-
-## Setup
+## Setup (new developer)
 
 ```bash
+nvm use 22            # Node 22 required (.nvmrc); Node 20 crashes on jsdom
 npm install
-npm run dev
-npm run build
-npm run lint
+cp .env.example .env.local   # defaults point at local backend :8000
+npm run dev           # → http://localhost:3000 (needs backend running, see reerhub-backend repo)
+npm run build         # 18 routes
+npx eslint . && npx tsc --noEmit
 ```
 
-## Deploy (Vercel)
+## What it does
 
-- Vercel builds this repo directly from `main` (auto-deploy) at **`https://www.reerhub.com`** (apex `reerhub.com` 308-redirects to `www`). There is no staging environment.
-- Project → Settings → Environment Variables (Production):
-  - `NEXT_PUBLIC_API_URL=https://api.reerhub.com/api/v1`
-  - `NEXT_PUBLIC_SITE_URL=https://www.reerhub.com`
-- Both are **build-time** values — redeploy after changing them.
-- The backend permits this origin through its `CORS_FRONTEND_URL`; the browser sends `Origin: https://www.reerhub.com`.
-- CI (`.github/workflows/ci.yml`): lint + `next build`. Requires Node ≥ 22 (see `.nvmrc`).
-- Full guide: workspace `docs/DEPLOYMENT.md`.
+- **Public (SEO):** `/`, `/jobs`, `/engineering`, `/ai`, `/companies[/:slug]`, `/jobs/:id` (Apply on company site, related, JSON-LD), `/privacy`, `/terms`, sitemap/robots.
+- **Accounts:** `/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`, `/profile` (details + role/track/skills + password + data export/delete), protected `/dashboard` (filter bar, sidebar, pastel cards, bookmarks, sort, Saved-only).
+- **Session:** one global `useAuth()` (`components/AuthProvider.tsx`); `middleware.ts` guards dashboard/profile; API via `lib/reerhub.ts` + `lib/auth.ts` (cookies, silent refresh, CSRF, `safeNext`).
 
-## Design
+## Docs (`docs/`, source of truth)
 
-Follow `docs/design/design-system.md` (v2, navy `#07152E` / blue `#2563EB` / cyan `#2DD4BF` / purple `#6366F1`, Inter, `60-70%` light surfaces). Do not invent new brand colors.
+`01-product.md` · `02-frontend.md` · `03-auth-ux.md` · `04-deployment.md` (Vercel env matrix) · `design/design-system.md` v2 · `DECISIONS.md` · `CHANGELOG.md` · `TODO.md` · `KNOWN_ISSUES.md`. Start with `AGENTS.md`.
+
+## Skills (`.agents/skills/`)
+
+`find-skills` · `frontend-design` (Anthropic UI taste) · `nextjs-app-router-patterns` · `code-review`. Pinned in `skills.json` for IDE teammates.
+
+## Deploy
+
+Vercel auto-deploys `main`. Env (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`) is build-time → redeploy after changes. Full matrix: `docs/04-deployment.md`. Keep `main` green; branches + PRs.
