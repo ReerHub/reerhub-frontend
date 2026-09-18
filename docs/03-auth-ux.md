@@ -4,4 +4,5 @@
 - Pages redirect authed users away (`/login`, `/signup`); `next` param sanitized to internal paths.
 - `/profile`: details + current role/track/skills/city/experience, verify banner + resend, change-password (email accounts), download-my-data, two-step account delete.
 - Navbar shows Sign in ↔ avatar menu (name/email, Dashboard/Profile/Log out); `useAuth` is the single session source — no per-page `getMe()`.
+- Bot protection: invisible Turnstile widget (`components/Turnstile.tsx`) on signup + forgot-password; token sent with the request (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, unset locally).
 - Backend contract lives in the backend repo (`reerhub-backend/docs/05-auth.md`); this doc covers only UX behavior.

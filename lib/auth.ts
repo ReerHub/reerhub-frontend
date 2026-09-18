@@ -106,6 +106,7 @@ export const signup = (body: {
   name: string;
   email: string;
   password: string;
+  turnstileToken?: string;
 }) =>
   request<AuthUser>("/auth/signup", {
     method: "POST",
@@ -144,10 +145,10 @@ export const verifyEmail = (token: string) =>
     body: JSON.stringify({ token }),
   });
 
-export const forgotPassword = (email: string) =>
+export const forgotPassword = (email: string, turnstileToken?: string) =>
   request<{ sent: boolean }>("/auth/forgot-password", {
     method: "POST",
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, turnstileToken }),
   });
 
 export const resetPassword = (token: string, password: string) =>

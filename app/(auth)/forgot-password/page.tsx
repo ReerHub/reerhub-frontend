@@ -1,20 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import Turnstile, { type TurnstileHandle } from "@/components/Turnstile";
 import { forgotPassword } from "@/lib/auth";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
+  const turnstileRef = useRef<TurnstileHandle>(null);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     try {
-      await forgotPassword(email);
+      const turnstileToken = await turnstileRef.current?.execute();
+      await forgotPassword(email, turnstileToken ?? undefined);
       setSent(true);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Request failed");
@@ -60,6 +63,7 @@ export default function ForgotPasswordPage() {
           >
             {busy ? "Sending…" : "Send reset link"}
           </button>
+          <Turnstile ref={turnstileRef} />
         </form>
       )}
       <p className="mt-6 text-sm text-center">

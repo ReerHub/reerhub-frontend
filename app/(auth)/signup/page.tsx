@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import GoogleButton from "@/components/GoogleButton";
+import Turnstile, { type TurnstileHandle } from "@/components/Turnstile";
 import { useAuth } from "@/components/AuthProvider";
 import { signup } from "@/lib/auth";
 
@@ -19,6 +20,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [checkInbox, setCheckInbox] = useState(false);
+  const turnstileRef = useRef<TurnstileHandle>(null);
 
   useEffect(() => {
     if (!loading && user && !checkInbox) router.replace("/dashboard");
@@ -28,7 +30,13 @@ export default function SignupPage() {
     e.preventDefault();
     setBusy(true);
     try {
-      await signup({ name, email, password });
+      const turnstileToken = await turnstileRef.current?.execute();
+      await signup({
+        name,
+        email,
+        password,
+        ...(turnstileToken ? { turnstileToken } : {}),
+      });
       await refresh();
       setCheckInbox(true);
       toast.success("Account created — check your inbox to verify");
@@ -129,6 +137,7 @@ export default function SignupPage() {
         >
           {busy ? "Creating…" : "Sign up"}
         </button>
+        <Turnstile ref={turnstileRef} />
       </form>
       <div className="my-6 flex items-center gap-3 text-xs text-slate-400">
         <span className="flex-1 h-px bg-slate-200" />
