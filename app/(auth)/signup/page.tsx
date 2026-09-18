@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import GoogleButton from "@/components/GoogleButton";
 import Turnstile, { type TurnstileHandle } from "@/components/Turnstile";
 import { useAuth } from "@/components/AuthProvider";
-import { safeNext, signup } from "@/lib/auth";
+import { requestVerifyEmail, safeNext, signup } from "@/lib/auth";
 
 const inputCls =
   "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft transition-all";
@@ -29,6 +29,7 @@ function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [checkInbox, setCheckInbox] = useState(false);
   const turnstileRef = useRef<TurnstileHandle>(null);
 
@@ -63,15 +64,36 @@ function SignupForm() {
         <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
           Check your inbox
         </h1>
-        <p className="text-slate-500 mb-8">
+        <p className="text-slate-500 mb-6">
           We sent a verification link to <strong>{email}</strong>. Click it,
-          then head to your dashboard.
+          then continue — wrong address?{" "}
+          <button
+            onClick={() => setCheckInbox(false)}
+            className="text-electric font-semibold underline underline-offset-2"
+          >
+            Edit email
+          </button>
         </p>
         <button
           onClick={() => router.push(next)}
           className="w-full px-4 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all"
         >
           Continue
+        </button>
+        <button
+          onClick={async () => {
+            try {
+              await requestVerifyEmail();
+              toast.success("Verification email sent");
+            } catch (err) {
+              toast.error(
+                err instanceof Error ? err.message : "Could not send email",
+              );
+            }
+          }}
+          className="mt-3 text-sm font-semibold text-slate-500 hover:text-slate-900 underline underline-offset-4"
+        >
+          Resend email
         </button>
       </div>
     );
@@ -128,17 +150,27 @@ function SignupForm() {
           >
             Password (min 8 characters)
           </label>
-          <input
-            id="su-password"
-            className={inputCls}
-            type="password"
-            required
-            minLength={8}
-            placeholder="Choose a strong password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-          />
+          <div className="relative">
+            <input
+              id="su-password"
+              className={`${inputCls} pr-16`}
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={8}
+              placeholder="Choose a strong password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-500 hover:text-slate-900"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
         <button
           type="submit"

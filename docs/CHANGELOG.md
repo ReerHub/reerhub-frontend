@@ -1,5 +1,11 @@
 # Changelog (frontend)
 
+## Unreleased — Auth/detail/profile flows (PR 3)
+
+- Login: Turnstile, show-password, inline errors. Signup inbox: edit-email + resend. Verify page: public resend form (kills the logged-out dead loop). Reset + profile passwords: show toggles.
+- Job detail: save button, Apply-first on mobile, `Opens <domain>` preview, related jobs with saves.
+- Profile: skill chips (x/10), dirty-aware Save + Reset, Google-account explainer, delete modal with Escape/backdrop dismiss. Footer companies loading state.
+
 ## Unreleased — Dashboard unification (PR 2, on `ui/redesign-p2`)
 
 - Single URL-synced filter state (header + sidebar write the same state; refresh/share/back-button safe), instant sidebar, removable prefill chips (incl. skills-bias toggle), Saved deep-link (`?view=saved`) with pagination, server-side sort (Title A–Z), 44px save targets, clickable card titles.
