@@ -84,7 +84,8 @@ export default function GoogleButton({ next }: { next: string }) {
     window.google.accounts.id.renderButton(ref.current, {
       theme: "outline",
       size: "large",
-      width: 320,
+      // 280px + page padding fits 320px devices; GIS caps at 400.
+      width: 280,
     });
   }, [ready, clientId, safe, router, refresh]);
 

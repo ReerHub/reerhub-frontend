@@ -68,7 +68,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         <AuthProvider>
           <Navbar />
-          <main className="min-h-screen relative pt-16">{children}</main>
+          <main className="min-h-dvh relative pt-16">{children}</main>
           <Footer />
         </AuthProvider>
         <CookieConsent />

@@ -52,7 +52,7 @@ export default function Navbar() {
           </span>
         </Link>
         <nav
-          className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 rounded-full p-1 overflow-x-auto max-w-full"
+          className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 rounded-full p-1 overflow-x-auto max-w-full no-scrollbar [mask-image:linear-gradient(to_right,black_88%,transparent)] sm:[mask-image:none]"
           aria-label="Primary"
         >
           {links.map((link) => {
