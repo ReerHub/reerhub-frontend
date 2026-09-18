@@ -108,11 +108,11 @@ export default function Footer() {
               aria-label="ReerHub home"
             >
               <Image
-                src="/reerhub-logo-64.png"
+                src="/reerhub-logo.png"
                 alt="ReerHub logo"
-                width={32}
-                height={32}
-                className="w-8 h-8"
+                width={96}
+                height={64}
+                className="h-8 w-auto"
               />
               <span className="font-bold text-slate-900 text-[17px] tracking-tight">
                 ReerHub
@@ -162,6 +162,20 @@ export default function Footer() {
           <p className="text-xs text-slate-500">
             © {currentYear} ReerHub. All rights reserved.
           </p>
+          <nav aria-label="Legal" className="flex items-center gap-4 text-xs">
+            <Link
+              href="/privacy"
+              className="text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              Terms
+            </Link>
+          </nav>
           <p className="text-xs text-slate-400">
             Built for engineers. Updated daily.
           </p>

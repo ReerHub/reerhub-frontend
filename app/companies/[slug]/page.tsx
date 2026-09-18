@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import CompanyLogo from "@/components/CompanyLogo";
 import JobCard from "@/components/JobCard";
 import { getCompany, listCompanyJobs, NotFoundError } from "@/lib/reerhub";
-import { companyTile } from "@/lib/format";
 
 export default async function CompanyDetailPage({
   params,
@@ -50,12 +50,11 @@ export default async function CompanyDetailPage({
             <span className="text-slate-900 font-semibold">{company.name}</span>
           </nav>
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-            <span
-              className={`w-16 h-16 rounded-2xl ${companyTile()} flex items-center justify-center font-bold text-3xl shrink-0 shadow-sm`}
-              aria-hidden
-            >
-              {company.name.charAt(0).toUpperCase()}
-            </span>
+            <CompanyLogo
+              name={company.name}
+              logoUrl={company.logoUrl}
+              size="lg"
+            />
             <div className="min-w-0">
               <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
                 {company.name}
