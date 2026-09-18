@@ -26,6 +26,7 @@ Self-contained repo: product/routes/design/decisions/changelog/skills live here 
 - SEO: `/jobs` etc. stay public; auth/dashboard never in sitemap; `robots.ts` disallows them; per-job JSON-LD.
 - Secrets: only `NEXT_PUBLIC_*` in browser (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`).
 - Commits `feat:/fix:/chore:/ci:/docs:`, only when asked. Never commit `.env*`/secrets.
+- **Branching: feature branches → PR into `develop` → tested → PR `develop` → `main` (auto-deploys). Never touch `main` directly.**
 
 ## Gotchas
 
