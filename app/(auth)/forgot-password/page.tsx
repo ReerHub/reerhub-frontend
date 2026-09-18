@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
             </label>
             <input
               id="fp-email"
-              className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-[15px] outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft"
               type="email"
               required
               placeholder="you@example.com"
@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 disabled:opacity-50"
+            className="w-full px-4 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark disabled:opacity-50"
           >
             {busy ? "Sending…" : "Send reset link"}
           </button>
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
         </form>
       )}
       <p className="mt-6 text-sm text-center">
-        <Link href="/login" className="text-blue-600 font-semibold">
+        <Link href="/login" className="text-electric font-semibold">
           Back to login
         </Link>
       </p>

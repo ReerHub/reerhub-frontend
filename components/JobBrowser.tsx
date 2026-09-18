@@ -68,7 +68,7 @@ function EmptyState({ onClear }: { onClear: () => void }) {
       </p>
       <button
         onClick={onClear}
-        className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-500 transition-all shadow-sm"
+        className="px-6 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark transition-all shadow-sm"
       >
         Clear filters
       </button>
@@ -216,7 +216,9 @@ export default function JobBrowser({
         setPage(pageToLoad);
       } catch {
         if (!signal?.aborted)
-          toast.error("Could not load jobs. Is the backend running?");
+          toast.error(
+            "Couldn't load roles. Check your connection and try again.",
+          );
       } finally {
         if (!signal?.aborted) {
           setLoading(false);
@@ -253,7 +255,9 @@ export default function JobBrowser({
       })
       .catch(() => {
         if (!ac.signal.aborted)
-          toast.error("Could not load jobs. Is the backend running?");
+          toast.error(
+            "Couldn't load roles. Check your connection and try again.",
+          );
       })
       .finally(() => {
         if (!ac.signal.aborted) setLoading(false);
@@ -344,7 +348,7 @@ export default function JobBrowser({
           >
             {loadingMore ? (
               <>
-                <span className="w-4 h-4 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-slate-300 border-t-electric rounded-full animate-spin" />
                 Loading…
               </>
             ) : (

@@ -73,7 +73,7 @@ export default function JobCard({
           aria-pressed={!!saved}
           className={`absolute top-4 right-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
             saved
-              ? "bg-blue-600 text-white"
+              ? "bg-electric text-white"
               : "bg-slate-100 text-slate-500 hover:text-slate-900"
           }`}
         >
@@ -103,7 +103,7 @@ export default function JobCard({
             size="sm"
           />
           <div className="min-w-0">
-            <h3 className="font-bold text-slate-900 text-[16px] leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+            <h3 className="font-display font-bold text-slate-900 text-[16px] leading-snug line-clamp-2 group-hover:text-electric transition-colors">
               {job.title}
             </h3>
             <p className="text-sm text-slate-500 font-medium truncate mt-0.5">
@@ -135,7 +135,7 @@ export default function JobCard({
           (job.skills && job.skills.length > 0)) && (
           <div className="flex flex-wrap gap-1.5 mb-4">
             {job.techRole && (
-              <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-semibold">
+              <span className="px-2.5 py-1 rounded-lg bg-electric-soft text-electric-deep text-xs font-semibold">
                 {job.seniority
                   ? `${job.seniority} · ${job.techRole}`
                   : job.techRole}
@@ -166,7 +166,7 @@ export default function JobCard({
           <span className="text-xs text-slate-400 font-medium">
             {posted ? `Posted ${posted.toLowerCase()}` : "Recently posted"}
           </span>
-          <span className="shrink-0 text-sm font-semibold text-blue-600 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+          <span className="shrink-0 text-sm font-semibold text-electric inline-flex items-center gap-1 group-hover:gap-2 transition-all">
             View job
             <svg
               className="w-4 h-4"

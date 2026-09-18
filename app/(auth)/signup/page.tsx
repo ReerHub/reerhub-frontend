@@ -1,19 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import GoogleButton from "@/components/GoogleButton";
 import Turnstile, { type TurnstileHandle } from "@/components/Turnstile";
 import { useAuth } from "@/components/AuthProvider";
-import { signup } from "@/lib/auth";
+import { safeNext, signup } from "@/lib/auth";
 
 const inputCls =
-  "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all";
+  "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft transition-all";
 
 export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
+  );
+}
+
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = safeNext(searchParams.get("next"));
   const { user, loading, refresh } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,8 +33,8 @@ export default function SignupPage() {
   const turnstileRef = useRef<TurnstileHandle>(null);
 
   useEffect(() => {
-    if (!loading && user && !checkInbox) router.replace("/dashboard");
-  }, [loading, user, checkInbox, router]);
+    if (!loading && user && !checkInbox) router.replace(next);
+  }, [loading, user, checkInbox, next, router]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,10 +68,10 @@ export default function SignupPage() {
           then head to your dashboard.
         </p>
         <button
-          onClick={() => router.push("/dashboard")}
-          className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-all"
+          onClick={() => router.push(next)}
+          className="w-full px-4 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all"
         >
-          Continue to dashboard
+          Continue
         </button>
       </div>
     );
@@ -133,7 +143,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-all disabled:opacity-50"
+          className="w-full px-4 py-2.5 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all disabled:opacity-50"
         >
           {busy ? "Creating…" : "Sign up"}
         </button>
@@ -144,10 +154,10 @@ export default function SignupPage() {
         or
         <span className="flex-1 h-px bg-slate-200" />
       </div>
-      <GoogleButton next="/dashboard" />
+      <GoogleButton next={next} />
       <p className="mt-6 text-sm text-slate-500 text-center">
         Have an account?{" "}
-        <Link href="/login" className="text-blue-600 font-semibold">
+        <Link href="/login" className="text-electric font-semibold">
           Log in
         </Link>
       </p>

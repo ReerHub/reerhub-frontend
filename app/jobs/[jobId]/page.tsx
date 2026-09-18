@@ -149,7 +149,7 @@ export default async function JobDetailPage({
         className="text-[13px] font-medium text-slate-500 mb-6 flex items-center gap-2 flex-wrap"
         aria-label="Breadcrumb"
       >
-        <Link href="/" className="hover:text-blue-600 transition-colors">
+        <Link href="/jobs" className="hover:text-electric transition-colors">
           Jobs
         </Link>
         <span aria-hidden className="text-slate-300">
@@ -158,7 +158,7 @@ export default async function JobDetailPage({
         {company.slug ? (
           <Link
             href={`/companies/${company.slug}`}
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-electric transition-colors"
           >
             {companyName}
           </Link>
@@ -185,12 +185,12 @@ export default async function JobDetailPage({
                 {company.slug ? (
                   <Link
                     href={`/companies/${company.slug}`}
-                    className="text-sm font-semibold text-blue-600 hover:text-blue-500"
+                    className="text-sm font-semibold text-electric hover:text-electric-dark"
                   >
                     {companyName}
                   </Link>
                 ) : (
-                  <p className="text-sm font-semibold text-blue-600">
+                  <p className="text-sm font-semibold text-electric">
                     {companyName}
                   </p>
                 )}
@@ -236,7 +236,7 @@ export default async function JobDetailPage({
                 </span>
               )}
               {job.remoteType && job.remoteType !== "unknown" && (
-                <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[13px] font-semibold capitalize">
+                <span className="px-2.5 py-1 rounded-lg bg-electric-soft text-electric-deep text-[13px] font-semibold capitalize">
                   {job.remoteType}
                 </span>
               )}
@@ -252,7 +252,7 @@ export default async function JobDetailPage({
                 {job.skills.map((skill: string) => (
                   <span
                     key={skill}
-                    className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[13px] font-medium"
+                    className="px-2.5 py-1 rounded-lg bg-electric-soft text-electric-deep text-[13px] font-medium"
                   >
                     {skill}
                   </span>
@@ -280,7 +280,7 @@ export default async function JobDetailPage({
                 href={job.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 font-semibold underline underline-offset-2"
+                className="text-electric font-semibold underline underline-offset-2"
               >
                 official listing
               </a>
@@ -307,7 +307,7 @@ export default async function JobDetailPage({
 
         <aside className="lg:sticky lg:top-24 space-y-4">
           {job.applicationUrl && (
-            <div className="bg-[#0B1730] text-white rounded-2xl p-6 shadow-card-hover">
+            <div className="bg-[#060B18] text-white rounded-2xl p-6 shadow-card-hover">
               <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-teal-300 mb-2">
                 Official application
               </p>
@@ -319,7 +319,7 @@ export default async function JobDetailPage({
                 href={job.applicationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold text-[15px] hover:bg-blue-500 active:bg-blue-700 transition-all shadow-[0_8px_20px_rgba(59,130,246,0.35)]"
+                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-electric text-white rounded-xl font-semibold text-[15px] hover:bg-electric-dark active:bg-electric-deep transition-all shadow-[0_8px_20px_rgba(46,107,255,0.35)]"
               >
                 Apply Now
                 <svg
@@ -351,7 +351,7 @@ export default async function JobDetailPage({
             {company.slug && (
               <Link
                 href={`/companies/${company.slug}`}
-                className="mt-4 flex items-center justify-center w-full px-6 py-2.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl font-semibold text-sm hover:bg-blue-100 transition-all"
+                className="mt-4 flex items-center justify-center w-full px-6 py-2.5 bg-electric-soft text-electric-deep border border-electric-soft rounded-xl font-semibold text-sm hover:bg-electric-soft transition-all"
               >
                 More from {companyName}
               </Link>

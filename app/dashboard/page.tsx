@@ -47,9 +47,7 @@ function Check({
     <label className="flex items-center gap-3 py-1.5 cursor-pointer text-[15px] text-slate-900">
       <span
         className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
-          checked
-            ? "bg-slate-950 border-slate-950"
-            : "border-slate-300 bg-white"
+          checked ? "bg-electric border-electric" : "border-slate-300 bg-white"
         }`}
         aria-hidden
       >
@@ -172,7 +170,9 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
       })
       .catch(() => {
         if (cancelled) return;
-        toast.error("Could not load jobs. Is the backend running?");
+        toast.error(
+          "Couldn't load roles. Check your connection and try again.",
+        );
         setLoading(false);
       });
     return () => {
@@ -203,7 +203,9 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
         setTotalPages(result.totalPages);
         setPage(pageToLoad);
       } catch {
-        toast.error("Could not load jobs. Is the backend running?");
+        toast.error(
+          "Couldn't load roles. Check your connection and try again.",
+        );
       } finally {
         setLoading(false);
         setLoadingMore(false);
@@ -292,9 +294,9 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
     <div className="bg-[#E5E8EF] -mt-16 pt-16 pb-10 min-h-screen">
       <div className="max-w-[1400px] mx-auto px-3 sm:px-6 pt-4">
         {/* ── Dark shell: search filters (site nav lives in Navbar) ── */}
-        <section className="bg-[#0B0F1C] rounded-[2rem] px-5 sm:px-8 py-7">
+        <section className="bg-[#060B18] rounded-3xl px-5 sm:px-8 py-7">
           <div className="mb-5">
-            <h1 className="text-white text-xl sm:text-2xl font-bold tracking-tight">
+            <h1 className="font-display text-white text-xl sm:text-2xl font-bold tracking-tight">
               {user
                 ? `Find your next role, ${user.name.split(" ")[0]}`
                 : "Find your next role"}
@@ -436,7 +438,7 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
         {/* ── Body ── */}
         <div className="grid lg:grid-cols-[290px_1fr] gap-5 mt-5 items-start">
           <aside className="space-y-5">
-            <div className="relative overflow-hidden rounded-3xl bg-[#0B0F1C] p-6 min-h-64 flex flex-col">
+            <div className="relative overflow-hidden rounded-3xl bg-[#060B18] p-6 min-h-64 flex flex-col">
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
@@ -450,7 +452,7 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
               </p>
               <Link
                 href="/profile"
-                className="relative mt-auto pt-6 block text-center px-4 py-2.5 bg-sky-300 text-slate-950 rounded-full text-sm font-semibold hover:bg-sky-200 transition-all"
+                className="relative mt-auto pt-6 block text-center px-4 py-2.5 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark transition-all"
               >
                 Complete profile
               </Link>
@@ -498,7 +500,7 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
               ))}
               <button
                 onClick={() => fetchJobs(1)}
-                className="mt-4 w-full px-4 py-2.5 bg-slate-950 text-white rounded-xl text-sm font-semibold hover:bg-slate-800 transition-all"
+                className="mt-4 w-full px-4 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark transition-all"
               >
                 Apply filters
               </button>
@@ -519,7 +521,7 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                   aria-pressed={savedOnly}
                   className={`px-4 py-1.5 rounded-full border text-sm font-semibold transition-all ${
                     savedOnly
-                      ? "bg-slate-950 text-white border-slate-950"
+                      ? "bg-electric text-white border-electric"
                       : "border-slate-300 text-slate-600 hover:border-slate-400"
                   }`}
                 >
@@ -570,7 +572,7 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                   </p>
                   <button
                     onClick={clearAll}
-                    className="px-6 py-2.5 bg-slate-950 text-white rounded-full text-sm font-semibold hover:bg-slate-800"
+                    className="px-6 py-2.5 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark"
                   >
                     Clear filters
                   </button>

@@ -38,7 +38,7 @@ function VerifyInner() {
           </p>
           <Link
             href="/dashboard"
-            className="inline-block px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-500"
+            className="inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark"
           >
             Go to dashboard
           </Link>
@@ -53,7 +53,7 @@ function VerifyInner() {
             Request a new verification email from your profile, or try logging
             in again.
           </p>
-          <Link href="/login" className="text-blue-600 font-semibold">
+          <Link href="/login" className="text-electric font-semibold">
             Back to login
           </Link>
         </>

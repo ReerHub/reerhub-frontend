@@ -96,7 +96,7 @@ export default function DashboardJobCard({
         </div>
         <p className="text-[15px] font-medium text-slate-900">{companyName}</p>
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-[22px] leading-tight font-bold text-slate-900 line-clamp-2">
+          <h3 className="font-display text-[22px] leading-tight font-bold text-slate-900 line-clamp-2">
             {job.title}
           </h3>
           <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden">
@@ -140,7 +140,7 @@ export default function DashboardJobCard({
         </div>
         <Link
           href={`/jobs/${job._id}`}
-          className="shrink-0 px-6 py-2 bg-slate-950 text-white rounded-full text-sm font-semibold hover:bg-slate-800 transition-all"
+          className="shrink-0 px-6 py-2 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark transition-all"
         >
           Details
         </Link>

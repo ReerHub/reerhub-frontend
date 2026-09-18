@@ -110,7 +110,7 @@ export default function SearchFilters({
   const pillBase =
     "px-3.5 py-1.5 rounded-lg text-[13px] font-semibold transition-all whitespace-nowrap";
   const pillInactive = "text-slate-600 hover:bg-slate-100 hover:text-slate-900";
-  const pillActive = "bg-blue-600 text-white shadow-sm";
+  const pillActive = "bg-electric text-white shadow-sm";
 
   return (
     <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-card">
@@ -121,7 +121,7 @@ export default function SearchFilters({
         }}
         className="flex flex-col lg:flex-row gap-2.5"
       >
-        <label className="flex items-center gap-2.5 flex-1 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+        <label className="flex items-center gap-2.5 flex-1 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-electric-dark focus-within:ring-4 focus-within:ring-electric-dark/10 transition-all">
           <SearchIcon />
           <span className="sr-only">Search engineering and AI roles</span>
           <input
@@ -131,7 +131,7 @@ export default function SearchFilters({
             className="w-full py-2.5 bg-transparent outline-none text-[15px] text-slate-900 placeholder:text-slate-400"
           />
         </label>
-        <label className="flex items-center gap-2 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all sm:w-52">
+        <label className="flex items-center gap-2 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-electric-dark focus-within:ring-4 focus-within:ring-electric-dark/10 transition-all sm:w-52">
           <LocationIcon />
           <span className="sr-only">Location</span>
           <input
@@ -141,7 +141,7 @@ export default function SearchFilters({
             className="w-full py-2.5 bg-transparent outline-none text-[15px] text-slate-900 placeholder:text-slate-400"
           />
         </label>
-        <label className="flex items-center gap-2 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all sm:w-52">
+        <label className="flex items-center gap-2 px-4 rounded-xl bg-slate-50 border border-slate-200 focus-within:border-electric-dark focus-within:ring-4 focus-within:ring-electric-dark/10 transition-all sm:w-52">
           <RoleIcon />
           <span className="sr-only">Role (e.g. Backend Engineer)</span>
           <input
@@ -153,7 +153,7 @@ export default function SearchFilters({
         </label>
         <button
           type="submit"
-          className="px-8 py-2.5 bg-blue-600 text-white rounded-xl text-[15px] font-semibold hover:bg-blue-500 active:bg-blue-700 transition-all shadow-sm"
+          className="px-8 py-2.5 bg-electric text-white rounded-xl text-[15px] font-semibold hover:bg-electric-dark active:bg-electric-deep transition-all shadow-sm"
         >
           Search
         </button>
@@ -228,7 +228,7 @@ export default function SearchFilters({
                 {typeof c.activeJobs === "number" && (
                   <span
                     className={`text-xs font-medium ${
-                      active ? "text-blue-100" : "text-slate-400"
+                      active ? "text-white/80" : "text-slate-400"
                     }`}
                   >
                     {c.activeJobs}

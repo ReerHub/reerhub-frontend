@@ -86,7 +86,7 @@ export default function Navbar() {
             <div className="relative">
               <button
                 onClick={() => setMenuOpen((v) => !v)}
-                className="w-9 h-9 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center"
+                className="w-9 h-9 rounded-full bg-electric text-white font-bold flex items-center justify-center"
                 aria-label="Account menu"
               >
                 {(user.avatarUrl && (
@@ -145,7 +145,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-semibold hover:bg-blue-500 transition-all whitespace-nowrap"
+              className="px-4 py-2 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark transition-all whitespace-nowrap"
             >
               Sign in
             </Link>
