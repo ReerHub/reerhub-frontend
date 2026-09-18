@@ -21,9 +21,16 @@ npx eslint . && npx tsc --noEmit
 - **Accounts:** `/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`, `/profile` (details + role/track/skills + password + data export/delete), protected `/dashboard` (filter bar, sidebar, pastel cards, bookmarks, sort, Saved-only).
 - **Session:** one global `useAuth()` (`components/AuthProvider.tsx`); `middleware.ts` guards dashboard/profile; API via `lib/reerhub.ts` + `lib/auth.ts` (cookies, silent refresh, CSRF, `safeNext`).
 
-## Docs (`docs/`, source of truth)
+## Docs
 
-`01-product.md` · `02-frontend.md` · `03-auth-ux.md` · `04-deployment.md` (Vercel env matrix) · `design/design-system.md` v2 · `DECISIONS.md` · `CHANGELOG.md` · `TODO.md` · `KNOWN_ISSUES.md`. Start with `AGENTS.md`.
+`docs/DECISIONS.md` · `docs/CHANGELOG.md` · `docs/04-deployment.md` (Vercel env matrix) · `docs/design/design-system.md` v2. Start with `AGENTS.md`. Deliberately small — no new doc files without a triggering incident or requirement.
+
+## Roadmap
+
+1. e2e smoke (Playwright) — blocked on browsers in dev env, not on need.
+2. Analytics + Web Vitals (needs provider pick).
+3. Job alerts backend (bell + footer subscribe are "coming soon").
+4. Deferred: PWA/offline, nested error boundaries.
 
 ## Skills (`.agents/skills/`)
 

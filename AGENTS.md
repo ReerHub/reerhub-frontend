@@ -36,6 +36,6 @@ Self-contained repo: product/routes/design/decisions/changelog/skills live here 
 
 `find-skills` · `frontend-design` (Anthropic UI taste) · `nextjs-app-router-patterns` · `code-review`. Pinned in `skills.json`.
 
-## Docs discipline
+## Docs discipline (minimal by design)
 
-`docs/` is the source of truth: `CHANGELOG.md` (dated), `TODO.md`, `KNOWN_ISSUES.md`, specs + `README.md` truthful, `04-deployment.md` env matrix mirrors `.env.example`.
+`docs/` holds exactly four entries: `DECISIONS.md`, `CHANGELOG.md`, `04-deployment.md` (env matrix mirrors `.env.example`), `design/` (design-system v2). README covers setup/product/roadmap. Do NOT create new doc files, TODO lists, or issue logs without a triggering incident or user-visible requirement — backlog lives in README Roadmap or GitHub Issues.
