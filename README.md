@@ -2,7 +2,7 @@
 
 Next.js 16 + React 19 UI for **ReerHub** (Real Effective Engineering Roles Hub, reerhub.com) — India-first tech-job discovery. Marketing home, SEO listings with official Apply links, protected personalized dashboard, accounts, profiles, saved jobs.
 
-Live: `https://www.reerhub.com` (Vercel, auto-deploy on `main` push — no staging).
+Live: `https://www.reerhub.com` (Vercel, auto-deploy on `main` push). Staging: `https://staging.reerhub.com` (auto-deploys `develop`; SSO off, crawlers disallowed).
 
 ## Setup (new developer)
 
@@ -11,7 +11,7 @@ nvm use 22            # Node 22 required (.nvmrc); Node 20 crashes on jsdom
 npm install
 cp .env.example .env.local   # defaults point at local backend :8000
 npm run dev           # → http://localhost:3000 (needs backend running, see reerhub-backend repo)
-npm run build         # 18 routes
+npm run build         # 20 routes
 npx eslint . && npx tsc --noEmit
 ```
 
@@ -34,7 +34,7 @@ npx eslint . && npx tsc --noEmit
 
 ## Skills (`.agents/skills/`)
 
-`find-skills` · `frontend-design` (Anthropic UI taste) · `nextjs-app-router-patterns` · `code-review`. Pinned in `skills.json` for IDE teammates.
+`find-skills` · `frontend-design` (Anthropic UI taste) · `nextjs-app-router-patterns` · `ui-ux-pro-max` (systematic rules) · `code-review`. Pinned in `skills.json` for IDE teammates.
 
 ## Deploy
 
