@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
 import CompanyLogo from "@/components/CompanyLogo";
-import JobCard from "@/components/JobCard";
+import RelatedJobs from "@/components/RelatedJobs";
+import SaveJobButton from "@/components/SaveJobButton";
 import {
   getJob,
   listJobsWithMeta,
@@ -73,6 +74,13 @@ export default async function JobDetailPage({
   const company = job.companyId || {};
   const companyName: string = company.name || "Company";
   const posted = timeAgo(job.postedAt || job.firstSeenAt);
+  const applyDomain = (() => {
+    try {
+      return new URL(job.applicationUrl).hostname.replace(/^www\./, "");
+    } catch {
+      return null;
+    }
+  })();
   const relatedJobs = company._id
     ? await fetchRelatedJobs(company._id, job._id || jobId)
     : [];
@@ -174,7 +182,7 @@ export default async function JobDetailPage({
       </nav>
 
       <div className="grid lg:grid-cols-[1fr_340px] gap-5 items-start">
-        <article className="min-w-0">
+        <article className="min-w-0 order-2 lg:order-none">
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
             <div className="flex items-center gap-4 mb-5">
               <CompanyLogo
@@ -200,12 +208,15 @@ export default async function JobDetailPage({
                   </p>
                 )}
               </div>
-              <span className="ml-auto inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg shrink-0">
-                <span
-                  className="w-1.5 h-1.5 rounded-full bg-emerald-500"
-                  aria-hidden
-                />
-                Active
+              <span className="ml-auto inline-flex items-center gap-2 shrink-0">
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-50 border border-green-100 px-2.5 py-1 rounded-lg">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-green-500"
+                    aria-hidden
+                  />
+                  Active
+                </span>
+                <SaveJobButton jobId={job._id || jobId} variant="icon" />
               </span>
             </div>
 
@@ -290,24 +301,13 @@ export default async function JobDetailPage({
           )}
 
           {relatedJobs.length > 0 && (
-            <section className="mt-8">
-              <h2 className="font-bold text-slate-900 text-xl mb-4">
-                More from {companyName}
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {relatedJobs.map(
-                  (related: React.ComponentProps<typeof JobCard>["job"]) => (
-                    <JobCard key={related._id} job={related} />
-                  ),
-                )}
-              </div>
-            </section>
+            <RelatedJobs jobs={relatedJobs} companyName={companyName} />
           )}
         </article>
 
-        <aside className="lg:sticky lg:top-24 space-y-4">
+        <aside className="order-1 lg:order-none lg:sticky lg:top-24 space-y-4">
           {job.applicationUrl && (
-            <div className="bg-[#060B18] text-white rounded-2xl p-6 shadow-card-hover">
+            <div className="bg-ink text-white rounded-2xl p-6 shadow-card-hover">
               <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-teal-300 mb-2">
                 Official application
               </p>
@@ -319,7 +319,7 @@ export default async function JobDetailPage({
                 href={job.applicationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-electric text-white rounded-xl font-semibold text-[15px] hover:bg-electric-dark active:bg-electric-deep transition-all shadow-[0_8px_20px_rgba(46,107,255,0.35)]"
+                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-electric text-white rounded-xl font-semibold text-[15px] hover:bg-electric-dark active:bg-electric-deep transition-all shadow-sm"
               >
                 Apply Now
                 <svg
@@ -336,6 +336,11 @@ export default async function JobDetailPage({
                   />
                 </svg>
               </a>
+              {applyDomain && (
+                <p className="text-xs text-white/50 text-center mt-2">
+                  Opens {applyDomain} in a new tab
+                </p>
+              )}
             </div>
           )}
 

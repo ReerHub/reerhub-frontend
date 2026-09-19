@@ -73,7 +73,7 @@ export default function DashboardJobCard({
             onClick={() => onToggleSave(job._id, !saved)}
             aria-label={saved ? "Remove saved job" : "Save job"}
             aria-pressed={saved}
-            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+            className={`min-w-11 min-h-11 w-11 h-11 rounded-full flex items-center justify-center transition-all ${
               saved
                 ? "bg-slate-900 text-white"
                 : "bg-white/80 text-slate-700 hover:text-slate-900"
@@ -96,9 +96,12 @@ export default function DashboardJobCard({
         </div>
         <p className="text-[15px] font-medium text-slate-900">{companyName}</p>
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-display text-[22px] leading-tight font-bold text-slate-900 line-clamp-2">
+          <Link
+            href={`/jobs/${job._id}`}
+            className="font-display text-[22px] leading-tight font-bold text-slate-900 line-clamp-2 hover:underline underline-offset-4"
+          >
             {job.title}
-          </h3>
+          </Link>
           <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden">
             {job.companyId?.logoUrl ? (
               <Image

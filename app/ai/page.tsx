@@ -23,20 +23,12 @@ function SubHero({
   children: React.ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden bg-[#060B18]">
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(600px 300px at 50% -50px, rgba(46,107,255,0.25), transparent), radial-gradient(500px 260px at 85% 20%, rgba(99,102,241,0.18), transparent)",
-        }}
-        aria-hidden
-      />
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8 text-center">
-        <h1 className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-white tracking-tight mb-3">
+    <section className="bg-white border-b border-slate-200/70">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
+        <h1 className="font-display text-3xl sm:text-[40px] leading-[1.15] font-bold text-slate-900 tracking-tight mb-3">
           {title}
         </h1>
-        <p className="text-white/70 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
+        <p className="text-slate-500 text-base sm:text-lg max-w-xl leading-relaxed">
           {children}
         </p>
       </div>

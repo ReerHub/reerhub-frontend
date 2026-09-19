@@ -45,18 +45,18 @@ export const metadata = {
     title: "ReerHub | Engineering & AI jobs in India",
     description:
       "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages.",
-    images: ["/reerhub-logo.png"],
+    images: ["/reerhub-logo-with-text.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "ReerHub | Engineering & AI jobs in India",
     description:
       "Engineering, data, and AI roles from India's top product companies.",
-    images: ["/reerhub-logo.png"],
+    images: ["/reerhub-logo-with-text.png"],
   },
   icons: {
-    icon: "/reerhub-logo.png",
-    apple: "/reerhub-logo.png",
+    icon: "/reerhub-icon-logo.png",
+    apple: "/reerhub-icon-logo.png",
   },
 };
 
@@ -68,7 +68,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       >
         <AuthProvider>
           <Navbar />
-          <main className="min-h-screen relative pt-16">{children}</main>
+          <main className="min-h-dvh relative pt-16">{children}</main>
           <Footer />
         </AuthProvider>
         <CookieConsent />

@@ -40,11 +40,11 @@ export default function Navbar() {
           aria-label="ReerHub home"
         >
           <Image
-            src="/reerhub-logo.png"
+            src="/reerhub-icon-logo.png"
             alt="ReerHub logo"
-            width={96}
-            height={64}
-            className="h-8 w-auto"
+            width={36}
+            height={36}
+            className="w-9 h-9 rounded-lg"
             priority
           />
           <span className="font-bold text-slate-900 text-[17px] tracking-tight">
@@ -52,7 +52,7 @@ export default function Navbar() {
           </span>
         </Link>
         <nav
-          className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 rounded-full p-1 overflow-x-auto max-w-full"
+          className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 rounded-full p-1 overflow-x-auto max-w-full no-scrollbar [mask-image:linear-gradient(to_right,black_88%,transparent)] sm:[mask-image:none]"
           aria-label="Primary"
         >
           {links.map((link) => {

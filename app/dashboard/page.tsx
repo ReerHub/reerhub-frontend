@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import toast from "react-hot-toast";
 import DashboardJobCard from "@/components/DashboardJobCard";
 import { useAuth } from "@/components/AuthProvider";
@@ -92,30 +100,105 @@ export default function DashboardPage() {
   const { user } = useAuth();
   // Remount when the account changes so profile prefill runs via
   // initializers (no setState-in-effect needed).
-  return <DashboardBoard key={user?.id ?? "guest"} user={user} />;
+  return (
+    <Suspense>
+      <DashboardBoard key={user?.id ?? "guest"} user={user} />
+    </Suspense>
+  );
 }
 
-function buildParams(
-  source: Record<string, string>,
-): Record<string, string | number> {
-  const params: Record<string, string | number> = { page: 1, limit: PAGE_SIZE };
-  for (const [k, v] of Object.entries(source)) {
-    if (v) params[k] = v;
-  }
-  return params;
+type DashFilters = {
+  q: string;
+  city: string;
+  seniority: string[];
+  techTrack: "" | TechTrack;
+  remoteType: string[];
+  fullTime: boolean;
+  skillsOn: boolean;
+};
+
+const EMPTY: DashFilters = {
+  q: "",
+  city: "",
+  seniority: [],
+  techTrack: "",
+  remoteType: [],
+  fullTime: false,
+  skillsOn: true,
+};
+
+function filtersFromParams(
+  sp: URLSearchParams,
+  user: AuthUser | null,
+): DashFilters {
+  const csv = (k: string) =>
+    (sp.get(k) || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  const has = (k: string) => sp.has(k);
+  return {
+    // Profile prefill fills only slots the URL leaves empty.
+    q: sp.get("q") ?? user?.profile.currentRole ?? "",
+    city: sp.get("city") ?? user?.profile.city ?? "",
+    seniority: has("seniority") ? csv("seniority") : [],
+    techTrack:
+      (sp.get("techTrack") as TechTrack) || user?.profile.techTrack || "",
+    remoteType: csv("remoteType"),
+    fullTime: sp.get("employment") === "fulltime",
+    skillsOn: sp.get("ps") !== "0",
+  };
+}
+
+function filtersToParams(f: DashFilters, view: string, sort: string) {
+  const sp = new URLSearchParams();
+  if (f.q) sp.set("q", f.q);
+  if (f.city) sp.set("city", f.city);
+  if (f.seniority.length > 0) sp.set("seniority", f.seniority.join(","));
+  if (f.techTrack) sp.set("techTrack", f.techTrack);
+  if (f.remoteType.length > 0) sp.set("remoteType", f.remoteType.join(","));
+  if (f.fullTime) sp.set("employment", "fulltime");
+  if (!f.skillsOn) sp.set("ps", "0");
+  if (view === "saved") sp.set("view", "saved");
+  if (sort !== "updated") sp.set("sort", sort);
+  return sp;
 }
 
 function DashboardBoard({ user }: { user: AuthUser | null }) {
-  const [q, setQ] = useState(user?.profile.currentRole || "");
-  const [city, setCity] = useState(user?.profile.city || "");
-  const [track, setTrack] = useState<"" | TechTrack>(
-    (user?.profile.techTrack as TechTrack) || "",
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const spKey = searchParams.toString();
+
+  const initial = useMemo(
+    () => filtersFromParams(new URLSearchParams(spKey), user),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
-  const [modes, setModes] = useState<string[]>([]);
-  const [fullTime, setFullTime] = useState(false);
-  const [levels, setLevels] = useState<string[]>([]);
-  const [savedOnly, setSavedOnly] = useState(false);
-  const [sort, setSort] = useState<"updated" | "az">("updated");
+  const [filters, setFilters] = useState<DashFilters>(initial);
+  const [prevInitial, setPrevInitial] = useState(initial);
+  const [view, setView] = useState(
+    new URLSearchParams(spKey).get("view") === "saved" ? "saved" : "all",
+  );
+  const [sort, setSort] = useState(
+    new URLSearchParams(spKey).get("sort") === "az" ? "az" : "updated",
+  );
+
+  // Back/forward navigation re-syncs state from the URL (single source).
+  const live = useMemo(
+    () => filtersFromParams(new URLSearchParams(spKey), user),
+    [spKey],
+  );
+  if (
+    JSON.stringify(live) !== JSON.stringify(filters) &&
+    JSON.stringify(live) !== JSON.stringify(prevInitial)
+  ) {
+    setPrevInitial(live);
+    setFilters(live);
+    const params = new URLSearchParams(spKey);
+    setView(params.get("view") === "saved" ? "saved" : "all");
+    setSort(params.get("sort") === "az" ? "az" : "updated");
+  }
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [total, setTotal] = useState(0);
@@ -124,34 +207,123 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [ids, setIds] = useState<string[]>([]);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const query = useMemo(
-    () => ({
-      q,
-      city,
-      seniority: levels.join(","),
-      techTrack: track,
-      remoteType: modes.join(","),
-      employmentType: fullTime ? FULL_TIME_VALUES.join(",") : "",
-      skills: (user?.profile.skills || []).join(","),
+  const savedOnly = view === "saved";
+
+  const currentParams = useCallback(
+    (): Record<string, string> => ({
+      q: filters.q,
+      city: filters.city,
+      seniority: filters.seniority.join(","),
+      techTrack: filters.techTrack,
+      remoteType: filters.remoteType.join(","),
+      employmentType: filters.fullTime ? FULL_TIME_VALUES.join(",") : "",
+      skills: filters.skillsOn ? (user?.profile.skills || []).join(",") : "",
+      sort,
     }),
-    [q, city, levels, track, modes, fullTime, user],
+    [filters, sort, user],
   );
 
-  // Snapshot of the first-load params (mount only).
-  const firstParamsRef = useRef<Record<string, string | number> | null>(null);
-  if (firstParamsRef.current === null) {
-    firstParamsRef.current = buildParams({
-      q: user?.profile.currentRole || "",
-      city: user?.profile.city || "",
-      seniority: "",
-      techTrack: user?.profile.techTrack || "",
-      remoteType: "",
-      employmentType: "",
-      skills: (user?.profile.skills || []).join(","),
-    });
-  }
+  const pushState = useCallback(
+    (next: DashFilters, nextView: string, nextSort: string) => {
+      const sp = filtersToParams(next, nextView, nextSort);
+      const qs = sp.toString();
+      router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+    },
+    [router, pathname],
+  );
 
+  // Every committed change writes the URL; the fetch effect below reacts.
+  // Plain function over render-scope state (no refs): each render creates
+  // fresh handlers, so rapid successive commits always see latest values.
+  const commit = (
+    patch: Partial<DashFilters>,
+    opts?: { view?: string; sort?: string },
+  ) => {
+    const next = { ...filters, ...patch };
+    const nextView = opts?.view ?? view;
+    const nextSort = opts?.sort ?? sort;
+    setFilters(next);
+    setView(nextView);
+    setSort(nextSort as "updated" | "az");
+    setLoading(true);
+    pushState(next, nextView, nextSort);
+  };
+
+  // Header text inputs edit local state; Search commits to the URL.
+  const setDraft = (patch: Partial<DashFilters>) => {
+    setFilters((f) => ({ ...f, ...patch }));
+  };
+
+  const submit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    commit({});
+  };
+
+  // First-load params, snapshotted once via lazy initializer (no refs).
+  const [firstParams] = useState<Record<string, string | number>>(() => {
+    const params: Record<string, string | number> = {
+      page: 1,
+      limit: PAGE_SIZE,
+    };
+    const first: Record<string, string> = {
+      q: initial.q,
+      city: initial.city,
+      seniority: initial.seniority.join(","),
+      techTrack: initial.techTrack,
+      remoteType: initial.remoteType.join(","),
+      employmentType: initial.fullTime ? FULL_TIME_VALUES.join(",") : "",
+      skills: initial.skillsOn ? (user?.profile.skills || []).join(",") : "",
+      sort: "updated",
+    };
+    for (const [k, v] of Object.entries(first)) {
+      if (v) params[k] = v;
+    }
+    return params;
+  });
+
+  const loadPage = useCallback(
+    async (
+      pageToLoad: number,
+      activeQuery: Record<string, string>,
+      append = false,
+    ) => {
+      if (append) setLoadingMore(true);
+      else setLoading(true);
+      try {
+        const params: Record<string, string | number> = {
+          page: pageToLoad,
+          limit: PAGE_SIZE,
+        };
+        for (const [k, v] of Object.entries(activeQuery)) {
+          if (v) params[k] = v;
+        }
+        const result = await listJobsWithMeta(params);
+        if (append) {
+          setJobs((prev) => {
+            const seen = new Set(prev.map((j) => j._id));
+            return [...prev, ...result.jobs.filter((j) => !seen.has(j._id))];
+          });
+        } else {
+          setJobs(result.jobs);
+        }
+        setTotal(result.total);
+        setTotalPages(result.totalPages);
+        setPage(pageToLoad);
+      } catch {
+        toast.error(
+          "Couldn't load roles. Check your connection and try again.",
+        );
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [],
+  );
+
+  // Saved ids load once per account (key-remount above resets per user).
   useEffect(() => {
     let cancelled = false;
     savedIds()
@@ -159,7 +331,15 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
         if (!cancelled) setIds(list);
       })
       .catch(() => {});
-    listJobsWithMeta(firstParamsRef.current ?? { page: 1, limit: PAGE_SIZE })
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Initial load.
+  useEffect(() => {
+    let cancelled = false;
+    listJobsWithMeta(firstParams)
       .then((result) => {
         if (cancelled) return;
         setJobs(result.jobs);
@@ -180,44 +360,29 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
     };
   }, []);
 
-  const fetchJobs = useCallback(
-    async (
-      pageToLoad: number,
-      append = false,
-      override?: Record<string, string>,
-    ) => {
-      if (append) setLoadingMore(true);
-      else setLoading(true);
-      try {
-        const source = override ?? query;
-        const params: Record<string, string | number> = {
-          page: pageToLoad,
-          limit: PAGE_SIZE,
-        };
-        for (const [k, v] of Object.entries(source)) {
-          if (v) params[k] = v;
-        }
-        const result = await listJobsWithMeta(params);
-        setJobs((prev) => (append ? [...prev, ...result.jobs] : result.jobs));
-        setTotal(result.total);
-        setTotalPages(result.totalPages);
-        setPage(pageToLoad);
-      } catch {
-        toast.error(
-          "Couldn't load roles. Check your connection and try again.",
-        );
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [query],
-  );
-
-  const submit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    fetchJobs(1);
-  };
+  // Committed URL changes (commit() above) push a new spKey, which lands
+  // here and refetches page 1. Back/forward works the same way.
+  const lastFetchedKey = useRef<string | null>(null);
+  useEffect(() => {
+    if (lastFetchedKey.current === null) {
+      lastFetchedKey.current = spKey;
+      return;
+    }
+    if (lastFetchedKey.current === spKey) return;
+    lastFetchedKey.current = spKey;
+    const q = filtersFromParams(new URLSearchParams(spKey), user);
+    const params: Record<string, string> = {
+      q: q.q,
+      city: q.city,
+      seniority: q.seniority.join(","),
+      techTrack: q.techTrack,
+      remoteType: q.remoteType.join(","),
+      employmentType: q.fullTime ? FULL_TIME_VALUES.join(",") : "",
+      skills: q.skillsOn ? (user?.profile.skills || []).join(",") : "",
+      sort: new URLSearchParams(spKey).get("sort") === "az" ? "az" : "updated",
+    };
+    loadPage(1, params);
+  });
 
   const toggleSave = useCallback(async (jobId: string, next: boolean) => {
     try {
@@ -244,57 +409,66 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
   };
 
   const savedSet = useMemo(() => new Set(ids), [ids]);
-  const visible = useMemo(() => {
-    const base = savedOnly ? jobs.filter((j) => savedSet.has(j._id)) : jobs;
-    if (sort === "az") {
-      return [...base].sort((a, b) =>
-        `${a.companyId?.name || ""} ${a.title}`.localeCompare(
-          `${b.companyId?.name || ""} ${b.title}`,
-        ),
-      );
-    }
-    return base;
-  }, [jobs, savedOnly, savedSet, sort]);
-
-  const clearSidebar = () => {
-    setModes([]);
-    setFullTime(false);
-    setLevels([]);
-  };
-
-  const clearSidebarAndFetch = () => {
-    clearSidebar();
-    fetchJobs(1, false, {
-      ...query,
-      remoteType: "",
-      employmentType: "",
-      seniority: "",
-    });
-  };
+  // Server sorts globally (sort=az); saved view filters accumulated pages.
+  const visible = useMemo(
+    () => (savedOnly ? jobs.filter((j) => savedSet.has(j._id)) : jobs),
+    [jobs, savedOnly, savedSet],
+  );
 
   const clearAll = () => {
-    const cleared = {
-      q: "",
-      city: "",
-      seniority: "",
-      techTrack: "",
-      remoteType: "",
-      employmentType: "",
-      skills: (user?.profile.skills || []).join(","),
-    };
-    setQ("");
-    setCity("");
-    setTrack("");
-    clearSidebar();
-    setSavedOnly(false);
-    fetchJobs(1, false, cleared);
+    commit({ ...EMPTY, skillsOn: true }, { view: "all", sort: "updated" });
   };
+
+  // Active-filter chips (profile prefill included) — each clears its slot.
+  const chips: { label: string; clear: () => void }[] = [];
+  if (filters.q)
+    chips.push({ label: `Role: ${filters.q}`, clear: () => commit({ q: "" }) });
+  if (filters.city)
+    chips.push({
+      label: `Location: ${filters.city}`,
+      clear: () => commit({ city: "" }),
+    });
+  if (filters.techTrack) {
+    const label =
+      TECH_TRACKS.find((t) => t.value === filters.techTrack)?.label ??
+      filters.techTrack;
+    chips.push({
+      label: `Track: ${label}`,
+      clear: () => commit({ techTrack: "" }),
+    });
+  }
+  if (filters.seniority.length > 0)
+    chips.push({
+      label: `Level: ${filters.seniority.join(", ")}`,
+      clear: () => commit({ seniority: [] }),
+    });
+  if (filters.remoteType.length > 0)
+    chips.push({
+      label: `Mode: ${filters.remoteType.join(", ")}`,
+      clear: () => commit({ remoteType: [] }),
+    });
+  if (filters.fullTime)
+    chips.push({
+      label: "Full time",
+      clear: () => commit({ fullTime: false }),
+    });
+  const profileSkills = (user?.profile.skills || []).join(", ");
+  if (filters.skillsOn && profileSkills)
+    chips.push({
+      label: `Your skills: ${profileSkills}`,
+      clear: () => commit({ skillsOn: false }),
+    });
+  if (!filters.skillsOn && profileSkills)
+    chips.push({
+      label: "Profile skills off",
+      clear: () => commit({ skillsOn: true }),
+    });
 
   return (
     <div className="bg-[#E5E8EF] -mt-16 pt-16 pb-10 min-h-screen">
       <div className="max-w-[1400px] mx-auto px-3 sm:px-6 pt-4">
         {/* ── Dark shell: search filters (site nav lives in Navbar) ── */}
-        <section className="bg-[#060B18] rounded-3xl px-5 sm:px-8 py-7">
+        <section className="bg-ink rounded-3xl px-5 sm:px-8 py-7">
           <div className="mb-5">
             <h1 className="font-display text-white text-xl sm:text-2xl font-bold tracking-tight">
               {user
@@ -326,9 +500,10 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                 />
               </svg>
               <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Role — Designer"
+                value={filters.q}
+                onChange={(e) => setDraft({ q: e.target.value })}
+                placeholder="Role — Backend, SDE-2, ML"
+                aria-label="Role or keyword"
                 className="w-full py-3 bg-transparent outline-none text-white placeholder:text-white/35 text-[15px]"
               />
             </label>
@@ -352,9 +527,10 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                 />
               </svg>
               <input
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
+                value={filters.city}
+                onChange={(e) => setDraft({ city: e.target.value })}
                 placeholder="Work location"
+                aria-label="Work location"
                 className="w-full py-3 bg-transparent outline-none text-white placeholder:text-white/35 text-[15px]"
               />
             </label>
@@ -373,10 +549,13 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                 />
               </svg>
               <select
-                value={levels.length === 1 ? levels[0] : ""}
-                onChange={(e) =>
-                  setLevels(e.target.value ? [e.target.value] : [])
+                value={
+                  filters.seniority.length === 1 ? filters.seniority[0] : ""
                 }
+                onChange={(e) =>
+                  commit({ seniority: e.target.value ? [e.target.value] : [] })
+                }
+                aria-label="Experience level"
                 className="w-full py-3 bg-transparent outline-none text-white text-[15px] [&>option]:text-slate-900 cursor-pointer"
               >
                 <option value="">Experience</option>
@@ -402,8 +581,11 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                 />
               </svg>
               <select
-                value={track}
-                onChange={(e) => setTrack(e.target.value as "" | TechTrack)}
+                value={filters.techTrack}
+                onChange={(e) =>
+                  commit({ techTrack: e.target.value as "" | TechTrack })
+                }
+                aria-label="Tech track"
                 className="w-full py-3 bg-transparent outline-none text-white text-[15px] [&>option]:text-slate-900 cursor-pointer"
               >
                 <option value="">All tracks</option>
@@ -437,13 +619,13 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
 
         {/* ── Body ── */}
         <div className="grid lg:grid-cols-[290px_1fr] gap-5 mt-5 items-start">
-          <aside className="space-y-5">
-            <div className="relative overflow-hidden rounded-3xl bg-[#060B18] p-6 min-h-64 flex flex-col">
+          <aside className="space-y-5 order-2 lg:order-none">
+            <div className="relative overflow-hidden rounded-3xl bg-ink p-6 min-h-64 hidden lg:flex flex-col">
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    "radial-gradient(300px 200px at 85% 0%, rgba(99,102,241,0.45), transparent), radial-gradient(260px 260px at 10% 100%, rgba(45,212,191,0.25), transparent)",
+                    "radial-gradient(300px 200px at 85% 0%, rgba(47,111,237,0.35), transparent)",
                 }}
                 aria-hidden
               />
@@ -461,63 +643,95 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
             <div className="bg-white rounded-3xl border border-slate-200/70 p-5">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="font-bold text-slate-900 text-lg">Filters</h2>
-                <button
-                  onClick={clearSidebarAndFetch}
-                  className="text-[13px] font-semibold text-slate-400 hover:text-red-500 underline underline-offset-4"
-                >
-                  Clear
-                </button>
+                <span className="flex items-center gap-3">
+                  <button
+                    onClick={() => commit(EMPTY)}
+                    className="text-[13px] font-semibold text-slate-400 hover:text-red-500 underline underline-offset-4"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    onClick={() => setFiltersOpen((v) => !v)}
+                    aria-expanded={filtersOpen}
+                    aria-label={
+                      filtersOpen ? "Collapse filters" : "Expand filters"
+                    }
+                    className="lg:hidden w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500"
+                  >
+                    <svg
+                      className={`w-4 h-4 transition-transform ${filtersOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                      />
+                    </svg>
+                  </button>
+                </span>
               </div>
-              <p className="text-[13px] font-medium text-slate-400 mt-3 mb-1">
-                Work mode
-              </p>
-              {WORK_MODES.map((m) => (
+              <div className={filtersOpen ? "block" : "hidden lg:block"}>
+                <p className="text-xs text-slate-400 mb-1">
+                  Changes apply instantly.
+                </p>
+                <p className="text-[13px] font-medium text-slate-400 mt-3 mb-1">
+                  Work mode
+                </p>
+                {WORK_MODES.map((m) => (
+                  <Check
+                    key={m.value}
+                    label={m.label}
+                    checked={filters.remoteType.includes(m.value)}
+                    onChange={() =>
+                      commit({
+                        remoteType: toggle(filters.remoteType, m.value),
+                      })
+                    }
+                  />
+                ))}
+                <p className="text-[13px] font-medium text-slate-400 mt-4 mb-1">
+                  Employment
+                </p>
                 <Check
-                  key={m.value}
-                  label={m.label}
-                  checked={modes.includes(m.value)}
-                  onChange={() => setModes((prev) => toggle(prev, m.value))}
+                  label="Full time"
+                  checked={filters.fullTime}
+                  onChange={() => commit({ fullTime: !filters.fullTime })}
                 />
-              ))}
-              <p className="text-[13px] font-medium text-slate-400 mt-4 mb-1">
-                Employment
-              </p>
-              <Check
-                label="Full time"
-                checked={fullTime}
-                onChange={() => setFullTime((v) => !v)}
-              />
-              <p className="text-[13px] font-medium text-slate-400 mt-4 mb-1">
-                Level
-              </p>
-              {LEVELS.map((l) => (
-                <Check
-                  key={l}
-                  label={l}
-                  checked={levels.includes(l)}
-                  onChange={() => setLevels((prev) => toggle(prev, l))}
-                />
-              ))}
-              <button
-                onClick={() => fetchJobs(1)}
-                className="mt-4 w-full px-4 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark transition-all"
-              >
-                Apply filters
-              </button>
+                <p className="text-[13px] font-medium text-slate-400 mt-4 mb-1">
+                  Level
+                </p>
+                {LEVELS.map((l) => (
+                  <Check
+                    key={l}
+                    label={l}
+                    checked={filters.seniority.includes(l)}
+                    onChange={() =>
+                      commit({ seniority: toggle(filters.seniority, l) })
+                    }
+                  />
+                ))}
+              </div>
             </div>
           </aside>
 
-          <section>
+          <section className="order-1 lg:order-none">
             <div className="flex items-center justify-between flex-wrap gap-3 mb-4 px-1">
               <h1 className="text-[28px] font-bold text-slate-900 tracking-tight flex items-center gap-3">
-                Recommended jobs
+                {savedOnly ? "Saved roles" : "Recommended jobs"}
                 <span className="px-3 py-1 rounded-full border border-slate-300 text-sm font-semibold text-slate-600">
-                  {savedOnly ? visible.length : total}
+                  {savedOnly ? `${visible.length} of ${ids.length}` : total}
                 </span>
               </h1>
               <div className="flex items-center gap-2 text-sm">
                 <button
-                  onClick={() => setSavedOnly((v) => !v)}
+                  onClick={() =>
+                    commit({}, { view: savedOnly ? "all" : "saved" })
+                  }
                   aria-pressed={savedOnly}
                   className={`px-4 py-1.5 rounded-full border text-sm font-semibold transition-all ${
                     savedOnly
@@ -532,16 +746,35 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                   <select
                     value={sort}
                     onChange={(e) =>
-                      setSort(e.target.value as "updated" | "az")
+                      commit({}, { sort: e.target.value as "updated" | "az" })
                     }
                     className="text-slate-900 font-semibold bg-transparent outline-none cursor-pointer"
                   >
                     <option value="updated">Last updated</option>
-                    <option value="az">Company A–Z</option>
+                    <option value="az">Title A–Z</option>
                   </select>
                 </label>
               </div>
             </div>
+
+            {chips.length > 0 && (
+              <div
+                className="flex flex-wrap gap-1.5 mb-4 px-1"
+                aria-label="Active filters"
+              >
+                {chips.map((chip) => (
+                  <button
+                    key={chip.label}
+                    onClick={chip.clear}
+                    title={`Remove ${chip.label}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-electric-soft text-electric-deep text-[13px] font-semibold hover:opacity-80 transition-all"
+                  >
+                    {chip.label}
+                    <span aria-hidden>×</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {loading ? (
@@ -580,16 +813,18 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
               )}
             </div>
 
-            {!loading && !savedOnly && page < totalPages && (
+            {!loading && page < totalPages && (
               <div className="text-center mt-8">
                 <button
-                  onClick={() => fetchJobs(page + 1, true)}
+                  onClick={() => loadPage(page + 1, currentParams(), true)}
                   disabled={loadingMore}
                   className="px-8 py-3 bg-white border border-slate-200 rounded-full font-semibold text-slate-900 text-[15px] hover:shadow-card transition-all disabled:opacity-50"
                 >
                   {loadingMore
                     ? "Loading…"
-                    : `Load more (${total - jobs.length} left)`}
+                    : savedOnly
+                      ? `Load more saved (${ids.length - visible.length} left)`
+                      : `Load more (${total - jobs.length} left)`}
                 </button>
               </div>
             )}

@@ -17,7 +17,7 @@ Self-contained repo: product/routes/design/decisions/changelog/skills live here 
 ## Runtime
 
 - **Node 22** (`.nvmrc` + `engines`; Node 20 crashes on jsdom). `npm run dev` → `:3000` (needs backend at `:8000` for data).
-- Checks: `npx eslint .` (zero errors; `setState` sync-in-`useEffect` is an error — use initializers + key-remount, promise-callback fetches), `npx tsc --noEmit`, `npm run build` (18 routes).
+- Checks: `npx eslint .` (zero errors; `setState` sync-in-`useEffect` is an error — use initializers + key-remount, promise-callback fetches), `npx tsc --noEmit`, `npm run build` (20 routes).
 
 ## Conventions
 
@@ -26,6 +26,7 @@ Self-contained repo: product/routes/design/decisions/changelog/skills live here 
 - SEO: `/jobs` etc. stay public; auth/dashboard never in sitemap; `robots.ts` disallows them; per-job JSON-LD.
 - Secrets: only `NEXT_PUBLIC_*` in browser (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`).
 - Commits `feat:/fix:/chore:/ci:/docs:`, only when asked. Never commit `.env*`/secrets.
+- **Branching: feature branches → PR into `develop` (auto-deploys staging) → tested → PR `develop` → `main` (auto-deploys prod). Never touch `main` directly.**
 
 ## Gotchas
 

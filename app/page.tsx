@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import CompanyLogo from "@/components/CompanyLogo";
-import { listCompanies, type Company } from "@/lib/reerhub";
+import { listCompanies, TECH_TRACKS, type Company } from "@/lib/reerhub";
 
 const WHY = [
   {
@@ -70,7 +71,10 @@ const WHY = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [hq, setHq] = useState("");
+  const [htrack, setHtrack] = useState("");
 
   useEffect(() => {
     listCompanies()
@@ -81,74 +85,119 @@ export default function Home() {
   const hiring = companies.filter((c) => (c.activeJobs ?? 0) > 0);
   const totalRoles = companies.reduce((sum, c) => sum + (c.activeJobs ?? 0), 0);
 
+  const searchJobs = (e: React.FormEvent) => {
+    e.preventDefault();
+    const sp = new URLSearchParams();
+    if (hq.trim()) sp.set("q", hq.trim());
+    if (htrack) sp.set("techTrack", htrack);
+    const qs = sp.toString();
+    router.push(`/jobs${qs ? `?${qs}` : ""}`);
+  };
+
   return (
     <div>
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-[#060B18]">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(700px 340px at 8% -80px, rgba(46,107,255,0.28), transparent), radial-gradient(620px 300px at 92% 12%, rgba(45,212,191,0.16), transparent), radial-gradient(480px 320px at 60% 120%, rgba(99,102,241,0.18), transparent)",
-          }}
-          aria-hidden
-        />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-16 text-center">
-          <p className="rise-in inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 border border-white/15 bg-white/5 rounded-full px-4 py-1.5 mb-6">
+      <section className="bg-white border-b border-slate-200/70">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-16">
+          <p className="rise-in inline-flex items-center gap-2 text-[13px] font-semibold text-electric-deep bg-electric-soft rounded-full px-4 py-1.5 mb-6">
             Engineering & AI roles only
           </p>
-          <h1 className="rise-in font-display text-4xl sm:text-[52px] leading-[1.08] font-bold text-white tracking-tight mb-5 max-w-3xl mx-auto">
+          <h1 className="rise-in font-display text-4xl sm:text-[56px] leading-[1.06] font-bold text-slate-900 tracking-tight mb-5 max-w-3xl">
             Tech jobs from India&apos;s top product companies.
           </h1>
-          <p className="rise-in text-white/70 text-base sm:text-lg mb-9 max-w-xl mx-auto leading-relaxed">
+          <p className="rise-in text-slate-500 text-base sm:text-lg mb-9 max-w-xl leading-relaxed">
             SDE, AI/ML, data, cloud, mobile, security, and more — indexed daily
             from official career pages. Apply directly on the company site.
           </p>
-          <div className="rise-in flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
+          <form
+            onSubmit={searchJobs}
+            role="search"
+            aria-label="Search tech roles"
+            className="rise-in max-w-2xl flex flex-col sm:flex-row gap-2.5 p-2.5 rounded-2xl bg-white border border-slate-200 shadow-card mb-4"
+          >
+            <label className="flex items-center gap-2.5 flex-1 px-4 rounded-xl bg-surface focus-within:ring-2 focus-within:ring-electric-soft transition-all">
+              <svg
+                className="w-5 h-5 text-slate-400 shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+              <span className="sr-only">Search roles or skills</span>
+              <input
+                value={hq}
+                onChange={(e) => setHq(e.target.value)}
+                placeholder="Try Backend, React, ML…"
+                className="w-full py-3 bg-transparent outline-none text-slate-900 placeholder:text-slate-400 text-[15px]"
+              />
+            </label>
+            <label className="flex items-center gap-2 sm:w-48 px-4 rounded-xl bg-surface focus-within:ring-2 focus-within:ring-electric-soft transition-all">
+              <span className="sr-only">Tech track</span>
+              <select
+                value={htrack}
+                onChange={(e) => setHtrack(e.target.value)}
+                className="w-full py-3 bg-transparent outline-none text-slate-900 text-[15px] cursor-pointer"
+              >
+                <option value="">All tracks</option>
+                {TECH_TRACKS.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="submit"
+              className="px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark active:bg-electric-deep transition-all shadow-sm"
+            >
+              Search roles
+            </button>
+          </form>
+          <p className="rise-in text-slate-500 text-sm mb-10 tabular-nums">
+            {companies.length > 0 ? (
+              <>
+                {totalRoles} open India roles · {companies.length} companies ·
+                refreshed daily
+              </>
+            ) : (
+              <span
+                className="inline-block h-4 w-56 rounded bg-slate-100 animate-pulse"
+                aria-hidden
+              />
+            )}
+          </p>
+          <div className="rise-in flex items-center gap-5 text-sm">
+            <Link
+              href="/engineering"
+              className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
+            >
+              Engineering
+            </Link>
+            <span aria-hidden className="text-slate-300">
+              /
+            </span>
+            <Link
+              href="/ai"
+              className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
+            >
+              AI / ML
+            </Link>
+            <span aria-hidden className="text-slate-300">
+              /
+            </span>
             <Link
               href="/signup"
-              className="w-full sm:w-auto px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark active:bg-electric-deep transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)] text-center"
+              className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
             >
-              Get matched roles
+              Get matched →
             </Link>
-            <div className="flex w-full sm:w-auto gap-3">
-              <Link
-                href="/engineering"
-                className="flex-1 sm:flex-none px-6 py-3 bg-white/5 text-white border border-white/20 rounded-xl font-semibold hover:bg-white/10 transition-all text-center backdrop-blur-sm"
-              >
-                Engineering
-              </Link>
-              <Link
-                href="/ai"
-                className="flex-1 sm:flex-none px-6 py-3 bg-white/5 text-white border border-white/20 rounded-xl font-semibold hover:bg-white/10 transition-all text-center backdrop-blur-sm"
-              >
-                AI / ML
-              </Link>
-            </div>
-          </div>
-
-          {/* Live stat strip */}
-          <div className="rise-in max-w-2xl mx-auto grid grid-cols-3 gap-3">
-            {[
-              {
-                k: companies.length > 0 ? String(totalRoles) : "—",
-                label: "Open India roles",
-              },
-              { k: String(companies.length), label: "Companies" },
-              { k: "9", label: "Tech tracks" },
-            ].map((s) => (
-              <div
-                key={s.label}
-                className="rounded-xl bg-white/5 border border-white/10 px-4 py-3 backdrop-blur-sm"
-              >
-                <p className="text-xl sm:text-2xl font-bold text-white">
-                  {s.k}
-                </p>
-                <p className="text-[11px] uppercase tracking-wider text-white/50 mt-0.5">
-                  {s.label}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -308,25 +357,20 @@ export default function Home() {
 
       {/* ── CTA ── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-        <div className="bg-[#060B18] rounded-3xl px-6 sm:px-12 py-12 sm:py-16 text-center relative overflow-hidden">
-          <div
-            className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-52 rounded-full blur-3xl pointer-events-none"
-            style={{ background: "rgba(46,107,255,0.22)" }}
-            aria-hidden
-          />
-          <p className="relative text-xs font-semibold uppercase tracking-[0.2em] text-white/60 mb-3">
-            Real Effective Engineering Roles Hub.
+        <div className="bg-electric-soft rounded-3xl px-6 sm:px-12 py-12 sm:py-16 text-center">
+          <p className="text-sm font-semibold text-electric-deep mb-3">
+            Real Effective Engineering Roles Hub
           </p>
-          <h2 className="relative text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
+          <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
             Find roles. Build what&apos;s next.
           </h2>
-          <p className="relative text-white/70 mb-8 max-w-md mx-auto leading-relaxed">
+          <p className="text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">
             Engineering and AI openings from top product companies — always on
             their official pages.
           </p>
           <Link
             href="/signup"
-            className="relative inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)]"
+            className="inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all shadow-sm"
           >
             Get started free
           </Link>

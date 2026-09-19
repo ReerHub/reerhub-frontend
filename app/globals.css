@@ -1,19 +1,27 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* REERHUB BRAND TOKENS — light theme only (see docs/design/design-system.md) */
-  --color-primary: #2563eb; /* Bright blue: primary actions (legacy alias) */
-  --color-electric: #2e6bff; /* Primary actions */
-  --color-electric-dark: #2456cc; /* Primary hover */
-  --color-electric-deep: #1d46a8; /* Primary active + on-tint text */
-  --color-electric-soft: #e9effe; /* Primary tint backgrounds */
-  --color-ink: #060b18; /* Dark surfaces (single navy) */
-  --color-primary-dark: #1d4ed8; /* Hover */
-  --color-primary-deep: #1e40af; /* Active */
+  /* REERHUB COLOR SYSTEM v3 (see docs/design/design-system.md)
+     Primary #2F6FED · Ink #111827 · Gray #9AA8BC · Light blue #E8F0FF
+     Light surfaces only on public pages; ink reserved for workspace chrome. */
+  --color-primary: #2f6fed; /* Primary actions */
+  --color-primary-dark: #2559c4; /* Primary hover */
+  --color-primary-deep: #1d47a1; /* Primary active + on-tint text */
+  --color-primary-soft: #e8f0ff; /* Primary tint backgrounds */
+  --color-electric: #2f6fed; /* Alias of primary (migration compat) */
+  --color-electric-dark: #2559c4;
+  --color-electric-deep: #1d47a1;
+  --color-electric-soft: #e8f0ff;
+  --color-ink: #111827; /* Dark surfaces (single) */
+  --color-surface: #f7f9fc; /* Light input wells + page background */
   --color-brand-light: #3b82f6;
-  --color-brand-cyan: #0d9488; /* Accent (teal-600, WCAG-safe on light) */
+  --color-brand-cyan: #0d9488; /* Verified/live accents only */
   --color-brand-purple: #6366f1;
-  --color-navy: #0b1730; /* Hero + CTA sections */
+  --color-navy: #111827; /* Legacy alias of ink */
+
+  /* Text scale override: secondary text uses Neural Gray per system. */
+  --color-slate-500: #9aa8bc;
+  --color-slate-900: #111827;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -22,11 +30,11 @@
   --font-display: var(--font-space-grotesk), "Inter", ui-sans-serif, system-ui,
     sans-serif;
 
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04),
-    0 1px 3px rgba(15, 23, 42, 0.06);
-  --shadow-card-hover: 0 4px 8px rgba(15, 23, 42, 0.06),
-    0 12px 28px rgba(15, 23, 42, 0.1);
-  --shadow-pop: 0 6px 24px rgba(15, 23, 42, 0.12);
+  --shadow-card: 0 1px 2px rgba(17, 24, 39, 0.04),
+    0 1px 3px rgba(17, 24, 39, 0.06);
+  --shadow-card-hover: 0 4px 8px rgba(17, 24, 39, 0.06),
+    0 12px 28px rgba(17, 24, 39, 0.1);
+  --shadow-pop: 0 6px 24px rgba(17, 24, 39, 0.12);
 }
 
 :root {
@@ -96,6 +104,30 @@ body {
 }
 .rise-in {
   animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Hide scrollbars on scrollable pill rails (nav still scrolls by touch). */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* One orchestrated entrance lives on the marketing hero only.
+   Everywhere else, motion answers user actions (hover, expand, toggle).
+   Honor reduced-motion: stillness, static skeletons, native scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
+  .skeleton {
+    animation: none;
+    background: #e2e8f0;
+  }
+  html[data-scroll-behavior="smooth"] {
+    scroll-behavior: auto;
+  }
 }
 
 /* ATS job-description typography (uncontrolled HTML from boards) */

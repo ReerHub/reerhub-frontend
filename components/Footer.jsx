@@ -108,11 +108,11 @@ export default function Footer() {
               aria-label="ReerHub home"
             >
               <Image
-                src="/reerhub-logo.png"
+                src="/reerhub-icon-logo.png"
                 alt="ReerHub logo"
-                width={96}
-                height={64}
-                className="h-8 w-auto"
+                width={36}
+                height={36}
+                className="w-9 h-9 rounded-lg"
               />
               <span className="font-bold text-slate-900 text-[17px] tracking-tight">
                 ReerHub
@@ -149,6 +149,11 @@ export default function Footer() {
                   />
                 </li>
               ))}
+              {companies.length === 0 && (
+                <li className="text-sm text-slate-400">
+                  Company list is loading…
+                </li>
+              )}
             </ul>
             <p className="mt-3 pt-3 border-t border-slate-100">
               <FooterLink href="/companies" label="View all →" />
