@@ -97,23 +97,15 @@ export default function Home() {
   return (
     <div>
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-[#060B18]">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(700px 340px at 8% -80px, rgba(46,107,255,0.28), transparent), radial-gradient(620px 300px at 92% 12%, rgba(45,212,191,0.16), transparent), radial-gradient(480px 320px at 60% 120%, rgba(99,102,241,0.18), transparent)",
-          }}
-          aria-hidden
-        />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-16 text-center">
-          <p className="rise-in inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 border border-white/15 bg-white/5 rounded-full px-4 py-1.5 mb-6">
+      <section className="bg-white border-b border-slate-200/70">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-12 sm:pb-16">
+          <p className="rise-in inline-flex items-center gap-2 text-[13px] font-semibold text-electric-deep bg-electric-soft rounded-full px-4 py-1.5 mb-6">
             Engineering & AI roles only
           </p>
-          <h1 className="rise-in font-display text-4xl sm:text-[52px] leading-[1.08] font-bold text-white tracking-tight mb-5 max-w-3xl mx-auto">
+          <h1 className="rise-in font-display text-4xl sm:text-[56px] leading-[1.06] font-bold text-slate-900 tracking-tight mb-5 max-w-3xl">
             Tech jobs from India&apos;s top product companies.
           </h1>
-          <p className="rise-in text-white/70 text-base sm:text-lg mb-9 max-w-xl mx-auto leading-relaxed">
+          <p className="rise-in text-slate-500 text-base sm:text-lg mb-9 max-w-xl leading-relaxed">
             SDE, AI/ML, data, cloud, mobile, security, and more — indexed daily
             from official career pages. Apply directly on the company site.
           </p>
@@ -121,11 +113,11 @@ export default function Home() {
             onSubmit={searchJobs}
             role="search"
             aria-label="Search tech roles"
-            className="rise-in max-w-2xl mx-auto flex flex-col sm:flex-row gap-2.5 p-2.5 rounded-2xl bg-white/[0.07] border border-white/15 backdrop-blur-sm mb-4"
+            className="rise-in max-w-2xl flex flex-col sm:flex-row gap-2.5 p-2.5 rounded-2xl bg-white border border-slate-200 shadow-card mb-4"
           >
-            <label className="flex items-center gap-2.5 flex-1 px-4 rounded-xl bg-transparent focus-within:bg-white/5 transition-colors">
+            <label className="flex items-center gap-2.5 flex-1 px-4 rounded-xl bg-surface focus-within:ring-2 focus-within:ring-electric-soft transition-all">
               <svg
-                className="w-5 h-5 text-white/50 shrink-0"
+                className="w-5 h-5 text-slate-400 shrink-0"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -143,15 +135,15 @@ export default function Home() {
                 value={hq}
                 onChange={(e) => setHq(e.target.value)}
                 placeholder="Try Backend, React, ML…"
-                className="w-full py-3 bg-transparent outline-none text-white placeholder:text-white/40 text-[15px]"
+                className="w-full py-3 bg-transparent outline-none text-slate-900 placeholder:text-slate-400 text-[15px]"
               />
             </label>
-            <label className="flex items-center gap-2 sm:w-48 px-4 rounded-xl bg-transparent focus-within:bg-white/5 transition-colors">
+            <label className="flex items-center gap-2 sm:w-48 px-4 rounded-xl bg-surface focus-within:ring-2 focus-within:ring-electric-soft transition-all">
               <span className="sr-only">Tech track</span>
               <select
                 value={htrack}
                 onChange={(e) => setHtrack(e.target.value)}
-                className="w-full py-3 bg-transparent outline-none text-white text-[15px] [&>option]:text-slate-900 cursor-pointer"
+                className="w-full py-3 bg-transparent outline-none text-slate-900 text-[15px] cursor-pointer"
               >
                 <option value="">All tracks</option>
                 {TECH_TRACKS.map((t) => (
@@ -163,12 +155,12 @@ export default function Home() {
             </label>
             <button
               type="submit"
-              className="px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark active:bg-electric-deep transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)]"
+              className="px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark active:bg-electric-deep transition-all shadow-sm"
             >
               Search roles
             </button>
           </form>
-          <p className="rise-in text-white/50 text-sm mb-10 tabular-nums">
+          <p className="rise-in text-slate-500 text-sm mb-10 tabular-nums">
             {companies.length > 0 ? (
               <>
                 {totalRoles} open India roles · {companies.length} companies ·
@@ -176,33 +168,33 @@ export default function Home() {
               </>
             ) : (
               <span
-                className="inline-block h-4 w-56 rounded bg-white/10 animate-pulse"
+                className="inline-block h-4 w-56 rounded bg-slate-100 animate-pulse"
                 aria-hidden
               />
             )}
           </p>
-          <div className="rise-in flex items-center justify-center gap-5 text-sm">
+          <div className="rise-in flex items-center gap-5 text-sm">
             <Link
               href="/engineering"
-              className="text-white/70 hover:text-white font-semibold transition-colors"
+              className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
             >
               Engineering
             </Link>
-            <span aria-hidden className="text-white/25">
+            <span aria-hidden className="text-slate-300">
               /
             </span>
             <Link
               href="/ai"
-              className="text-white/70 hover:text-white font-semibold transition-colors"
+              className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
             >
               AI / ML
             </Link>
-            <span aria-hidden className="text-white/25">
+            <span aria-hidden className="text-slate-300">
               /
             </span>
             <Link
               href="/signup"
-              className="text-white/70 hover:text-white font-semibold transition-colors"
+              className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
             >
               Get matched →
             </Link>
@@ -365,25 +357,20 @@ export default function Home() {
 
       {/* ── CTA ── */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-        <div className="bg-[#060B18] rounded-3xl px-6 sm:px-12 py-12 sm:py-16 text-center relative overflow-hidden">
-          <div
-            className="absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-52 rounded-full blur-3xl pointer-events-none"
-            style={{ background: "rgba(46,107,255,0.22)" }}
-            aria-hidden
-          />
-          <p className="relative text-xs font-semibold uppercase tracking-[0.2em] text-white/60 mb-3">
-            Real Effective Engineering Roles Hub.
+        <div className="bg-electric-soft rounded-3xl px-6 sm:px-12 py-12 sm:py-16 text-center">
+          <p className="text-sm font-semibold text-electric-deep mb-3">
+            Real Effective Engineering Roles Hub
           </p>
-          <h2 className="relative text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4">
+          <h2 className="font-display text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
             Find roles. Build what&apos;s next.
           </h2>
-          <p className="relative text-white/70 mb-8 max-w-md mx-auto leading-relaxed">
+          <p className="text-slate-500 mb-8 max-w-md mx-auto leading-relaxed">
             Engineering and AI openings from top product companies — always on
             their official pages.
           </p>
           <Link
             href="/signup"
-            className="relative inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)]"
+            className="inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all shadow-sm"
           >
             Get started free
           </Link>

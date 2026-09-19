@@ -468,7 +468,7 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
     <div className="bg-[#E5E8EF] -mt-16 pt-16 pb-10 min-h-screen">
       <div className="max-w-[1400px] mx-auto px-3 sm:px-6 pt-4">
         {/* ── Dark shell: search filters (site nav lives in Navbar) ── */}
-        <section className="bg-[#060B18] rounded-3xl px-5 sm:px-8 py-7">
+        <section className="bg-ink rounded-3xl px-5 sm:px-8 py-7">
           <div className="mb-5">
             <h1 className="font-display text-white text-xl sm:text-2xl font-bold tracking-tight">
               {user
@@ -620,12 +620,12 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
         {/* ── Body ── */}
         <div className="grid lg:grid-cols-[290px_1fr] gap-5 mt-5 items-start">
           <aside className="space-y-5 order-2 lg:order-none">
-            <div className="relative overflow-hidden rounded-3xl bg-[#060B18] p-6 min-h-64 hidden lg:flex flex-col">
+            <div className="relative overflow-hidden rounded-3xl bg-ink p-6 min-h-64 hidden lg:flex flex-col">
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    "radial-gradient(300px 200px at 85% 0%, rgba(99,102,241,0.45), transparent), radial-gradient(260px 260px at 10% 100%, rgba(45,212,191,0.25), transparent)",
+                    "radial-gradient(300px 200px at 85% 0%, rgba(47,111,237,0.35), transparent)",
                 }}
                 aria-hidden
               />

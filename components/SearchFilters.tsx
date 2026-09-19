@@ -269,7 +269,7 @@ export default function SearchFilters({
           title="India-first feed: hide non-India roles"
           className={`${pillBase} ${
             filters.indiaOnly
-              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+              ? "bg-green-50 text-green-700 border border-green-200"
               : pillInactive
           }`}
         >

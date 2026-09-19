@@ -61,9 +61,9 @@ export default async function CompanyDetailPage({
               </h1>
               <p className="text-slate-500 text-[15px] mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                 {company.industry && <span>{company.industry}</span>}
-                <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold">
+                <span className="inline-flex items-center gap-1.5 text-green-700 font-semibold">
                   <span
-                    className="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                    className="w-1.5 h-1.5 rounded-full bg-green-500"
                     aria-hidden
                   />
                   {openCount} open roles

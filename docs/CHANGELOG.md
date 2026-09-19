@@ -1,5 +1,11 @@
 # Changelog (frontend)
 
+## Unreleased — Color system v3 + light marketing (on `ui/redesign-v2`)
+
+- New palette: primary `#2F6FED` family, Neural Dark `#111827`, Neural Gray `#9AA8BC`, Light Blue `#E8F0FF`; success/error/warning aligned; teal reserved for official-trust marks only.
+- Public pages go white (listing sub-heroes, home hero + CTA tint panel); dashboard shell, promo, and Apply card stay ink as workspace anchors; glow gradients and blue glow shadows removed.
+- `design-system.md` v3; slate-900/500 overridden in `@theme` (commented).
+
 ## Unreleased — Redesign PR 1 + ui-ux-pro-max skill
 
 - Electric-blue token family, single ink navy, Space Grotesk display type, unified radii; footer/breadcrumb/404 point at `/jobs`; signup preserves `?next=`.
