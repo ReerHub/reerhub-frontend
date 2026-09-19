@@ -1,5 +1,10 @@
 # Changelog (frontend)
 
+## Unreleased — Redesign PR 1 + ui-ux-pro-max skill
+
+- Electric-blue token family, single ink navy, Space Grotesk display type, unified radii; footer/breadcrumb/404 point at `/jobs`; signup preserves `?next=`.
+- New skill `ui-ux-pro-max` (systematic design rules); UI work uses both design skills (direction, then rules pass).
+
 ## Unreleased — Staging guards (on `ui/staging-robots`)
 
 - `robots.ts` returns disallow-all on staging hosts (SSO off, crawlers must stay out). ADR-010 adopts the staging promotion flow.
