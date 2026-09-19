@@ -110,8 +110,8 @@ export default function Footer() {
               <Image
                 src="/reerhub-logo.png"
                 alt="ReerHub logo"
-                width={96}
-                height={64}
+                width={120}
+                height={60}
                 className="h-8 w-auto"
               />
               <span className="font-bold text-slate-900 text-[17px] tracking-tight">
