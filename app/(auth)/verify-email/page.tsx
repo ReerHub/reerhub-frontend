@@ -96,7 +96,7 @@ function ResendForm() {
 
   if (sent) {
     return (
-      <p className="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl px-4 py-3 text-sm font-medium">
+      <p className="bg-green-50 border border-green-200 text-green-800 rounded-xl px-4 py-3 text-sm font-medium">
         If an unverified account exists for {email}, a new link is on its way.
       </p>
     );

@@ -209,9 +209,9 @@ export default async function JobDetailPage({
                 )}
               </div>
               <span className="ml-auto inline-flex items-center gap-2 shrink-0">
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-lg">
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-50 border border-green-100 px-2.5 py-1 rounded-lg">
                   <span
-                    className="w-1.5 h-1.5 rounded-full bg-emerald-500"
+                    className="w-1.5 h-1.5 rounded-full bg-green-500"
                     aria-hidden
                   />
                   Active
@@ -307,7 +307,7 @@ export default async function JobDetailPage({
 
         <aside className="order-1 lg:order-none lg:sticky lg:top-24 space-y-4">
           {job.applicationUrl && (
-            <div className="bg-[#060B18] text-white rounded-2xl p-6 shadow-card-hover">
+            <div className="bg-ink text-white rounded-2xl p-6 shadow-card-hover">
               <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-teal-300 mb-2">
                 Official application
               </p>
@@ -319,7 +319,7 @@ export default async function JobDetailPage({
                 href={job.applicationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-electric text-white rounded-xl font-semibold text-[15px] hover:bg-electric-dark active:bg-electric-deep transition-all shadow-[0_8px_20px_rgba(46,107,255,0.35)]"
+                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-electric text-white rounded-xl font-semibold text-[15px] hover:bg-electric-dark active:bg-electric-deep transition-all shadow-sm"
               >
                 Apply Now
                 <svg

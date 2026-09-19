@@ -1,6 +1,6 @@
 # ReerHub Design System
 
-> Version: 2.0
+> Version: 3.0 (supersedes v2 navy/gradient system)
 >
 > Status: Active
 >
@@ -153,95 +153,81 @@ Use it primarily on:
 
 ---
 
-## 5. Brand Color Palette
+## 5. Brand Color Palette (v3 color system)
 
-### Primary Colors
+Modern, clean, premium SaaS: white backgrounds, one primary accent, no
+gradients, no heavy shadows, no visual clutter. Dark ink is reserved for
+workspace chrome (dashboard shell, apply card) — never marketing surfaces.
 
-#### Navy
-
-HEX:
-
-`#07152E`
-
-Usage:
-
-- Main dark background (hero, selected dark sections)
-- Dark section text base (pair with white text)
-
----
-
-#### Deep Navy
+### Primary Blue (also Neural Blue)
 
 HEX:
 
-`#0B1F3A`
+`#2F6FED`
 
 Usage:
 
-- Sections / footer background
+- Primary buttons, links, active states, selected filters.
+- Hover `#2559C4`, active `#1D46A8`, tint `#E8F0FF` (text on tint: `#1D46A8`).
+- Contrast on white: 4.5:1 (AA minimum — do not lighten for text).
 
 ---
 
-#### Blue
+### Neural Dark
 
 HEX:
 
-`#3B82F6`
+`#111827`
 
 Usage:
 
-- Primary brand color
-- Gradient stops
-- Hover accents
+- Headings and primary text (light surfaces).
+- Single dark surface for workspace chrome (dashboard shell, apply card).
 
 ---
 
-#### Bright Blue
+### Neural Gray
 
 HEX:
 
-`#2563EB`
+`#9AA8BC`
 
 Usage:
 
-- Primary buttons
-- Links
-- Active states
-- Selected filters
-- Important actions
-
-This is the main ReerHub interaction color.
+- Secondary text, placeholders, meta labels. Never body copy, never borders.
 
 ---
 
-#### Cyan Accent
+### Light Blue
 
 HEX:
 
-`#2DD4BF`
+`#E8F0FF`
 
 Usage:
 
-- Accent elements
-- Gradient start
-- Small highlights
-
-Use sparingly — accent, never primary CTA.
+- Tint panels (CTA), selected pills, focus rings. Pair with `#1D46A8` text.
 
 ---
 
-#### Purple Accent
+### Background / Surface / Border
 
-HEX:
-
-`#6366F1`
-
-Usage:
-
-- Gradient end
-- Decorative accents
+- Background `#FFFFFF`, Surface `#F7F9FC` (input wells), Border `#E2E8F0`.
 
 ---
+
+### States
+
+- Success `#16A34A` (text: `#166534` on white for AA), Warning `#F59E0B`
+  (text: `#92400E`), Error `#DC2626`.
+- Verified/official trust marks: teal, and only there.
+
+---
+
+### Retired v2 tokens
+
+Navy `#07152E`/`#0B1730`, bright blue `#2563EB`, cyan/purple gradients,
+glow shadows. Dashboard pastels are retained (pop against ink).
 
 ## 6. Neutral Colors
 
@@ -260,11 +246,11 @@ Usage:
 
 ---
 
-### Slate 900 (Main Text)
+### Neural Dark (Headings and primary text — was Slate 900)
 
 HEX:
 
-`#0F172A`
+`#111827`
 
 Usage:
 
@@ -291,11 +277,11 @@ Usage:
 
 ---
 
-### Slate 500 (Muted Text)
+### Neural Gray (Muted text — was Slate 500)
 
 HEX:
 
-`#64748B`
+`#9AA8BC`
 
 Usage:
 
@@ -345,15 +331,15 @@ This should be the default application background.
 
 Primary:
 
-`#10B981`
+`#16A34A`
 
 Background:
 
-`#ECFDF5`
+`#F0FDF4`
 
-Text:
+Text (AA on white):
 
-`#047857`
+`#166534`
 
 Usage:
 
@@ -368,7 +354,7 @@ Usage:
 
 Primary:
 
-`#EF4444`
+`#DC2626`
 
 Background:
 
