@@ -45,18 +45,18 @@ export const metadata = {
     title: "ReerHub | Engineering & AI jobs in India",
     description:
       "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages.",
-    images: ["/reerhub-logo.png"],
+    images: ["/reerhub-logo-with-text.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "ReerHub | Engineering & AI jobs in India",
     description:
       "Engineering, data, and AI roles from India's top product companies.",
-    images: ["/reerhub-logo.png"],
+    images: ["/reerhub-logo-with-text.png"],
   },
   icons: {
-    icon: "/reerhub-logo.png",
-    apple: "/reerhub-logo.png",
+    icon: "/reerhub-icon-logo.png",
+    apple: "/reerhub-icon-logo.png",
   },
 };
 

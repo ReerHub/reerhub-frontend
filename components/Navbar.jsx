@@ -40,11 +40,11 @@ export default function Navbar() {
           aria-label="ReerHub home"
         >
           <Image
-            src="/reerhub-logo.png"
+            src="/reerhub-icon-logo.png"
             alt="ReerHub logo"
-            width={96}
-            height={64}
-            className="h-8 w-auto"
+            width={36}
+            height={36}
+            className="w-9 h-9 rounded-lg"
             priority
           />
           <span className="font-bold text-slate-900 text-[17px] tracking-tight">
