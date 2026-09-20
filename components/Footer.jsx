@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -213,31 +212,22 @@ export default function Footer() {
           ))}
           <SubscribeBox />
         </div>
-
-        <div className="select-none" aria-hidden>
-          <p className="text-right text-[13px] font-semibold uppercase tracking-[0.35em] text-slate-500 mb-2">
+        <div className="w-full overflow-hidden select-none" aria-hidden>
+          <p
+            className="m-0 w-full whitespace-nowrap text-center font-bold leading-[0.9] text-transparent"
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700,
+              fontSize: "clamp(2rem, 7.75vw, 8.1rem)",
+              letterSpacing: "-0.035em",
+              WebkitTextStroke: "1.5px rgba(47, 111, 237, 0.45)",
+              opacity: 0.8,
+            }}
+          >
             Real Effective
             <br />
             Engineering Roles
           </p>
-          <div className="flex items-end gap-4 sm:gap-6">
-            <Image
-              src="/reerhub-icon-logo.png"
-              alt=""
-              width={160}
-              height={160}
-              className="w-24 h-24 sm:w-36 sm:h-36 shrink-0"
-            />
-            <p
-              className="font-display font-bold leading-none tracking-tight text-transparent whitespace-nowrap"
-              style={{
-                fontSize: "clamp(3.5rem, 17vw, 13rem)",
-                WebkitTextStroke: "1.5px rgba(47, 111, 237, 0.65)",
-              }}
-            >
-              ReerHub
-            </p>
-          </div>
         </div>
 
         <div className="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
