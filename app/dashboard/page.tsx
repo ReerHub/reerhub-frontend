@@ -96,6 +96,61 @@ function SkeletonCard() {
   );
 }
 
+// Profile completion drives recommendations — show progress so members
+// know why (and how) to fill the gaps. Pure derivation, no extra fetches.
+function profileCompletion(user: AuthUser | null): number {
+  const profile = user?.profile;
+  const parts = [
+    !!profile?.currentRole,
+    !!profile?.techTrack,
+    !!profile?.city,
+    (profile?.skills?.length ?? 0) > 0,
+    !!profile?.headline,
+    profile?.experienceYears !== undefined && profile?.experienceYears !== null,
+  ];
+  return Math.round((parts.filter(Boolean).length / parts.length) * 100);
+}
+
+function ProfilePromo({ user }: { user: AuthUser | null }) {
+  const completion = profileCompletion(user);
+  const done = completion >= 100;
+  return (
+    <div className="relative overflow-hidden rounded-3xl bg-ink p-6 min-h-64 hidden lg:flex flex-col">
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(300px 200px at 85% 0%, rgba(47,111,237,0.35), transparent)",
+        }}
+        aria-hidden
+      />
+      <p className="relative text-white text-[26px] leading-tight font-bold">
+        Get your best profession with ReerHub
+      </p>
+      <div
+        className="relative mt-4"
+        aria-label={`Profile ${completion}% complete`}
+      >
+        <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-electric transition-all"
+            style={{ width: `${completion}%` }}
+          />
+        </div>
+        <p className="text-white/50 text-xs mt-2">
+          {done ? "Profile complete" : `Profile ${completion}% complete`}
+        </p>
+      </div>
+      <Link
+        href="/profile"
+        className="relative mt-auto pt-6 block text-center px-4 py-2.5 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark transition-all"
+      >
+        {done ? "Review profile" : "Complete profile"}
+      </Link>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   // Remount when the account changes so profile prefill runs via
@@ -506,6 +561,29 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                 aria-label="Role or keyword"
                 className="w-full py-3 bg-transparent outline-none text-white placeholder:text-white/35 text-[15px]"
               />
+              {filters.q && (
+                <button
+                  type="button"
+                  onClick={() => setDraft({ q: "" })}
+                  aria-label="Clear role search"
+                  className="shrink-0 w-7 h-7 rounded-full text-white/50 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              )}
             </label>
             <label className="flex items-center gap-3 px-4 rounded-2xl bg-transparent border border-white/10 focus-within:border-white/30 transition-all">
               <svg
@@ -533,6 +611,29 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
                 aria-label="Work location"
                 className="w-full py-3 bg-transparent outline-none text-white placeholder:text-white/35 text-[15px]"
               />
+              {filters.city && (
+                <button
+                  type="button"
+                  onClick={() => setDraft({ city: "" })}
+                  aria-label="Clear location search"
+                  className="shrink-0 w-7 h-7 rounded-full text-white/50 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              )}
             </label>
             <label className="flex items-center gap-3 px-4 rounded-2xl bg-transparent border border-white/10 focus-within:border-white/30 transition-all">
               <svg
@@ -620,27 +721,9 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
         {/* ── Body ── */}
         <div className="grid lg:grid-cols-[290px_1fr] gap-5 mt-5 items-start">
           <aside className="space-y-5 order-2 lg:order-none">
-            <div className="relative overflow-hidden rounded-3xl bg-ink p-6 min-h-64 hidden lg:flex flex-col">
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(300px 200px at 85% 0%, rgba(47,111,237,0.35), transparent)",
-                }}
-                aria-hidden
-              />
-              <p className="relative text-white text-[26px] leading-tight font-bold">
-                Get your best profession with ReerHub
-              </p>
-              <Link
-                href="/profile"
-                className="relative mt-auto pt-6 block text-center px-4 py-2.5 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark transition-all"
-              >
-                Complete profile
-              </Link>
-            </div>
+            <ProfilePromo user={user} />
 
-            <div className="bg-white rounded-3xl border border-slate-200/70 p-5">
+            <div className="bg-white rounded-3xl border border-slate-200/70 p-5 lg:sticky lg:top-24">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="font-bold text-slate-900 text-lg">Filters</h2>
                 <span className="flex items-center gap-3">
