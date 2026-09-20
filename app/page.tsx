@@ -193,7 +193,7 @@ export default function Home() {
               /
             </span>
             <Link
-              href="/signup"
+              href="/login"
               className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
             >
               Get matched →
@@ -304,7 +304,7 @@ export default function Home() {
         </div>
         <div className="text-center mt-8">
           <Link
-            href="/signup"
+            href="/login"
             className="inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all shadow-[0_8px_24px_rgba(46,107,255,0.35)]"
           >
             Create free account
@@ -369,7 +369,7 @@ export default function Home() {
             their official pages.
           </p>
           <Link
-            href="/signup"
+            href="/login"
             className="inline-block px-8 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark transition-all shadow-sm"
           >
             Get started free

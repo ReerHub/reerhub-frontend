@@ -23,10 +23,10 @@ export default function LoginWall({ next }: { next: string }) {
           Log in to view &amp; apply
         </Link>
         <Link
-          href={`/signup?next=${encodeURIComponent(next)}`}
+          href={`/login?next=${encodeURIComponent(next)}`}
           className="flex items-center justify-center w-full px-6 py-2.5 rounded-xl font-semibold text-sm text-white/80 hover:text-white border border-white/15 hover:border-white/30 transition-all"
         >
-          Create free account
+          New here? It takes seconds
         </Link>
       </div>
     </div>

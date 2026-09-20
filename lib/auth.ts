@@ -102,26 +102,17 @@ export function safeNext(raw: string | null): string {
   return "/dashboard";
 }
 
-export const signup = (body: {
-  name: string;
+export const requestMagicLink = (body: {
   email: string;
-  password: string;
   turnstileToken?: string;
 }) =>
-  request<AuthUser>("/auth/signup", {
+  request<{ sent: boolean }>("/auth/magic-link", {
     method: "POST",
     body: JSON.stringify(body),
   });
 
-export const login = (body: {
-  email: string;
-  password: string;
-  turnstileToken?: string;
-}) =>
-  request<AuthUser>("/auth/login", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
+export const verifyMagicLink = (token: string) =>
+  request<AuthUser>(`/auth/verify-magic?token=${encodeURIComponent(token)}`);
 
 export const googleLogin = (idToken: string) =>
   request<AuthUser>("/auth/google", {
@@ -153,18 +144,6 @@ export const verifyEmail = (token: string) =>
   request<{ verified: boolean }>("/auth/verify-email", {
     method: "POST",
     body: JSON.stringify({ token }),
-  });
-
-export const forgotPassword = (email: string, turnstileToken?: string) =>
-  request<{ sent: boolean }>("/auth/forgot-password", {
-    method: "POST",
-    body: JSON.stringify({ email, turnstileToken }),
-  });
-
-export const resetPassword = (token: string, password: string) =>
-  request<{ reset: boolean }>("/auth/reset-password", {
-    method: "POST",
-    body: JSON.stringify({ token, password }),
   });
 
 export const savedIds = () => request<string[]>("/users/me/saved/ids");
