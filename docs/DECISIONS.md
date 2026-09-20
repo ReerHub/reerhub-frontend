@@ -25,3 +25,7 @@ Navy/blue/cyan-purple, Inter, light surfaces; full spec in `docs/design/design-s
 ## ADR-009 — Cookie-session UX contract (2026-09-18)
 
 `credentials:"include"` everywhere, silent refresh-once-and-retry, CSRF auto-handled, `safeNext` redirects, `useAuth` single session. Reason: invisible auth that survives the 15-min access window.
+
+## ADR-011 — Teaser gating, SEO dies by design (2026-09-20, reverses ADR-007)
+
+Lists show title/company/chips/location/date only; detail shows an excerpt plus a login wall. Full description, skills, Apply, and saves need a session. Anonymous and crawler views are identical (no cloaking). Reason: registration wall is the growth lever; search traffic is sacrificed deliberately. Consequence: detail SSR forwards cookies so members still get full content server-side; JSON-LD carries only the visible excerpt.

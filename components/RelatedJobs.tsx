@@ -18,12 +18,16 @@ export default function RelatedJobs({
   companyName: string;
 }) {
   const [ids, setIds] = useState<string[]>([]);
+  const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     savedIds()
       .then((list) => {
-        if (!cancelled) setIds(list);
+        if (!cancelled) {
+          setIds(list);
+          setAuthed(true);
+        }
       })
       .catch(() => {});
     return () => {
@@ -59,7 +63,7 @@ export default function RelatedJobs({
           <JobCard
             key={related._id}
             job={related}
-            showSave
+            showSave={authed}
             saved={savedSet.has(related._id)}
             onToggleSave={toggleSave}
           />
