@@ -134,3 +134,31 @@ export const getCompany = (slug: string) => get<Company>(`/companies/${slug}`);
 
 export const listCompanyJobs = (companyId: string, limit = 50) =>
   listJobsWithMeta({ companyId, limit });
+
+// SEO slug URLs: /jobs/{title}-{company}-{id} (backend untouched — the
+// trailing 24-hex id is the lookup key; bare ids keep working and
+// canonical-redirect to the slug form).
+export const slugify = (value: string) =>
+  (value || "job")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "job";
+
+export const jobSlug = (job: {
+  title: string;
+  companyId?: { name?: string } | null;
+  _id: string;
+}) =>
+  `${slugify(job.title)}-${slugify(job.companyId?.name || "company")}-${job._id}`;
+
+export const parseJobSlug = (slug: string): string | null => {
+  const hit = /-([a-f0-9]{24})$/.exec(slug || "");
+  return hit ? hit[1] : null;
+};
+
+export const jobUrl = (job: {
+  title: string;
+  companyId?: { name?: string } | null;
+  _id: string;
+}) => `/jobs/${jobSlug(job)}`;

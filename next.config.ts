@@ -7,8 +7,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
-  // Password auth is gone (magic link only). Dead routes funnel to /login;
-  // query strings (e.g. ?next=) are preserved by default.
+  // Password auth is gone (magic link only): dead auth routes funnel to
+  // /login (query strings like ?next= preserved). Track homes moved to
+  // /engineering-jobs + /ai-jobs (308 permanent).
   async redirects() {
     return [
       { source: "/signup", destination: "/login", permanent: false },
@@ -22,6 +23,12 @@ const nextConfig: NextConfig = {
         destination: "/login",
         permanent: false,
       },
+      {
+        source: "/engineering",
+        destination: "/engineering-jobs",
+        permanent: true,
+      },
+      { source: "/ai", destination: "/ai-jobs", permanent: true },
     ];
   },
 };

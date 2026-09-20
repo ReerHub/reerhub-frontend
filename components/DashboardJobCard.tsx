@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Job } from "@/lib/reerhub";
+import { jobUrl } from "@/lib/reerhub";
 import { locationLabel, timeAgo } from "@/lib/format";
 
 const PASTELS = [
@@ -97,7 +98,7 @@ export default function DashboardJobCard({
         <p className="text-[15px] font-medium text-slate-900">{companyName}</p>
         <div className="flex items-start justify-between gap-3">
           <Link
-            href={`/jobs/${job._id}`}
+            href={jobUrl(job)}
             className="font-display text-[22px] leading-tight font-bold text-slate-900 line-clamp-2 hover:underline underline-offset-4"
           >
             {job.title}
@@ -142,7 +143,7 @@ export default function DashboardJobCard({
           </p>
         </div>
         <Link
-          href={`/jobs/${job._id}`}
+          href={jobUrl(job)}
           className="shrink-0 px-6 py-2 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark transition-all"
         >
           Details

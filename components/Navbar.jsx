@@ -9,8 +9,8 @@ import { useAuth } from "@/components/AuthProvider";
 const LINKS = [
   { href: "/", label: "Home" },
   { href: "/jobs", label: "All Roles" },
-  { href: "/engineering", label: "Engineering" },
-  { href: "/ai", label: "AI / ML" },
+  { href: "/engineering-jobs", label: "Engineering" },
+  { href: "/ai-jobs", label: "AI / ML" },
   { href: "/companies", label: "Companies" },
 ];
 

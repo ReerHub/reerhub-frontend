@@ -36,7 +36,10 @@ function SubHero({
   );
 }
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
+  alternates: { canonical: "/ai-jobs" },
   title: "AI & ML Jobs in India | ReerHub",
   description:
     "AI, machine learning, and data science roles from India's top product companies, indexed from official career pages.",

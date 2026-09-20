@@ -36,7 +36,10 @@ function SubHero({
   );
 }
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
+  alternates: { canonical: "/engineering-jobs" },
   title: "Engineering Jobs in India | ReerHub",
   description:
     "Software engineering roles — SDE, backend, frontend, DevOps, data — from India's top product companies, indexed from official career pages.",
