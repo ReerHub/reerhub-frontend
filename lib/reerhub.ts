@@ -36,6 +36,9 @@ export type Job = {
   title: string;
   normalizedTitle?: string;
   description?: string;
+  // Teaser shape for anonymous readers: gated fields are omitted and an
+  // excerpt is served instead (backend strips without a session).
+  excerpt?: string;
   department?: string;
   employmentType?: string;
   remoteType?: string;
@@ -45,8 +48,8 @@ export type Job = {
   taxonomyVersion?: number;
   isIndiaRole?: boolean;
   locations: { city?: string; state?: string; country?: string }[];
-  skills: string[];
-  applicationUrl: string;
+  skills?: string[];
+  applicationUrl?: string;
   sourceUrl: string;
   postedAt?: string;
   firstSeenAt: string;
@@ -122,7 +125,8 @@ export const listJobsWithMeta = async (
   };
 };
 
-export const getJob = (jobId: string) => get<Job>(`/jobs/${jobId}`);
+export const getJob = (jobId: string, init?: RequestInit) =>
+  get<Job>(`/jobs/${jobId}`, init);
 
 export const listCompanies = () => get<Company[]>("/companies");
 

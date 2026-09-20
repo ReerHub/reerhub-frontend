@@ -1,8 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
 import CompanyLogo from "@/components/CompanyLogo";
+import LoginWall from "@/components/LoginWall";
 import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
 import {
@@ -16,7 +18,13 @@ import { locationLabel, timeAgo } from "@/lib/format";
 
 async function fetchJob(jobId: string): Promise<Job> {
   try {
-    return await getJob(jobId);
+    // Forward the session so members SSR the full job while anonymous
+    // visitors and crawlers (no cookies) get the identical teaser view.
+    const cookieHeader = (await cookies()).toString();
+    return await getJob(
+      jobId,
+      cookieHeader ? { headers: { Cookie: cookieHeader } } : undefined,
+    );
   } catch (err) {
     if (err instanceof NotFoundError) notFound();
     throw err;
@@ -75,6 +83,7 @@ export default async function JobDetailPage({
   const companyName: string = company.name || "Company";
   const posted = timeAgo(job.postedAt || job.firstSeenAt);
   const applyDomain = (() => {
+    if (!job.applicationUrl) return null;
     try {
       return new URL(job.applicationUrl).hostname.replace(/^www\./, "");
     } catch {
@@ -84,9 +93,15 @@ export default async function JobDetailPage({
   const relatedJobs = company._id
     ? await fetchRelatedJobs(company._id, job._id || jobId)
     : [];
+  const isMember = !!job.applicationUrl;
   const sanitizedDescription = job.description
     ? DOMPurify.sanitize(job.description)
     : "";
+  const jsonLdDescription = (
+    job.description
+      ? job.description.replace(/<[^>]*>/g, " ")
+      : job.excerpt || ""
+  ).slice(0, 5000);
 
   const facts: { label: string; value?: string }[] = [
     {
@@ -126,9 +141,7 @@ export default async function JobDetailPage({
             "@context": "https://schema.org",
             "@type": "JobPosting",
             title: job.title,
-            description: job.description
-              ?.replace(/<[^>]*>/g, " ")
-              .slice(0, 5000),
+            description: jsonLdDescription,
             datePosted: job.postedAt || job.firstSeenAt,
             employmentType: job.employmentType,
             hiringOrganization: {
@@ -254,13 +267,13 @@ export default async function JobDetailPage({
             </div>
           </div>
 
-          {job.skills?.length > 0 && (
+          {(job.skills ?? []).length > 0 && (
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
               <h2 className="font-bold text-slate-900 text-[15px] mb-4">
                 Skills
               </h2>
               <div className="flex flex-wrap gap-1.5">
-                {job.skills.map((skill: string) => (
+                {(job.skills ?? []).map((skill: string) => (
                   <span
                     key={skill}
                     className="px-2.5 py-1 rounded-lg bg-electric-soft text-electric-deep text-[13px] font-medium"
@@ -281,6 +294,17 @@ export default async function JobDetailPage({
                 className="job-description"
                 dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
               />
+            </div>
+          )}
+
+          {!isMember && job.excerpt && (
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
+              <h2 className="font-bold text-slate-900 text-[15px] mb-4">
+                About this role
+              </h2>
+              <p className="text-slate-600 text-[15px] leading-relaxed">
+                {job.excerpt}…
+              </p>
             </div>
           )}
 
@@ -306,7 +330,7 @@ export default async function JobDetailPage({
         </article>
 
         <aside className="order-1 lg:order-none lg:sticky lg:top-24 space-y-4">
-          {job.applicationUrl && (
+          {job.applicationUrl ? (
             <div className="bg-ink text-white rounded-2xl p-6 shadow-card-hover">
               <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-teal-300 mb-2">
                 Official application
@@ -342,6 +366,8 @@ export default async function JobDetailPage({
                 </p>
               )}
             </div>
+          ) : (
+            <LoginWall next={`/jobs/${job._id || jobId}`} />
           )}
 
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card">
