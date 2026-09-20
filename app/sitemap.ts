@@ -1,10 +1,24 @@
 import type { MetadataRoute } from "next";
 
+import { jobSlug } from "@/lib/reerhub";
+
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
+
+const LOCATION_PAGES = [
+  "engineering-jobs",
+  "ai-jobs",
+  "bengaluru-jobs",
+  "chennai-jobs",
+  "hyderabad-jobs",
+  "mumbai-jobs",
+  "delhi-jobs",
+  "pune-jobs",
+  "remote-jobs",
+];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
@@ -21,18 +35,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 0.9,
     },
-    {
-      url: `${BASE}/engineering`,
+    ...LOCATION_PAGES.map((page) => ({
+      url: `${BASE}/${page}`,
       lastModified: now,
-      changeFrequency: "daily",
+      changeFrequency: "daily" as const,
       priority: 0.9,
-    },
-    {
-      url: `${BASE}/ai`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
+    })),
     {
       url: `${BASE}/companies`,
       lastModified: now,
@@ -67,9 +75,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (jobsRes.ok) {
       const json = await jobsRes.json();
       for (const j of json.data ?? []) {
-        if (j._id) {
+        if (j._id && j.title) {
           dynamic.push({
-            url: `${BASE}/jobs/${j._id}`,
+            url: `${BASE}/jobs/${jobSlug({ title: j.title, companyId: j.companyId, _id: j._id })}`,
             lastModified: j.postedAt ? new Date(j.postedAt) : now,
             changeFrequency: "daily",
             priority: 0.6,

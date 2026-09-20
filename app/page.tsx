@@ -175,7 +175,7 @@ export default function Home() {
           </p>
           <div className="rise-in flex items-center gap-5 text-sm">
             <Link
-              href="/engineering"
+              href="/engineering-jobs"
               className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
             >
               Engineering
@@ -184,7 +184,7 @@ export default function Home() {
               /
             </span>
             <Link
-              href="/ai"
+              href="/ai-jobs"
               className="text-slate-500 hover:text-slate-900 font-semibold transition-colors"
             >
               AI / ML

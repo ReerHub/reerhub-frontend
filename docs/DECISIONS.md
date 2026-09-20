@@ -29,3 +29,7 @@ Navy/blue/cyan-purple, Inter, light surfaces; full spec in `docs/design/design-s
 ## ADR-011 — Teaser gating, SEO dies by design (2026-09-20, reverses ADR-007)
 
 Lists show title/company/chips/location/date only; detail shows an excerpt plus a login wall. Full description, skills, Apply, and saves need a session. Anonymous and crawler views are identical (no cloaking). Reason: registration wall is the growth lever; search traffic is sacrificed deliberately. Consequence: detail SSR forwards cookies so members still get full content server-side; JSON-LD carries only the visible excerpt.
+
+## ADR-012 — Slug job URLs + -jobs location paths (2026-09-20)
+
+Job URLs are `/jobs/{title}-{company}-{id}` (id is the lookup key; backend untouched). Bare `/jobs/<id>` links 308 to the canonical slug. Track paths are `/engineering-jobs` + `/ai-jobs` (old paths 308); city paths are `/<city>-jobs` (Bengaluru/Chennai/Hyderabad/Mumbai/Delhi/Pune) + `/remote-jobs`, with thin markets (< 5 roles) showing "expanding soon" + recommended roles. Reason: readable URLs for sharing/SEO without backend changes. Consequence: sitemap, cards, and footer all emit slug URLs; `/llms.txt` documents the surface for AI consumers.

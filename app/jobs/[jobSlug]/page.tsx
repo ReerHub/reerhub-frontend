@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
 import CompanyLogo from "@/components/CompanyLogo";
 import LoginWall from "@/components/LoginWall";
@@ -9,12 +9,20 @@ import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
 import {
   getJob,
+  jobSlug,
   listJobsWithMeta,
   NotFoundError,
+  parseJobSlug,
   TECH_TRACKS,
   type Job,
 } from "@/lib/reerhub";
 import { locationLabel, timeAgo } from "@/lib/format";
+
+const siteUrl = () =>
+  (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(
+    /\/$/,
+    "",
+  );
 
 async function fetchJob(jobId: string): Promise<Job> {
   try {
@@ -31,13 +39,21 @@ async function fetchJob(jobId: string): Promise<Job> {
   }
 }
 
+// Bare ids (/jobs/<24hex>) keep working: they resolve to the same job and
+// 308 to the canonical slug URL below.
+function resolveJobId(slug: string): string {
+  return parseJobSlug(slug) || (/^[a-f0-9]{24}$/.test(slug) ? slug : "");
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ jobId: string }>;
+  params: Promise<{ jobSlug: string }>;
 }): Promise<Metadata> {
   try {
-    const { jobId } = await params;
+    const { jobSlug: slug } = await params;
+    const jobId = resolveJobId(slug);
+    if (!jobId) return { title: "Job | ReerHub" };
     const job = await fetchJob(jobId);
     const companyName = job.companyId?.name || "Company";
     const title = `${job.title} at ${companyName} | ReerHub`;
@@ -45,7 +61,11 @@ export async function generateMetadata({
       `${job.title} (${job.techRole || "tech role"}) at ${companyName}` +
       `${job.locations?.[0]?.city ? ` in ${job.locations[0].city}` : ""}. ` +
       `Apply directly on the company's official site.`;
-    return { title, description };
+    return {
+      title,
+      description,
+      alternates: { canonical: `/jobs/${jobSlug(job)}` },
+    };
   } catch {
     return { title: "Job | ReerHub" };
   }
@@ -72,13 +92,36 @@ function Fact({ label, value }: { label: string; value?: string }) {
   );
 }
 
+const faqs = [
+  {
+    q: "Where does this listing come from?",
+    a: "ReerHub indexes official company career pages and ATS boards daily. The company site is always the source of truth.",
+  },
+  {
+    q: "How do I apply for this role?",
+    a: "Log in, then use the Apply button to finish your application on the company's official site. ReerHub never takes a cut or holds your application.",
+  },
+  {
+    q: "Why do I need an account to see details?",
+    a: "Full descriptions, skills, and Apply links are members-only so companies get genuine applicants. Signing in takes seconds with Google or a magic link.",
+  },
+  {
+    q: "Is ReerHub free?",
+    a: "Yes. Browsing, saving roles, and applying are free for job seekers.",
+  },
+];
+
 export default async function JobDetailPage({
   params,
 }: {
-  params: Promise<{ jobId: string }>;
+  params: Promise<{ jobSlug: string }>;
 }) {
-  const { jobId } = await params;
+  const { jobSlug: slug } = await params;
+  const jobId = resolveJobId(slug);
+  if (!jobId) notFound();
   const job = await fetchJob(jobId);
+  const canonical = `/jobs/${jobSlug(job)}`;
+  if (slug !== canonical.split("/")[2]) permanentRedirect(canonical);
   const company = job.companyId || {};
   const companyName: string = company.name || "Company";
   const posted = timeAgo(job.postedAt || job.firstSeenAt);
@@ -91,7 +134,7 @@ export default async function JobDetailPage({
     }
   })();
   const relatedJobs = company._id
-    ? await fetchRelatedJobs(company._id, job._id || jobId)
+    ? await fetchRelatedJobs(company._id, job._id)
     : [];
   const isMember = !!job.applicationUrl;
   const sanitizedDescription = job.description
@@ -166,6 +209,20 @@ export default async function JobDetailPage({
           }),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.q,
+              acceptedAnswer: { "@type": "Answer", text: faq.a },
+            })),
+          }),
+        }}
+      />
       <nav
         className="text-[13px] font-medium text-slate-500 mb-6 flex items-center gap-2 flex-wrap"
         aria-label="Breadcrumb"
@@ -229,7 +286,7 @@ export default async function JobDetailPage({
                   />
                   Active
                 </span>
-                <SaveJobButton jobId={job._id || jobId} variant="icon" />
+                <SaveJobButton jobId={job._id} variant="icon" />
               </span>
             </div>
 
@@ -327,6 +384,24 @@ export default async function JobDetailPage({
           {relatedJobs.length > 0 && (
             <RelatedJobs jobs={relatedJobs} companyName={companyName} />
           )}
+
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mt-4">
+            <h2 className="font-bold text-slate-900 text-[15px] mb-4">
+              Frequently asked questions
+            </h2>
+            <div className="space-y-4">
+              {faqs.map((faq) => (
+                <div key={faq.q}>
+                  <h3 className="font-semibold text-slate-900 text-sm mb-1">
+                    {faq.q}
+                  </h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    {faq.a}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </article>
 
         <aside className="order-1 lg:order-none lg:sticky lg:top-24 space-y-4">
@@ -367,7 +442,7 @@ export default async function JobDetailPage({
               )}
             </div>
           ) : (
-            <LoginWall next={`/jobs/${job._id || jobId}`} />
+            <LoginWall next={canonical} />
           )}
 
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card">
