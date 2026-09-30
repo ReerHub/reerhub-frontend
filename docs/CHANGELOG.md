@@ -1,5 +1,29 @@
 # Changelog (frontend)
 
+## Unreleased — Pro billing page + 7-day trial copy
+
+- `/billing`: 3-plan selector (monthly preselected), `{ planId }` checkout, trial-steps + assurances + final CTA for prospects, membership view for members. Home pricing card → ₹150/month, 7-day trial copy site-wide.
+
+## Unreleased — Homepage motion system
+
+- Company marquee (infinite loop, pause on hover, edge fades); `Reveal` scroll entrances; `CountUp` counters (remount on late data — fixes stuck-at-zero); staggered hero with floating match card + pulse badge. All static under reduced-motion.
+
+## Unreleased — Teaser-gated roles rail (reverted)
+
+- Tried a 10-preview snap rail for live roles; reverted to the 3-card grid (uneven card sizes, no autoplay). Kept: static heading (never shows a wrong count) + "Browse all roles" link.
+
+## Unreleased — Passwordless UI + slug URLs + proxy
+
+- Login is Google + magic link; `/signup`, `/forgot-password`, `/reset-password` redirect to `/login`. Slug job URLs + `-jobs` track/city paths + `/llms.txt`. `middleware.ts` → `proxy.ts` (Next 16). Server-safe `lib/sanitize.ts` replaces `isomorphic-dompurify` on the server (fixes Turbopack jsdom build crash).
+
+## Unreleased — Recommendations + profile alerts
+
+- `RecommendationPanel` on dashboard (fit scores + feedback); profile gains availability/education/summary + digest alert controls wired to backend preferences.
+
+## Unreleased — Node 24 + latest deps
+
+- `.nvmrc`/`engines`/CI/shell default all 24; next 16.3.8, tailwind 4.3.3, `@types/node` 26, isomorphic-dompurify 4.4. Holds: `typescript@6`, `eslint@9` (upstream gaps, see AGENTS.md).
+
 ## Unreleased — Color system v3 + light marketing (on `ui/redesign-v2`)
 
 - New palette: primary `#2F6FED` family, Neural Dark `#111827`, Neural Gray `#9AA8BC`, Light Blue `#E8F0FF`; success/error/warning aligned; teal reserved for official-trust marks only.

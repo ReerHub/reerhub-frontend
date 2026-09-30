@@ -11,15 +11,17 @@ nvm use 24            # Node 24 required (.nvmrc); Node 20 crashes on jsdom
 npm install
 cp .env.example .env.local   # defaults point at local backend :8000
 npm run dev           # → http://localhost:3000 (needs backend running, see reerhub-backend repo)
-npm run build         # 20 routes
+npm run build         # 26 routes
 npx eslint . && npx tsc --noEmit
 ```
 
 ## What it does
 
-- **Public (SEO):** `/`, `/jobs`, `/engineering`, `/ai`, `/companies[/:slug]`, `/jobs/:id` (Apply on company site, related, JSON-LD), `/privacy`, `/terms`, sitemap/robots.
-- **Accounts:** `/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`, `/profile` (details + role/track/skills + password + data export/delete), protected `/dashboard` (filter bar, sidebar, pastel cards, bookmarks, sort, Saved-only).
+- **Public (teaser-gated, ADR-011):** `/`, `/jobs`, `/engineering-jobs`, `/ai-jobs`, `/<city>-jobs` (Bengaluru/Chennai/Hyderabad/Mumbai/Delhi/Pune), `/remote-jobs`, `/companies[/:slug]`, `/jobs/:slug` (excerpt + login wall for anonymous; full detail for members; JSON-LD, related, saves), `/privacy`, `/terms`, `/llms.txt`, sitemap/robots.
+- **Accounts (passwordless):** `/login` (Google + magic link; `/signup`, `/forgot-password`, `/reset-password` redirect here), `/verify-email`, `/verify-magic`, `/profile` (details + role/track/skills + alerts + data export/delete), protected `/dashboard` (URL-synced filters, recommendations panel, bookmarks, sort, Saved-only).
+- **Pro:** `/billing` (weekly ₹49 / monthly ₹150 / quarterly ₹299, 7-day trial, trial-steps + assurances + final CTA).
 - **Session:** one global `useAuth()` (`components/AuthProvider.tsx`); `proxy.ts` guards dashboard/profile; API via `lib/reerhub.ts` + `lib/auth.ts` (cookies, silent refresh, CSRF, `safeNext`).
+- **Motion:** company marquee, scroll reveals (`Reveal`), count-ups (`CountUp`), staggered hero; all static under `prefers-reduced-motion`.
 
 ## Docs
 
@@ -29,7 +31,7 @@ npx eslint . && npx tsc --noEmit
 
 1. e2e smoke (Playwright) — blocked on browsers in dev env, not on need.
 2. Analytics + Web Vitals (needs provider pick).
-3. Job alerts backend (bell + footer subscribe are "coming soon").
+3. Billing FAQ block (if trial conversion lags).
 4. Deferred: PWA/offline, nested error boundaries.
 
 ## Skills (`.agents/skills/`)
@@ -38,4 +40,4 @@ npx eslint . && npx tsc --noEmit
 
 ## Deploy
 
-Vercel auto-deploys `main`. Env (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`) is build-time → redeploy after changes. Full matrix: `docs/04-deployment.md`. Keep `main` green; branches + PRs.
+Vercel auto-deploys `main`. Env (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`) is build-time → redeploy after changes. Dashboard must pin **Node 24**. Full matrix: `docs/04-deployment.md`. Keep `main` green; branches + PRs.

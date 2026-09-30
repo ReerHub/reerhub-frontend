@@ -1,11 +1,12 @@
 # 04 — Deployment (Vercel)
 
 - Project auto-deploys `main` at `https://www.reerhub.com` (apex `reerhub.com` 308 → `www`). Staging auto-deploys `develop` at `https://staging.reerhub.com` (ADR-010; SSO off, `robots.ts` disallows all there).
-- **Environment** (Settings → Environment Variables, Production; build-time → **Redeploy** after changes):
+- **Environment** (Settings → Environment Variables, Production; build-time → **Redeploy** after changes; dashboard must pin **Node 24**):
   ```dotenv
   NEXT_PUBLIC_API_URL=https://api.reerhub.com/api/v1
   NEXT_PUBLIC_SITE_URL=https://www.reerhub.com
   NEXT_PUBLIC_GOOGLE_CLIENT_ID=<id>.apps.googleusercontent.com
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY=<turnstile-site-key>
   ```
 - Staging uses the same keys with staging hosts:
   ```dotenv

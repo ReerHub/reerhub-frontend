@@ -19,7 +19,7 @@ is deployed.
 
 ## Scope notes
 
-- Public listings stay open for SEO by design; only `/dashboard` and
+- Public listings show teasers only (title/company/chips/excerpt); full detail, saves, and Apply need a session — crawlers see the identical view (no cloaking). Only `/dashboard` and
   `/profile` require login.
 - Out of scope: spam/phishing content reports, theoretical findings without
   reproduction, third-party (Vercel/Render) infrastructure issues.
