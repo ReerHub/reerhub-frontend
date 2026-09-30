@@ -50,6 +50,9 @@ function ProfileForm({
     city: user.profile.city || "",
     experienceYears: user.profile.experienceYears?.toString() || "",
     remoteType: user.profile.remoteType || "unknown",
+    availability: user.profile.availability || "open",
+    education: user.profile.education || "",
+    experienceSummary: user.profile.experienceSummary || "",
   };
   const [form, setForm] = useState(initial);
   const [skills, setSkills] = useState<string[]>(
@@ -74,7 +77,11 @@ function ProfileForm({
 
   const set =
     (key: keyof typeof form) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >,
+    ) =>
       setForm((f) => ({ ...f, [key]: e.target.value }));
 
   const submit = async (e: React.FormEvent) => {
@@ -92,6 +99,9 @@ function ProfileForm({
           ? Number(form.experienceYears)
           : undefined,
         remoteType: form.remoteType,
+        availability: form.availability,
+        education: form.education || undefined,
+        experienceSummary: form.experienceSummary || undefined,
       });
       await onSaved();
       toast.success("Profile updated");
@@ -323,6 +333,79 @@ function ProfileForm({
             </select>
           </div>
         </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="pf-availability"
+              className="text-sm font-semibold text-slate-700"
+            >
+              Job-search status
+            </label>
+            <select
+              id="pf-availability"
+              className={inputCls}
+              value={form.availability}
+              onChange={set("availability")}
+            >
+              <option value="actively-looking">Actively looking</option>
+              <option value="open">Open to opportunities</option>
+              <option value="not-looking">Not looking right now</option>
+            </select>
+          </div>
+          <div>
+            <label
+              htmlFor="pf-education"
+              className="text-sm font-semibold text-slate-700"
+            >
+              Education
+            </label>
+            <input
+              id="pf-education"
+              className={inputCls}
+              value={form.education}
+              onChange={set("education")}
+              placeholder="e.g. B.Tech, Computer Science"
+            />
+          </div>
+        </div>
+        <div>
+          <label
+            htmlFor="pf-summary"
+            className="text-sm font-semibold text-slate-700"
+          >
+            Experience summary
+          </label>
+          <textarea
+            id="pf-summary"
+            className={inputCls}
+            value={form.experienceSummary}
+            onChange={set("experienceSummary")}
+            placeholder="What have you built and what kind of role do you want next?"
+            rows={4}
+          />
+        </div>
+        <fieldset className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+          <legend className="px-1 text-sm font-semibold text-slate-700">
+            Job alerts
+          </legend>
+          <p className="text-sm text-slate-500 mb-3">
+            Daily is the default. You can pause any time.
+          </p>
+          <select
+            className={inputCls}
+            defaultValue={user.notificationPreferences?.digest || "daily"}
+            onChange={(e) =>
+              updateMe({ notificationPreferences: { digest: e.target.value } })
+                .then(onSaved)
+                .catch(() => toast.error("Could not update alerts"))
+            }
+          >
+            <option value="daily">Daily matches</option>
+            <option value="weekdays">Weekdays only</option>
+            <option value="weekly">Weekly preview</option>
+            <option value="paused">Paused</option>
+          </select>
+        </fieldset>
         <div className="flex flex-wrap gap-3">
           <button
             type="submit"

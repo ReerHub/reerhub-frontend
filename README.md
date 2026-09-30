@@ -7,7 +7,7 @@ Live: `https://www.reerhub.com` (Vercel, auto-deploy on `main` push). Staging: `
 ## Setup (new developer)
 
 ```bash
-nvm use 22            # Node 22 required (.nvmrc); Node 20 crashes on jsdom
+nvm use 24            # Node 24 required (.nvmrc); Node 20 crashes on jsdom
 npm install
 cp .env.example .env.local   # defaults point at local backend :8000
 npm run dev           # → http://localhost:3000 (needs backend running, see reerhub-backend repo)
@@ -19,7 +19,7 @@ npx eslint . && npx tsc --noEmit
 
 - **Public (SEO):** `/`, `/jobs`, `/engineering`, `/ai`, `/companies[/:slug]`, `/jobs/:id` (Apply on company site, related, JSON-LD), `/privacy`, `/terms`, sitemap/robots.
 - **Accounts:** `/login`, `/signup`, `/verify-email`, `/forgot-password`, `/reset-password`, `/profile` (details + role/track/skills + password + data export/delete), protected `/dashboard` (filter bar, sidebar, pastel cards, bookmarks, sort, Saved-only).
-- **Session:** one global `useAuth()` (`components/AuthProvider.tsx`); `middleware.ts` guards dashboard/profile; API via `lib/reerhub.ts` + `lib/auth.ts` (cookies, silent refresh, CSRF, `safeNext`).
+- **Session:** one global `useAuth()` (`components/AuthProvider.tsx`); `proxy.ts` guards dashboard/profile; API via `lib/reerhub.ts` + `lib/auth.ts` (cookies, silent refresh, CSRF, `safeNext`).
 
 ## Docs
 

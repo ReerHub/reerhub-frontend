@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound, permanentRedirect } from "next/navigation";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import CompanyLogo from "@/components/CompanyLogo";
 import LoginWall from "@/components/LoginWall";
 import RelatedJobs from "@/components/RelatedJobs";
@@ -17,12 +17,6 @@ import {
   type Job,
 } from "@/lib/reerhub";
 import { locationLabel, timeAgo } from "@/lib/format";
-
-const siteUrl = () =>
-  (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(
-    /\/$/,
-    "",
-  );
 
 async function fetchJob(jobId: string): Promise<Job> {
   try {
@@ -138,7 +132,7 @@ export default async function JobDetailPage({
     : [];
   const isMember = !!job.applicationUrl;
   const sanitizedDescription = job.description
-    ? DOMPurify.sanitize(job.description)
+    ? sanitizeHtml(job.description)
     : "";
   const jsonLdDescription = (
     job.description

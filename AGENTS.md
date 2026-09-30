@@ -16,12 +16,13 @@ Self-contained repo: product/routes/design/decisions/changelog/skills live here 
 
 ## Runtime
 
-- **Node 22** (`.nvmrc` + `engines`; Node 20 crashes on jsdom). `npm run dev` → `:3000` (needs backend at `:8000` for data).
+- **Node 24** (`.nvmrc` + `engines`; Node 20 crashes on jsdom). `npm run dev` → `:3000` (needs backend at `:8000` for data).
 - Checks: `npx eslint .` (zero errors; `setState` sync-in-`useEffect` is an error — use initializers + key-remount, promise-callback fetches), `npx tsc --noEmit`, `npm run build` (20 routes).
+- Version holds (do not bump until upstream supports): `typescript@6` (TS 7 unsupported by typescript-eslint, retry at >=7.1) and `eslint@9` (v10 breaks `eslint-config-next`'s bundled react plugin).
 
 ## Conventions
 
-- Path alias `@/*`. API: `lib/reerhub.ts` (public reads) + `lib/auth.ts` (`credentials:"include"`, silent refresh retry, `safeNext`, auto CSRF). One global session: `components/AuthProvider.tsx` (`useAuth`) — never add per-page `getMe()` fetches. Guards in `middleware.ts`.
+- Path alias `@/*`. API: `lib/reerhub.ts` (public reads) + `lib/auth.ts` (`credentials:"include"`, silent refresh retry, `safeNext`, auto CSRF). One global session: `components/AuthProvider.tsx` (`useAuth`) — never add per-page `getMe()` fetches. Guards in `proxy.ts`.
 - Styling: Tailwind + `docs/design/design-system.md` v2 (navy/blue/cyan-purple, Inter, light surfaces). No new brand colors. Logos via `components/CompanyLogo.tsx` (fallback tile); remote images need `next.config.ts` `remotePatterns` for `next/image`.
 - SEO: `/jobs` etc. stay public; auth/dashboard never in sitemap; `robots.ts` disallows them; per-job JSON-LD.
 - Secrets: only `NEXT_PUBLIC_*` in browser (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`).

@@ -14,5 +14,5 @@
   ```
   (Google OAuth origins + Turnstile widget domains must list `staging.reerhub.com`.)
 - Backend must list `https://www.reerhub.com` in `CORS_FRONTEND_URL` with credentials on.
-- CI (`.github/workflows/ci.yml`): eslint + `tsc --noEmit` + build + `npm audit`; Dependabot weekly. Requires Node 22.
+- CI (`.github/workflows/ci.yml`): eslint + `tsc --noEmit` + build + `npm audit`; Dependabot weekly. Requires Node 24.
 - Rollback: Vercel → Deployments → Redeploy last good.
