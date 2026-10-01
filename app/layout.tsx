@@ -22,9 +22,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-  ),
+  metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
   title: "ReerHub | Engineering & AI jobs in India",
   description:
     "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages. Apply on the company site.",

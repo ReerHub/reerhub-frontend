@@ -17,6 +17,14 @@ export type AuthUser = {
     city?: string;
     experienceYears?: number;
     remoteType?: string;
+    targetLocations?: string[];
+    availability?: "actively-looking" | "open" | "not-looking";
+    education?: string;
+    experienceSummary?: string;
+  };
+  notificationPreferences?: {
+    digest?: "daily" | "weekdays" | "weekly" | "paused";
+    instantAlerts?: boolean;
   };
   createdAt?: string;
 };
@@ -170,3 +178,50 @@ export const exportMyData = () =>
 
 export const deleteAccount = () =>
   request<{ deleted: boolean }>("/users/me", { method: "DELETE" });
+
+export type Recommendation = {
+  _id: string;
+  title: string;
+  companyId: { name: string; slug: string; logoUrl?: string };
+  locations: { city?: string }[];
+  firstSeenAt: string;
+  fit: { score: number; reasons: string[] };
+};
+
+export const getRecommendations = () =>
+  request<{ profileCompletion: number; jobs: Recommendation[] }>(
+    "/recommendations",
+  );
+
+export const setRecommendationFeedback = (jobId: string, feedback: string) =>
+  request<{ feedback: string }>(`/recommendations/${jobId}/feedback`, {
+    method: "PATCH",
+    body: JSON.stringify({ feedback }),
+  });
+
+export type BillingState = {
+  subscription: null | {
+    plan: string;
+    status: string;
+    trialEndsAt?: string;
+    currentPeriodEndsAt?: string;
+    cancelledAt?: string;
+    payments: {
+      razorpayPaymentId?: string;
+      amount?: number;
+      status?: string;
+      paidAt?: string;
+    }[];
+  };
+};
+export const getBilling = () => request<BillingState>("/billing");
+export const beginCheckout = (planId = "pro-monthly") =>
+  request<{
+    subscription: BillingState["subscription"];
+    checkoutUrl: string | null;
+  }>("/billing/checkout", {
+    method: "POST",
+    body: JSON.stringify({ planId }),
+  });
+export const cancelSubscription = () =>
+  request<BillingState>("/billing/cancel", { method: "POST" });

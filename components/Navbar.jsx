@@ -132,6 +132,13 @@ export default function Navbar() {
                     >
                       Profile
                     </Link>
+                    <Link
+                      href="/billing"
+                      onClick={() => setMenuOpen(false)}
+                      className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
+                    >
+                      ReerHub Pro
+                    </Link>
                     <button
                       onClick={onLogout}
                       className="block w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600"

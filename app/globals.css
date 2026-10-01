@@ -114,6 +114,94 @@ body {
   display: none;
 }
 
+/* ── Company marquee: seamless LTR loop (track holds 2 copies, shifts -50%).
+   Pause on hover / focus so cards stay clickable; stillness for reduced-motion. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+.marquee-track {
+  animation: marquee var(--marquee-duration, 36s) linear infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ── Gentle float for hero accents (match card, chips). */
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.float-y {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+/* ── Live pulse dot (fresh-role badge). */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.8);
+  }
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ── Price pop: replays when the selected plan changes (key-driven). */
+@keyframes price-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.price-pop {
+  animation: price-pop 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Scroll reveal: sections rise in once via IntersectionObserver.
+   Transition (not keyframes) so visibility is class-driven. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* One orchestrated entrance lives on the marketing hero only.
    Everywhere else, motion answers user actions (hover, expand, toggle).
    Honor reduced-motion: stillness, static skeletons, native scrolling. */
@@ -124,6 +212,17 @@ body {
   .skeleton {
     animation: none;
     background: #e2e8f0;
+  }
+  .marquee-track,
+  .float-y,
+  .pulse-dot,
+  .price-pop {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
   html[data-scroll-behavior="smooth"] {
     scroll-behavior: auto;

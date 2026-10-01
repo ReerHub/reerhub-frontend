@@ -12,6 +12,7 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 import DashboardJobCard from "@/components/DashboardJobCard";
+import RecommendationPanel from "@/components/RecommendationPanel";
 import { useAuth } from "@/components/AuthProvider";
 import {
   requestVerifyEmail,
@@ -715,6 +716,12 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
             >
               Resend link
             </button>
+          </div>
+        )}
+
+        {user && (
+          <div className="mt-6">
+            <RecommendationPanel />
           </div>
         )}
 
