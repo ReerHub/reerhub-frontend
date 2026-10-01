@@ -1,7 +1,7 @@
 import Link from "next/link";
 import CompanyLogo from "@/components/CompanyLogo";
 import type { Job } from "@/lib/reerhub";
-import { TECH_TRACKS } from "@/lib/reerhub";
+import { jobUrl, TECH_TRACKS } from "@/lib/reerhub";
 import { locationLabel, timeAgo } from "@/lib/format";
 
 function PinIcon() {
@@ -93,7 +93,7 @@ export default function JobCard({
         </button>
       )}
       <Link
-        href={`/jobs/${job._id}`}
+        href={jobUrl(job)}
         className="group flex flex-col h-full bg-white border border-slate-200/80 rounded-2xl p-5 shadow-card hover:shadow-card-hover hover:border-slate-300 hover:-translate-y-0.5 transition-all duration-200"
       >
         <div className="flex items-center gap-3 mb-3">

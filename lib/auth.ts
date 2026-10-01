@@ -17,6 +17,14 @@ export type AuthUser = {
     city?: string;
     experienceYears?: number;
     remoteType?: string;
+    targetLocations?: string[];
+    availability?: "actively-looking" | "open" | "not-looking";
+    education?: string;
+    experienceSummary?: string;
+  };
+  notificationPreferences?: {
+    digest?: "daily" | "weekdays" | "weekly" | "paused";
+    instantAlerts?: boolean;
   };
   createdAt?: string;
 };
@@ -102,26 +110,17 @@ export function safeNext(raw: string | null): string {
   return "/dashboard";
 }
 
-export const signup = (body: {
-  name: string;
+export const requestMagicLink = (body: {
   email: string;
-  password: string;
   turnstileToken?: string;
 }) =>
-  request<AuthUser>("/auth/signup", {
+  request<{ sent: boolean }>("/auth/magic-link", {
     method: "POST",
     body: JSON.stringify(body),
   });
 
-export const login = (body: {
-  email: string;
-  password: string;
-  turnstileToken?: string;
-}) =>
-  request<AuthUser>("/auth/login", {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
+export const verifyMagicLink = (token: string) =>
+  request<AuthUser>(`/auth/verify-magic?token=${encodeURIComponent(token)}`);
 
 export const googleLogin = (idToken: string) =>
   request<AuthUser>("/auth/google", {
@@ -155,18 +154,6 @@ export const verifyEmail = (token: string) =>
     body: JSON.stringify({ token }),
   });
 
-export const forgotPassword = (email: string, turnstileToken?: string) =>
-  request<{ sent: boolean }>("/auth/forgot-password", {
-    method: "POST",
-    body: JSON.stringify({ email, turnstileToken }),
-  });
-
-export const resetPassword = (token: string, password: string) =>
-  request<{ reset: boolean }>("/auth/reset-password", {
-    method: "POST",
-    body: JSON.stringify({ token, password }),
-  });
-
 export const savedIds = () => request<string[]>("/users/me/saved/ids");
 
 export const saveJob = (jobId: string) =>
@@ -191,3 +178,50 @@ export const exportMyData = () =>
 
 export const deleteAccount = () =>
   request<{ deleted: boolean }>("/users/me", { method: "DELETE" });
+
+export type Recommendation = {
+  _id: string;
+  title: string;
+  companyId: { name: string; slug: string; logoUrl?: string };
+  locations: { city?: string }[];
+  firstSeenAt: string;
+  fit: { score: number; reasons: string[] };
+};
+
+export const getRecommendations = () =>
+  request<{ profileCompletion: number; jobs: Recommendation[] }>(
+    "/recommendations",
+  );
+
+export const setRecommendationFeedback = (jobId: string, feedback: string) =>
+  request<{ feedback: string }>(`/recommendations/${jobId}/feedback`, {
+    method: "PATCH",
+    body: JSON.stringify({ feedback }),
+  });
+
+export type BillingState = {
+  subscription: null | {
+    plan: string;
+    status: string;
+    trialEndsAt?: string;
+    currentPeriodEndsAt?: string;
+    cancelledAt?: string;
+    payments: {
+      razorpayPaymentId?: string;
+      amount?: number;
+      status?: string;
+      paidAt?: string;
+    }[];
+  };
+};
+export const getBilling = () => request<BillingState>("/billing");
+export const beginCheckout = (planId = "pro-monthly") =>
+  request<{
+    subscription: BillingState["subscription"];
+    checkoutUrl: string | null;
+  }>("/billing/checkout", {
+    method: "POST",
+    body: JSON.stringify({ planId }),
+  });
+export const cancelSubscription = () =>
+  request<BillingState>("/billing/cancel", { method: "POST" });

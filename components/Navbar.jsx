@@ -9,8 +9,8 @@ import { useAuth } from "@/components/AuthProvider";
 const LINKS = [
   { href: "/", label: "Home" },
   { href: "/jobs", label: "All Roles" },
-  { href: "/engineering", label: "Engineering" },
-  { href: "/ai", label: "AI / ML" },
+  { href: "/engineering-jobs", label: "Engineering" },
+  { href: "/ai-jobs", label: "AI / ML" },
   { href: "/companies", label: "Companies" },
 ];
 
@@ -131,6 +131,13 @@ export default function Navbar() {
                       className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
                     >
                       Profile
+                    </Link>
+                    <Link
+                      href="/billing"
+                      onClick={() => setMenuOpen(false)}
+                      className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
+                    >
+                      ReerHub Pro
                     </Link>
                     <button
                       onClick={onLogout}

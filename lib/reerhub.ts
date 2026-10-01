@@ -1,12 +1,14 @@
-export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+// Browser uses same-origin /api/v1 (Next rewrite proxies to the backend,
+// so the backend URL never ships in client JS). Server components/SSR use
+// server-only API_URL directly.
+const SERVER_API_BASE = process.env.API_URL || "http://localhost:8000/api/v1";
 
-// Single source of truth for the API origin. NEXT_PUBLIC_SERVER_URL is kept
-// as a deprecated alias so old imports keep working.
+export const API_BASE =
+  typeof window === "undefined" ? SERVER_API_BASE : "/api/v1";
+
+// Single source of truth for the API origin (server-only).
 export const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL ||
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/, "") ||
-  "http://localhost:8000";
+  SERVER_API_BASE.replace(/\/api\/v1\/?$/, "") || "http://localhost:8000";
 
 export type TechTrack =
   | "software"
@@ -36,6 +38,9 @@ export type Job = {
   title: string;
   normalizedTitle?: string;
   description?: string;
+  // Teaser shape for anonymous readers: gated fields are omitted and an
+  // excerpt is served instead (backend strips without a session).
+  excerpt?: string;
   department?: string;
   employmentType?: string;
   remoteType?: string;
@@ -45,8 +50,8 @@ export type Job = {
   taxonomyVersion?: number;
   isIndiaRole?: boolean;
   locations: { city?: string; state?: string; country?: string }[];
-  skills: string[];
-  applicationUrl: string;
+  skills?: string[];
+  applicationUrl?: string;
   sourceUrl: string;
   postedAt?: string;
   firstSeenAt: string;
@@ -122,7 +127,8 @@ export const listJobsWithMeta = async (
   };
 };
 
-export const getJob = (jobId: string) => get<Job>(`/jobs/${jobId}`);
+export const getJob = (jobId: string, init?: RequestInit) =>
+  get<Job>(`/jobs/${jobId}`, init);
 
 export const listCompanies = () => get<Company[]>("/companies");
 
@@ -130,3 +136,31 @@ export const getCompany = (slug: string) => get<Company>(`/companies/${slug}`);
 
 export const listCompanyJobs = (companyId: string, limit = 50) =>
   listJobsWithMeta({ companyId, limit });
+
+// SEO slug URLs: /jobs/{title}-{company}-{id} (backend untouched — the
+// trailing 24-hex id is the lookup key; bare ids keep working and
+// canonical-redirect to the slug form).
+export const slugify = (value: string) =>
+  (value || "job")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "job";
+
+export const jobSlug = (job: {
+  title: string;
+  companyId?: { name?: string } | null;
+  _id: string;
+}) =>
+  `${slugify(job.title)}-${slugify(job.companyId?.name || "company")}-${job._id}`;
+
+export const parseJobSlug = (slug: string): string | null => {
+  const hit = /-([a-f0-9]{24})$/.exec(slug || "");
+  return hit ? hit[1] : null;
+};
+
+export const jobUrl = (job: {
+  title: string;
+  companyId?: { name?: string } | null;
+  _id: string;
+}) => `/jobs/${jobSlug(job)}`;

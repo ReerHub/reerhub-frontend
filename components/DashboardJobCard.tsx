@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Job } from "@/lib/reerhub";
+import { jobUrl } from "@/lib/reerhub";
 import { locationLabel, timeAgo } from "@/lib/format";
 
 const PASTELS = [
@@ -60,7 +61,11 @@ export default function DashboardJobCard({
   ].filter(Boolean) as string[];
 
   return (
-    <article className="bg-white rounded-3xl border border-slate-200/70 p-2 shadow-card hover:shadow-card-hover transition-all">
+    <article
+      className={`bg-white rounded-3xl border border-slate-200/70 p-2 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all ${
+        saved ? "ring-2 ring-electric/40" : ""
+      }`}
+    >
       <div
         className="rounded-2xl p-4 min-h-56 flex flex-col"
         style={{ backgroundColor: pastelFor(index) }}
@@ -73,7 +78,7 @@ export default function DashboardJobCard({
             onClick={() => onToggleSave(job._id, !saved)}
             aria-label={saved ? "Remove saved job" : "Save job"}
             aria-pressed={saved}
-            className={`min-w-11 min-h-11 w-11 h-11 rounded-full flex items-center justify-center transition-all ${
+            className={`min-w-11 min-h-11 w-11 h-11 rounded-full flex items-center justify-center transition-all active:scale-90 ${
               saved
                 ? "bg-slate-900 text-white"
                 : "bg-white/80 text-slate-700 hover:text-slate-900"
@@ -97,7 +102,7 @@ export default function DashboardJobCard({
         <p className="text-[15px] font-medium text-slate-900">{companyName}</p>
         <div className="flex items-start justify-between gap-3">
           <Link
-            href={`/jobs/${job._id}`}
+            href={jobUrl(job)}
             className="font-display text-[22px] leading-tight font-bold text-slate-900 line-clamp-2 hover:underline underline-offset-4"
           >
             {job.title}
@@ -142,8 +147,8 @@ export default function DashboardJobCard({
           </p>
         </div>
         <Link
-          href={`/jobs/${job._id}`}
-          className="shrink-0 px-6 py-2 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark transition-all"
+          href={jobUrl(job)}
+          className="shrink-0 px-6 py-2 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark active:scale-95 transition-all"
         >
           Details
         </Link>

@@ -46,7 +46,14 @@ const Turnstile = forwardRef<TurnstileHandle>(function Turnstile(_, ref) {
     () =>
       typeof document !== "undefined" && !!document.getElementById(SCRIPT_ID),
   );
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+  const [siteKey, setSiteKey] = useState("");
+
+  useEffect(() => {
+    fetch("/api/config")
+      .then((r) => r.json())
+      .then((j) => setSiteKey(j.turnstileSiteKey || ""))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!siteKey || ready) return;
