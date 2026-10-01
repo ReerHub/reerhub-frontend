@@ -25,7 +25,7 @@ npx eslint . && npx tsc --noEmit
 
 ## Docs
 
-`docs/DECISIONS.md` · `docs/CHANGELOG.md` · `docs/04-deployment.md` (Vercel env matrix) · `docs/design/design-system.md` v2. Start with `AGENTS.md`. Deliberately small — no new doc files without a triggering incident or requirement.
+`docs/DECISIONS.md` · `docs/04-deployment.md` (Vercel env matrix) · `docs/design/design-system.md` v2. Start with `AGENTS.md`. Deliberately small — no new doc files without a triggering incident or requirement.
 
 ## Roadmap
 
@@ -40,4 +40,4 @@ npx eslint . && npx tsc --noEmit
 
 ## Deploy
 
-Vercel auto-deploys `main`. Env (`NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY`) is build-time → redeploy after changes. Dashboard must pin **Node 24**. Full matrix: `docs/04-deployment.md`. Keep `main` green; branches + PRs.
+Vercel auto-deploys `main`. Env (`API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, `TURNSTILE_SITE_KEY`) is server-only, no `NEXT_PUBLIC_*` — browser calls same-origin `/api/v1` (Next rewrite proxies to `API_URL`); public keys served at runtime via `/api/config`. Dashboard must pin **Node 24**. Full matrix: `docs/04-deployment.md`. Keep `main` green; branches + PRs.

@@ -1,12 +1,14 @@
-export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+// Browser uses same-origin /api/v1 (Next rewrite proxies to the backend,
+// so the backend URL never ships in client JS). Server components/SSR use
+// server-only API_URL directly.
+const SERVER_API_BASE = process.env.API_URL || "http://localhost:8000/api/v1";
 
-// Single source of truth for the API origin. NEXT_PUBLIC_SERVER_URL is kept
-// as a deprecated alias so old imports keep working.
+export const API_BASE =
+  typeof window === "undefined" ? SERVER_API_BASE : "/api/v1";
+
+// Single source of truth for the API origin (server-only).
 export const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL ||
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1\/?$/, "") ||
-  "http://localhost:8000";
+  SERVER_API_BASE.replace(/\/api\/v1\/?$/, "") || "http://localhost:8000";
 
 export type TechTrack =
   | "software"

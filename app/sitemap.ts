@@ -2,9 +2,8 @@ import type { MetadataRoute } from "next";
 
 import { jobSlug } from "@/lib/reerhub";
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+const BASE = process.env.SITE_URL || "http://localhost:3000";
+const API_BASE = process.env.API_URL || "http://localhost:8000/api/v1";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 

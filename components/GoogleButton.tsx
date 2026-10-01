@@ -39,7 +39,14 @@ export default function GoogleButton({ next }: { next: string }) {
       typeof document !== "undefined" &&
       !!document.getElementById("google-gsi"),
   );
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+  const [clientId, setClientId] = useState("");
+
+  useEffect(() => {
+    fetch("/api/config")
+      .then((r) => r.json())
+      .then((j) => setClientId(j.googleClientId || ""))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!clientId || ready) return;

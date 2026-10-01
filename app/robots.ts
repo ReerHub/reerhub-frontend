@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const base = process.env.SITE_URL || "http://localhost:3000";
   // Staging is publicly reachable (no SSO) for testing — keep crawlers out.
   if (base.includes("staging")) {
     return { rules: [{ userAgent: "*", disallow: "/" }] };
