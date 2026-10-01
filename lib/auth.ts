@@ -24,7 +24,6 @@ export type AuthUser = {
   };
   notificationPreferences?: {
     digest?: "daily" | "weekdays" | "weekly" | "paused";
-    instantAlerts?: boolean;
   };
   createdAt?: string;
 };
