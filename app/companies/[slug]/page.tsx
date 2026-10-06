@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 import { notFound } from "next/navigation";
 import CompanyLogo from "@/components/CompanyLogo";
 import JobCard from "@/components/JobCard";
@@ -33,7 +35,7 @@ export default async function CompanyDetailPage({
   return (
     <div>
       <section className="border-b border-slate-200 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+        <div className="page-container py-10 sm:py-12">
           <nav
             className="text-[13px] text-slate-500 mb-6 flex items-center gap-2"
             aria-label="Breadcrumb"
@@ -116,7 +118,7 @@ export default async function CompanyDetailPage({
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+      <section className="page-container py-10">
         <h2 className="font-bold text-slate-900 text-xl mb-5">
           Open roles{" "}
           <span className="text-slate-500 font-medium">({openCount})</span>
@@ -137,6 +139,9 @@ export default async function CompanyDetailPage({
             </p>
           </div>
         )}
+        <Suspense>
+          <DiscoveryPrompt count={jobs.length} />
+        </Suspense>
       </section>
     </div>
   );

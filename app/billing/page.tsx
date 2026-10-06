@@ -1,18 +1,42 @@
 "use client";
 
+import Script from "next/script";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   beginCheckout,
   cancelSubscription,
   getBilling,
+  verifyCheckout,
   type BillingState,
 } from "@/lib/auth";
 import { useAuth } from "@/components/AuthProvider";
 import Reveal from "@/components/Reveal";
+import MembershipStatus from "@/components/MembershipStatus";
+import Icon from "@/components/ui/Icon";
+import { hasProAccess, membershipDate, planLabel } from "@/lib/membership";
 
 type PlanId = "pro-weekly" | "pro-monthly" | "pro-quarterly";
+
+type RazorpayResponse = {
+  razorpay_payment_id: string;
+  razorpay_subscription_id: string;
+  razorpay_signature: string;
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => {
+      open: () => void;
+      on: (
+        event: string,
+        handler: (response: { error?: { description?: string } }) => void,
+      ) => void;
+    };
+  }
+}
 
 const PLANS: {
   id: PlanId;
@@ -53,8 +77,14 @@ const PLANS: {
 
 const TRIAL_STEPS = [
   ["Day 1", "Pick a plan, build your profile in two minutes."],
-  ["Days 2–7", "Wake up to your top-5 matches with fit reasons."],
-  ["Day 8", "First charge — or cancel in one tap, keep nothing to pay."],
+  [
+    "Days 2–7",
+    "Review ranked matches. Daily emails include up to five roles that meet the relevance threshold.",
+  ],
+  [
+    "Day 8",
+    "Recurring plan billing begins. Cancel renewal during your trial if you don’t want to continue.",
+  ],
 ];
 
 const ASSURANCES = [
@@ -66,8 +96,12 @@ const ASSURANCES = [
 
 const FAQS = [
   [
+    "Are subscription payments refundable?",
+    "Subscription payments are non-refundable, including unused days. Cancel renewal to stop the next deduction; you keep Pro through the end of your current paid period. Cancelling during the trial prevents the first recurring subscription charge. Razorpay’s payment-method authorization amount is separate from subscription fees.",
+  ],
+  [
     "When am I first charged?",
-    "On day 8. Every plan starts with a 7-day free trial — the first charge happens only after the trial ends. Cancel during the trial and you pay nothing.",
+    "Recurring plan billing starts after the 7-day trial. Razorpay may show a small refundable authorization amount when you set up your payment method. Review the checkout amount before authorizing.",
   ],
   [
     "How do I pay — is UPI supported?",
@@ -79,11 +113,11 @@ const FAQS = [
   ],
   [
     "Can I switch plans later?",
-    "Yes. Cancel renewal on your current plan, then start the new plan from this page — weekly ₹49, monthly ₹149, or quarterly ₹299. The new plan starts its own billing cycle.",
+    "Cancel renewal on your current plan, then choose another once your current access ends. Weekly is ₹49, monthly is ₹149, and quarterly is ₹299. Cancelling renewal keeps your current Pro access until the end of the period.",
   ],
   [
     "What does Pro unlock over a free account?",
-    "Pro members get a daily top-five of fresh matches with clear fit reasons, full official job details with apply links, and digest controls (daily weekdays, weekly, or paused). Without Pro you see teasers only.",
+    "Free members can browse official openings, save roles, and apply manually. Pro adds a private ranked dashboard, relevance feedback, and a daily email with up to five strong matches scoring 55% or higher. You can pause alerts any time.",
   ],
   [
     "Will I be hired if my fit score is high?",
@@ -140,9 +174,11 @@ function FaqSection() {
 const stagger = (index: number) => ({ animationDelay: `${index * 90}ms` });
 
 export default function BillingPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, refresh } = useAuth();
+  const router = useRouter();
   const [billing, setBilling] = useState<BillingState | null>(null);
   const [busy, setBusy] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
   const [planId, setPlanId] = useState<PlanId>("pro-monthly");
   useEffect(() => {
     if (user)
@@ -151,17 +187,77 @@ export default function BillingPage() {
         .catch(() => toast.error("Could not load billing"));
   }, [user]);
   const start = async () => {
+    if (!user) {
+      router.push("/login?next=/billing");
+      return;
+    }
     setBusy(true);
     try {
       const data = await beginCheckout(planId);
-      if (data.checkoutUrl) window.location.assign(data.checkoutUrl);
-      else toast.success("Your Pro access is already active");
+      if (!data.checkout) {
+        setBilling({ subscription: data.subscription });
+        await refresh();
+        toast.success("Your Pro access is already active");
+        setBusy(false);
+        return;
+      }
+      if (!window.Razorpay) {
+        throw new Error("Secure checkout is still loading. Please try again.");
+      }
+      const selectedPlan =
+        PLANS.find((plan) => plan.id === data.subscription?.plan) || selected;
+      const checkout = new window.Razorpay({
+        key: data.checkout.keyId,
+        subscription_id: data.checkout.subscriptionId,
+        name: "ReerHub",
+        description: `${selectedPlan.name} career intelligence membership`,
+        prefill: { name: user?.name, email: user?.email },
+        theme: { color: "#2F6FED" },
+        modal: { ondismiss: () => setBusy(false) },
+        handler: async (response: RazorpayResponse) => {
+          try {
+            const verified = await verifyCheckout({
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySubscriptionId: response.razorpay_subscription_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            setBilling(verified);
+            await refresh();
+            router.push("/billing/success");
+          } catch (error) {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : "We could not verify your membership",
+            );
+          } finally {
+            setBusy(false);
+          }
+        },
+      });
+      checkout.on("payment.failed", (response) => {
+        toast.error(
+          response.error?.description ||
+            "Payment was not completed. You can try again.",
+        );
+        setBusy(false);
+      });
+      checkout.open();
     } catch (error) {
+      const conflict = error as Error & { code?: string; data?: BillingState };
+      if (
+        conflict.code === "PENDING_PLAN_CONFLICT" &&
+        conflict.data?.subscription
+      ) {
+        setBilling(conflict.data);
+        setPlanId(conflict.data.subscription.plan as PlanId);
+      }
       toast.error(
         error instanceof Error ? error.message : "Could not start checkout",
       );
-    } finally {
       setBusy(false);
+    } finally {
+      // The Razorpay modal owns its loading state after it opens.
     }
   };
   const cancel = async () => {
@@ -169,7 +265,11 @@ export default function BillingPage() {
     try {
       const data = await cancelSubscription();
       setBilling(data);
-      toast.success("Your plan will not renew");
+      setConfirmCancel(false);
+      await refresh();
+      toast.success(
+        `Renewal cancelled. Pro access ends ${membershipDate(data.subscription) || "at the end of this period"}.`,
+      );
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not cancel plan",
@@ -182,56 +282,84 @@ export default function BillingPage() {
     return (
       <p className="max-w-3xl mx-auto px-4 py-16 text-slate-500">Loading…</p>
     );
-  if (!user)
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-16">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
-        />
-        <p className="rise-in text-sm font-bold text-electric">ReerHub Pro</p>
-        <h1
-          className="rise-in font-display text-4xl font-bold text-slate-900 mt-2"
-          style={stagger(1)}
-        >
-          Make every daily match count.
-        </h1>
-        <p className="rise-in text-slate-600 mt-3 text-lg" style={stagger(2)}>
-          Sign in to start your 7-day free trial.
-        </p>
-        <Link
-          href="/login?next=/billing"
-          className="rise-in inline-block mt-6 px-6 py-3 rounded-xl bg-electric text-white font-semibold hover:bg-electric-dark hover:-translate-y-0.5 transition-all"
-          style={stagger(3)}
-        >
-          Sign in
-        </Link>
-        <FaqSection />
-      </div>
-    );
-  const subscription = billing?.subscription;
-  const isLive =
-    subscription && ["active", "trialing"].includes(subscription.status);
+  const subscription = billing?.subscription || user?.membership?.subscription;
+  const isLive = hasProAccess(subscription);
   const selected = PLANS.find((p) => p.id === planId) || PLANS[1];
   return (
-    <div className="max-w-4xl mx-auto px-4 py-14 overflow-hidden">
+    <div className="mx-auto max-w-5xl px-5 py-10 sm:py-16">
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
       />
-      <p className="rise-in text-sm font-bold text-electric">ReerHub Pro</p>
+      <p className="rise-in mb-4 flex items-center gap-2 text-sm font-bold text-primary-deep">
+        <Icon name="spark" />
+        ReerHub Pro
+      </p>
       <h1
-        className="rise-in font-display text-4xl font-bold text-slate-900 mt-2"
+        className="rise-in max-w-2xl font-display text-4xl sm:text-5xl leading-tight font-bold tracking-tight text-slate-900 mt-2"
         style={stagger(1)}
       >
-        Make every daily match count.
+        A stronger signal for your next move.
       </h1>
       <p
         className="rise-in text-slate-600 text-lg leading-relaxed mt-4"
         style={stagger(2)}
       >
-        7-day free trial on every plan. Cancel any time. We show fit—not a
-        promise of hiring.
+        Your skills. Your preferences. A ranked shortlist that helps you focus.
+        Start with a 7-day trial on any plan.
+      </p>
+      {isLive && user && (
+        <div className="mt-8">
+          <MembershipStatus
+            user={{
+              ...user,
+              membership: { isPro: true, subscription: subscription || null },
+            }}
+          />
+        </div>
+      )}
+      {subscription && !isLive && (
+        <div className="surface-panel mt-8 p-5" role="status">
+          <h2 className="font-semibold text-ink">
+            {subscription.status === "pending"
+              ? "Your checkout isn’t complete yet."
+              : subscription.status === "past_due"
+                ? "Your membership needs attention."
+                : "Your previous Pro access has ended."}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            {subscription.status === "pending"
+              ? "Resume your existing pending plan to continue secure checkout. Pro becomes available after payment authorization is confirmed."
+              : "Free job discovery and your saved roles are still available. Review your membership before starting another checkout."}
+          </p>
+          {subscription.status === "pending" &&
+            !subscription.checkoutNeedsReview && (
+              <button
+                className="btn-secondary mt-4"
+                onClick={() => setPlanId(subscription.plan as PlanId)}
+              >
+                Select pending {planLabel(subscription.plan)} checkout
+              </button>
+            )}
+          {subscription.checkoutNeedsReview && (
+            <p className="mt-3 text-sm">
+              Checkout needs confirmation. Please{" "}
+              <a className="underline" href="mailto:hello@reerhub.com">
+                contact support
+              </a>{" "}
+              before retrying.
+            </p>
+          )}
+        </div>
+      )}
+      <p className="mt-7 text-sm text-slate-600">
+        {isLive
+          ? "Your current plan is shown below."
+          : "Choose your billing cycle. Every plan includes the same Pro features."}
       </p>
       <div
         className="grid md:grid-cols-3 gap-4 mt-9"
@@ -245,10 +373,28 @@ export default function BillingPage() {
               key={plan.id}
               role="radio"
               aria-checked={active}
+              tabIndex={active ? 0 : -1}
+              onKeyDown={(e) => {
+                if (
+                  ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"].includes(
+                    e.key,
+                  )
+                ) {
+                  e.preventDefault();
+                  const next =
+                    (index +
+                      (["ArrowRight", "ArrowDown"].includes(e.key) ? 1 : 2)) %
+                    PLANS.length;
+                  setPlanId(PLANS[next].id);
+                  (
+                    e.currentTarget.parentElement?.children[next] as HTMLElement
+                  )?.focus();
+                }
+              }}
               disabled={!!isLive}
               onClick={() => setPlanId(plan.id)}
               style={stagger(index)}
-              className={`rise-in relative text-left bg-white rounded-3xl border p-6 transition-all ${active ? "border-electric ring-2 ring-electric-soft shadow-card-hover -translate-y-1" : "border-slate-200 shadow-card hover:border-slate-400 hover:-translate-y-0.5"} ${isLive ? "opacity-90" : ""}`}
+              className={`rise-in relative text-left bg-white rounded-2xl border p-6 transition-colors ${active ? "border-electric ring-2 ring-electric-soft" : "border-slate-200 hover:border-slate-400"} ${isLive ? "opacity-90" : ""}`}
             >
               {plan.badge && (
                 <span
@@ -258,6 +404,11 @@ export default function BillingPage() {
                 </span>
               )}
               <p className="font-bold text-slate-900">{plan.name}</p>
+              {active && (
+                <span className="absolute right-5 top-5 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
+                  <Icon name="check" className="h-4 w-4" />
+                </span>
+              )}
               <p className="mt-2">
                 <span className="font-display text-4xl font-bold text-slate-900 tabular-nums">
                   {plan.price}
@@ -274,7 +425,11 @@ export default function BillingPage() {
               </p>
               {subscription?.plan === plan.id && (
                 <p className="text-xs font-bold text-slate-500 mt-3">
-                  Your current plan
+                  {isLive
+                    ? "Your current plan"
+                    : subscription.status === "pending"
+                      ? "Your pending plan"
+                      : "Your previous plan"}
                 </p>
               )}
             </button>
@@ -288,10 +443,10 @@ export default function BillingPage() {
               What Pro includes
             </h2>
             <ul className="mt-5 space-y-3 text-slate-600">
-              <li>Daily top-five fresh job matches</li>
-              <li>Clear reasons behind every fit score</li>
-              <li>Full official job details and apply links</li>
-              <li>Weekday, weekly, and pause controls</li>
+              <li>Up to five strong 55%+ matches each day</li>
+              <li>Clear reasons behind every match score</li>
+              <li>A private ranked dashboard built from your profile</li>
+              <li>Hide unsuitable roles and pause alerts any time</li>
             </ul>
           </section>
           <section className="bg-ink rounded-3xl p-7 text-white">
@@ -309,26 +464,76 @@ export default function BillingPage() {
                 {isLive ? "" : ` ${selected.per}`}
               </span>
             </p>
-            {subscription?.trialEndsAt && (
+            {isLive && membershipDate(subscription) && (
               <p className="text-sm text-white/70 mt-4">
-                Trial ends{" "}
-                {new Date(subscription.trialEndsAt).toLocaleDateString("en-IN")}
+                {subscription?.cancelAtPeriodEnd
+                  ? "Pro access ends"
+                  : subscription?.status === "trialing"
+                    ? "Trial ends"
+                    : "Next renewal"}{" "}
+                {membershipDate(subscription)}
               </p>
             )}
             <button
-              onClick={isLive ? cancel : start}
-              disabled={busy}
+              onClick={isLive ? () => setConfirmCancel(true) : start}
+              disabled={
+                busy ||
+                !!subscription?.checkoutNeedsReview ||
+                !!(
+                  isLive &&
+                  (subscription?.cancelAtPeriodEnd || subscription?.cancelledAt)
+                )
+              }
               className="w-full mt-6 py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 transition-all"
             >
               {busy
                 ? "Please wait…"
                 : isLive
-                  ? "Cancel renewal"
+                  ? subscription?.cancelledAt
+                    ? "Renewal cancelled"
+                    : "Cancel renewal"
                   : `Start 7-day free trial · ${selected.name} ${selected.price}`}
             </button>
+            {confirmCancel && (
+              <div
+                className="mt-4 rounded-xl border border-white/30 p-4"
+                role="region"
+                aria-label="Confirm cancellation"
+              >
+                <p className="text-sm leading-6">
+                  Cancel the next renewal? You will keep Pro until{" "}
+                  {membershipDate(subscription)}. Subscription payments are
+                  non-refundable; unused days are not refunded.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    className="btn-secondary"
+                    onClick={cancel}
+                    disabled={busy}
+                  >
+                    Confirm cancellation
+                  </button>
+                  <button
+                    className="min-h-11 px-3 underline"
+                    onClick={() => setConfirmCancel(false)}
+                    disabled={busy}
+                  >
+                    Keep renewal
+                  </button>
+                </div>
+              </div>
+            )}
+            <p className="mt-4 text-sm leading-6 text-white/90">
+              Subscription payments are non-refundable. Cancel renewal to stop
+              the next deduction and keep Pro for the remaining paid days.{" "}
+              <Link href="/terms#subscriptions" className="underline">
+                Subscription terms
+              </Link>
+            </p>
             {!isLive && (
               <p className="text-xs text-white/50 text-center mt-3">
-                First charge after trial · cancel any time
+                Recurring billing after trial. Review authorization charges at
+                checkout.
               </p>
             )}
           </section>
@@ -337,7 +542,9 @@ export default function BillingPage() {
       {!isLive && (
         <Reveal>
           <section className="mt-14">
-            <p className="text-sm font-bold text-electric">Zero risk</p>
+            <p className="text-sm font-bold text-electric">
+              Know what happens next
+            </p>
             <h2 className="font-display text-3xl font-bold text-slate-900 mt-1">
               How your 7-day trial works
             </h2>
@@ -405,27 +612,20 @@ export default function BillingPage() {
       {!isLive && (
         <Reveal>
           <section className="mt-12 bg-ink rounded-3xl p-8 sm:p-10 text-center overflow-hidden relative">
-            <div
-              className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-electric opacity-20 blur-3xl"
-              aria-hidden
-            />
-            <div
-              className="absolute -bottom-24 -left-16 w-64 h-64 rounded-full bg-brand-purple opacity-20 blur-3xl"
-              aria-hidden
-            />
             <p className="text-sm font-bold text-teal-300 relative">
-              Tomorrow&apos;s digest is already forming
+              Your search, with more direction
             </p>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight mt-2 relative">
-              Your next role could be in it.
+              Spend your time on the roles that fit.
             </h2>
             <p className="text-white/70 mt-3 max-w-md mx-auto relative">
-              Join Pro tonight and wake up to five official roles ranked for
-              your profile.
+              Start your trial, complete your profile, and review your strongest
+              available matches. Daily emails include up to five roles that meet
+              the relevance threshold.
             </p>
             <button
               onClick={start}
-              disabled={busy}
+              disabled={busy || !!subscription?.checkoutNeedsReview}
               className="relative mt-7 inline-block px-8 py-3.5 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 transition-all"
             >
               {busy

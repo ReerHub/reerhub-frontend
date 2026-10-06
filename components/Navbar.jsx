@@ -1,164 +1,200 @@
 "use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
-
-const LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/jobs", label: "All Roles" },
-  { href: "/engineering-jobs", label: "Engineering" },
-  { href: "/ai-jobs", label: "AI / ML" },
-  { href: "/companies", label: "Companies" },
-];
-
-const AUTH_LINKS = [{ href: "/dashboard", label: "Dashboard" }];
-
+import ProBadge from "@/components/ProBadge";
+import Icon from "@/components/ui/Icon";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading, logout } = useAuth();
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const onLogout = async () => {
-    await logout();
-    setMenuOpen(false);
-    router.push("/");
-    router.refresh();
+  const [open, setOpen] = useState(false);
+  const [account, setAccount] = useState(false);
+  const accountRef = useRef(null);
+  const triggerRef = useRef(null);
+  useEffect(() => {
+    const dismiss = (event) => {
+      if (event.type === "keydown" && event.key === "Escape") {
+        setOpen(false);
+        setAccount(false);
+        triggerRef.current?.focus();
+      }
+      if (
+        event.type === "pointerdown" &&
+        !accountRef.current?.contains(event.target)
+      )
+        setAccount(false);
+    };
+    document.addEventListener("keydown", dismiss);
+    document.addEventListener("pointerdown", dismiss);
+    return () => {
+      document.removeEventListener("keydown", dismiss);
+      document.removeEventListener("pointerdown", dismiss);
+    };
+  }, []);
+  const links = [
+    { href: "/jobs", label: "Discover jobs" },
+    { href: "/companies", label: "Companies" },
+    {
+      href: "/billing",
+      label: user?.membership?.isPro ? "Manage Pro" : "ReerHub Pro",
+    },
+    ...(user ? [{ href: "/dashboard", label: "My dashboard" }] : []),
+  ];
+  const close = () => {
+    setOpen(false);
+    setAccount(false);
   };
-
-  const links = user ? [...LINKS, ...AUTH_LINKS] : LINKS;
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-200/80">
-      <div className="max-w-6xl mx-auto h-16 px-4 sm:px-6 flex items-center justify-between gap-3">
+    <header className="site-nav">
+      <div className="page-container flex h-[72px] items-center justify-between gap-4">
         <Link
           href="/"
-          className="flex items-center gap-2.5"
+          onClick={close}
+          className="flex shrink-0 items-center gap-2.5"
           aria-label="ReerHub home"
         >
           <Image
             src="/reerhub-icon-logo.png"
-            alt="ReerHub logo"
             width={36}
             height={36}
-            className="w-9 h-9 rounded-lg"
+            alt=""
             priority
           />
-          <span className="font-bold text-slate-900 text-[17px] tracking-tight">
-            ReerHub
+          <span className="font-display text-xl font-bold tracking-tight text-ink">
+            ReerHub<span className="text-primary">.</span>
           </span>
         </Link>
-        <nav
-          className="flex items-center gap-1 bg-slate-50 border border-slate-200/70 rounded-full p-1 overflow-x-auto max-w-full no-scrollbar [mask-image:linear-gradient(to_right,black_88%,transparent)] sm:[mask-image:none]"
-          aria-label="Primary"
-        >
-          {links.map((link) => {
-            const active =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={active ? "page" : undefined}
-                className={`px-3 sm:px-4 py-1.5 rounded-full text-[13px] sm:text-sm font-semibold transition-all whitespace-nowrap ${
-                  active
-                    ? "bg-white text-slate-900 shadow-card"
-                    : "text-slate-500 hover:text-slate-900"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+          {links.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`nav-link ${pathname.startsWith(href) ? "is-active" : ""}`}
+              aria-current={pathname.startsWith(href) ? "page" : undefined}
+            >
+              {label}
+            </Link>
+          ))}
         </nav>
         <div className="flex items-center gap-2">
           {loading ? (
-            <span
-              className="w-9 h-9 rounded-full bg-slate-100 animate-pulse"
-              aria-hidden
-            />
+            <div className="skeleton h-10 w-20 rounded-xl" />
           ) : user ? (
-            <div className="relative">
+            <div className="relative flex items-center gap-3" ref={accountRef}>
+              <ProBadge user={user} />
               <button
-                onClick={() => setMenuOpen((v) => !v)}
-                className="w-9 h-9 rounded-full bg-electric text-white font-bold flex items-center justify-center"
-                aria-label="Account menu"
+                ref={triggerRef}
+                onClick={() => setAccount(!account)}
+                className="account-trigger"
+                aria-label="Open account navigation"
+                aria-expanded={account}
+                aria-controls="account-navigation"
               >
-                {(user.avatarUrl && (
+                {user.avatarUrl ? (
                   <Image
                     src={user.avatarUrl}
                     alt=""
-                    width={36}
-                    height={36}
+                    width={32}
+                    height={32}
                     unoptimized
-                    className="w-9 h-9 rounded-full object-cover"
+                    className="h-8 w-8 rounded-full object-cover"
                   />
-                )) ||
-                  user.name.charAt(0).toUpperCase()}
+                ) : (
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-bold text-primary-deep">
+                    {user.name.charAt(0).toUpperCase()}
+                  </span>
+                )}
+                <Icon name="chevron" className="hidden h-4 w-4 sm:block" />
               </button>
-              {menuOpen && (
-                <>
-                  <button
-                    aria-hidden
-                    tabIndex={-1}
-                    onClick={() => setMenuOpen(false)}
-                    className="fixed inset-0 z-10 cursor-default"
-                  />
-                  <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-card-hover py-2 text-sm z-20">
-                    <p className="px-4 pt-1 pb-2 border-b border-slate-100 mb-1 min-w-0">
-                      <span className="block font-bold text-slate-900 truncate">
-                        {user.name}
-                      </span>
-                      <span className="block text-xs text-slate-500 truncate">
-                        {user.email}
-                      </span>
+              {account && (
+                <div id="account-navigation" className="account-popover">
+                  <div className="border-b border-slate-100 px-4 pb-4">
+                    <p className="truncate font-semibold text-ink">
+                      {user.name}
                     </p>
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-2 hover:bg-slate-50 font-semibold text-slate-900"
-                    >
-                      Dashboard
-                    </Link>
-                    <Link
-                      href="/profile"
-                      onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
-                    >
-                      Profile
-                    </Link>
-                    <Link
-                      href="/billing"
-                      onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
-                    >
-                      ReerHub Pro
-                    </Link>
-                    <button
-                      onClick={onLogout}
-                      className="block w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600"
-                    >
-                      Log out
-                    </button>
+                    <p className="mt-1 truncate text-xs text-slate-600">
+                      {user.email}
+                    </p>
                   </div>
-                </>
+                  {[
+                    ["/dashboard", "My dashboard", "grid"],
+                    ["/profile", "Profile & preferences", "user"],
+                    [
+                      "/billing",
+                      user.membership?.isPro ? "Manage Pro" : "Explore Pro",
+                      "spark",
+                    ],
+                  ].map(([href, label, icon]) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={close}
+                      className="account-link"
+                    >
+                      <Icon name={icon} className="h-4 w-4" />
+                      {label}
+                    </Link>
+                  ))}
+                  <button
+                    className="account-link w-full"
+                    onClick={async () => {
+                      await logout();
+                      close();
+                      router.push("/");
+                      router.refresh();
+                    }}
+                  >
+                    <Icon name="logout" className="h-4 w-4" />
+                    Sign out
+                  </button>
+                </div>
               )}
             </div>
           ) : (
-            <Link
-              href="/login"
-              className="px-4 py-2 bg-electric text-white rounded-full text-sm font-semibold hover:bg-electric-dark transition-all whitespace-nowrap"
-            >
-              Sign in
+            <Link href="/login" className="btn-primary text-sm">
+              Join free
             </Link>
           )}
+          <button
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 md:hidden"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            onClick={() => setOpen(!open)}
+          >
+            <Icon name={open ? "close" : "menu"} />
+          </button>
         </div>
       </div>
+      {open && (
+        <nav
+          id="mobile-navigation"
+          aria-label="Mobile primary"
+          className="border-t border-slate-100 bg-white p-4 md:hidden"
+        >
+          {links.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={close}
+              className={`nav-link block ${pathname.startsWith(href) ? "is-active" : ""}`}
+            >
+              {label}
+            </Link>
+          ))}
+          <div className="mt-3 flex gap-3 border-t border-slate-100 pt-3">
+            <Link href="/engineering-jobs" onClick={close} className="nav-link">
+              Engineering
+            </Link>
+            <Link href="/ai-jobs" onClick={close} className="nav-link">
+              AI / ML
+            </Link>
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:ui:fixtures": "node scripts/ui-fixtures.mjs",
     "prepare": "husky"
   },
   "dependencies": {

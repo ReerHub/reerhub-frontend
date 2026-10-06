@@ -42,12 +42,12 @@ export default function CookieConsent() {
 
   return (
     <div
-      role="dialog"
+      role="region"
       aria-live="polite"
       aria-label="Cookie consent"
-      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 bg-slate-950 text-white rounded-2xl p-5 shadow-card-hover"
+      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 bg-white border border-slate-200 text-ink rounded-2xl p-5 shadow-pop"
     >
-      <p className="text-sm leading-relaxed text-white/85">
+      <p className="text-sm leading-relaxed text-slate-600">
         We use strictly-necessary cookies to keep you logged in and secure. See
         our{" "}
         <Link
@@ -61,13 +61,13 @@ export default function CookieConsent() {
       <div className="flex gap-2 mt-4">
         <button
           onClick={() => choose("accepted")}
-          className="flex-1 px-4 py-2 bg-white text-slate-950 rounded-xl text-sm font-semibold hover:bg-slate-200"
+          className="btn-primary flex-1"
         >
           Accept
         </button>
         <button
           onClick={() => choose("declined")}
-          className="flex-1 px-4 py-2 border border-white/25 rounded-xl text-sm font-semibold hover:border-white/50"
+          className="btn-secondary flex-1"
         >
           Decline
         </button>
