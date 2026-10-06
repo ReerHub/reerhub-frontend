@@ -41,10 +41,10 @@ export default function RecommendationPanel() {
       <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
         <div>
           <p className="text-sm font-semibold text-electric">
-            Your ranked roles
+            Your Pro match desk
           </p>
           <h2 id="matches-title" className="text-2xl font-bold text-slate-900">
-            Best matches today
+            Strong matches today
           </h2>
         </div>
         <Link href="/profile" className="text-sm font-semibold text-electric">
@@ -103,7 +103,8 @@ export default function RecommendationPanel() {
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-2xl p-6 text-slate-600">
-          Add your skills, role, and location to see a ranked job shortlist.
+          We could not find a strong 55%+ match today. Keep your profile current
+          and check back after the next official-role refresh.
         </div>
       )}
     </section>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import {
   changePassword,
@@ -384,28 +385,46 @@ function ProfileForm({
             rows={4}
           />
         </div>
-        <fieldset className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-          <legend className="px-1 text-sm font-semibold text-slate-700">
-            Job alerts
-          </legend>
-          <p className="text-sm text-slate-500 mb-3">
-            Daily is the default. You can pause any time.
-          </p>
-          <select
-            className={inputCls}
-            defaultValue={user.notificationPreferences?.digest || "daily"}
-            onChange={(e) =>
-              updateMe({ notificationPreferences: { digest: e.target.value } })
-                .then(onSaved)
-                .catch(() => toast.error("Could not update alerts"))
-            }
-          >
-            <option value="daily">Daily matches</option>
-            <option value="weekdays">Weekdays only</option>
-            <option value="weekly">Weekly preview</option>
-            <option value="paused">Paused</option>
-          </select>
-        </fieldset>
+        {user.membership?.isPro ? (
+          <fieldset className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+            <legend className="px-1 text-sm font-semibold text-slate-700">
+              Pro match alerts
+            </legend>
+            <p className="text-sm text-slate-500 mb-3">
+              Get up to five strong matches every day, or pause alerts any time.
+            </p>
+            <select
+              className={inputCls}
+              defaultValue={user.notificationPreferences?.digest || "daily"}
+              onChange={(e) =>
+                updateMe({
+                  notificationPreferences: { digest: e.target.value },
+                })
+                  .then(onSaved)
+                  .catch(() => toast.error("Could not update alerts"))
+              }
+            >
+              <option value="daily">Daily matches</option>
+              <option value="paused">Pause alerts</option>
+            </select>
+          </fieldset>
+        ) : (
+          <section className="rounded-2xl border border-primary/20 bg-primary-soft p-5">
+            <h2 className="font-bold text-slate-900">
+              Your profile is ready for Pro matching
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+              Use your skills and preferences to receive up to five strong roles
+              a day. Free accounts never receive match emails.
+            </p>
+            <Link
+              href="/billing"
+              className="mt-4 inline-flex rounded-xl bg-electric px-4 py-2.5 text-sm font-bold text-white hover:bg-electric-dark"
+            >
+              Explore Pro
+            </Link>
+          </section>
+        )}
         <div className="flex flex-wrap gap-3">
           <button
             type="submit"

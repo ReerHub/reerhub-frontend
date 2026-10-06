@@ -25,6 +25,10 @@ export type AuthUser = {
   notificationPreferences?: {
     digest?: "daily" | "weekdays" | "weekly" | "paused";
   };
+  membership?: {
+    isPro: boolean;
+    subscription: BillingState["subscription"];
+  };
   createdAt?: string;
 };
 
@@ -217,10 +221,19 @@ export const getBilling = () => request<BillingState>("/billing");
 export const beginCheckout = (planId = "pro-monthly") =>
   request<{
     subscription: BillingState["subscription"];
-    checkoutUrl: string | null;
+    checkout: null | { subscriptionId: string; keyId: string };
   }>("/billing/checkout", {
     method: "POST",
     body: JSON.stringify({ planId }),
+  });
+export const verifyCheckout = (body: {
+  razorpayPaymentId: string;
+  razorpaySubscriptionId: string;
+  razorpaySignature: string;
+}) =>
+  request<BillingState>("/billing/verify", {
+    method: "POST",
+    body: JSON.stringify(body),
   });
 export const cancelSubscription = () =>
   request<BillingState>("/billing/cancel", { method: "POST" });

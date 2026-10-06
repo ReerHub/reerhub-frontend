@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import ProBadge from "@/components/ProBadge";
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -83,71 +84,74 @@ export default function Navbar() {
               aria-hidden
             />
           ) : user ? (
-            <div className="relative">
-              <button
-                onClick={() => setMenuOpen((v) => !v)}
-                className="w-9 h-9 rounded-full bg-electric text-white font-bold flex items-center justify-center"
-                aria-label="Account menu"
-              >
-                {(user.avatarUrl && (
-                  <Image
-                    src={user.avatarUrl}
-                    alt=""
-                    width={36}
-                    height={36}
-                    unoptimized
-                    className="w-9 h-9 rounded-full object-cover"
-                  />
-                )) ||
-                  user.name.charAt(0).toUpperCase()}
-              </button>
-              {menuOpen && (
-                <>
-                  <button
-                    aria-hidden
-                    tabIndex={-1}
-                    onClick={() => setMenuOpen(false)}
-                    className="fixed inset-0 z-10 cursor-default"
-                  />
-                  <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-card-hover py-2 text-sm z-20">
-                    <p className="px-4 pt-1 pb-2 border-b border-slate-100 mb-1 min-w-0">
-                      <span className="block font-bold text-slate-900 truncate">
-                        {user.name}
-                      </span>
-                      <span className="block text-xs text-slate-500 truncate">
-                        {user.email}
-                      </span>
-                    </p>
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-2 hover:bg-slate-50 font-semibold text-slate-900"
-                    >
-                      Dashboard
-                    </Link>
-                    <Link
-                      href="/profile"
-                      onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
-                    >
-                      Profile
-                    </Link>
-                    <Link
-                      href="/billing"
-                      onClick={() => setMenuOpen(false)}
-                      className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
-                    >
-                      ReerHub Pro
-                    </Link>
+            <div className="flex items-center gap-2">
+              <ProBadge user={user} />
+              <div className="relative">
+                <button
+                  onClick={() => setMenuOpen((v) => !v)}
+                  className="w-9 h-9 rounded-full bg-electric text-white font-bold flex items-center justify-center"
+                  aria-label="Account menu"
+                >
+                  {(user.avatarUrl && (
+                    <Image
+                      src={user.avatarUrl}
+                      alt=""
+                      width={36}
+                      height={36}
+                      unoptimized
+                      className="w-9 h-9 rounded-full object-cover"
+                    />
+                  )) ||
+                    user.name.charAt(0).toUpperCase()}
+                </button>
+                {menuOpen && (
+                  <>
                     <button
-                      onClick={onLogout}
-                      className="block w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600"
-                    >
-                      Log out
-                    </button>
-                  </div>
-                </>
-              )}
+                      aria-hidden
+                      tabIndex={-1}
+                      onClick={() => setMenuOpen(false)}
+                      className="fixed inset-0 z-10 cursor-default"
+                    />
+                    <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-xl shadow-card-hover py-2 text-sm z-20">
+                      <p className="px-4 pt-1 pb-2 border-b border-slate-100 mb-1 min-w-0">
+                        <span className="block font-bold text-slate-900 truncate">
+                          {user.name}
+                        </span>
+                        <span className="block text-xs text-slate-500 truncate">
+                          {user.email}
+                        </span>
+                      </p>
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 hover:bg-slate-50 font-semibold text-slate-900"
+                      >
+                        Dashboard
+                      </Link>
+                      <Link
+                        href="/profile"
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        href="/billing"
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 hover:bg-slate-50 text-slate-600"
+                      >
+                        {user.membership?.isPro ? "Manage Pro" : "Explore Pro"}
+                      </Link>
+                      <button
+                        onClick={onLogout}
+                        className="block w-full text-left px-4 py-2 hover:bg-slate-50 text-slate-600"
+                      >
+                        Log out
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           ) : (
             <Link

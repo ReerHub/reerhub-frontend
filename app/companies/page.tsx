@@ -10,13 +10,16 @@ export default async function CompaniesPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-      <h1 className="text-4xl font-bold text-slate-900 tracking-tight mb-3">
-        Tech companies
-      </h1>
-      <p className="text-slate-500 mb-10">
-        {companies.length} product companies · {totalRoles} open tech roles ·
-        refreshed daily from official pages.
-      </p>
+      <div className="max-w-3xl">
+        <p className="text-sm font-bold text-electric">Official sources</p>
+        <h1 className="mt-2 text-4xl font-bold text-slate-900 tracking-tight mb-3">
+          Companies hiring through their own career pages
+        </h1>
+        <p className="text-slate-500 mb-10">
+          {companies.length} product companies · {totalRoles} open tech roles ·
+          refreshed daily from official pages.
+        </p>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {companies.map((company) => (

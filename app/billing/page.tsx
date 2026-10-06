@@ -1,18 +1,39 @@
 "use client";
 
 import Link from "next/link";
+import Script from "next/script";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   beginCheckout,
   cancelSubscription,
   getBilling,
+  verifyCheckout,
   type BillingState,
 } from "@/lib/auth";
 import { useAuth } from "@/components/AuthProvider";
 import Reveal from "@/components/Reveal";
 
 type PlanId = "pro-weekly" | "pro-monthly" | "pro-quarterly";
+
+type RazorpayResponse = {
+  razorpay_payment_id: string;
+  razorpay_subscription_id: string;
+  razorpay_signature: string;
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: Record<string, unknown>) => {
+      open: () => void;
+      on: (
+        event: string,
+        handler: (response: { error?: { description?: string } }) => void,
+      ) => void;
+    };
+  }
+}
 
 const PLANS: {
   id: PlanId;
@@ -83,7 +104,7 @@ const FAQS = [
   ],
   [
     "What does Pro unlock over a free account?",
-    "Pro members get a daily top-five of fresh matches with clear fit reasons, full official job details with apply links, and digest controls (daily weekdays, weekly, or paused). Without Pro you see teasers only.",
+    "Free members can browse official openings, save roles, and apply manually. Pro adds a private ranked dashboard, relevance feedback, and a daily email with up to five strong matches scoring 55% or higher. You can pause alerts any time.",
   ],
   [
     "Will I be hired if my fit score is high?",
@@ -140,7 +161,8 @@ function FaqSection() {
 const stagger = (index: number) => ({ animationDelay: `${index * 90}ms` });
 
 export default function BillingPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, refresh } = useAuth();
+  const router = useRouter();
   const [billing, setBilling] = useState<BillingState | null>(null);
   const [busy, setBusy] = useState(false);
   const [planId, setPlanId] = useState<PlanId>("pro-monthly");
@@ -154,14 +176,60 @@ export default function BillingPage() {
     setBusy(true);
     try {
       const data = await beginCheckout(planId);
-      if (data.checkoutUrl) window.location.assign(data.checkoutUrl);
-      else toast.success("Your Pro access is already active");
+      if (!data.checkout) {
+        toast.success("Your Pro access is already active");
+        setBusy(false);
+        return;
+      }
+      if (!window.Razorpay) {
+        throw new Error("Secure checkout is still loading. Please try again.");
+      }
+      const selectedPlan =
+        PLANS.find((plan) => plan.id === data.subscription?.plan) || selected;
+      const checkout = new window.Razorpay({
+        key: data.checkout.keyId,
+        subscription_id: data.checkout.subscriptionId,
+        name: "ReerHub",
+        description: `${selectedPlan.name} career intelligence membership`,
+        prefill: { name: user?.name, email: user?.email },
+        theme: { color: "#2F6FED" },
+        modal: { ondismiss: () => setBusy(false) },
+        handler: async (response: RazorpayResponse) => {
+          try {
+            const verified = await verifyCheckout({
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySubscriptionId: response.razorpay_subscription_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            setBilling(verified);
+            await refresh();
+            router.push("/billing/success");
+          } catch (error) {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : "We could not verify your membership",
+            );
+          } finally {
+            setBusy(false);
+          }
+        },
+      });
+      checkout.on("payment.failed", (response) => {
+        toast.error(
+          response.error?.description ||
+            "Payment was not completed. You can try again.",
+        );
+        setBusy(false);
+      });
+      checkout.open();
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Could not start checkout",
       );
-    } finally {
       setBusy(false);
+    } finally {
+      // The Razorpay modal owns its loading state after it opens.
     }
   };
   const cancel = async () => {
@@ -215,6 +283,10 @@ export default function BillingPage() {
   const selected = PLANS.find((p) => p.id === planId) || PLANS[1];
   return (
     <div className="max-w-4xl mx-auto px-4 py-14 overflow-hidden">
+      <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
@@ -288,10 +360,10 @@ export default function BillingPage() {
               What Pro includes
             </h2>
             <ul className="mt-5 space-y-3 text-slate-600">
-              <li>Daily top-five fresh job matches</li>
-              <li>Clear reasons behind every fit score</li>
-              <li>Full official job details and apply links</li>
-              <li>Weekday, weekly, and pause controls</li>
+              <li>Up to five strong 55%+ matches each day</li>
+              <li>Clear reasons behind every match score</li>
+              <li>A private ranked dashboard built from your profile</li>
+              <li>Hide unsuitable roles and pause alerts any time</li>
             </ul>
           </section>
           <section className="bg-ink rounded-3xl p-7 text-white">
