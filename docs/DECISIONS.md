@@ -43,7 +43,7 @@ Login is Google + magic-link email; `/signup`, `/forgot-password`, `/reset-passw
 
 ## ADR-015 — Pro billing: 3 plans, 7-day trial (2026-09-30)
 
-`/billing` offers weekly ₹49 / monthly ₹150 (preselected, "Most popular") / quarterly ₹299 ("Best value", 33% off), each with a 7-day trial; checkout posts `{ planId }`. Trial-steps, assurances, and a final CTA banner sit below the fold for prospects only. Reason: weekly bridges trial→paid, monthly is the default, quarterly locks a search cycle. Consequence: copy must stay in sync with backend `TRIAL_DAYS` and `BILLING_PLANS`.
+`/billing` offers weekly ₹49 / monthly ₹149 (preselected, "Most popular") / quarterly ₹299 ("Best value", 33% off), each with a 7-day trial; checkout posts `{ planId }`. Trial-steps, assurances, and a final CTA banner sit below the fold for prospects only. Reason: weekly bridges trial→paid, monthly is the default, quarterly locks a search cycle. Consequence: copy must stay in sync with backend `TRIAL_DAYS` and `BILLING_PLANS`.
 
 ## ADR-016 — Homepage motion system (2026-09-30)
 

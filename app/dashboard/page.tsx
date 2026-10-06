@@ -13,7 +13,10 @@ import {
 import toast from "react-hot-toast";
 import DashboardJobCard from "@/components/DashboardJobCard";
 import RecommendationPanel from "@/components/RecommendationPanel";
+import MembershipStatus from "@/components/MembershipStatus";
+import UpgradePanel from "@/components/UpgradePanel";
 import { useAuth } from "@/components/AuthProvider";
+import { isPro } from "@/lib/membership";
 import {
   requestVerifyEmail,
   saveJob,
@@ -720,8 +723,15 @@ function DashboardBoard({ user }: { user: AuthUser | null }) {
         )}
 
         {user && (
-          <div className="mt-6">
-            <RecommendationPanel />
+          <div className="mt-6 space-y-5">
+            {isPro(user) ? (
+              <>
+                <MembershipStatus user={user} />
+                <RecommendationPanel />
+              </>
+            ) : (
+              <UpgradePanel />
+            )}
           </div>
         )}
 

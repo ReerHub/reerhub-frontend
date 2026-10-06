@@ -56,8 +56,9 @@ function LoginForm() {
         Welcome to ReerHub
       </h1>
       <p className="text-slate-500 mb-8">
-        Log in to see your recommended tech roles. No passwords — we email you a
-        secure sign-in link.
+        Create your free job-search account to view official role details, save
+        openings, and apply directly. No passwords — we email you a secure
+        sign-in link.
       </p>
       <GoogleButton next={next} />
       <div className="my-6 flex items-center gap-3 text-xs text-slate-400">

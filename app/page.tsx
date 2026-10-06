@@ -14,9 +14,18 @@ import {
 } from "@/lib/reerhub";
 
 const steps = [
-  ["Build your profile", "Add your role, skills, experience, and preferences."],
-  ["See the fit", "We explain exactly why each official role fits you."],
-  ["Apply with momentum", "Receive fresh top matches before they go stale."],
+  [
+    "Discover official openings",
+    "Browse roles indexed directly from company career pages.",
+  ],
+  [
+    "Build your signal",
+    "Save roles and add the skills, experience, and preferences that matter to you.",
+  ],
+  [
+    "Let Pro rank the work",
+    "Receive only strong matches, with clear reasons behind each score.",
+  ],
 ];
 
 const stagger = (index: number) => ({ animationDelay: `${index * 90}ms` });
@@ -46,44 +55,45 @@ export default function Home() {
               className="rise-in text-sm font-bold text-electric mb-5"
               style={stagger(0)}
             >
-              Official tech roles, matched daily
+              Official tech roles from companies hiring in India
             </p>
             <h1
               className="rise-in font-display text-4xl sm:text-6xl leading-[1.03] font-bold tracking-tight text-slate-900 max-w-xl"
               style={stagger(1)}
             >
-              Your next engineering role, ranked for you.
+              Discover every opening. Let Pro find the right ones.
             </h1>
             <p
               className="rise-in text-lg leading-relaxed text-slate-600 max-w-xl mt-6"
               style={stagger(2)}
             >
-              ReerHub reads official company career pages, then highlights the
-              India tech jobs that fit your skills, experience, and preferences.
+              Start with a clean, trusted job search. When you are ready,
+              ReerHub Pro turns your profile into a private daily shortlist of
+              strong matches.
             </p>
             <div
               className="rise-in flex flex-wrap gap-3 mt-8"
               style={stagger(3)}
             >
               <Link
-                href="/login?next=/profile"
+                href="/jobs"
                 className="px-6 py-3 bg-electric text-white rounded-xl font-semibold hover:bg-electric-dark hover:-translate-y-0.5 hover:shadow-card-hover active:translate-y-0 transition-all"
               >
-                Build my profile
+                Browse official roles
               </Link>
               <Link
-                href="/jobs"
+                href="/billing"
                 className="px-6 py-3 border border-slate-300 text-slate-800 rounded-xl font-semibold hover:border-slate-500 hover:-translate-y-0.5 transition-all"
               >
-                Preview live roles
+                How Pro matching works
               </Link>
             </div>
             <p
               className="rise-in text-sm text-slate-500 mt-4"
               style={stagger(4)}
             >
-              Start free. Get 7 days of ReerHub Pro when you are ready for daily
-              matches.
+              Free accounts unlock full job details and official Apply links.
+              Pro adds career intelligence.
             </p>
           </div>
           <div
@@ -97,7 +107,9 @@ export default function Home() {
             />
             <div className="float-y bg-ink rounded-3xl p-6 sm:p-8 shadow-pop">
               <div className="flex justify-between items-center border-b border-white/10 pb-5">
-                <span className="text-white font-bold">Your match today</span>
+                <span className="text-white font-bold">
+                  Your Pro match desk
+                </span>
                 <span className="text-xs font-bold bg-white/10 text-white px-3 py-1 rounded-full inline-flex items-center gap-1.5">
                   <span
                     className="pulse-dot w-1.5 h-1.5 rounded-full bg-teal-300"
@@ -128,13 +140,13 @@ export default function Home() {
               </div>
               <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
                 <span className="py-3 rounded-xl bg-white/10 text-white">
-                  Profile
+                  Profile signals
                 </span>
                 <span className="py-3 rounded-xl bg-electric text-white">
                   Fit score
                 </span>
                 <span className="py-3 rounded-xl bg-white/10 text-white">
-                  Daily digest
+                  Daily top five
                 </span>
               </div>
             </div>
@@ -179,7 +191,7 @@ export default function Home() {
               href="/login?next=/jobs"
               className="inline-flex px-6 py-3 rounded-xl bg-electric text-white font-semibold hover:bg-electric-dark hover:-translate-y-0.5 hover:shadow-card-hover active:translate-y-0 transition-all"
             >
-              Sign in to unlock full job details and apply links
+              Create a free account to view details and apply
             </Link>
           </div>
         </section>
@@ -191,7 +203,7 @@ export default function Home() {
               A better job-search loop
             </p>
             <h2 className="font-display text-3xl font-bold text-slate-900 mt-1">
-              Less searching. More relevant applications.
+              A better job-search loop.
             </h2>
           </Reveal>
           <div className="grid md:grid-cols-3 gap-8 mt-10">
@@ -213,15 +225,15 @@ export default function Home() {
         <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 grid lg:grid-cols-[1fr_.8fr] gap-10 items-center">
           <div>
             <p className="text-sm font-bold text-electric">
-              Simple, honest pricing
+              Free discovery. Pro intelligence.
             </p>
             <h2 className="font-display text-3xl font-bold text-slate-900 mt-1">
-              Keep discovery free. Upgrade for the daily edge.
+              Search manually for free. Make each search count with Pro.
             </h2>
             <p className="text-slate-600 leading-relaxed mt-4 max-w-xl">
-              Pro never promises an interview or selection. It gives you a
-              transparent, explainable shortlist so you can focus your time on
-              the roles that fit.
+              A free account gives you full official openings, Apply links,
+              filters, your profile, and saved roles. Pro adds a ranked private
+              workspace and a daily email with up to five strong matches.
             </p>
           </div>
           <div className="bg-ink text-white rounded-3xl p-7 hover:shadow-card-hover transition-shadow">
@@ -233,8 +245,9 @@ export default function Home() {
               <span className="text-white/60"> / month</span>
             </p>
             <p className="text-white/70 mt-3">
-              7 days free, then daily top-five matches, fit explanations, and
-              alert controls. Weekly ₹49 · Quarterly ₹299.
+              7 days free, then up to five 55%+ matches each day, fit
+              explanations, hide-feedback controls, and pauseable alerts. Weekly
+              ₹49 · Quarterly ₹299.
             </p>
             <Link
               href="/billing"
