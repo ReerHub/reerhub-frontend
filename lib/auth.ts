@@ -1,4 +1,4 @@
-import { API_BASE } from "@/lib/reerhub";
+import { API_BASE, type Job } from "@/lib/reerhub";
 
 export type AuthUser = {
   id: string;
@@ -100,8 +100,12 @@ async function readBody<T>(res: Response): Promise<T> {
       json.message || `Request failed (${res.status})`,
     ) as Error & {
       status?: number;
+      code?: string;
+      data?: BillingState;
     };
     err.status = res.status;
+    err.code = json.code;
+    err.data = json.data;
     throw err;
   }
   return json.data as T;
@@ -158,6 +162,20 @@ export const verifyEmail = (token: string) =>
   });
 
 export const savedIds = () => request<string[]>("/users/me/saved/ids");
+export const getSavedJobs = async (page = 1) => {
+  const res = await doFetch(`/users/me/saved?page=${page}&limit=21`);
+  if (res.status === 401) {
+    await getMe();
+    const retry = await doFetch(`/users/me/saved?page=${page}&limit=21`);
+    if (!retry.ok) throw new Error("Could not load saved roles");
+    return retry.json() as Promise<{
+      data: Job[];
+      meta: { totalPages: number };
+    }>;
+  }
+  if (!res.ok) throw new Error("Could not load saved roles");
+  return res.json() as Promise<{ data: Job[]; meta: { totalPages: number } }>;
+};
 
 export const saveJob = (jobId: string) =>
   request<{ saved: boolean }>(`/users/me/saved/${jobId}`, { method: "POST" });
@@ -209,6 +227,10 @@ export type BillingState = {
     trialEndsAt?: string;
     currentPeriodEndsAt?: string;
     cancelledAt?: string;
+    isPro?: boolean;
+    accessEndsAt?: string | null;
+    cancelAtPeriodEnd?: boolean;
+    checkoutNeedsReview?: boolean;
     payments: {
       razorpayPaymentId?: string;
       amount?: number;

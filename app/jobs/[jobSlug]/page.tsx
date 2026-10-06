@@ -97,7 +97,7 @@ const faqs = [
   },
   {
     q: "Why do I need an account to see details?",
-    a: "Full descriptions, skills, and Apply links are members-only so companies get genuine applicants. Signing in takes seconds with Google or a magic link.",
+    a: "A free account unlocks full descriptions, skills, Apply links, and your saved shortlist. Sign in with Google or a secure email link; no payment is required.",
   },
   {
     q: "Is ReerHub free?",
@@ -170,7 +170,7 @@ export default async function JobDetailPage({
   ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+    <div className="page-container py-8 sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -246,7 +246,7 @@ export default async function JobDetailPage({
       </nav>
 
       <div className="grid lg:grid-cols-[1fr_340px] gap-5 items-start">
-        <article className="min-w-0 order-2 lg:order-none">
+        <article className="min-w-0">
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
             <div className="flex items-center gap-4 mb-5">
               <CompanyLogo
@@ -273,12 +273,14 @@ export default async function JobDetailPage({
                 )}
               </div>
               <span className="ml-auto inline-flex items-center gap-2 shrink-0">
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-50 border border-green-100 px-2.5 py-1 rounded-lg">
+                <span
+                  className={`inline-flex items-center gap-1.5 text-xs font-semibold border px-2.5 py-1 rounded-lg ${job.status === "closed" ? "text-slate-600 bg-slate-100 border-slate-200" : "text-green-700 bg-green-50 border-green-100"}`}
+                >
                   <span
                     className="w-1.5 h-1.5 rounded-full bg-green-500"
                     aria-hidden
                   />
-                  Active
+                  {job.status === "closed" ? "Closed" : "Open role"}
                 </span>
                 <SaveJobButton jobId={job._id} variant="icon" />
               </span>
@@ -316,6 +318,42 @@ export default async function JobDetailPage({
                 </span>
               )}
             </div>
+          </div>
+
+          {job.status === "closed" && (
+            <div className="surface-panel mb-4 border-amber-200 bg-amber-50 p-5">
+              <h2 className="font-semibold text-ink">
+                This opening is no longer active.
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                The company may have closed this role. Browse fresh openings, or
+                check its official careers page for the latest status.
+              </p>
+              <Link href="/jobs" className="btn-secondary mt-4">
+                Explore open roles
+              </Link>
+            </div>
+          )}
+          <div className="mb-4 lg:hidden">
+            {job.applicationUrl ? (
+              <div className="surface-panel p-5">
+                <a
+                  href={job.applicationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary w-full"
+                >
+                  {job.status === "closed"
+                    ? "Check official listing"
+                    : "Apply on company website"}
+                </a>
+                <p className="mt-3 text-center text-xs text-slate-600">
+                  Opens the company’s hiring page in a new tab.
+                </p>
+              </div>
+            ) : (
+              <LoginWall next={canonical} />
+            )}
           </div>
 
           {(job.skills ?? []).length > 0 && (
@@ -398,9 +436,9 @@ export default async function JobDetailPage({
           </div>
         </article>
 
-        <aside className="order-1 lg:order-none lg:sticky lg:top-24 space-y-4">
+        <aside className="lg:sticky lg:top-24 space-y-4">
           {job.applicationUrl ? (
-            <div className="bg-ink text-white rounded-2xl p-6 shadow-card-hover">
+            <div className="hidden lg:block bg-ink text-white rounded-2xl p-6 shadow-card-hover">
               <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-teal-300 mb-2">
                 Official application
               </p>
@@ -414,7 +452,9 @@ export default async function JobDetailPage({
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-electric text-white rounded-xl font-semibold text-[15px] hover:bg-electric-dark active:bg-electric-deep transition-all shadow-sm"
               >
-                Apply Now
+                {job.status === "closed"
+                  ? "Check official listing"
+                  : "Apply on company website"}
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -430,13 +470,15 @@ export default async function JobDetailPage({
                 </svg>
               </a>
               {applyDomain && (
-                <p className="text-xs text-white/50 text-center mt-2">
+                <p className="text-xs text-white/80 text-center mt-2">
                   Opens {applyDomain} in a new tab
                 </p>
               )}
             </div>
           ) : (
-            <LoginWall next={canonical} />
+            <div className="hidden lg:block">
+              <LoginWall next={canonical} />
+            </div>
           )}
 
           <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-card">

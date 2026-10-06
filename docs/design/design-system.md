@@ -1,12 +1,30 @@
 # ReerHub Design System
 
-> Version: 3.0 (supersedes v2 navy/gradient system)
+> Version: 3.1 (supersedes v2 navy/gradient system)
 >
 > Status: Active
 >
 > Product: ReerHub (Real Effective Engineering Roles Hub)
 >
 > Domain: reerhub.com
+
+---
+
+## Current component and journey contract (October 2026)
+
+The v3.1 implementation uses a light discovery surface (#F7F9FC), white cards,
+ReerHub blue (#2F6FED), ink (#111827), and readable secondary text (#64748B).
+Legacy palette/dark-mode sections below are historical guidance, not a claim
+that the current website supports a theme toggle.
+
+- One 72px navigation bar, responsive account menu, and real-link footer.
+- Shared 1248px page shell, PageHeader, JobCard, company directory, clear loading/error/empty states.
+- Anonymous listing previews end with DiscoveryPrompt: sign in for free to unlock full descriptions, official Apply links and saved roles. Return URLs preserve the discovery context.
+- Free dashboard: discovery, saved roles, profile signals and honest Pro upgrade panels. No fabricated/blurred recommendations.
+- Pro dashboard: MembershipStatus, ranked match cards, reasons, save/apply, feedback and pause-alert controls. Match scores mean profile relevance, not hiring odds.
+- Existing weekly ₹49 / monthly ₹149 / quarterly ₹299 plans remain unchanged. Success confirms server-side membership before exposing the Pro dashboard CTA; pending confirmation retries are bounded.
+- Mobile job detail places Apply/sign-in immediately after the role summary. Closed openings are explicitly labelled.
+- Motion is finite entrance/interaction feedback, respects reduced motion, and avoids perpetual decorative movement. Controls have visible focus and dashboard/pricing selections support arrow-key navigation.
 
 ---
 
@@ -426,50 +444,50 @@ Recommended tokens:
 ```css
 :root {
   /* Brand */
-  --color-navy: #07152E;
-  --color-navy-deep: #0B1F3A;
-  --color-brand-blue: #3B82F6;
-  --color-brand-bright: #2563EB;
-  --color-brand-cyan: #2DD4BF;
-  --color-brand-purple: #6366F1;
+  --color-navy: #07152e;
+  --color-navy-deep: #0b1f3a;
+  --color-brand-blue: #3b82f6;
+  --color-brand-bright: #2563eb;
+  --color-brand-cyan: #2dd4bf;
+  --color-brand-purple: #6366f1;
 
   /* Backgrounds */
-  --color-background: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-surface-muted: #F1F5F9;
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1f5f9;
 
   /* Text */
-  --color-text-primary: #0F172A;
+  --color-text-primary: #0f172a;
   --color-text-body: #475569;
-  --color-text-secondary: #64748B;
-  --color-text-muted: #94A3B8;
-  --color-text-inverse: #FFFFFF;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+  --color-text-inverse: #ffffff;
 
   /* Borders */
-  --color-border: #E2E8F0;
-  --color-border-strong: #CBD5E1;
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
 
   /* Interactive */
-  --color-primary: #2563EB;
-  --color-primary-hover: #1D4ED8;
-  --color-primary-active: #1E40AF;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-active: #1e40af;
 
   /* Status */
-  --color-success: #10B981;
-  --color-success-bg: #ECFDF5;
+  --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
   --color-success-text: #047857;
 
-  --color-error: #EF4444;
-  --color-error-bg: #FEF2F2;
-  --color-error-text: #B91C1C;
+  --color-error: #ef4444;
+  --color-error-bg: #fef2f2;
+  --color-error-text: #b91c1c;
 
-  --color-warning: #F59E0B;
-  --color-warning-bg: #FFFBEB;
-  --color-warning-text: #B45309;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+  --color-warning-text: #b45309;
 
-  --color-info: #2563EB;
-  --color-info-bg: #EFF6FF;
-  --color-info-text: #1D4ED8;
+  --color-info: #2563eb;
+  --color-info-bg: #eff6ff;
+  --color-info-text: #1d4ed8;
 }
 ```
 
@@ -478,12 +496,7 @@ Recommended tokens:
 The official ReerHub gradient:
 
 ```css
-background: linear-gradient(
-  135deg,
-  #2DD4BF 0%,
-  #3B82F6 50%,
-  #6366F1 100%
-);
+background: linear-gradient(135deg, #2dd4bf 0%, #3b82f6 50%, #6366f1 100%);
 ```
 
 Use gradients primarily for:
@@ -754,22 +767,19 @@ ReerHub should use subtle shadows.
 Default card:
 
 ```css
-box-shadow:
-  0 1px 2px rgba(15, 23, 42, 0.04);
+box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 ```
 
 Elevated card:
 
 ```css
-box-shadow:
-  0 4px 12px rgba(15, 23, 42, 0.08);
+box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
 ```
 
 Modal:
 
 ```css
-box-shadow:
-  0 20px 40px rgba(15, 23, 42, 0.15);
+box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
 ```
 
 Avoid heavy shadows.
@@ -1059,36 +1069,36 @@ Status: implemented (class-based, Tailwind v4 `@custom-variant dark`, toggle in 
 Dark palette (actual):
 
 ```css
---dark-background: #060D1D;   /* page */
---dark-surface: #0B1A33;       /* cards */
---dark-surface-input: #060D1D; /* inputs inside dark cards */
+--dark-background: #060d1d; /* page */
+--dark-surface: #0b1a33; /* cards */
+--dark-surface-input: #060d1d; /* inputs inside dark cards */
 --dark-border: rgba(255, 255, 255, 0.1);
---dark-text-primary: #FFFFFF / #F1F5F9;
---dark-text-body: #B6C2D2;
---dark-text-muted: #94A3B8;
---dark-accent: #60A5FA;        /* links / active pills (bright blue, lightened for contrast) */
+--dark-text-primary: #ffffff / #f1f5f9;
+--dark-text-body: #b6c2d2;
+--dark-text-muted: #94a3b8;
+--dark-accent: #60a5fa; /* links / active pills (bright blue, lightened for contrast) */
 --dark-accent-bg: rgba(37, 99, 235, 0.15);
---dark-highlight: #2DD4BF;     /* footer headings, toggles */
+--dark-highlight: #2dd4bf; /* footer headings, toggles */
 ```
 
 Suggested dark palette (reserve):
 
 ```css
---dark-background: #07152E;
---dark-surface: #0B1F3A;
---dark-surface-secondary: #1E293B;
+--dark-background: #07152e;
+--dark-surface: #0b1f3a;
+--dark-surface-secondary: #1e293b;
 
---dark-text-primary: #F8FAFC;
---dark-text-secondary: #CBD5E1;
---dark-text-muted: #94A3B8;
+--dark-text-primary: #f8fafc;
+--dark-text-secondary: #cbd5e1;
+--dark-text-muted: #94a3b8;
 
 --dark-border: #334155;
 
---dark-primary: #3B82F6;
---dark-primary-hover: #60A5FA;
+--dark-primary: #3b82f6;
+--dark-primary-hover: #60a5fa;
 
---dark-success: #10B981;
---dark-error: #F87171;
+--dark-success: #10b981;
+--dark-error: #f87171;
 ```
 
 The brand blue should remain recognizable in dark mode.
@@ -1112,11 +1122,9 @@ Interactive elements must have visible focus states.
 Recommended focus ring:
 
 ```css
-outline:
-  2px solid #3B82F6;
+outline: 2px solid #3b82f6;
 
-outline-offset:
-  2px;
+outline-offset: 2px;
 ```
 
 ## 28. Responsive Design
@@ -1217,8 +1225,7 @@ Recommended duration:
 Use:
 
 ```css
-transition:
-  all 150ms ease;
+transition: all 150ms ease;
 ```
 
 Avoid:
@@ -1336,23 +1343,23 @@ Components should consume those tokens rather than defining their own brand colo
 
 ## 36. Brand Color Quick Reference
 
-| Token | HEX | Primary Usage |
-| --- | --- | --- |
-| Navy | `#07152E` | Hero, dark sections |
-| Deep Navy | `#0B1F3A` | Footer, sections |
-| Blue | `#3B82F6` | Primary brand |
-| Bright Blue | `#2563EB` | Buttons, links |
-| Cyan | `#2DD4BF` | Accents |
-| Purple | `#6366F1` | Gradient/accent |
-| White | `#FFFFFF` | Text on dark, surfaces |
-| Slate 900 | `#0F172A` | Main text |
-| Slate 600 | `#475569` | Body text |
-| Slate 500 | `#64748B` | Muted text |
-| Slate 200 | `#E2E8F0` | Borders |
-| Slate 50 | `#F8FAFC` | Light background |
-| Success | `#10B981` | Success states |
-| Warning | `#F59E0B` | Warning states |
-| Error | `#EF4444` | Error states |
+| Token       | HEX       | Primary Usage          |
+| ----------- | --------- | ---------------------- |
+| Navy        | `#07152E` | Hero, dark sections    |
+| Deep Navy   | `#0B1F3A` | Footer, sections       |
+| Blue        | `#3B82F6` | Primary brand          |
+| Bright Blue | `#2563EB` | Buttons, links         |
+| Cyan        | `#2DD4BF` | Accents                |
+| Purple      | `#6366F1` | Gradient/accent        |
+| White       | `#FFFFFF` | Text on dark, surfaces |
+| Slate 900   | `#0F172A` | Main text              |
+| Slate 600   | `#475569` | Body text              |
+| Slate 500   | `#64748B` | Muted text             |
+| Slate 200   | `#E2E8F0` | Borders                |
+| Slate 50    | `#F8FAFC` | Light background       |
+| Success     | `#10B981` | Success states         |
+| Warning     | `#F59E0B` | Warning states         |
+| Error       | `#EF4444` | Error states           |
 
 ## 37. Official ReerHub Palette
 

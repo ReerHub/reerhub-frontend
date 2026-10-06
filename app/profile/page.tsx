@@ -14,6 +14,7 @@ import {
   type AuthUser,
 } from "@/lib/auth";
 import { TECH_TRACKS } from "@/lib/reerhub";
+import Icon from "@/components/ui/Icon";
 
 const inputCls =
   "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft transition-all";
@@ -129,14 +130,32 @@ function ProfileForm({
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
-        Your profile
+    <div className="mx-auto max-w-3xl px-5 py-10 sm:py-14">
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"
+      >
+        <Icon name="arrow" className="h-4 w-4 rotate-180" />
+        My dashboard
+      </Link>
+      <h1 className="font-display text-4xl font-bold text-slate-900 tracking-tight mb-3">
+        Your next role starts with you.
       </h1>
       <p className="text-slate-500 mb-6">
         {user.email} · {user.authProvider === "google" ? "Google" : "Email"}{" "}
         account
       </p>
+      <div className="mb-7 rounded-xl border border-primary/15 bg-primary-soft p-5">
+        <h2 className="text-sm font-semibold text-primary-deep">
+          Build a clear picture of what you want next.
+        </h2>
+        <p className="mt-2 text-sm leading-7 text-slate-600">
+          Add your core skills, experience, and work preferences.{" "}
+          {user.membership?.isPro
+            ? "These signals shape your ranked Pro matches and daily shortlist."
+            : "Save your profile now, and it’s ready if you choose Pro matching later."}
+        </p>
+      </div>
       {!user.emailVerified && (
         <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800 flex items-center justify-between gap-3">
           <span>Email not verified — check your inbox.</span>
@@ -145,7 +164,7 @@ function ProfileForm({
           </button>
         </div>
       )}
-      <form onSubmit={submit} className="space-y-4">
+      <form onSubmit={submit} className="profile-form space-y-5">
         <div>
           <label
             htmlFor="pf-name"
@@ -394,6 +413,7 @@ function ProfileForm({
               Get up to five strong matches every day, or pause alerts any time.
             </p>
             <select
+              aria-label="Daily Pro match email preference"
               className={inputCls}
               defaultValue={user.notificationPreferences?.digest || "daily"}
               onChange={(e) =>

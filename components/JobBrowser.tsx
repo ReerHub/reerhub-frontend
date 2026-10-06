@@ -4,6 +4,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import JobCard from "@/components/JobCard";
+import DiscoveryPrompt from "@/components/DiscoveryPrompt";
+import { useAuth } from "@/components/AuthProvider";
+import { savedIds as fetchSavedIds, saveJob, unsaveJob } from "@/lib/auth";
 import SearchFilters, { Filters } from "@/components/SearchFilters";
 import {
   listCompanies,
@@ -23,6 +26,9 @@ const FILTER_KEYS: (keyof Filters)[] = [
   "techTrack",
   "techRole",
   "skills",
+  "seniority",
+  "employmentType",
+  "sort",
   "indiaOnly",
 ];
 
@@ -88,6 +94,9 @@ function filtersFromSearchParams(
     techTrack: (sp.get("techTrack") as TechTrack) || initialCategory,
     techRole: sp.get("techRole") ?? "",
     skills: sp.get("skills") ?? "",
+    seniority: sp.get("seniority") ?? "",
+    employmentType: sp.get("employmentType") ?? "",
+    sort: sp.get("sort") === "az" ? "az" : "",
     indiaOnly: sp.get("indiaOnly") !== "false",
   };
 }
@@ -117,6 +126,9 @@ function buildJobQuery(
     techTrack: activeFilters.techTrack,
     techRole: activeFilters.techRole,
     skills: activeFilters.skills,
+    seniority: activeFilters.seniority,
+    employmentType: activeFilters.employmentType,
+    sort: activeFilters.sort,
     ...(activeFilters.indiaOnly ? {} : { indiaOnly: "false" }),
     page: pageToLoad,
     limit: PAGE_SIZE,
@@ -142,6 +154,7 @@ export default function JobBrowser({
   showSave?: boolean;
   onToggleSave?: (jobId: string, saved: boolean) => void;
 }) {
+  const { user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -180,6 +193,34 @@ export default function JobBrowser({
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState(false);
+  const [localSaved, setLocalSaved] = useState<string[]>([]);
+  useEffect(() => {
+    if (user && !savedIds)
+      fetchSavedIds()
+        .then(setLocalSaved)
+        .catch(() => {});
+  }, [user, savedIds]);
+  const toggleSave = async (jobId: string, saved: boolean) => {
+    if (onToggleSave) {
+      onToggleSave(jobId, saved);
+      return;
+    }
+    try {
+      if (saved) await saveJob(jobId);
+      else await unsaveJob(jobId);
+      setLocalSaved((previous) =>
+        saved
+          ? [...new Set([...previous, jobId])]
+          : previous.filter((id) => id !== jobId),
+      );
+      toast.success(
+        saved ? "Added to your shortlist" : "Removed from your shortlist",
+      );
+    } catch {
+      toast.error("Could not update saved role");
+    }
+  };
 
   const filtersRef = useRef(filters);
 
@@ -192,6 +233,7 @@ export default function JobBrowser({
   const pushToUrl = useCallback(
     (next: Filters) => {
       const sp = filtersToSearchParams(next);
+      if (pathname === "/dashboard") sp.set("view", "discover");
       const qs = sp.toString();
       router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
     },
@@ -214,7 +256,9 @@ export default function JobBrowser({
         setTotal(result.total);
         setTotalPages(result.totalPages);
         setPage(pageToLoad);
+        setError(false);
       } catch {
+        setError(true);
         if (!signal?.aborted)
           toast.error(
             "Couldn't load roles. Check your connection and try again.",
@@ -252,8 +296,10 @@ export default function JobBrowser({
         setTotal(result.total);
         setTotalPages(result.totalPages);
         setPage(1);
+        setError(false);
       })
       .catch(() => {
+        setError(true);
         if (!ac.signal.aborted)
           toast.error(
             "Couldn't load roles. Check your connection and try again.",
@@ -263,7 +309,7 @@ export default function JobBrowser({
         if (!ac.signal.aborted) setLoading(false);
       });
     return () => ac.abort();
-  }, [INITIAL]);
+  }, [INITIAL, user?.id]);
 
   const clearAll = () => {
     const next = filtersFromSearchParams(
@@ -291,7 +337,10 @@ export default function JobBrowser({
     [fetchJobs, pushToUrl],
   );
 
-  const savedSet = useMemo(() => new Set(savedIds || []), [savedIds]);
+  const savedSet = useMemo(
+    () => new Set(savedIds || localSaved),
+    [savedIds, localSaved],
+  );
 
   const visibleJobs = useMemo(() => {
     if (!savedOnly || !savedIds) return jobs;
@@ -322,21 +371,40 @@ export default function JobBrowser({
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+        ) : error ? (
+          <div className="surface-panel col-span-full p-8 text-center">
+            <h3 className="text-lg font-bold text-ink">
+              We couldn’t load these openings.
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Try again to refresh the current search.
+            </p>
+            <button
+              className="btn-secondary mt-5"
+              onClick={() => {
+                setLoading(true);
+                fetchJobs(1, filters);
+              }}
+            >
+              Try again
+            </button>
+          </div>
         ) : visibleJobs.length > 0 ? (
           visibleJobs.map((job) => (
             <JobCard
               key={job._id}
               job={job}
               saved={savedSet.has(job._id)}
-              showSave={showSave}
-              onToggleSave={onToggleSave}
+              showSave={showSave ?? !!user}
+              onToggleSave={toggleSave}
             />
           ))
         ) : (
           <EmptyState onClear={clearAll} />
         )}
       </div>
-      {!loading && page < totalPages && (
+      {!loading && <DiscoveryPrompt count={jobs.length} />}
+      {!loading && user && page < totalPages && (
         <div className="text-center mt-9">
           <button
             onClick={() => {

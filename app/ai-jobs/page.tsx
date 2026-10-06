@@ -1,59 +1,41 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import JobBrowser from "@/components/JobBrowser";
-
-function FiltersBarSkeleton() {
-  return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-card">
-      <div className="skeleton h-10 w-full rounded-xl" />
-      <div className="flex gap-2 mt-3">
-        <div className="skeleton h-8 w-24 rounded-lg" />
-        <div className="skeleton h-8 w-24 rounded-lg" />
-        <div className="skeleton h-8 w-24 rounded-lg" />
-      </div>
-    </div>
-  );
-}
-
-function SubHero({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="bg-white border-b border-slate-200/70">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
-        <h1 className="font-display text-3xl sm:text-[40px] leading-[1.15] font-bold text-slate-900 tracking-tight mb-3">
-          {title}
-        </h1>
-        <p className="text-slate-500 text-base sm:text-lg max-w-xl leading-relaxed">
-          {children}
-        </p>
-      </div>
-    </section>
-  );
-}
-
-export const revalidate = 86400;
-
+import PageHeader from "@/components/PageHeader";
+import Icon from "@/components/ui/Icon";
 export const metadata: Metadata = {
-  alternates: { canonical: "/ai-jobs" },
-  title: "AI & ML Jobs in India | ReerHub",
+  title: "Work at the edge of what’s next. | ReerHub",
   description:
-    "AI, machine learning, and data science roles from India's top product companies, indexed from official career pages.",
+    "Explore AI and machine learning roles from official hiring pages, from applied ML to LLM engineering.",
+  alternates: { canonical: "/ai-jobs" },
 };
-
-export default function AIPage() {
+export default function Page() {
   return (
     <div>
-      <SubHero title="AI & ML jobs">
-        Machine learning, LLM, and data science roles from top product
-        companies.
-      </SubHero>
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <Suspense fallback={<FiltersBarSkeleton />}>
+      <PageHeader
+        title="Work at the edge of what’s next."
+        description="Explore AI and machine learning roles from official hiring pages, from applied ML to LLM engineering."
+      >
+        <span className="inline-flex items-center gap-2 text-xs font-semibold text-teal-800">
+          <Icon name="shield" className="h-4 w-4" />
+          Official sources. Direct applications.
+        </span>
+      </PageHeader>
+      <section className="page-container py-8 sm:py-10">
+        <nav aria-label="Job categories" className="mb-7 flex flex-wrap gap-2">
+          {[
+            ["/jobs", "All roles"],
+            ["/engineering-jobs", "Engineering"],
+            ["/ai-jobs", "AI / ML"],
+            ["/remote-jobs", "Remote"],
+          ].map(([href, label]) => (
+            <Link href={href} key={href} className="btn-secondary text-xs">
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <Suspense fallback={<div className="skeleton h-56 rounded-2xl" />}>
           <JobBrowser initialCategory="ai-ml" heading="AI & ML roles" />
         </Suspense>
       </section>
