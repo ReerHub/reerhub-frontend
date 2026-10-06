@@ -34,7 +34,7 @@ const PLANS: {
   {
     id: "pro-monthly",
     name: "Monthly",
-    price: "₹150",
+    price: "₹149",
     per: "/ month",
     badge: "Most popular",
     blurb: "The sensible default for an active search.",
@@ -64,7 +64,78 @@ const ASSURANCES = [
   ["Secure checkout", "Payments processed by Razorpay."],
 ];
 
+const FAQS = [
+  [
+    "When am I first charged?",
+    "On day 8. Every plan starts with a 7-day free trial — the first charge happens only after the trial ends. Cancel during the trial and you pay nothing.",
+  ],
+  [
+    "How do I pay — is UPI supported?",
+    "Yes. Checkout runs on Razorpay and accepts UPI, credit/debit cards, and netbanking. ReerHub never sees or stores your payment details.",
+  ],
+  [
+    "How do I cancel?",
+    "One tap: open this page while your plan is active and hit “Cancel renewal”. No calls, no retention maze. Your access continues until the end of the paid period and never renews.",
+  ],
+  [
+    "Can I switch plans later?",
+    "Yes. Cancel renewal on your current plan, then start the new plan from this page — weekly ₹49, monthly ₹149, or quarterly ₹299. The new plan starts its own billing cycle.",
+  ],
+  [
+    "What does Pro unlock over a free account?",
+    "Pro members get a daily top-five of fresh matches with clear fit reasons, full official job details with apply links, and digest controls (daily weekdays, weekly, or paused). Without Pro you see teasers only.",
+  ],
+  [
+    "Will I be hired if my fit score is high?",
+    "No — fit scores rank relevance to your profile; they are never a promise of hiring. Every application happens on the company's own official site.",
+  ],
+];
+
+const FAQ_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map(([question, answer]) => ({
+    "@type": "Question",
+    name: question,
+    acceptedAnswer: { "@type": "Answer", text: answer },
+  })),
+};
+
 const planName = (id?: string) => PLANS.find((p) => p.id === id)?.name || "Pro";
+
+function FaqSection() {
+  return (
+    <Reveal>
+      <section className="mt-14">
+        <p className="text-sm font-bold text-electric">Questions</p>
+        <h2 className="font-display text-3xl font-bold text-slate-900 mt-1">
+          Billing FAQ
+        </h2>
+        <div className="mt-7 space-y-3">
+          {FAQS.map(([question, answer]) => (
+            <details
+              key={question}
+              className="group bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-card"
+            >
+              <summary className="font-bold text-slate-900 text-[15px] cursor-pointer list-none flex items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+                {question}
+                <span
+                  className="text-electric font-bold shrink-0 group-open:rotate-45 transition-transform"
+                  aria-hidden
+                >
+                  +
+                </span>
+              </summary>
+              <p className="text-slate-600 text-[15px] leading-relaxed mt-2">
+                {answer}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+    </Reveal>
+  );
+}
 
 const stagger = (index: number) => ({ animationDelay: `${index * 90}ms` });
 
@@ -114,6 +185,10 @@ export default function BillingPage() {
   if (!user)
     return (
       <div className="max-w-3xl mx-auto px-4 py-16">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
+        />
         <p className="rise-in text-sm font-bold text-electric">ReerHub Pro</p>
         <h1
           className="rise-in font-display text-4xl font-bold text-slate-900 mt-2"
@@ -131,6 +206,7 @@ export default function BillingPage() {
         >
           Sign in
         </Link>
+        <FaqSection />
       </div>
     );
   const subscription = billing?.subscription;
@@ -139,6 +215,10 @@ export default function BillingPage() {
   const selected = PLANS.find((p) => p.id === planId) || PLANS[1];
   return (
     <div className="max-w-4xl mx-auto px-4 py-14 overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
+      />
       <p className="rise-in text-sm font-bold text-electric">ReerHub Pro</p>
       <h1
         className="rise-in font-display text-4xl font-bold text-slate-900 mt-2"
@@ -211,7 +291,7 @@ export default function BillingPage() {
               <li>Daily top-five fresh job matches</li>
               <li>Clear reasons behind every fit score</li>
               <li>Full official job details and apply links</li>
-              <li>Weekday, weekly, pause, and instant-alert controls</li>
+              <li>Weekday, weekly, and pause controls</li>
             </ul>
           </section>
           <section className="bg-ink rounded-3xl p-7 text-white">
@@ -305,9 +385,10 @@ export default function BillingPage() {
           </section>
         </Reveal>
       )}
+      <FaqSection />
       {subscription?.payments?.length ? (
         <section className="mt-8 bg-white border border-slate-200 rounded-2xl p-6">
-          <h2 className="font-bold text-slate-900">Payment history</h2>
+          <h2 className="font-bold text-slate-900">Payment history</h2>{" "}
           <ul className="mt-4 space-y-2 text-sm text-slate-600">
             {subscription.payments.map((payment) => (
               <li key={payment.razorpayPaymentId}>

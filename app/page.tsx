@@ -228,7 +228,7 @@ export default function Home() {
             <p className="font-bold">ReerHub Pro</p>
             <p className="mt-3">
               <span className="font-display text-5xl font-bold tabular-nums">
-                ₹150
+                ₹149
               </span>
               <span className="text-white/60"> / month</span>
             </p>
