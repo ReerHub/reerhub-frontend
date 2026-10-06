@@ -65,8 +65,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
       >
         <AuthProvider>
+          <a href="#main-content" className="skip-link">
+            Skip to content
+          </a>
           <Navbar />
-          <main className="min-h-dvh relative pt-16">{children}</main>
+          <main
+            id="main-content"
+            className="min-h-dvh relative pt-[72px]"
+            tabIndex={-1}
+          >
+            {children}
+          </main>
           <Footer />
         </AuthProvider>
         <CookieConsent />

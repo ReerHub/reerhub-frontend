@@ -36,7 +36,10 @@ function VerifyMagic() {
   }, [token, next, router, refresh]);
 
   return (
-    <div className="max-w-md mx-auto px-4 py-16 text-center">
+    <div
+      className="surface-panel mx-auto my-16 max-w-md p-8 text-center sm:p-10"
+      role="status"
+    >
       {error ? (
         <>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">

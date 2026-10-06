@@ -3,6 +3,8 @@ import Link from "next/link";
 import JobBrowser from "@/components/JobBrowser";
 import JobCard from "@/components/JobCard";
 import { listJobsWithMeta } from "@/lib/reerhub";
+import PageHeader from "@/components/PageHeader";
+import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 
 // Thin markets (< 5 roles) get an "expanding soon" panel plus recommended
 // roles instead of a near-empty list.
@@ -46,17 +48,12 @@ export default async function CityJobs({
 
   return (
     <div>
-      <section className="bg-white border-b border-slate-200/70">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-8">
-          <h1 className="font-display text-3xl sm:text-[40px] leading-[1.15] font-bold text-slate-900 tracking-tight mb-3">
-            {title}
-          </h1>
-          <p className="text-slate-500 text-base sm:text-lg max-w-xl leading-relaxed">
-            {blurb}
-          </p>
-        </div>
-      </section>
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+      <PageHeader
+        title={title}
+        description={blurb}
+        back={{ href: "/jobs", label: "All tech jobs" }}
+      />
+      <section className="page-container py-10">
         {total >= THIN_THRESHOLD ? (
           <Suspense fallback={<FiltersBarSkeleton />}>
             <JobBrowser
@@ -93,8 +90,8 @@ async function ExpandingSoon({ location }: { location: string }) {
           We&apos;re growing coverage in {location}
         </h2>
         <p className="text-slate-500 max-w-lg mx-auto leading-relaxed mb-6">
-          Few open roles here right now. Meanwhile, these recommended openings
-          from top product companies are hiring across India.
+          Few open roles here right now. Meanwhile, these other openings from
+          top product companies are hiring across India.
         </p>
         <Link
           href="/jobs"
@@ -106,7 +103,7 @@ async function ExpandingSoon({ location }: { location: string }) {
       {recommended.length > 0 && (
         <>
           <h2 className="font-bold text-slate-900 text-xl mb-4">
-            Recommended roles
+            Explore other openings in India
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {recommended.map((job) => (
@@ -115,6 +112,9 @@ async function ExpandingSoon({ location }: { location: string }) {
           </div>
         </>
       )}
+      <Suspense>
+        <DiscoveryPrompt count={recommended.length} />
+      </Suspense>
     </div>
   );
 }

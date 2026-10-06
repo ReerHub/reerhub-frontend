@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import Icon from "@/components/ui/Icon";
 export default function UpgradePanel({
   compact = false,
 }: {
@@ -7,35 +7,39 @@ export default function UpgradePanel({
 }) {
   return (
     <section
-      className={`relative overflow-hidden rounded-3xl bg-ink text-white ${compact ? "p-5" : "p-7 sm:p-8"}`}
+      className={`rounded-2xl border border-primary/20 bg-primary-soft ${compact ? "p-6" : "p-8"}`}
     >
-      <div
-        className="absolute right-0 top-0 h-32 w-32 rounded-full bg-electric/25 blur-3xl"
-        aria-hidden
-      />
-      <p className="relative text-sm font-semibold text-teal-200">
+      <span className="inline-flex items-center gap-2 text-sm font-bold text-primary-deep">
+        <Icon name="spark" className="h-4 w-4" />
         ReerHub Pro
-      </p>
+      </span>
       <h2
-        className={`relative mt-2 font-display font-bold tracking-tight ${compact ? "text-xl" : "text-3xl"}`}
+        className={`mt-4 font-display font-bold leading-tight tracking-tight text-ink ${compact ? "text-2xl" : "text-3xl"}`}
       >
-        Stop searching every role. Start with the right ones.
+        Let the right roles rise to the top.
       </h2>
-      <p className="relative mt-3 max-w-xl text-sm leading-relaxed text-white/70">
-        Get up to five strong matches each day, clear reasons behind every
-        score, and a private ranked workspace built from your profile.
+      <p className="mt-3 text-sm leading-7 text-slate-600">
+        A ranked workspace built around your skills, experience, and
+        preferences.
       </p>
-      <div className="relative mt-5 flex flex-wrap items-center gap-3">
-        <Link
-          href="/billing"
-          className="rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-900 transition-transform hover:-translate-y-0.5 hover:bg-slate-100 active:translate-y-0"
-        >
-          Start 7-day trial
-        </Link>
-        <span className="text-xs text-white/55">
-          From ₹49/week · pause alerts any time
-        </span>
-      </div>
+      <ul className="my-5 space-y-3 text-xs leading-6 text-slate-700">
+        {[
+          "Personalized matches and clear reasons",
+          "Relevance feedback and hide controls",
+          "Up to 5 strong matches by email daily",
+        ].map((x) => (
+          <li key={x} className="flex gap-2">
+            <Icon name="check" className="mt-1 h-4 w-4 shrink-0 text-primary" />
+            {x}
+          </li>
+        ))}
+      </ul>
+      <Link href="/billing" className="btn-primary w-full">
+        Explore the 7-day trial
+      </Link>
+      <p className="mt-4 text-center text-xs text-slate-600">
+        ₹49/week · ₹149/month · ₹299/quarter
+      </p>
     </section>
   );
 }

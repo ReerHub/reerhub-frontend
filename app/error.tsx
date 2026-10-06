@@ -9,7 +9,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 text-center">
+    <div className="page-container py-16 text-center" role="alert">
       <div className="mx-auto w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-5">
         <svg
           className="w-7 h-7 text-slate-400"
@@ -33,16 +33,10 @@ export default function GlobalError({
         This page hit a snag. Try again, or head back to browse roles.
       </p>
       <div className="flex items-center justify-center gap-3">
-        <button
-          onClick={reset}
-          className="px-6 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark transition-all shadow-sm"
-        >
+        <button onClick={reset} className="btn-primary">
           Try again
         </button>
-        <Link
-          href="/jobs"
-          className="px-6 py-2.5 bg-white border border-slate-200 text-slate-900 rounded-xl text-sm font-semibold hover:border-slate-300 transition-all"
-        >
+        <Link href="/jobs" className="btn-secondary">
           Browse roles
         </Link>
       </div>

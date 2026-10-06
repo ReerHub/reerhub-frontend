@@ -49,6 +49,14 @@ Login is Google + magic-link email; `/signup`, `/forgot-password`, `/reset-passw
 
 Company marquee (CSS-only infinite loop, pause on hover/focus) + `Reveal` (one-shot scroll entrances) + `CountUp` (late data remounts the animation) + staggered hero. Reason: motion is the conversion lever on marketing pages; dashboard stays still. Consequence: all motion disabled under `prefers-reduced-motion`; counters must handle async data (never lock on initial zero).
 
+## ADR-021 — Discovery-first UI and coherent Pro workspace (2026-10-07)
+
+The v3.1 visual system replaces the looping homepage marquee with finite entrances and a clearly labelled illustrative match panel. One navigation/footer and shared page/card patterns cover public, account and membership routes. Anonymous previews explicitly explain the free sign-in unlock; mobile job details put Apply/sign-in directly after the summary. Free users get manual discovery and saved roles; only Pro renders the ranked recommendations workspace. Dashboard discovery filters preserve `view=discover`. Billing success polls membership briefly and offers retry without claiming active access while confirmation is pending. Existing Razorpay pricing, plan IDs, backend matching and entitlement enforcement are unchanged by this redesign.
+
 ## ADR-017 — Node 24 LTS baseline (2026-09-30, shared with backend)
 
 Same as backend ADR-014: `.nvmrc`/`engines`/CI/shell default all 24. Holds: `typescript@6` (TS 7 unsupported by typescript-eslint, retry at >=7.1) and `eslint@9` (v10 breaks the bundled react plugin). Reason: latest LTS; Node 20 crashes on jsdom. Consequence: Vercel dashboard must also pin 24.
+
+## ADR-022 — Explicit cancellation and isolated UI checks (2026-10-07)
+
+Billing, cancellation confirmation and terms disclose non-refundable subscription payments and remaining-period access; authorization amounts are distinct. Membership badges and screens honor the backend's `isPro`, `accessEndsAt` and `cancelAtPeriodEnd`. Pending-plan conflicts require an explicit selection rather than silently switching checkout. Turnstile configuration/script failures block submission with an actionable retry. For repeatable local QA, `npm run test:ui:fixtures` serves synthetic membership states at `http://127.0.0.1:3001/api/v1/fixture`, backed only by an in-memory loopback API. It never connects to a database, sends email or initiates payment; it is not a replacement for staging provider tests.

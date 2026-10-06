@@ -25,7 +25,10 @@ function VerifyInner() {
   }, [token]);
 
   return (
-    <div className="max-w-md mx-auto px-4 py-16 text-center">
+    <div
+      className="surface-panel mx-auto my-16 max-w-md p-8 text-center sm:p-10"
+      role="status"
+    >
       {state === "busy" && (
         <p className="text-slate-500">Verifying your email…</p>
       )}
