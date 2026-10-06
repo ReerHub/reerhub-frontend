@@ -34,7 +34,7 @@ const PLANS: {
   {
     id: "pro-monthly",
     name: "Monthly",
-    price: "₹150",
+    price: "₹149",
     per: "/ month",
     badge: "Most popular",
     blurb: "The sensible default for an active search.",
@@ -79,7 +79,7 @@ const FAQS = [
   ],
   [
     "Can I switch plans later?",
-    "Yes. Cancel renewal on your current plan, then start the new plan from this page — weekly ₹49, monthly ₹150, or quarterly ₹299. The new plan starts its own billing cycle.",
+    "Yes. Cancel renewal on your current plan, then start the new plan from this page — weekly ₹49, monthly ₹149, or quarterly ₹299. The new plan starts its own billing cycle.",
   ],
   [
     "What does Pro unlock over a free account?",
