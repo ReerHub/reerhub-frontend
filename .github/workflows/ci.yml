@@ -2,9 +2,9 @@ name: Frontend CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 permissions:
   contents: read
@@ -25,7 +25,8 @@ jobs:
       # so leak prevention relies on GitHub's free native protections instead:
       # enable Secret scanning + Push protection in repo Settings → Code security.
       - run: npx tsc --noEmit
+      - run: npm run test:admin
       - run: npm run build
 
 # Production is deployed directly from GitHub by Vercel (auto-deploy on push to
-# main) — no staging environment here (ADR-005).
+# main). develop deploys the staging environment.

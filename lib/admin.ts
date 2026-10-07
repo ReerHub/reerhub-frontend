@@ -36,9 +36,24 @@ async function csrf() {
     credentials: "include",
   });
   const json = await response.json().catch(() => ({}));
-  return json.data?.csrfToken || cookie("csrfToken");
+  const result = json.data?.csrfToken || cookie("csrfToken");
+  if (!response.ok || typeof result !== "string" || !result) {
+    throw new Error(
+      "Secure request verification is unavailable. Refresh and try again.",
+    );
+  }
+  return result;
 }
-async function parse<T>(response: Response): Promise<T> {
+export type AdminPage<T> = {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+async function parse<T>(response: Response, envelope = false): Promise<T> {
   const json = await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = new Error(
@@ -52,12 +67,14 @@ async function parse<T>(response: Response): Promise<T> {
       "The admin API returned an invalid response. Please retry.",
     );
   }
-  return json.data as T;
+  return (envelope ? json : json.data) as T;
 }
+let refreshInFlight: Promise<unknown> | null = null;
 async function call<T>(
   path: string,
   init: RequestInit = {},
   retry = true,
+  envelope = false,
 ): Promise<T> {
   const method = (init.method || "GET").toUpperCase();
   const token = method === "GET" ? undefined : await csrf();
@@ -75,14 +92,19 @@ async function call<T>(
     retry &&
     (!path.startsWith("/admin/auth/") || path === "/admin/auth/session")
   ) {
-    const refreshed = await call<{ id: string }>(
+    refreshInFlight ??= call<{ id: string }>(
       "/admin/auth/refresh",
       { method: "POST" },
       false,
-    ).catch(() => null);
-    if (refreshed) return call<T>(path, init, false);
+    )
+      .catch(() => null)
+      .finally(() => {
+        refreshInFlight = null;
+      });
+    const refreshed = await refreshInFlight;
+    if (refreshed) return call<T>(path, init, false, envelope);
   }
-  return parse<T>(response);
+  return parse<T>(response, envelope);
 }
 
 export const adminGoogleLogin = (idToken: string) =>
@@ -100,6 +122,22 @@ export const getAdminList = async <T>(path: string): Promise<T[]> => {
     throw new Error("The admin API did not return a list. Please retry.");
   }
   return data as T[];
+};
+export const getAdminPage = async <T>(path: string): Promise<AdminPage<T>> => {
+  const result = await call<AdminPage<T>>(path, {}, true, true);
+  const p = result.pagination;
+  if (
+    !Array.isArray(result.data) ||
+    !p ||
+    ![p.page, p.limit, p.total, p.totalPages].every(Number.isInteger) ||
+    p.page < 1 ||
+    p.limit < 1 ||
+    p.total < 0 ||
+    p.totalPages < 0
+  ) {
+    throw new Error("The admin API returned invalid pagination. Please retry.");
+  }
+  return result;
 };
 export const writeAdmin = <T>(
   path: string,
