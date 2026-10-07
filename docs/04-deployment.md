@@ -42,6 +42,8 @@ remains `/login`. The admin subdomain uses the same `API_URL` and
 subdomain to the Google OAuth client’s Authorized JavaScript origins and to the
 backend `CORS_FRONTEND_URL` list.
 
-For testing, the same admin paths are also enabled on `staging.reerhub.com`,
-`admin-staging.reerhub.com`, `localhost`, `127.0.0.1`, and `admin.localhost`.
-Production public hosts remain blocked.
+For testing, use `staging.reerhub.com/admin/auth` and
+`staging.reerhub.com/admin/dashboard`, or their `localhost:3000` equivalents.
+This keeps normal staging/local `/` and `/dashboard` public. Dedicated admin
+testing hosts (`admin-staging.reerhub.com` and `admin.localhost`) use `/auth`
+and `/dashboard` like production. Production public hosts remain blocked.

@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import {
   adminLogout,
   adminSession,
+  adminAuthPath,
   getAdmin,
+  getAdminList,
   writeAdmin,
   type AdminUser,
 } from "@/lib/admin";
@@ -18,10 +20,6 @@ type Tab =
   | "users"
   | "subscriptions"
   | "audit";
-type Page<T> = {
-  data: T[];
-  pagination?: { total: number; page: number; totalPages: number };
-};
 type Overview = {
   counts: {
     companies: number;
@@ -193,39 +191,30 @@ export default function AdminConsole() {
         setOverview(await getAdmin<Overview>("/admin/overview"));
       if (target === "companies")
         setCompanies(
-          (
-            await getAdmin<Page<Company>>(
-              `/admin/companies?limit=100&q=${encodeURIComponent(q)}`,
-            )
-          ).data,
+          await getAdminList<Company>(
+            `/admin/companies?limit=100&q=${encodeURIComponent(q)}`,
+          ),
         );
       if (target === "sources")
-        setSources((await getAdmin<{ data: Source[] }>("/admin/sources")).data);
+        setSources(await getAdminList<Source>("/admin/sources"));
       if (target === "jobs")
         setJobs(
-          (
-            await getAdmin<Page<Job>>(
-              `/admin/jobs?limit=50&q=${encodeURIComponent(q)}`,
-            )
-          ).data,
+          await getAdminList<Job>(
+            `/admin/jobs?limit=50&q=${encodeURIComponent(q)}`,
+          ),
         );
       if (target === "users")
         setUsers(
-          (
-            await getAdmin<Page<User>>(
-              `/admin/users?limit=50&q=${encodeURIComponent(q)}`,
-            )
-          ).data,
+          await getAdminList<User>(
+            `/admin/users?limit=50&q=${encodeURIComponent(q)}`,
+          ),
         );
       if (target === "subscriptions")
         setSubscriptions(
-          (await getAdmin<Page<Subscription>>("/admin/subscriptions?limit=50"))
-            .data,
+          await getAdminList<Subscription>("/admin/subscriptions?limit=50"),
         );
       if (target === "audit")
-        setAudit(
-          (await getAdmin<Page<Audit>>("/admin/audit-logs?limit=50")).data,
-        );
+        setAudit(await getAdminList<Audit>("/admin/audit-logs?limit=50"));
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "This view could not be loaded.",
@@ -238,7 +227,7 @@ export default function AdminConsole() {
     adminSession()
       .then(setMe)
       .catch(() => {
-        router.replace("/auth");
+        router.replace(adminAuthPath());
       })
       .finally(() => setLoading(false));
   }, [router]);
@@ -260,7 +249,7 @@ export default function AdminConsole() {
   );
   async function signOut() {
     await adminLogout().catch(() => null);
-    router.replace("/auth");
+    router.replace(adminAuthPath());
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

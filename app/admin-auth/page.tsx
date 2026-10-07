@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { adminGoogleLogin } from "@/lib/admin";
+import { adminDashboardPath, adminGoogleLogin } from "@/lib/admin";
 
 declare global {
   interface Window {
@@ -65,7 +65,7 @@ export default function AdminAuth() {
         setMessage("Checking administrator access…");
         try {
           await adminGoogleLogin(credential);
-          router.replace("/dashboard");
+          router.replace(adminDashboardPath());
         } catch (error) {
           setMessage(
             error instanceof Error ? error.message : "Sign-in failed.",
