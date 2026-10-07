@@ -202,12 +202,12 @@ function ProfileForm({
               htmlFor="pf-role"
               className="text-sm font-semibold text-slate-700"
             >
-              Current job role
+              Current or target role
             </label>
             <input
               id="pf-role"
               className={inputCls}
-              placeholder="e.g. SDE-2"
+              placeholder="e.g. Backend Engineer"
               value={form.currentRole}
               onChange={set("currentRole")}
             />
