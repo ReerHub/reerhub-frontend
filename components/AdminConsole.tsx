@@ -8,7 +8,7 @@ import {
   getAdmin,
   writeAdmin,
   type AdminUser,
-} from "../lib/admin";
+} from "@/lib/admin";
 
 type Tab =
   | "overview"

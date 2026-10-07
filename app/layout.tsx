@@ -1,5 +1,7 @@
 import "./globals.css";
+import "./admin.css";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { headers } from "next/headers";
 import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
@@ -58,27 +60,37 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const host = (await headers()).get("host")?.split(":")[0] || "";
+  const isAdminHost = host === "admin.localhost" || host.startsWith("admin.");
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body
         className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
       >
-        <AuthProvider>
-          <a href="#main-content" className="skip-link">
-            Skip to content
-          </a>
-          <Navbar />
-          <main
-            id="main-content"
-            className="min-h-dvh relative pt-[72px]"
-            tabIndex={-1}
-          >
-            {children}
-          </main>
-          <Footer />
-        </AuthProvider>
-        <CookieConsent />
+        {isAdminHost ? (
+          <>{children}</>
+        ) : (
+          <AuthProvider>
+            <a href="#main-content" className="skip-link">
+              Skip to content
+            </a>
+            <Navbar />
+            <main
+              id="main-content"
+              className="min-h-dvh relative pt-[72px]"
+              tabIndex={-1}
+            >
+              {children}
+            </main>
+            <Footer />
+          </AuthProvider>
+        )}
+        {!isAdminHost && <CookieConsent />}
         <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>

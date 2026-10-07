@@ -18,7 +18,12 @@ const nextConfig: NextConfig = {
     const backend = (
       process.env.API_URL || "http://localhost:8000/api/v1"
     ).replace(/\/+$/, "");
-    return [{ source: "/api/v1/:path*", destination: `${backend}/:path*` }];
+    return [
+      // Public-browser calls continue to use the normal backend proxy. The
+      // admin hostname is intercepted in proxy.ts and served by admin-api,
+      // which injects the backend-only admin origin marker.
+      { source: "/api/v1/:path*", destination: `${backend}/:path*` },
+    ];
   },
   async redirects() {
     return [
