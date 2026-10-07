@@ -170,14 +170,14 @@ function Dashboard() {
   const view =
     requested === "saved"
       ? "saved"
-      : requested === "discover"
+      : !pro && requested === "discover"
         ? "discover"
         : pro
           ? "matches"
           : "discover";
   const tabs = [
     ...(pro ? [{ id: "matches", label: "Your matches" }] : []),
-    { id: "discover", label: "Discover jobs" },
+    ...(!pro ? [{ id: "discover", label: "Discover jobs" }] : []),
     {
       id: "saved",
       label: `Saved roles${ids.length ? ` (${ids.length})` : ""}`,
@@ -185,10 +185,11 @@ function Dashboard() {
   ];
   const signals = [
     !!user.profile.techTrack,
-    !!user.profile.skills?.length,
+    !!user.profile.currentRole || !!user.profile.techRoles?.length,
+    (user.profile.skills?.length || 0) >= 3,
     user.profile.experienceYears !== undefined,
-    !!user.profile.city,
-    user.profile.remoteType && user.profile.remoteType !== "unknown",
+    !!user.profile.city ||
+      (user.profile.remoteType && user.profile.remoteType !== "unknown"),
   ];
   const completion = Math.round(
     (signals.filter(Boolean).length / signals.length) * 100,
@@ -205,7 +206,7 @@ function Dashboard() {
           </h1>
           <p className="mt-3 text-sm leading-6 text-slate-600">
             {pro
-              ? "Start with roles that fit. Keep the ones worth your time."
+              ? "Your shortlist is built for you. Start with the strongest matches, then broaden only when you want to."
               : "Find official openings, build your shortlist, and choose your next move."}
           </p>
         </div>
@@ -317,8 +318,8 @@ function Dashboard() {
             </div>
             <p className="text-sm leading-6 text-slate-600">
               {completion === 100
-                ? "Your core profile is complete. Keep your skills and preferences current as your search changes."
-                : "Add your skills, track, experience, location, and work preference to give Pro a clearer picture of your next role."}
+                ? "Your profile is match-ready. Keep your skills and preferences current as your search changes."
+                : "Add your target role, at least three skills, track, experience, and location or work preference for reliable Pro matches."}
             </p>
             <Link
               href="/profile"
