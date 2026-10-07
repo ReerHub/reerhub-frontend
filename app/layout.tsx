@@ -1,11 +1,14 @@
 import "./globals.css";
+import "./admin.css";
 import { Inter, Space_Grotesk } from "next/font/google";
+import { headers } from "next/headers";
 import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
+import { isAdminSurfaceHost } from "@/lib/admin-host";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -58,27 +61,36 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const isAdminHost = isAdminSurfaceHost((await headers()).get("host") || "");
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body
         className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
       >
-        <AuthProvider>
-          <a href="#main-content" className="skip-link">
-            Skip to content
-          </a>
-          <Navbar />
-          <main
-            id="main-content"
-            className="min-h-dvh relative pt-[72px]"
-            tabIndex={-1}
-          >
-            {children}
-          </main>
-          <Footer />
-        </AuthProvider>
-        <CookieConsent />
+        {isAdminHost ? (
+          <>{children}</>
+        ) : (
+          <AuthProvider>
+            <a href="#main-content" className="skip-link">
+              Skip to content
+            </a>
+            <Navbar />
+            <main
+              id="main-content"
+              className="min-h-dvh relative pt-[72px]"
+              tabIndex={-1}
+            >
+              {children}
+            </main>
+            <Footer />
+          </AuthProvider>
+        )}
+        {!isAdminHost && <CookieConsent />}
         <Toaster position="top-right" reverseOrder={false} />
       </body>
     </html>

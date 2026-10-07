@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { adminGoogleLogin } from "../../lib/admin";
+import { adminGoogleLogin } from "@/lib/admin";
 
 declare global {
   interface Window {
