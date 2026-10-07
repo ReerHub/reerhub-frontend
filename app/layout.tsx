@@ -8,7 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
-import { isAdminSurfaceHost } from "@/lib/admin-host";
+import { isDedicatedAdminHost } from "@/lib/admin-host";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,7 +66,10 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const isAdminHost = isAdminSurfaceHost((await headers()).get("host") || "");
+  const requestHeaders = await headers();
+  const isAdminHost =
+    isDedicatedAdminHost(requestHeaders.get("host") || "") ||
+    requestHeaders.get("x-reerhub-admin-surface") === "1";
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body

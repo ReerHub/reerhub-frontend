@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   adminLogout,
   adminSession,
+  adminAuthPath,
   getAdmin,
   writeAdmin,
   type AdminUser,
@@ -238,7 +239,7 @@ export default function AdminConsole() {
     adminSession()
       .then(setMe)
       .catch(() => {
-        router.replace("/auth");
+        router.replace(adminAuthPath());
       })
       .finally(() => setLoading(false));
   }, [router]);
@@ -260,7 +261,7 @@ export default function AdminConsole() {
   );
   async function signOut() {
     await adminLogout().catch(() => null);
-    router.replace("/auth");
+    router.replace(adminAuthPath());
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

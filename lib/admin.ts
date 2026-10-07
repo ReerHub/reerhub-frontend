@@ -7,7 +7,21 @@ export type AdminUser = {
   avatarUrl?: string;
   role: "admin";
 };
-const BASE = "/api/v1";
+const isDedicatedAdminHost = () => {
+  if (typeof window === "undefined") return true;
+  const host = window.location.hostname;
+  return (
+    host === "admin.reerhub.com" ||
+    host === "admin-staging.reerhub.com" ||
+    host === "admin.localhost"
+  );
+};
+
+const base = () => (isDedicatedAdminHost() ? "/api/v1" : "/admin-api");
+export const adminAuthPath = () =>
+  isDedicatedAdminHost() ? "/auth" : "/admin/auth";
+export const adminDashboardPath = () =>
+  isDedicatedAdminHost() ? "/dashboard" : "/admin/dashboard";
 
 function cookie(name: string) {
   return document.cookie
@@ -18,7 +32,9 @@ function cookie(name: string) {
 async function csrf() {
   const token = cookie("csrfToken");
   if (token) return decodeURIComponent(token);
-  const response = await fetch(`${BASE}/auth/csrf`, { credentials: "include" });
+  const response = await fetch(`${base()}/auth/csrf`, {
+    credentials: "include",
+  });
   const json = await response.json().catch(() => ({}));
   return json.data?.csrfToken || cookie("csrfToken");
 }
@@ -40,7 +56,7 @@ async function call<T>(
 ): Promise<T> {
   const method = (init.method || "GET").toUpperCase();
   const token = method === "GET" ? undefined : await csrf();
-  const response = await fetch(`${BASE}${path}`, {
+  const response = await fetch(`${base()}${path}`, {
     ...init,
     credentials: "include",
     headers: {
