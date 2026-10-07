@@ -117,7 +117,7 @@ const FAQS = [
   ],
   [
     "What does Pro unlock over a free account?",
-    "Free members can browse official openings, save roles, and apply manually. Pro adds a private ranked dashboard, relevance feedback, and a daily email with up to five strong matches scoring 55% or higher. You can pause alerts any time.",
+    "Free members can browse official openings, save roles, and apply manually. Pro adds a private ranked dashboard, relevance feedback, and one daily email with up to five strong matches scoring 75% or higher. You can pause alerts any time.",
   ],
   [
     "Will I be hired if my fit score is high?",
@@ -443,7 +443,7 @@ export default function BillingPage() {
               What Pro includes
             </h2>
             <ul className="mt-5 space-y-3 text-slate-600">
-              <li>Up to five strong 55%+ matches each day</li>
+              <li>One daily email with up to five strong 75%+ matches</li>
               <li>Clear reasons behind every match score</li>
               <li>A private ranked dashboard built from your profile</li>
               <li>Hide unsuitable roles and pause alerts any time</li>

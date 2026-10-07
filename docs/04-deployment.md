@@ -1,19 +1,34 @@
-# 04 — Deployment (Vercel)
+# Frontend deployment (Vercel)
 
-- Project auto-deploys `main` at `https://www.reerhub.com` (apex `reerhub.com` 308 → `www`). Staging auto-deploys `develop` at `https://staging.reerhub.com` (ADR-010; SSO off, `robots.ts` disallows all there).
-- **Environment** (Settings → Environment Variables, Production; build-time → **Redeploy** after changes; dashboard must pin **Node 24**):
-  ```dotenv
-  API_URL=https://api.reerhub.com/api/v1
-  SITE_URL=https://www.reerhub.com
-  GOOGLE_CLIENT_ID=<id>.apps.googleusercontent.com
-  TURNSTILE_SITE_KEY=<turnstile-site-key>
-  ```
-- Staging uses the same keys with staging hosts:
-  ```dotenv
-  API_URL=https://staging-api.reerhub.com/api/v1
-  SITE_URL=https://staging.reerhub.com
-  ```
-  (Google OAuth origins + Turnstile widget domains must list `staging.reerhub.com`.)
-- Backend must list `https://www.reerhub.com` in `CORS_FRONTEND_URL` with credentials on.
-- CI (`.github/workflows/ci.yml`): eslint + `tsc --noEmit` + build + `npm audit`; Dependabot weekly. Requires Node 24.
-- Rollback: Vercel → Deployments → Redeploy last good.
+`develop` deploys to `https://staging.reerhub.com`; `main` deploys to `https://reerhub.com`. The `www.reerhub.com` host redirects to the apex domain. Set Node 24 in Vercel.
+
+## Environment variables
+
+Production:
+
+```dotenv
+API_URL=https://api.reerhub.com/api/v1
+SITE_URL=https://reerhub.com
+GOOGLE_CLIENT_ID=<id>.apps.googleusercontent.com
+TURNSTILE_SITE_KEY=<turnstile-site-key>
+```
+
+Staging:
+
+```dotenv
+API_URL=https://staging-api.reerhub.com/api/v1
+SITE_URL=https://staging.reerhub.com
+GOOGLE_CLIENT_ID=<staging-or-shared-client-id>.apps.googleusercontent.com
+TURNSTILE_SITE_KEY=<staging-widget-site-key>
+```
+
+These values are server/build-time values. Redeploy after changing them. The backend must allow both deployed origins through `CORS_FRONTEND_URL`, and Google OAuth plus Turnstile must list the matching frontend hostname.
+
+## Release checks
+
+1. Sign in with Google and magic link; verify the return URL preserves the requested page.
+2. Confirm an anonymous visitor sees a teaser, a free user can view/apply/save, and a Pro member sees only relevance-based recommendations.
+3. Use Razorpay Test mode on staging to verify checkout, signature verification, billing success, cancellation, webhook delivery, and expiry.
+4. Confirm staging `robots.txt` disallows crawling; production sitemap and canonical URLs use `https://reerhub.com`.
+
+Rollback through Vercel Deployments by redeploying the last known good production build.

@@ -130,7 +130,8 @@ export default function Home() {
                 <strong className="block font-semibold text-ink">
                   Up to 5 strong matches a day
                 </strong>
-                Only 55%+ profile relevance. Never padded with weak matches.
+                Daily shortlist: only 75%+ profile relevance. Never padded with
+                weak matches.
               </p>
             </div>
             <p className="relative mt-4 text-center text-[11px] text-slate-600">
@@ -290,7 +291,8 @@ export default function Home() {
             </p>
             <p className="text-sm leading-7 text-slate-600">
               A private match dashboard and a daily shortlist built around your
-              profile. Only roles with 55% or higher relevance make the cut.
+              profile. Your default shortlist starts at 75%+, with broader
+              profile-ranked tiers available when you want to explore.
             </p>
             <Link href="/billing" className="btn-primary mt-6 w-full">
               Explore Pro plans

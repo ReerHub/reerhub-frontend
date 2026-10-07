@@ -11,6 +11,18 @@ import { jobUrl } from "@/lib/reerhub";
 import CompanyLogo from "@/components/CompanyLogo";
 import Icon from "@/components/ui/Icon";
 import { timeAgo } from "@/lib/format";
+
+type ScoreTier = 90 | 75 | 50 | 25 | 0;
+
+const SCORE_TIERS: { value: ScoreTier; label: string; description: string }[] =
+  [
+    { value: 90, label: "90%+", description: "Exceptional fit" },
+    { value: 75, label: "75%+", description: "Strong matches" },
+    { value: 50, label: "50%+", description: "Worth reviewing" },
+    { value: 25, label: "25%+", description: "Broader matches" },
+    { value: 0, label: "Explore all", description: "All profile-ranked roles" },
+  ];
+
 export default function RecommendationPanel({
   savedIds = [],
   onToggleSave,
@@ -19,29 +31,48 @@ export default function RecommendationPanel({
   onToggleSave?: (id: string, saved: boolean) => void;
 }) {
   const [jobs, setJobs] = useState<Recommendation[]>([]);
-  const [completion, setCompletion] = useState(0);
+  const [profileReady, setProfileReady] = useState<boolean | null>(null);
+  const [missingProfileFields, setMissingProfileFields] = useState<string[]>(
+    [],
+  );
+  const [minimumScore, setMinimumScore] = useState<ScoreTier>(75);
+  const [highMatchScore, setHighMatchScore] = useState(75);
+  const [matchCounts, setMatchCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [liked, setLiked] = useState<string[]>([]);
+  const [outcomes, setOutcomes] = useState<Record<string, string>>({});
+  const selectTier = (score: ScoreTier) => {
+    if (score === minimumScore) return;
+    setLoading(true);
+    setError(false);
+    setMinimumScore(score);
+  };
   const load = useCallback(() => {
     setLoading(true);
     setError(false);
-    getRecommendations()
+    getRecommendations(minimumScore)
       .then((data) => {
         setJobs(data.jobs);
-        setCompletion(data.profileCompletion);
+        setProfileReady(data.profileReady);
+        setMissingProfileFields(data.missingProfileFields);
+        setHighMatchScore(data.highMatchScore);
+        setMatchCounts(data.matchCounts);
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  }, [minimumScore]);
   useEffect(() => {
     let active = true;
-    getRecommendations()
+    getRecommendations(minimumScore)
       .then((data) => {
         if (active) {
           setJobs(data.jobs);
-          setCompletion(data.profileCompletion);
+          setProfileReady(data.profileReady);
+          setMissingProfileFields(data.missingProfileFields);
+          setHighMatchScore(data.highMatchScore);
+          setMatchCounts(data.matchCounts);
         }
       })
       .catch(() => {
@@ -53,18 +84,27 @@ export default function RecommendationPanel({
     return () => {
       active = false;
     };
-  }, []);
+  }, [minimumScore]);
   const feedback = async (id: string, value: string) => {
     setBusy(id);
     try {
       await setRecommendationFeedback(id, value);
       if (value === "not_relevant")
         setJobs((prev) => prev.filter((j) => j._id !== id));
-      else setLiked((prev) => [...prev, id]);
+      else {
+        if (value === "relevant") setLiked((prev) => [...prev, id]);
+        setOutcomes((prev) => ({ ...prev, [id]: value }));
+      }
       toast.success(
         value === "not_relevant"
           ? "Role hidden from your matches"
-          : "Thanks. Relevance feedback saved.",
+          : value === "applied"
+            ? "Application recorded. Good luck!"
+            : value === "interview"
+              ? "Interview recorded. We’re rooting for you!"
+              : value === "offer"
+                ? "Offer recorded. Congratulations!"
+                : "Thanks. Relevance feedback saved.",
       );
     } catch {
       toast.error("Could not save feedback");
@@ -80,16 +120,46 @@ export default function RecommendationPanel({
             id="matches-title"
             className="text-2xl font-bold tracking-tight text-ink"
           >
-            Your strongest matches
+            {minimumScore === 0
+              ? "All profile-ranked roles"
+              : `${minimumScore}%+ profile matches`}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Ranked by relevance to your profile. Every role meets the 55%
-            minimum.
+            {minimumScore === 0
+              ? "Every role has at least two profile signals. Stronger fits appear first."
+              : `Ranked by relevance to your profile. Every role meets the ${minimumScore}% minimum.`}
           </p>
         </div>
         <span className="rounded-full border border-primary/20 bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary-deep">
           Pro intelligence
         </span>
+      </div>
+      <div
+        className="mb-7 flex flex-wrap gap-2"
+        role="group"
+        aria-label="Filter matches by relevance score"
+      >
+        {SCORE_TIERS.map((tier) => {
+          const selected = minimumScore === tier.value;
+          const count =
+            matchCounts[tier.value === 0 ? "all" : String(tier.value)] || 0;
+          return (
+            <button
+              key={tier.value}
+              type="button"
+              aria-pressed={selected}
+              title={tier.description}
+              onClick={() => selectTier(tier.value)}
+              className={`min-h-11 rounded-xl border px-3 text-sm font-semibold transition-colors ${
+                selected
+                  ? "border-primary bg-primary text-white"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-primary/40 hover:text-primary"
+              }`}
+            >
+              {tier.label} <span className="ml-1 opacity-80">{count}</span>
+            </button>
+          );
+        })}
       </div>
       {loading ? (
         <div className="space-y-4">
@@ -145,9 +215,11 @@ export default function RecommendationPanel({
                 <div className="text-center">
                   <div
                     className="match-score"
-                    style={{ "--score": job.fit.score } as CSSProperties}
+                    style={
+                      { "--score": job.fit.relevanceScore } as CSSProperties
+                    }
                   >
-                    <span>{job.fit.score}%</span>
+                    <span>{job.fit.relevanceScore}%</span>
                   </div>
                   <p className="mt-2 text-[11px] font-medium text-slate-600">
                     Profile match
@@ -201,12 +273,52 @@ export default function RecommendationPanel({
                       : "Relevant to me"}
                   </button>
                   <button
+                    disabled={
+                      busy === job._id || outcomes[job._id] === "applied"
+                    }
+                    className="min-h-11 rounded-lg px-3 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+                    onClick={() => feedback(job._id, "applied")}
+                  >
+                    {outcomes[job._id] === "applied"
+                      ? "Application recorded"
+                      : "Applied"}
+                  </button>
+                  <button
                     disabled={busy === job._id}
                     className="min-h-11 rounded-lg px-3 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-60"
                     onClick={() => feedback(job._id, "not_relevant")}
                   >
                     Hide role
                   </button>
+                  <details className="relative">
+                    <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-lg px-3 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                      More
+                    </summary>
+                    <div className="absolute right-0 z-10 mt-1 w-36 rounded-xl border border-slate-200 bg-white p-1 shadow-card">
+                      <button
+                        disabled={
+                          busy === job._id || outcomes[job._id] === "interview"
+                        }
+                        className="w-full rounded-lg px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                        onClick={() => feedback(job._id, "interview")}
+                      >
+                        {outcomes[job._id] === "interview"
+                          ? "Interview recorded"
+                          : "Got interview"}
+                      </button>
+                      <button
+                        disabled={
+                          busy === job._id || outcomes[job._id] === "offer"
+                        }
+                        className="w-full rounded-lg px-3 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                        onClick={() => feedback(job._id, "offer")}
+                      >
+                        {outcomes[job._id] === "offer"
+                          ? "Offer recorded"
+                          : "Got offer"}
+                      </button>
+                    </div>
+                  </details>
                 </div>
               </div>
             </article>
@@ -216,21 +328,36 @@ export default function RecommendationPanel({
         <div className="surface-panel flex flex-col items-center p-8 text-center sm:p-12">
           <Icon name="spark" className="mb-4 h-8 w-8 text-primary" />
           <h3 className="text-xl font-bold text-ink">
-            {completion < 60
-              ? "Give your matches a stronger starting point."
+            {profileReady === false
+              ? "Complete your match profile first."
               : "A quieter day. A focused shortlist."}
           </h3>
           <p className="mt-3 max-w-md text-sm leading-7 text-slate-600">
-            {completion < 60
-              ? "Add your skills, experience, and preferences. A clearer profile helps us surface stronger matches."
-              : "No current roles meet the 55% relevance threshold. We’ll keep checking fresh official openings; you can explore all jobs in the meantime."}
+            {profileReady === false
+              ? `Add ${missingProfileFields.join(", ")} so we can build a reliable ${highMatchScore}%+ shortlist.`
+              : minimumScore === 0
+                ? "No profile-ranked roles are available right now. We’ll keep checking fresh official openings."
+                : `No current roles meet the ${minimumScore}% relevance threshold. You can broaden your shortlist without leaving your Pro workspace.`}
           </p>
-          <Link
-            href={completion < 60 ? "/profile" : "/dashboard?view=discover"}
-            className="btn-primary mt-6"
-          >
-            {completion < 60 ? "Complete my profile" : "Explore all jobs"}
-          </Link>
+          {profileReady === false ? (
+            <Link href="/profile" className="btn-primary mt-6">
+              Complete my profile
+            </Link>
+          ) : (
+            <button
+              type="button"
+              className="btn-primary mt-6"
+              onClick={() =>
+                selectTier(minimumScore > 50 ? 50 : minimumScore > 25 ? 25 : 0)
+              }
+            >
+              {minimumScore > 50
+                ? "Show 50%+ matches"
+                : minimumScore > 25
+                  ? "Show 25%+ matches"
+                  : "Explore all ranked roles"}
+            </button>
+          )}
         </div>
       )}
       <p className="mt-5 text-xs leading-6 text-slate-600">

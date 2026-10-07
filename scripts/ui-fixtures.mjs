@@ -32,13 +32,15 @@ const job = {
   techTrack: "software",
   techRole: "Backend Engineer",
   locations: [{ city: "Bengaluru" }],
-  skills: ["Node.js", "MongoDB"],
+  skills: ["Node.js", "MongoDB", "TypeScript"],
   remoteType: "hybrid",
   firstSeenAt: new Date().toISOString(),
   status: "active",
   sourceUrl: "https://example.com/jobs/1",
   fit: {
+    relevanceScore: 86,
     score: 86,
+    evidenceCount: 4,
     reasons: [
       "Matches your Node.js skills",
       "Aligned with your preferred location",
@@ -130,11 +132,21 @@ const server = http.createServer(async (req, res) => {
     return json(user);
   }
   if (path === "/billing") return json({ subscription });
-  if (path === "/recommendations")
+  if (path === "/recommendations") {
+    const minimumScore = Number(url.searchParams.get("minScore") || 75);
     return json(
-      { profileCompletion: 100, jobs: hidden ? [] : [job] },
+      {
+        profileCompletion: 100,
+        profileReady: true,
+        missingProfileFields: [],
+        minimumRelevanceScore: minimumScore,
+        highMatchScore: 75,
+        matchCounts: { 90: 0, 75: hidden ? 0 : 1, 50: hidden ? 0 : 1, 25: hidden ? 0 : 1, all: hidden ? 0 : 1 },
+        jobs: hidden || (minimumScore && job.fit.relevanceScore < minimumScore) ? [] : [job],
+      },
       pro ? 200 : 403,
     );
+  }
   if (path.includes("/feedback")) {
     if (data.feedback === "not_relevant") hidden = true;
     return json({ feedback: data.feedback });

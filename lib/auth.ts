@@ -206,13 +206,25 @@ export type Recommendation = {
   companyId: { name: string; slug: string; logoUrl?: string };
   locations: { city?: string }[];
   firstSeenAt: string;
-  fit: { score: number; reasons: string[] };
+  fit: {
+    relevanceScore: number;
+    /** Compatibility alias while clients migrate to relevanceScore. */
+    score: number;
+    reasons: string[];
+    evidenceCount: number;
+  };
 };
 
-export const getRecommendations = () =>
-  request<{ profileCompletion: number; jobs: Recommendation[] }>(
-    "/recommendations",
-  );
+export const getRecommendations = (minScore = 75) =>
+  request<{
+    profileCompletion: number;
+    profileReady: boolean;
+    missingProfileFields: string[];
+    minimumRelevanceScore: number;
+    highMatchScore: number;
+    matchCounts: Record<"90" | "75" | "50" | "25" | "all", number>;
+    jobs: Recommendation[];
+  }>(`/recommendations?minScore=${minScore}&limit=50`);
 
 export const setRecommendationFeedback = (jobId: string, feedback: string) =>
   request<{ feedback: string }>(`/recommendations/${jobId}/feedback`, {
