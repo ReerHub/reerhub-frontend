@@ -38,6 +38,8 @@ Self-contained repo: product/routes/design/decisions/changelog/skills live here 
 
 `find-skills` · `frontend-design` (Anthropic UI taste) · `nextjs-app-router-patterns` · `ui-ux-pro-max` (systematic rules: palette/a11y/touch/responsive) · `code-review`. Pinned in `skills.json`. UI work uses both design skills: `frontend-design` for direction first, `ui-ux-pro-max` rules pass before finishing.
 
+Additional focused guidance: `vercel-react-best-practices` for React/Next.js performance and data fetching; `web-design-guidelines` for accessibility and interface audits. Use these when relevant, while preserving the local Next.js documentation and ReerHub design/product constraints above.
+
 ## Docs discipline (minimal by design)
 
 `docs/` holds exactly three entries: `DECISIONS.md`, `04-deployment.md` (env matrix mirrors `.env.example`), `design/` (design-system v2). README covers setup/product/roadmap. Do NOT create new doc files, TODO lists, or issue logs without a triggering incident or user-visible requirement — backlog lives in README Roadmap or GitHub Issues.
