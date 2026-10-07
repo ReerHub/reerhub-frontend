@@ -47,6 +47,11 @@ async function parse<T>(response: Response): Promise<T> {
     error.status = response.status;
     throw error;
   }
+  if (!Object.prototype.hasOwnProperty.call(json, "data")) {
+    throw new Error(
+      "The admin API returned an invalid response. Please retry.",
+    );
+  }
   return json.data as T;
 }
 async function call<T>(
@@ -65,7 +70,11 @@ async function call<T>(
       ...init.headers,
     },
   });
-  if (response.status === 401 && retry && !path.startsWith("/admin/auth/")) {
+  if (
+    response.status === 401 &&
+    retry &&
+    (!path.startsWith("/admin/auth/") || path === "/admin/auth/session")
+  ) {
     const refreshed = await call<{ id: string }>(
       "/admin/auth/refresh",
       { method: "POST" },
@@ -85,6 +94,13 @@ export const adminSession = () => call<AdminUser>("/admin/auth/session");
 export const adminLogout = () =>
   call<{ loggedOut: boolean }>("/admin/auth/logout", { method: "POST" });
 export const getAdmin = <T>(path: string) => call<T>(path);
+export const getAdminList = async <T>(path: string): Promise<T[]> => {
+  const data = await call<unknown>(path);
+  if (!Array.isArray(data)) {
+    throw new Error("The admin API did not return a list. Please retry.");
+  }
+  return data as T[];
+};
 export const writeAdmin = <T>(
   path: string,
   method: "POST" | "PATCH",
