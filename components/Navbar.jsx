@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import ProBadge from "@/components/ProBadge";
 import Icon from "@/components/ui/Icon";
+import UserAvatar from "@/components/UserAvatar";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -93,20 +94,11 @@ export default function Navbar() {
                 aria-expanded={account}
                 aria-controls="account-navigation"
               >
-                {user.avatarUrl ? (
-                  <Image
-                    src={user.avatarUrl}
-                    alt=""
-                    width={32}
-                    height={32}
-                    unoptimized
-                    className="h-8 w-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-bold text-primary-deep">
-                    {user.name.charAt(0).toUpperCase()}
-                  </span>
-                )}
+                <UserAvatar
+                  key={user._id || user.email}
+                  name={user.name}
+                  avatarUrl={user.avatarUrl}
+                />
                 <Icon name="chevron" className="hidden h-4 w-4 sm:block" />
               </button>
               {account && (

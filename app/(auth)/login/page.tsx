@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import GoogleButton from "@/components/GoogleButton";
@@ -14,7 +14,6 @@ const inputCls =
   "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft transition-all";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading } = useAuth();
   const next = safeNext(searchParams.get("next"));
@@ -25,8 +24,10 @@ function LoginForm() {
   const turnstileRef = useRef<TurnstileHandle>(null);
 
   useEffect(() => {
-    if (!loading && user) router.replace(next);
-  }, [loading, user, next, router]);
+    // A full navigation drops anonymous router-cache entries and makes the
+    // protected-route guard read the newly issued session cookies.
+    if (!loading && user) window.location.replace(next);
+  }, [loading, user, next]);
 
   const send = async () => {
     setBusy(true);
@@ -51,6 +52,14 @@ function LoginForm() {
     e.preventDefault();
     await send();
   };
+
+  if (loading || user) {
+    return (
+      <div className="page-container py-20 text-center" role="status">
+        {user ? "Signed in. Opening your workspace…" : "Checking your session…"}
+      </div>
+    );
+  }
 
   return (
     <div className="page-container grid min-h-[75vh] items-center gap-12 py-12 lg:grid-cols-2 lg:py-16">

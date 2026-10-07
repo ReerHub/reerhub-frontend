@@ -15,13 +15,13 @@ export default function CompanyLogo({
   logoUrl?: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const [failed, setFailed] = useState(false);
+  const [failedUrl, setFailedUrl] = useState<string>();
   const px = DIMS[size];
   const radius = size === "lg" ? "rounded-2xl" : "rounded-xl";
   const text =
     size === "sm" ? "text-lg" : size === "lg" ? "text-3xl" : "text-xl";
 
-  if (!logoUrl || failed) {
+  if (!logoUrl || failedUrl === logoUrl) {
     return (
       <span
         className={`${radius} ${companyTile()} flex items-center justify-center font-bold ${text} shrink-0 shadow-sm`}
@@ -40,7 +40,11 @@ export default function CompanyLogo({
       width={px}
       height={px}
       loading="lazy"
-      onError={() => setFailed(true)}
+      // Favicons are already tiny; avoid server-side optimization of a
+      // third-party redirect which may return 404 or reject server requests.
+      unoptimized
+      referrerPolicy="no-referrer"
+      onError={() => setFailedUrl(logoUrl)}
       className={`${radius} object-contain bg-white border border-slate-200/80 shrink-0 shadow-sm p-1`}
     />
   );
