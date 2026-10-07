@@ -25,6 +25,16 @@
       "name": "code-review",
       "source": "mattpocock/skills",
       "scope": "project"
+    },
+    {
+      "name": "vercel-react-best-practices",
+      "source": "vercel-labs/agent-skills",
+      "scope": "project"
+    },
+    {
+      "name": "web-design-guidelines",
+      "source": "vercel-labs/agent-skills",
+      "scope": "project"
     }
   ]
 }
