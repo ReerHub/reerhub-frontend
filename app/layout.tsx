@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
+import { isAdminSurfaceHost } from "@/lib/admin-host";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -65,8 +66,7 @@ export default async function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const host = (await headers()).get("host")?.split(":")[0] || "";
-  const isAdminHost = host === "admin.localhost" || host.startsWith("admin.");
+  const isAdminHost = isAdminSurfaceHost((await headers()).get("host") || "");
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body

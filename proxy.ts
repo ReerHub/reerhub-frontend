@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isAdminSurfaceHost } from "@/lib/admin-host";
 
 const PROTECTED = ["/dashboard", "/profile", "/billing/success"];
-const isAdminHost = (host: string) =>
-  host === "admin.localhost" || host.startsWith("admin.");
 
 const hidden = (req: NextRequest) => {
   const url = req.nextUrl.clone();
@@ -15,7 +14,7 @@ const hidden = (req: NextRequest) => {
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const admin = isAdminHost(req.headers.get("host")?.split(":")[0] || "");
+  const admin = isAdminSurfaceHost(req.headers.get("host") || "");
 
   if (admin) {
     const url = req.nextUrl.clone();
