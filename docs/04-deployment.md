@@ -32,3 +32,12 @@ These values are server/build-time values. Redeploy after changing them. The bac
 4. Confirm staging `robots.txt` disallows crawling; production sitemap and canonical URLs use `https://reerhub.com`.
 
 Rollback through Vercel Deployments by redeploying the last known good production build.
+# Admin deployment
+
+Create a second Vercel project from this frontend repository with **Root
+Directory** set to `admin`, then attach `admin.reerhub.com`. Configure only
+`API_URL` (the backend `/api/v1` base URL) and `GOOGLE_CLIENT_ID`; neither the
+admin project nor its browser bundle needs secrets. Add the admin subdomain to
+the existing Google OAuth client’s Authorized JavaScript origins and to the
+backend `CORS_FRONTEND_URL` list. The public project intentionally has no
+`/auth` route; its customer login remains `/login`.
