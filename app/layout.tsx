@@ -26,39 +26,8 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata = {
   metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
-  title: "ReerHub | Engineering & AI jobs in India",
-  description:
-    "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages. Apply on the company site.",
-  keywords: [
-    "ReerHub",
-    "India tech jobs",
-    "engineering jobs India",
-    "AI jobs India",
-    "SDE jobs",
-    "product company careers India",
-  ],
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    siteName: "ReerHub",
-    locale: "en_IN",
-    url: "/",
-    title: "ReerHub | Engineering & AI jobs in India",
-    description:
-      "Engineering, data, and AI roles from India's top product companies — indexed daily from official career pages.",
-    images: ["/reerhub-logo-with-text.png"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ReerHub | Engineering & AI jobs in India",
-    description:
-      "Engineering, data, and AI roles from India's top product companies.",
-    images: ["/reerhub-logo-with-text.png"],
-  },
-  icons: {
-    icon: "/reerhub-icon-logo.png",
-    apple: "/reerhub-icon-logo.png",
-  },
+  title: "ReerHub",
+  icons: { icon: "/reerhub-icon-logo.png", apple: "/reerhub-icon-logo.png" },
 };
 
 export default async function RootLayout({

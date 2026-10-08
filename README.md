@@ -2,11 +2,11 @@
 
 Next.js 16 and React 19 frontend for ReerHub, an India-first tech-job discovery product. It presents official company openings, passwordless accounts, free manual discovery, and a Pro workspace for ranked role relevance.
 
-Live: `https://reerhub.com`. Staging: `https://staging.reerhub.com` from `develop`; staging is blocked from crawlers.
+Live: `https://reerhub.com`. Staging: `https://staging.reerhub.com` from `develop`; staging serves noindex directives.
 
 ## Product behaviour
 
-- Anonymous visitors can preview up to 10 listings. Signing in for free unlocks full descriptions, official Apply links, filters, company pages, profile editing, and saved roles.
+- Anonymous visitors can preview up to 10 listings and read full job descriptions, skills and official Apply links without signing in. A free account unlocks complete browsing, profile editing and saved roles.
 - Free accounts use a manual discovery dashboard. They never receive ranked matches or match emails.
 - Pro members with a valid entitlement, including remaining time after cancellation, receive a default 75%+ ranked shortlist, tiered 90/75/50/25% dashboard filters, relevance feedback, and one daily email with up to five fresh 75%+ roles. A match-ready profile needs a track, target role, three skills, experience, and a city or work-mode preference. A score describes profile relevance, never hiring probability; freshness only orders already-qualified roles.
 - Pro plans are weekly ₹49, monthly ₹149, and quarterly ₹299. Each has a seven-day trial. Subscription payments are non-refundable; cancellation stops renewal while access remains available until the displayed end date.
@@ -20,6 +20,8 @@ cp .env.example .env.local
 npm run dev
 npx eslint .
 npx tsc --noEmit
+npm run test:seo
+npm run test:admin
 npm run build
 ```
 

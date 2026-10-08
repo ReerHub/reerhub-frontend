@@ -4,12 +4,17 @@ import { isDedicatedAdminHost, isSharedAdminTestHost } from "@/lib/admin-host";
 
 const PROTECTED = ["/dashboard", "/profile", "/billing/success"];
 
+const unindexed = (response: NextResponse) => {
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return response;
+};
+
 const hidden = (req: NextRequest) => {
   const url = req.nextUrl.clone();
   // No route exists at this internal path, which produces a real 404 rather
   // than exposing a redirect hint about the admin console.
   url.pathname = "/__reerhub_not_found";
-  return NextResponse.rewrite(url);
+  return unindexed(NextResponse.rewrite(url));
 };
 
 const adminRewrite = (req: NextRequest, pathname: string) => {
@@ -20,7 +25,9 @@ const adminRewrite = (req: NextRequest, pathname: string) => {
   url.pathname = pathname;
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-reerhub-admin-surface", "1");
-  return NextResponse.rewrite(url, { request: { headers: requestHeaders } });
+  return unindexed(
+    NextResponse.rewrite(url, { request: { headers: requestHeaders } }),
+  );
 };
 
 export function proxy(req: NextRequest) {
@@ -37,14 +44,14 @@ export function proxy(req: NextRequest) {
       pathname === "/admin-dashboard" ||
       pathname.startsWith("/admin-api/"))
   ) {
-    return NextResponse.next();
+    return unindexed(NextResponse.next());
   }
 
   if (admin) {
     // The admin login needs public widget configuration and the brand asset.
     // These contain no secrets and must remain reachable on the dedicated host.
     if (pathname === "/api/config" || pathname === "/reerhub-icon-logo.png") {
-      return NextResponse.next();
+      return unindexed(NextResponse.next());
     }
     if (pathname === "/" || pathname === "/dashboard") {
       return adminRewrite(req, "/admin-dashboard");
@@ -68,7 +75,8 @@ export function proxy(req: NextRequest) {
     if (pathname === "/admin/auth") return adminRewrite(req, "/admin-auth");
     if (pathname === "/admin/dashboard")
       return adminRewrite(req, "/admin-dashboard");
-    if (pathname.startsWith("/admin-api/")) return NextResponse.next();
+    if (pathname.startsWith("/admin-api/"))
+      return unindexed(NextResponse.next());
   }
 
   // These implementation routes must never be reachable from the public
@@ -84,7 +92,12 @@ export function proxy(req: NextRequest) {
   }
 
   if (!PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    return sharedTestHost ||
+      (process.env.SITE_URL || "").includes("staging") ||
+      /^\/(?:login|verify-magic|verify-email)(?:\/|$)/.test(pathname)
+      ? unindexed(response)
+      : response;
   }
   const session =
     req.cookies.get("accessToken")?.value ||
@@ -95,9 +108,9 @@ export function proxy(req: NextRequest) {
     url.pathname = "/login";
     url.search = "";
     url.searchParams.set("next", `${pathname}${req.nextUrl.search}`);
-    return NextResponse.redirect(url);
+    return unindexed(NextResponse.redirect(url));
   }
-  return NextResponse.next();
+  return unindexed(NextResponse.next());
 }
 
 export const config = {

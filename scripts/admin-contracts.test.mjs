@@ -152,6 +152,21 @@ test("admin host routes stay isolated and required public config remains accessi
         },
       }),
     );
+  assert.equal(route("reerhub.com", "/jobs").headers.get("x-robots-tag"), null);
+  for (const [host, path] of [
+    ["staging.reerhub.com", "/jobs"],
+    ["admin.reerhub.com", "/auth"],
+    ["admin.reerhub.com", "/dashboard"],
+    ["reerhub.com", "/login"],
+    ["reerhub.com", "/dashboard"],
+    ["reerhub.com", "/profile"],
+    ["reerhub.com", "/billing/success"],
+  ]) {
+    assert.equal(
+      route(host, path).headers.get("x-robots-tag"),
+      "noindex, nofollow",
+    );
+  }
   for (const host of ["reerhub.com", "www.reerhub.com"])
     for (const path of [
       "/auth",

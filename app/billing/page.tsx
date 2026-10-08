@@ -1,4 +1,5 @@
 "use client";
+import { safeJsonLd } from "@/lib/seo";
 
 import Script from "next/script";
 import Link from "next/link";
@@ -293,7 +294,7 @@ export default function BillingPage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_JSON_LD) }}
       />
       <p className="rise-in mb-4 flex items-center gap-2 text-sm font-bold text-primary-deep">
         <Icon name="spark" />

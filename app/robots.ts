@@ -2,25 +2,16 @@ import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   const base = process.env.SITE_URL || "http://localhost:3000";
-  // Staging is publicly reachable (no SSO) for testing — keep crawlers out.
+  // Let crawlers read staging's noindex headers instead of blocking them.
   if (base.includes("staging")) {
-    return { rules: [{ userAgent: "*", disallow: "/" }] };
+    return { rules: [{ userAgent: "*", allow: "/" }] };
   }
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/dashboard",
-          "/profile",
-          "/login",
-          "/signup",
-          "/verify-email",
-          "/verify-magic",
-          "/forgot-password",
-          "/reset-password",
-        ],
+        disallow: ["/api/", "/admin-api/"],
       },
     ],
     sitemap: `${base}/sitemap.xml`,

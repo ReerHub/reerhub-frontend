@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Suspense } from "react";
-import JobBrowser from "@/components/JobBrowser";
+import ServerJobBrowser from "@/components/ServerJobBrowser";
 import PageHeader from "@/components/PageHeader";
 import Icon from "@/components/ui/Icon";
-export const metadata: Metadata = {
-  title: "Find your next tech role. | ReerHub",
-  description:
-    "Official openings from companies hiring in India. Search by what you build, where you want to work, and what comes next.",
-  alternates: { canonical: "/jobs" },
-};
+export const metadata = pageMetadata(
+  "Tech Jobs in India",
+  "Official openings from companies hiring in India. Search by what you build, where you want to work, and what comes next.",
+  "/jobs",
+);
 export default function Page() {
   return (
     <div>
@@ -36,7 +35,7 @@ export default function Page() {
           ))}
         </nav>
         <Suspense fallback={<div className="skeleton h-56 rounded-2xl" />}>
-          <JobBrowser heading="All open roles" />
+          <ServerJobBrowser heading="All open roles" />
         </Suspense>
       </section>
     </div>

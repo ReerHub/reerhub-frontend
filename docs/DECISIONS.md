@@ -2,7 +2,7 @@
 
 ## Discovery-first access
 
-Anonymous visitors get a small, SEO-safe job preview. A free signed-in account unlocks full job information, official Apply links, search/filtering, profile, and saved roles. This keeps discovery useful while making registration the unlock point.
+Anonymous visitors get a 10-role listing preview; full descriptions, skills and official Apply links are public. A free account unlocks complete browsing, profile and saved roles. Pro matching remains protected. Crawlers receive the same public content as visitors.
 
 ## Pro is career relevance, not hiring prediction
 
@@ -22,4 +22,8 @@ The active interface uses a light discovery surface, white cards, ReerHub blue (
 
 ## Deployment and UI verification
 
-`develop` is staging and `main` is production. Staging is public but blocked from search crawlers. `npm run test:ui:fixtures` is an in-memory local membership-state harness; it never calls database, email, or payment services and does not replace real staging checkout tests.
+`develop` is staging and `main` is production. Staging is public but served with noindex directives. `npm run test:ui:fixtures` is an in-memory local membership-state harness; it never calls database, email, or payment services and does not replace real staging checkout tests.
+
+## Public search metadata
+
+Public pages have unique metadata, social previews and self-referencing canonicals. Only sufficiently documented active jobs emit JobPosting markup; historical closed-role URLs remain without it. The metadata-only cursor feed populates a split sitemap index at `/sitemap.xml`, independent of the anonymous listing cap. Private/admin pages and staging use readable noindex directives. Search indexing and rich results are never guaranteed.

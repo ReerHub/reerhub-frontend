@@ -4,10 +4,10 @@ import { useAuth } from "@/components/AuthProvider";
 import { usePathname, useSearchParams } from "next/navigation";
 import Icon from "@/components/ui/Icon";
 export default function DiscoveryPrompt({ count }: { count?: number }) {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const pathname = usePathname();
   const params = useSearchParams();
-  if (user || loading) return null;
+  if (user) return null;
   const next = `${pathname}${params.size ? `?${params.toString()}` : ""}`;
   return (
     <section
@@ -28,8 +28,8 @@ export default function DiscoveryPrompt({ count }: { count?: number }) {
           There’s more to discover. Your free account unlocks it.
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
-          See all openings, read full descriptions, save your shortlist, and
-          apply on the company’s official site. No payment required.
+          Browse the full listings and save your shortlist with a free account.
+          Job details and official Apply links are public. No payment required.
         </p>
       </div>
       <Link

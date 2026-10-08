@@ -1,7 +1,9 @@
-export const metadata = {
-  title: "Privacy Policy | ReerHub",
-  description: "How ReerHub collects, uses, and protects your data.",
-};
+import { pageMetadata } from "@/lib/seo";
+export const metadata = pageMetadata(
+  "Privacy Policy | ReerHub",
+  "Learn how ReerHub collects and protects account and profile data, uses cookies, and handles your privacy choices while you discover tech jobs.",
+  "/privacy",
+);
 
 export default function PrivacyPage() {
   return (

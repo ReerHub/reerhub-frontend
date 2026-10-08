@@ -144,6 +144,7 @@ export default function JobBrowser({
   savedIds,
   showSave,
   onToggleSave,
+  initialData,
 }: {
   initialCategory?: "" | TechTrack;
   heading?: string;
@@ -153,6 +154,7 @@ export default function JobBrowser({
   savedIds?: string[];
   showSave?: boolean;
   onToggleSave?: (jobId: string, saved: boolean) => void;
+  initialData?: Awaited<ReturnType<typeof listJobsWithMeta>>;
 }) {
   const { user } = useAuth();
   const router = useRouter();
@@ -186,11 +188,11 @@ export default function JobBrowser({
     setFilters(INITIAL);
   }
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [total, setTotal] = useState(0);
+  const [jobs, setJobs] = useState<Job[]>(initialData?.jobs || []);
+  const [total, setTotal] = useState(initialData?.total || 0);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(initialData?.totalPages || 0);
+  const [loading, setLoading] = useState(!initialData);
   const [loadingMore, setLoadingMore] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState(false);

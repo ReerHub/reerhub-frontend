@@ -5,6 +5,26 @@ import { notFound } from "next/navigation";
 import CompanyLogo from "@/components/CompanyLogo";
 import JobCard from "@/components/JobCard";
 import { getCompany, listCompanyJobs, NotFoundError } from "@/lib/reerhub";
+import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  try {
+    const company = await getCompany(slug);
+    return pageMetadata(
+      `${company.name} Careers & Tech Jobs`,
+      `Explore engineering, AI and data openings at ${company.name} in India. Read job details and apply on the official company site with ReerHub.`,
+      `/companies/${company.slug}`,
+    );
+  } catch (error) {
+    if (error instanceof NotFoundError) notFound();
+    throw error;
+  }
+}
 
 export default async function CompanyDetailPage({
   params,
@@ -34,6 +54,18 @@ export default async function CompanyDetailPage({
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: safeJsonLd(
+            breadcrumb([
+              { name: "Home", path: "/" },
+              { name: "Companies", path: "/companies" },
+              { name: company.name, path: `/companies/${company.slug}` },
+            ]),
+          ),
+        }}
+      />
       <section className="border-b border-slate-200 bg-white">
         <div className="page-container py-10 sm:py-12">
           <nav

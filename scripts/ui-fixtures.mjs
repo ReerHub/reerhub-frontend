@@ -33,7 +33,12 @@ const job = {
   companyId: company,
   techTrack: "software",
   techRole: "Backend Engineer",
-  locations: [{ city: "Bengaluru" }],
+  locations: [{ city: "Bengaluru", country: "India" }],
+  description:
+    "<p>Build reliable APIs and distributed backend services. Collaborate with engineering teams using Node.js, MongoDB and TypeScript.</p>",
+  applicationUrl: "https://example.com/apply",
+  postedAt: "2025-01-01T00:00:00.000Z",
+  updatedAt: "2025-01-02T00:00:00.000Z",
   skills: ["Node.js", "MongoDB", "TypeScript"],
   remoteType: "hybrid",
   firstSeenAt: new Date().toISOString(),
@@ -385,6 +390,11 @@ const server = http.createServer(async (req, res) => {
     return json({ saved: saved.length > 0 });
   }
   if (path === "/companies") return json([company]);
+  if (path === "/companies/fixture-labs") return json(company);
+  if (path === "/jobs/sitemap") return json([job]);
+  if (path === `/jobs/${job._id}`) return json(job);
+  if (path === "/jobs/333333333333333333333333")
+    return json({ ...job, _id: "333333333333333333333333", status: "closed" });
   if (path === "/jobs")
     return json([job], 200, { total: 1, totalPages: 1, page: 1 });
   return json(null, 404);
