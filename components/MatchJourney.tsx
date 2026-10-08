@@ -60,7 +60,7 @@ export default function MatchJourney({ companies }: { companies: Company[] }) {
         >
           <path
             d="M210 40C250 40 255 90 300 90M210 90H300M210 140C250 140 255 90 300 90M300 90H408"
-            stroke="#D8D4F9"
+            stroke="#bfdbfe"
             strokeWidth="1.5"
           />
           {[40, 90, 140, 90].map((y, index) => (
@@ -69,7 +69,7 @@ export default function MatchJourney({ companies }: { companies: Company[] }) {
               cx="0"
               cy="0"
               r="3"
-              fill="#4F46E5"
+              fill="#2563eb"
               className={styles.signal}
               style={
                 {

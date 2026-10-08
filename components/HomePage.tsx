@@ -135,7 +135,7 @@ export default function HomePage() {
                         cy="36"
                         r="32"
                         fill="none"
-                        stroke="#EEECFF"
+                        stroke="#eff6ff"
                         strokeWidth="5"
                       />
                       <circle
@@ -144,7 +144,7 @@ export default function HomePage() {
                         cy="36"
                         r="32"
                         fill="none"
-                        stroke="#4F46E5"
+                        stroke="#2563eb"
                         strokeWidth="5"
                         pathLength="100"
                         strokeDasharray="86 100"

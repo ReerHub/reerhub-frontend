@@ -6,15 +6,15 @@ ReerHub is a calm, trustworthy career-discovery product. The interface should ma
 
 ## Foundations
 
-- Final approved public palette: Indigo `#4F46E5`; hover `#4338CA`; deep/on-tint text `#3730A3`; lavender highlight `#EEECFF`.
-- Charcoal headings `#18181B`; body text `#475569`; muted text `#64748B`.
-- Canvas `#FAFAFC`; white cards `#FFFFFF`; borders `#E7E7EE`.
-- Shared static dark gradient: `--public-gradient` combines a 130-degree dark Indigo `#25215a` to dark Indigo `#312E81` gradient with a restrained low-opacity `#4F46E5` radial highlight. Dark-surface text is white or pale lavender `#DEDCF3`; use solid white buttons with Indigo text.
-- Use solid dark Indigo `#25215a` (`--public-chrome`) for navigation, mobile navigation and footer. Reserve the shared gradient for membership/Pro promotions, featured Monthly pricing and checkout panels. Keep discovery, official application panels, forms, account popovers and long descriptions light. The homepage final CTA is white with a soft lavender accent, charcoal heading and solid Indigo button. Selection/check indicators are independent of the Recommended label.
-- The footer has no duplicate CTA row. It retains navigation columns, a decorative outlined ReerHub wordmark fading downward, legal links and copyright. Decorative lettering is hidden from assistive technology.
-- The public theme lives in `app/public.css`, scoped to `.public-site`, including compatibility aliases for existing `primary` and `electric` utilities. Admin uses the same Indigo palette in its separately scoped app/admin.css; do not apply public layout overrides to admin.
+- Final approved public palette: Cobalt Blue `#2563eb`; hover `#1d4ed8`; deep/on-tint text `#1e40af`; ice blue highlight `#eff6ff`.
+- Charcoal headings `#0f172a`; body text `#475569`; muted text `#64748B`.
+- Canvas `#f8fafc`; white cards `#FFFFFF`; borders `#e2e8f0`.
+- Shared static dark gradient: `--public-gradient` combines a 130-degree Midnight Navy `#172554` to Royal Blue `#1e40af` gradient with a restrained low-opacity `#2563eb` radial highlight. Dark-surface text is white or pale ice blue `#dbeafe`; use solid white buttons with Cobalt Blue text.
+- Use solid Midnight Navy `#172554` (`--public-chrome`) for navigation, mobile navigation and footer. Reserve the shared gradient for membership/Pro promotions, featured Monthly pricing and checkout panels. Keep discovery, official application panels, forms, account popovers and long descriptions light. The homepage final CTA is white with a soft ice blue accent, charcoal heading and solid Cobalt Blue button. Selection/check indicators are independent of the Recommended label.
+- The footer has no duplicate CTA row. It retains navigation columns, the combined reerhub-sticker-logo-text image, legal links and copyright. Public navigation uses the icon alone; the footer has no separately rendered brand wordmark.
+- The public theme lives in `app/public.css`, scoped to `.public-site`, including compatibility aliases for existing `primary` and `electric` utilities. Admin uses the same Cobalt Blue palette in its separately scoped app/admin.css; do not apply public layout overrides to admin.
 - Success uses green with AA text contrast; error uses red; warnings use amber. Use semantic status rather than decorative color.
-- The brand wordmark is exactly `ReerHub`, without a decorative trailing dot, including social previews and oversized footer lettering. Preserve ordinary sentence punctuation. Retain the original blue logo artwork. Do not introduce unrelated purple/cyan gradients, a theme toggle, or a replacement logo.
+- The brand wordmark is exactly `ReerHub`, without a decorative trailing dot, including social previews. Preserve ordinary sentence punctuation. Retain the original blue logo artwork. Do not introduce unrelated purple/cyan gradients, a theme toggle, or a replacement logo.
 
 ## Components and layout
 
