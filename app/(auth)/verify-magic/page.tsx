@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { safeNext, verifyMagicLink } from "@/lib/auth";
 
 function VerifyMagic() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { refresh } = useAuth();
   const token = searchParams.get("token");
@@ -27,13 +26,12 @@ function VerifyMagic() {
       .then(async (me) => {
         await refresh();
         toast.success(`Welcome${me.name ? `, ${me.name.split(" ")[0]}` : ""}`);
-        router.push(next);
-        router.refresh();
+        window.location.replace(next);
       })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : "This link didn't work");
       });
-  }, [token, next, router, refresh]);
+  }, [token, next, refresh]);
 
   return (
     <div

@@ -113,7 +113,14 @@ async function readBody<T>(res: Response): Promise<T> {
 
 /** Keep post-login redirects inside the app (blocks open-redirect abuse). */
 export function safeNext(raw: string | null): string {
-  if (raw && raw.startsWith("/") && !raw.startsWith("//")) return raw;
+  if (
+    raw &&
+    raw.startsWith("/") &&
+    !raw.startsWith("//") &&
+    !/[\\\u0000-\u0020]/.test(raw) &&
+    !/^\/(?:login|verify-magic)(?:[/?#]|$)/.test(raw)
+  )
+    return raw;
   return "/dashboard";
 }
 

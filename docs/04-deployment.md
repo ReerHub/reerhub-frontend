@@ -27,9 +27,9 @@ These values are server/build-time values. Redeploy after changing them. The bac
 ## Release checks
 
 1. Sign in with Google and magic link; verify the return URL preserves the requested page.
-2. Confirm an anonymous visitor sees a teaser, a free user can view/apply/save, and a Pro member sees only relevance-based recommendations.
+2. Confirm anonymous listings show a preview but full job details and official Apply links are public. Free users can browse/save; only entitled Pro users get relevance-based recommendations.
 3. Use Razorpay Test mode on staging to verify checkout, signature verification, billing success, cancellation, webhook delivery, and expiry.
-4. Confirm staging `robots.txt` disallows crawling; production sitemap and canonical URLs use `https://reerhub.com`.
+4. Confirm staging returns `X-Robots-Tag: noindex, nofollow` and allows crawlers to read it. Production public pages are indexable; private/admin pages are noindex. The `/sitemap.xml` index and child maps use `https://reerhub.com` and cover all active India roles.
 
 Rollback through Vercel Deployments by redeploying the last known good production build.
 # Admin deployment

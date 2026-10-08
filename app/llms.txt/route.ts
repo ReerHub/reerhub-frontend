@@ -5,9 +5,9 @@ India-first tech-job discovery engine. Listings are indexed daily from
 official company career pages and ATS boards — never scraped third-party
 reposts. Applications always happen on the company's official site.
 
-> Full job descriptions, skills, Apply links, and saving roles require a
-> free account (Google or magic-link sign-in). Anonymous visitors see
-> teasers: title, company, location, and a short excerpt.
+> Full job descriptions, skills, and official Apply links are public.
+> Anonymous listings show up to 10 previews. Complete browsing, profile,
+> and saving roles require a free Google or magic-link account.
 
 ## Browse
 
@@ -29,8 +29,8 @@ reposts. Applications always happen on the company's official site.
 ## Job detail
 
 - Canonical shape: /jobs/{title}-{company}-{id}
-- Detail pages carry JobPosting + FAQ structured data limited to the
-  publicly visible teaser content.
+- Sufficiently documented active jobs carry JobPosting structured data
+  matching the publicly visible description. Closed jobs omit job markup.
 
 ## Accounts
 

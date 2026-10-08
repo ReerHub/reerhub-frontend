@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/AuthProvider";
 import { googleLogin, safeNext } from "@/lib/auth";
@@ -26,7 +25,6 @@ declare global {
 }
 
 export default function GoogleButton({ next }: { next: string }) {
-  const router = useRouter();
   const { refresh } = useAuth();
   const safe = safeNext(next);
   const ref = useRef<HTMLDivElement>(null);
@@ -81,8 +79,7 @@ export default function GoogleButton({ next }: { next: string }) {
           await googleLogin(res.credential);
           await refresh();
           toast.success("Signed in with Google");
-          router.push(safe);
-          router.refresh();
+          window.location.replace(safe);
         } catch {
           toast.error("Google sign-in failed. Please try again.");
         }
@@ -94,7 +91,7 @@ export default function GoogleButton({ next }: { next: string }) {
       // 280px + page padding fits 320px devices; GIS caps at 400.
       width: 280,
     });
-  }, [ready, clientId, safe, router, refresh]);
+  }, [ready, clientId, safe, refresh]);
 
   if (!clientId) return null;
   return <div ref={ref} className="flex justify-center" />;

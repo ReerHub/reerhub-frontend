@@ -24,7 +24,7 @@ Self-contained repo: product, deployment, design, and decisions live in README a
 
 - Path alias `@/*`. API: `lib/reerhub.ts` (public reads) + `lib/auth.ts` (`credentials:"include"`, silent refresh retry, `safeNext`, auto CSRF). One global session: `components/AuthProvider.tsx` (`useAuth`) — never add per-page `getMe()` fetches. Guards in `proxy.ts`.
 - Styling: Tailwind + `docs/design/design-system.md` (primary `#2F6FED`, ink `#111827`, light surfaces). No new brand colors. Motion is finite opacity/transform feedback only; everything is static under `prefers-reduced-motion`. Logos use `components/CompanyLogo.tsx` when a company mark is needed; remote images need `next.config.ts` `remotePatterns` for `next/image`.
-- Anonymous visitors see teasers only (ADR-011): lists show chips + excerpt, detail shows excerpt + login wall; crawlers see the identical view. Per-job JSON-LD carries the visible excerpt only; auth/dashboard never in sitemap; `robots.ts` disallows them.
+- Anonymous listings show up to 10 previews; full job details and official Apply links are public. Crawlers see identical content. Only eligible active roles emit JobPosting; private/admin pages and staging use noindex and stay out of the split sitemap.
 - Secrets: server-only env (`API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, `TURNSTILE_SITE_KEY`) — no `NEXT_PUBLIC_*`. Browser calls same-origin `/api/v1` (rewrite proxies to `API_URL`); `GET /api/config` serves public widget keys at runtime.
 - Commits `feat:/fix:/chore:/ci:/docs:`, only when asked. Never commit `.env*`/secrets.
 - **Branching: feature branches → PR into `develop` (auto-deploys staging) → tested → PR `develop` → `main` (auto-deploys prod). Never touch `main` directly.**

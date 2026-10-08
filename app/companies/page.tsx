@@ -1,6 +1,12 @@
 import PageHeader from "@/components/PageHeader";
 import CompanyDirectory from "@/components/CompanyDirectory";
 import { listCompanies } from "@/lib/reerhub";
+import { pageMetadata } from "@/lib/seo";
+export const metadata = pageMetadata(
+  "Product Companies Hiring in India",
+  "Explore companies hiring engineering, AI and data talent in India. Browse their official openings and find the team behind your next tech role.",
+  "/companies",
+);
 export const dynamic = "force-dynamic";
 export default async function CompaniesPage() {
   const companies = await listCompanies();
