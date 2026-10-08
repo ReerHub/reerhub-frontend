@@ -12,7 +12,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Next.js 16 App Router + React 19 + Tailwind 4 UI for **ReerHub** (reerhub.com) — India-first tech-job discovery. Teaser-gated public listings (`/jobs`, `/engineering-jobs`, `/ai-jobs`, city + `/remote-jobs`, `/companies`, slug job URLs), protected `/dashboard` with recommendations, passwordless auth, and Pro billing. Live at `https://reerhub.com` (Vercel, auto-deploy on `main` push).
 
-Self-contained repo: product/routes/design/decisions/changelog/skills live here (`docs/`, `.agents/skills/`). Sibling `reerhub-backend` repo is a separate checkout — never assume shared files. Parent folder is workspace only.
+Self-contained repo: product, deployment, design, and decisions live in README and `docs/`. Sibling `reerhub-backend` repo is a separate checkout — never assume shared files. Parent folder is workspace only.
 
 ## Runtime
 
@@ -33,12 +33,6 @@ Self-contained repo: product/routes/design/decisions/changelog/skills live here 
 
 - `API_URL`/`SITE_URL` are build-time — Vercel redeploy after changing. Backend CORS must allow the origin + `credentials:true`.
 - Backend global rate limit is per process; after running backend tests, wait before live-verifying (15-min window).
-
-## Skills (`.agents/skills/`)
-
-`find-skills` · `frontend-design` (Anthropic UI taste) · `nextjs-app-router-patterns` · `ui-ux-pro-max` (systematic rules: palette/a11y/touch/responsive) · `code-review`. Pinned in `skills.json`. UI work uses both design skills: `frontend-design` for direction first, `ui-ux-pro-max` rules pass before finishing.
-
-Additional focused guidance: `vercel-react-best-practices` for React/Next.js performance and data fetching; `web-design-guidelines` for accessibility and interface audits. Use these when relevant, while preserving the local Next.js documentation and ReerHub design/product constraints above.
 
 ## Docs discipline (minimal by design)
 

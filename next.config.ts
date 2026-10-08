@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  distDir: process.env.REERHUB_UI_FIXTURES === "1" ? ".next-fixtures" : ".next",
+  distDir:
+    process.env.REERHUB_UI_FIXTURES === "1"
+      ? `.next-fixtures/${process.env.FIXTURE_PORT || "3001"}`
+      : ".next",
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "www.google.com" },
@@ -18,7 +21,12 @@ const nextConfig: NextConfig = {
     const backend = (
       process.env.API_URL || "http://localhost:8000/api/v1"
     ).replace(/\/+$/, "");
-    return [{ source: "/api/v1/:path*", destination: `${backend}/:path*` }];
+    return [
+      // Public-browser calls continue to use the normal backend proxy. The
+      // admin hostname is intercepted in proxy.ts and served by admin-api,
+      // which injects the backend-only admin origin marker.
+      { source: "/api/v1/:path*", destination: `${backend}/:path*` },
+    ];
   },
   async redirects() {
     return [

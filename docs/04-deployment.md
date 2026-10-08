@@ -32,3 +32,18 @@ These values are server/build-time values. Redeploy after changing them. The bac
 4. Confirm staging `robots.txt` disallows crawling; production sitemap and canonical URLs use `https://reerhub.com`.
 
 Rollback through Vercel Deployments by redeploying the last known good production build.
+# Admin deployment
+
+Attach `admin.reerhub.com` to the existing public Vercel project; no second
+project or environment is needed. Host routing serves `/auth` and `/dashboard`
+only on that subdomain, while `reerhub.com/auth` is a 404 and customer login
+remains `/login`. The admin subdomain uses the same `API_URL` and
+`GOOGLE_CLIENT_ID` already configured for the public deployment. Add the admin
+subdomain to the Google OAuth client’s Authorized JavaScript origins and to the
+backend `CORS_FRONTEND_URL` list.
+
+For testing, use `staging.reerhub.com/admin/auth` and
+`staging.reerhub.com/admin/dashboard`, or their `localhost:3000` equivalents.
+This keeps normal staging/local `/` and `/dashboard` public. Dedicated admin
+testing hosts (`admin-staging.reerhub.com` and `admin.localhost`) use `/auth`
+and `/dashboard` like production. Production public hosts remain blocked.
