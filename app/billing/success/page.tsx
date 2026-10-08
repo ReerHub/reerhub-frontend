@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import { getBilling, type BillingState } from "@/lib/auth";
 import { useAuth } from "@/components/AuthProvider";
 import { hasProAccess, membershipDate, planLabel } from "@/lib/membership";
+import { profileSignals } from "@/lib/profile-readiness";
 
 export default function BillingSuccessPage() {
-  const { refresh } = useAuth();
+  const { user, refresh } = useAuth();
   const [billing, setBilling] = useState<BillingState | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -45,6 +46,9 @@ export default function BillingSuccessPage() {
   const subscription = billing?.subscription;
   const ready = hasProAccess(subscription);
   const date = membershipDate(subscription);
+  const profileReady = user
+    ? profileSignals(user.profile).every((signal) => signal.complete)
+    : false;
 
   return (
     <div className="page-container flex min-h-[70vh] items-center py-12">
@@ -89,9 +93,21 @@ export default function BillingSuccessPage() {
           )}
           <div className="mt-8 flex flex-wrap gap-3">
             {ready ? (
-              <Link href="/dashboard" className="btn-primary">
-                Open my Pro dashboard
-              </Link>
+              <>
+                <Link
+                  href={profileReady ? "/dashboard" : "/profile"}
+                  className="btn-primary"
+                >
+                  {profileReady
+                    ? "Open my Pro dashboard"
+                    : "Complete my match profile"}
+                </Link>
+                {!profileReady && (
+                  <Link href="/dashboard" className="btn-secondary">
+                    Open Pro dashboard
+                  </Link>
+                )}
+              </>
             ) : (
               <button
                 className="btn-primary"
@@ -109,6 +125,13 @@ export default function BillingSuccessPage() {
               {ready ? "Manage Pro" : "Check membership"}
             </Link>
           </div>
+          {ready && !profileReady && (
+            <p className="mt-4 text-sm leading-6 text-slate-600">
+              Next: add your tech track, target role, three skills, experience
+              and location or work mode. These signals help us find relevant
+              roles; a subscription alone cannot create a strong match.
+            </p>
+          )}
           <p className="mt-6 text-xs leading-relaxed text-slate-500">
             Match scores describe relevance to your profile, not the likelihood
             of an interview or offer.

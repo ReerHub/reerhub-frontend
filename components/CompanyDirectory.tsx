@@ -44,12 +44,12 @@ export default function CompanyDirectory({
       <p className="mb-5 text-xs font-medium text-slate-600" role="status">
         {filtered.length} {filtered.length === 1 ? "company" : "companies"}
       </p>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="discovery-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((c) => (
           <Link
             key={c._id}
             href={`/companies/${c.slug}`}
-            className="job-card group block p-6"
+            className="company-card job-card group block p-6"
           >
             <div className="flex items-center gap-4">
               <CompanyLogo name={c.name} logoUrl={c.logoUrl} />

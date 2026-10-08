@@ -15,7 +15,7 @@ export default function MembershipStatus({ user }: { user: AuthUser }) {
   const paused = user.notificationPreferences?.digest === "paused";
   return (
     <section
-      className="rounded-2xl bg-ink p-6 text-white"
+      className="membership-card rounded-2xl bg-ink p-6 text-white"
       aria-labelledby="membership-title"
     >
       <div className="flex flex-wrap items-start justify-between gap-4">

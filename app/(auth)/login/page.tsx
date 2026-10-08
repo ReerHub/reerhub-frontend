@@ -62,7 +62,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="page-container grid min-h-[75vh] items-center gap-12 py-12 lg:grid-cols-2 lg:py-16">
+    <div className="auth-shell page-container grid min-h-[75vh] items-center gap-12 py-12 lg:grid-cols-2 lg:py-16">
       <aside className="hidden max-w-lg lg:block">
         <div className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-teal-800">
           <Icon name="shield" />
@@ -72,13 +72,13 @@ function LoginForm() {
           A better starting point for your next chapter.
         </h2>
         <p className="mt-5 text-lg leading-8 text-slate-600">
-          One free account. Every detail you need to take your next step.
+          Your search, in one place. Save a shortlist and explore every opening.
         </p>
         <ul className="mt-8 space-y-5">
           {[
-            "Read full role descriptions and requirements",
+            "Unlock complete browsing and search filters",
             "Save the opportunities worth coming back to",
-            "Apply directly on official company hiring pages",
+            "Build your profile for personalized Pro matching",
           ].map((x) => (
             <li
               key={x}
@@ -90,7 +90,7 @@ function LoginForm() {
           ))}
         </ul>
       </aside>
-      <div className="surface-panel mx-auto w-full max-w-md p-6 sm:p-9">
+      <div className="auth-card surface-panel mx-auto w-full max-w-md p-6 sm:p-9">
         <h1 className="font-display text-3xl font-bold text-slate-900 tracking-tight mb-3">
           Your next move starts here.
         </h1>

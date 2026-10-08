@@ -225,6 +225,7 @@ export default function JobBrowser({
   };
 
   const filtersRef = useRef(filters);
+  const requestRef = useRef(0);
 
   useEffect(() => {
     filtersRef.current = filters;
@@ -249,24 +250,33 @@ export default function JobBrowser({
       append = false,
       signal?: AbortSignal,
     ) => {
+      const request = ++requestRef.current;
       try {
         const result = await listJobsWithMeta(
           buildJobQuery(activeFilters, pageToLoad),
         );
-        if (signal?.aborted) return;
-        setJobs((prev) => (append ? [...prev, ...result.jobs] : result.jobs));
+        if (signal?.aborted || request !== requestRef.current) return;
+        setJobs((prev) =>
+          append
+            ? [
+                ...new Map(
+                  [...prev, ...result.jobs].map((job) => [job._id, job]),
+                ).values(),
+              ]
+            : result.jobs,
+        );
         setTotal(result.total);
         setTotalPages(result.totalPages);
         setPage(pageToLoad);
         setError(false);
       } catch {
+        if (signal?.aborted || request !== requestRef.current) return;
         setError(true);
-        if (!signal?.aborted)
-          toast.error(
-            "Couldn't load roles. Check your connection and try again.",
-          );
+        toast.error(
+          "Couldn't load roles. Check your connection and try again.",
+        );
       } finally {
-        if (!signal?.aborted) {
+        if (!signal?.aborted && request === requestRef.current) {
           setLoading(false);
           setLoadingMore(false);
         }
@@ -291,27 +301,11 @@ export default function JobBrowser({
   // Initial jobs fetch when INITIAL changes (URL back/forward).
   useEffect(() => {
     const ac = new AbortController();
-    listJobsWithMeta(buildJobQuery(INITIAL, 1))
-      .then((result) => {
-        if (ac.signal.aborted) return;
-        setJobs(result.jobs);
-        setTotal(result.total);
-        setTotalPages(result.totalPages);
-        setPage(1);
-        setError(false);
-      })
-      .catch(() => {
-        setError(true);
-        if (!ac.signal.aborted)
-          toast.error(
-            "Couldn't load roles. Check your connection and try again.",
-          );
-      })
-      .finally(() => {
-        if (!ac.signal.aborted) setLoading(false);
-      });
+    void Promise.resolve().then(() => {
+      if (!ac.signal.aborted) return fetchJobs(1, INITIAL, false, ac.signal);
+    });
     return () => ac.abort();
-  }, [INITIAL, user?.id]);
+  }, [INITIAL, user?.id, fetchJobs]);
 
   const clearAll = () => {
     const next = filtersFromSearchParams(
@@ -370,7 +364,10 @@ export default function JobBrowser({
           </p>
         )}
       </div>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div
+        className="discovery-grid grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+        aria-busy={loading}
+      >
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
         ) : error ? (
@@ -405,8 +402,8 @@ export default function JobBrowser({
           <EmptyState onClear={clearAll} />
         )}
       </div>
-      {!loading && <DiscoveryPrompt count={jobs.length} />}
-      {!loading && user && page < totalPages && (
+      {!loading && !error && <DiscoveryPrompt count={jobs.length} />}
+      {!loading && !error && user && page < totalPages && (
         <div className="text-center mt-9">
           <button
             onClick={() => {

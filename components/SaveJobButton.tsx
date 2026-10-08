@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 import toast from "react-hot-toast";
 import { saveJob, savedIds, unsaveJob } from "@/lib/auth";
 
 /**
  * Standalone bookmark toggle for server-rendered pages (job detail).
- * Loads its own saved state; silent when logged out (hides itself).
+ * Signed-out visitors can return to this role after signing in to save it.
  */
 export default function SaveJobButton({
   jobId,
@@ -17,9 +20,13 @@ export default function SaveJobButton({
 }) {
   const [saved, setSaved] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const { user, loading } = useAuth();
+  const pathname = usePathname();
 
   useEffect(() => {
     let cancelled = false;
+    if (!user) return;
     savedIds()
       .then((list) => {
         if (!cancelled) {
@@ -33,12 +40,24 @@ export default function SaveJobButton({
     return () => {
       cancelled = true;
     };
-  }, [jobId]);
+  }, [jobId, user?.id, user]);
 
-  // Logged-out visitors have no saved list — render nothing, not a dead button.
+  if (loading) return null;
+  if (!user)
+    return (
+      <Link
+        href={`/login?next=${encodeURIComponent(pathname)}`}
+        aria-label="Sign in to save this job"
+        className="btn-secondary min-h-11"
+      >
+        Save role
+      </Link>
+    );
   if (!visible) return null;
 
   const toggle = async () => {
+    if (busy) return;
+    setBusy(true);
     try {
       if (saved) {
         await unsaveJob(jobId);
@@ -50,6 +69,8 @@ export default function SaveJobButton({
       }
     } catch {
       toast.error("Could not save. Please log in and try again.");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -57,6 +78,7 @@ export default function SaveJobButton({
     return (
       <button
         onClick={toggle}
+        disabled={busy}
         aria-label={saved ? "Remove saved job" : "Save job"}
         aria-pressed={saved}
         className={`min-w-11 min-h-11 w-11 h-11 rounded-full border flex items-center justify-center transition-all ${
@@ -85,6 +107,7 @@ export default function SaveJobButton({
   return (
     <button
       onClick={toggle}
+      disabled={busy}
       aria-pressed={saved}
       className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-semibold transition-all ${
         saved

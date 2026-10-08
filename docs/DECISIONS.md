@@ -18,9 +18,11 @@ Google and magic links are the supported sign-in methods. Deprecated password UR
 
 ## Visual system and motion
 
-The active interface uses a light discovery surface, white cards, ReerHub blue (`#2F6FED`), and ink (`#111827`). Shared navigation, cards, status panels, and responsive page shells make free discovery and the Pro workspace feel coherent. Motion is finite feedback only and respects `prefers-reduced-motion`.
+The final public interface uses Indigo (`#4F46E5`, hover `#4338CA`), charcoal (`#18181B`), soft white (`#FAFAFC`), white cards, and lavender (`#EEECFF`). Navigation/mobile navigation/footer use solid dark Indigo `#25215a`. One static shared gradient (`#25215a` → `#312E81`, 130 degrees, restrained Indigo highlight) is reserved for Pro membership, pricing and checkout panels; discovery and official application panels stay light. The homepage final CTA is white/lavender to separate it from the footer, whose duplicate CTA is removed. Wordmarks and social previews use `ReerHub` without a decorative dot; ordinary punctuation and original logo artwork remain unchanged. Job details precede upgrade prompts; profile and dashboard share truthful completion guidance. `app/public.css` scopes tokens to the public layout, with admin using separately scoped Indigo tokens. Shared navigation, cards, status panels, and responsive shells unify Free and Pro. Motion is finite opacity/transform feedback and respects `prefers-reduced-motion`.
 
 ## Deployment and UI verification
+
+Public page containers use a centered 1680px maximum frame with responsive 20–48px gutters and full-bleed backgrounds; extra viewport width becomes outer margins. Discovery grids follow container width and stop at four job columns or eight company tiles; long prose and forms retain reading-width limits and billing is capped at 1200px. The homepage shows up to 16 real companies ranked by active openings (zero-opening companies excluded). Its clearly labelled illustrative market-to-match animation is the one looping exception to finite motion, with pause/play, offscreen/tab-hidden suspension and a static reduced-motion state. Company tiles remain static and never imply partnership or endorsement.
 
 `develop` is staging and `main` is production. Staging is public but served with noindex directives. `npm run test:ui:fixtures` is an in-memory local membership-state harness; it never calls database, email, or payment services and does not replace real staging checkout tests.
 

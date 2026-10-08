@@ -7,7 +7,7 @@ export default function UpgradePanel({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-primary/20 bg-primary-soft ${compact ? "p-6" : "p-8"}`}
+      className={`upgrade-panel rounded-2xl border border-primary/20 bg-primary-soft ${compact ? "p-6" : "p-8"}`}
     >
       <span className="inline-flex items-center gap-2 text-sm font-bold text-primary-deep">
         <Icon name="spark" className="h-4 w-4" />

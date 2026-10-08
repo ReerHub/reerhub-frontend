@@ -1,0 +1,124 @@
+.login:global(.admin-ui.auth-shell) {
+  background: #fafafc;
+  color: #18181b;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+}
+.login :global(.auth-story) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  background:
+    radial-gradient(ellipse at 90% 10%, #4f46e530, transparent 65%),
+    linear-gradient(135deg, #25215a, #312e81);
+  color: #fff;
+  border: 0;
+  padding: 48px clamp(24px, 5vw, 96px);
+  gap: 64px;
+}
+.login :global(.brand) {
+  color: #fff;
+}
+.login :global(.brand img) {
+  border-radius: 10px;
+  background: #fff;
+}
+.login :global(.brand small),
+.login :global(.auth-bottom) {
+  color: #c7c2e5;
+}
+.login :global(.auth-story h1) {
+  color: #fff;
+  max-width: 620px;
+  font-size: clamp(38px, 4vw, 60px);
+  letter-spacing: -0.05em;
+}
+.login :global(.auth-story h1 span) {
+  color: #c7c2ff;
+}
+.login :global(.auth-story > div > p),
+.login :global(.auth-features > div) {
+  color: #dedcf3;
+}
+.login :global(.auth-story .eyebrow),
+.login :global(.auth-features svg) {
+  color: #c7c2ff;
+}
+.login :global(.auth-features > div) {
+  gap: 14px;
+  line-height: 1.6;
+}
+.login :global(.auth-main) {
+  min-width: 0;
+  padding: 48px clamp(20px, 4vw, 80px);
+}
+.login :global(.auth-card) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  max-width: 440px;
+  background: #fff;
+  border: 1px solid #e4e2ef;
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: 0 20px 64px #25215a08;
+}
+.login :global(.auth-card > .auth-shield) {
+  background: #eeecff;
+  border-color: #dfdcff;
+  color: #4338ca;
+}
+.login :global(.auth-card .eyebrow) {
+  color: #4338ca;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.login :global(.auth-card h2) {
+  font-size: 34px;
+  color: #18181b;
+}
+.login :global(.auth-card > p),
+.login :global(.auth-policy) {
+  color: #475569;
+  line-height: 1.8;
+}
+.login :global(.button) {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #fff;
+  min-height: 44px;
+}
+.login :global(.button:hover) {
+  background: #4338ca;
+}
+.login :global(button:focus-visible) {
+  outline: 3px solid #4f46e5;
+  outline-offset: 4px;
+}
+.login :global(.notice:not(.error)) {
+  background: #eeecff;
+  border-color: #dfdcff;
+  color: #3730a3;
+}
+@media (max-width: 1023px) {
+  .login:global(.admin-ui.auth-shell) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .login :global(.auth-story) {
+    padding: 28px 24px;
+    gap: 24px;
+  }
+  .login :global(.auth-story h1) {
+    font-size: 34px;
+    margin-top: 24px;
+  }
+  .login :global(.auth-main) {
+    padding: 32px 20px;
+  }
+}
+@media (max-width: 480px) {
+  .login :global(.auth-card) {
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+  .login :global(.auth-card h2) {
+    font-size: 30px;
+  }
+}

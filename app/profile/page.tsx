@@ -15,6 +15,7 @@ import {
 } from "@/lib/auth";
 import { TECH_TRACKS } from "@/lib/reerhub";
 import Icon from "@/components/ui/Icon";
+import { profileSignals } from "@/lib/profile-readiness";
 
 const inputCls =
   "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft transition-all";
@@ -65,6 +66,16 @@ function ProfileForm({
   const dirty =
     JSON.stringify({ ...form, skills }) !==
     JSON.stringify({ ...initial, skills: user.profile.skills || [] });
+  const signals = profileSignals({
+    ...user.profile,
+    ...form,
+    skills,
+    experienceYears:
+      form.experienceYears.trim() === ""
+        ? undefined
+        : Number(form.experienceYears),
+  });
+  const ready = signals.every((signal) => signal.complete);
 
   const addSkill = (raw: string) => {
     const value = raw.trim().replace(/,+$/, "");
@@ -147,13 +158,38 @@ function ProfileForm({
       </p>
       <div className="mb-7 rounded-xl border border-primary/15 bg-primary-soft p-5">
         <h2 className="text-sm font-semibold text-primary-deep">
-          Build a clear picture of what you want next.
+          {ready
+            ? "Your core match signals are complete."
+            : "Give your next role a clearer starting point."}
         </h2>
         <p className="mt-2 text-sm leading-7 text-slate-600">
           Add your core skills, experience, and work preferences.{" "}
           {user.membership?.isPro
             ? "These signals shape your ranked Pro matches and daily shortlist."
             : "Save your profile now, and it’s ready if you choose Pro matching later."}
+        </p>
+        <ul
+          className="profile-checklist"
+          aria-label="Match profile requirements"
+        >
+          {signals.map((signal) => (
+            <li key={signal.label} data-complete={signal.complete}>
+              <Icon
+                name={signal.complete ? "check" : "user"}
+                className="h-3.5 w-3.5"
+              />
+              <span>
+                {signal.label}
+                <span className="sr-only">
+                  {signal.complete ? ": complete" : ": needed"}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 text-xs text-slate-600">
+          {dirty ? "Save your changes to use these signals. " : ""}Profile
+          relevance is not a prediction of hiring.
         </p>
       </div>
       {!user.emailVerified && (
@@ -416,6 +452,7 @@ function ProfileForm({
               aria-label="Daily Pro match email preference"
               className={inputCls}
               defaultValue={user.notificationPreferences?.digest || "daily"}
+              disabled={busy || dirty}
               onChange={(e) =>
                 updateMe({
                   notificationPreferences: { digest: e.target.value },
@@ -427,11 +464,17 @@ function ProfileForm({
               <option value="daily">Daily matches</option>
               <option value="paused">Pause alerts</option>
             </select>
+            {dirty && (
+              <p className="mt-2 text-xs text-slate-600">
+                Save or reset your profile changes before changing email
+                preferences.
+              </p>
+            )}
           </fieldset>
         ) : (
           <section className="rounded-2xl border border-primary/20 bg-primary-soft p-5">
             <h2 className="font-bold text-slate-900">
-              Your profile is ready for Pro matching
+              Personalized direction, when you’re ready.
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-600">
               Use your skills and preferences to receive up to five strong roles
@@ -445,7 +488,7 @@ function ProfileForm({
             </Link>
           </section>
         )}
-        <div className="flex flex-wrap gap-3">
+        <div className="profile-save-bar flex flex-wrap items-center gap-3">
           <button
             type="submit"
             disabled={busy || !dirty}
@@ -462,6 +505,13 @@ function ProfileForm({
           >
             Reset
           </button>
+          <p className="text-xs text-slate-600" role="status">
+            {busy
+              ? "Saving your profile…"
+              : dirty
+                ? "You have unsaved changes."
+                : "Your profile is up to date."}
+          </p>
         </div>
       </form>
       <SecuritySection isEmailAccount={user.authProvider === "email"} />
