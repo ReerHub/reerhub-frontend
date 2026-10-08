@@ -1,0 +1,115 @@
+.billing {
+  width: 100%;
+  max-width: 1200px;
+  min-width: 0;
+  --indigo: #4f46e5;
+  color: #18181b;
+}
+.billing :global(.text-electric),
+.billing :global(.text-primary-deep) {
+  color: #4338ca;
+}
+.billing :global(.bg-electric-soft) {
+  background: #eeecff;
+}
+.billing :global(.text-slate-900),
+.billing :global(.text-ink) {
+  color: #18181b;
+}
+.billing a:focus-visible,
+.billing button:focus-visible,
+.billing summary:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 4px;
+}
+.planCard {
+  background: #fff;
+  border-color: #e4e4ed;
+  min-height: 265px;
+  padding-top: 32px;
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s,
+    border-color 0.18s;
+}
+.planCard:not(:disabled):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px #18181b09;
+}
+.planCard.selected {
+  border-color: #4f46e5;
+  outline: 2px solid #4f46e5;
+  outline-offset: 3px;
+}
+.planCard.featured,
+.checkoutPanel {
+  background: var(--public-gradient);
+  border-color: #312e81;
+  color: #fff;
+}
+.planCard.featured.selected {
+  outline-color: #4f46e5;
+}
+.billing .featured :global(.text-slate-900),
+.billing .featured :global(.text-electric) {
+  color: #fff;
+}
+.billing .featured :global(.text-slate-600),
+.billing .featured :global(.text-slate-500) {
+  color: #dedcf3;
+}
+.planBadge {
+  background: #eeecff;
+  color: #4338ca;
+  border: 1px solid #d8d4ff;
+}
+.featured .planBadge {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4f46e5;
+}
+.selectionMark {
+  background: #4f46e5;
+  color: #fff;
+}
+.featured .selectionMark {
+  background: #fff;
+  color: #4338ca;
+}
+.checkoutPanel {
+  border-radius: 18px;
+}
+.billing .checkoutPanel :global(.text-white\/50),
+.billing .checkoutPanel :global(.text-white\/60),
+.billing .checkoutPanel :global(.text-white\/70) {
+  color: #dedcf3;
+}
+.billing .checkoutPanel :global(.text-teal-300) {
+  color: #c7c2ff;
+}
+.billing .checkoutPanel :global(.text-slate-900) {
+  color: #18181b;
+}
+.checkoutPanel button {
+  min-height: 44px;
+}
+.billing .checkoutPanel button:focus-visible,
+.billing .checkoutPanel a:focus-visible {
+  outline-color: #c7c2ff;
+}
+.billing .checkoutPanel :global(.btn-secondary) {
+  background: #fff;
+  color: #18181b;
+}
+@media (prefers-reduced-motion: reduce) {
+  .billing *,
+  .billing *::before,
+  .billing *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .planCard:not(:disabled):hover,
+  .checkoutPanel button:hover {
+    transform: none;
+  }
+}

@@ -19,7 +19,9 @@ export default function DiscoveryPrompt({ count }: { count?: number }) {
       </div>
       <div className="flex-1">
         <p className="mb-1 text-xs font-semibold text-primary-deep">
-          You’re exploring a preview{count ? ` of ${count} roles` : ""}
+          {count
+            ? `You’re exploring a preview of ${count} ${count === 1 ? "role" : "roles"}`
+            : "Your free discovery account"}
         </p>
         <h2
           id="discovery-prompt-title"
@@ -28,8 +30,8 @@ export default function DiscoveryPrompt({ count }: { count?: number }) {
           There’s more to discover. Your free account unlocks it.
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
-          See all openings, read full descriptions, save your shortlist, and
-          apply on the company’s official site. No payment required.
+          Browse the full listings and save your shortlist with a free account.
+          Job details and official Apply links are public. No payment required.
         </p>
       </div>
       <Link

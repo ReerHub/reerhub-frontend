@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Icon from "@/components/ui/Icon";
 import { adminDashboardPath, adminGoogleLogin } from "@/lib/admin";
+import styles from "./AdminAuth.module.css";
 
 export default function AdminAuth() {
   const router = useRouter();
@@ -115,8 +116,27 @@ export default function AdminAuth() {
     setReady(false);
     setAttempt((a) => a + 1);
   }
+  useEffect(() => {
+    if (!ready || !target.current || !window.google) return;
+    let previousWidth = Math.min(340, target.current.clientWidth);
+    const observer = new ResizeObserver(() => {
+      if (!target.current || !window.google || signingIn.current) return;
+      const width = Math.min(340, target.current.clientWidth);
+      if (!width || width === previousWidth) return;
+      previousWidth = width;
+      target.current.replaceChildren();
+      window.google.accounts.id.renderButton(target.current, {
+        theme: "outline",
+        size: "large",
+        width,
+        text: "signin_with",
+      });
+    });
+    observer.observe(target.current);
+    return () => observer.disconnect();
+  }, [ready]);
   return (
-    <main className="admin-ui auth-shell">
+    <main className={`${styles.login} admin-ui auth-shell`}>
       <section className="auth-story">
         <div className="brand">
           <Image src="/reerhub-icon-logo.png" width={38} height={38} alt="" />
@@ -125,7 +145,7 @@ export default function AdminAuth() {
           </span>
         </div>
         <div>
-          <p className="eyebrow">Behind every better match</p>
+          <p className="eyebrow">REERHUB CONTROL ROOM</p>
           <h1>
             A clearer view.
             <br />
@@ -159,7 +179,7 @@ export default function AdminAuth() {
             <Icon name="shield" />
           </div>
           <p className="eyebrow">Secure administrator access</p>
-          <h2>Welcome to operations.</h2>
+          <h2>Welcome back.</h2>
           <p>
             Sign in with the Google account already granted an administrator
             role.

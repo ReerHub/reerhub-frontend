@@ -1,4 +1,5 @@
 "use client";
+import { safeJsonLd } from "@/lib/seo";
 
 import Script from "next/script";
 import Link from "next/link";
@@ -16,6 +17,7 @@ import { useAuth } from "@/components/AuthProvider";
 import Reveal from "@/components/Reveal";
 import MembershipStatus from "@/components/MembershipStatus";
 import Icon from "@/components/ui/Icon";
+import styles from "./Billing.module.css";
 import { hasProAccess, membershipDate, planLabel } from "@/lib/membership";
 
 type PlanId = "pro-weekly" | "pro-monthly" | "pro-quarterly";
@@ -60,7 +62,7 @@ const PLANS: {
     name: "Monthly",
     price: "₹149",
     per: "/ month",
-    badge: "Most popular",
+    badge: "Recommended",
     blurb: "The sensible default for an active search.",
     saving: "Just ~₹35 / week",
   },
@@ -212,7 +214,7 @@ export default function BillingPage() {
         name: "ReerHub",
         description: `${selectedPlan.name} career intelligence membership`,
         prefill: { name: user?.name, email: user?.email },
-        theme: { color: "#2F6FED" },
+        theme: { color: "#4F46E5" },
         modal: { ondismiss: () => setBusy(false) },
         handler: async (response: RazorpayResponse) => {
           try {
@@ -286,14 +288,14 @@ export default function BillingPage() {
   const isLive = hasProAccess(subscription);
   const selected = PLANS.find((p) => p.id === planId) || PLANS[1];
   return (
-    <div className="mx-auto max-w-5xl px-5 py-10 sm:py-16">
+    <div className={`${styles.billing} mx-auto max-w-5xl px-5 py-10 sm:py-16`}>
       <Script
         src="https://checkout.razorpay.com/v1/checkout.js"
         strategy="afterInteractive"
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_JSON_LD) }}
       />
       <p className="rise-in mb-4 flex items-center gap-2 text-sm font-bold text-primary-deep">
         <Icon name="spark" />
@@ -367,7 +369,7 @@ export default function BillingPage() {
         aria-label="Choose a plan"
       >
         {PLANS.map((plan, index) => {
-          const active = plan.id === planId && !isLive;
+          const active = plan.id === (isLive ? subscription?.plan : planId);
           return (
             <button
               key={plan.id}
@@ -394,19 +396,24 @@ export default function BillingPage() {
               disabled={!!isLive}
               onClick={() => setPlanId(plan.id)}
               style={stagger(index)}
-              className={`rise-in relative text-left bg-white rounded-2xl border p-6 transition-colors ${active ? "border-electric ring-2 ring-electric-soft" : "border-slate-200 hover:border-slate-400"} ${isLive ? "opacity-90" : ""}`}
+              className={`${styles.planCard} ${plan.id === "pro-monthly" ? styles.featured : ""} ${active ? styles.selected : ""} rise-in relative text-left rounded-2xl border p-6`}
             >
               {plan.badge && (
                 <span
-                  className={`absolute -top-3 left-5 text-xs font-bold px-3 py-1 rounded-full ${plan.id === "pro-quarterly" ? "bg-green-600 text-white" : "bg-electric text-white"}`}
+                  className={`${styles.planBadge} absolute -top-3 left-5 text-xs font-bold px-3 py-1 rounded-full`}
                 >
                   {plan.badge}
                 </span>
               )}
               <p className="font-bold text-slate-900">{plan.name}</p>
               {active && (
-                <span className="absolute right-5 top-5 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
+                <span
+                  className={`${styles.selectionMark} absolute right-5 top-5 flex h-6 w-6 items-center justify-center rounded-full`}
+                >
                   <Icon name="check" className="h-4 w-4" />
+                  <span className="sr-only">
+                    {isLive ? "Current plan" : "Selected plan"}
+                  </span>
                 </span>
               )}
               <p className="mt-2">
@@ -449,7 +456,9 @@ export default function BillingPage() {
               <li>Hide unsuitable roles and pause alerts any time</li>
             </ul>
           </section>
-          <section className="bg-ink rounded-3xl p-7 text-white">
+          <section
+            className={`${styles.checkoutPanel} rounded-3xl p-7 text-white`}
+          >
             <p className="text-white/70 text-sm">
               {isLive
                 ? `Your membership · ${planName(subscription?.plan)}`
@@ -611,7 +620,9 @@ export default function BillingPage() {
       ) : null}
       {!isLive && (
         <Reveal>
-          <section className="mt-12 bg-ink rounded-3xl p-8 sm:p-10 text-center overflow-hidden relative">
+          <section
+            className={`${styles.checkoutPanel} mt-12 rounded-3xl p-8 sm:p-10 text-center overflow-hidden relative`}
+          >
             <p className="text-sm font-bold text-teal-300 relative">
               Your search, with more direction
             </p>

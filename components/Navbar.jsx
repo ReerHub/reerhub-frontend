@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import ProBadge from "@/components/ProBadge";
 import Icon from "@/components/ui/Icon";
+import UserAvatar from "@/components/UserAvatar";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -14,12 +15,16 @@ export default function Navbar() {
   const [account, setAccount] = useState(false);
   const accountRef = useRef(null);
   const triggerRef = useRef(null);
+  const menuRef = useRef(null);
   useEffect(() => {
     const dismiss = (event) => {
       if (event.type === "keydown" && event.key === "Escape") {
         setOpen(false);
         setAccount(false);
-        triggerRef.current?.focus();
+        if (document.activeElement?.closest("#mobile-navigation"))
+          menuRef.current?.focus();
+        else if (accountRef.current?.contains(document.activeElement))
+          triggerRef.current?.focus();
       }
       if (
         event.type === "pointerdown" &&
@@ -47,6 +52,13 @@ export default function Navbar() {
     setOpen(false);
     setAccount(false);
   };
+  const isActive = (href) =>
+    href === "/jobs"
+      ? pathname.startsWith("/jobs") ||
+        /^\/(engineering|ai|bengaluru|hyderabad|pune|chennai|delhi|mumbai|remote)-jobs(?:\/|$)/.test(
+          pathname,
+        )
+      : pathname.startsWith(href);
   return (
     <header className="site-nav">
       <div className="page-container flex h-[72px] items-center justify-between gap-4">
@@ -61,19 +73,20 @@ export default function Navbar() {
             width={36}
             height={36}
             alt=""
+            className="rounded-lg bg-white p-0.5"
             priority
           />
           <span className="font-display text-xl font-bold tracking-tight text-ink">
-            ReerHub<span className="text-primary">.</span>
+            ReerHub
           </span>
         </Link>
-        <nav aria-label="Primary" className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
           {links.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className={`nav-link ${pathname.startsWith(href) ? "is-active" : ""}`}
-              aria-current={pathname.startsWith(href) ? "page" : undefined}
+              className={`nav-link ${isActive(href) ? "is-active" : ""}`}
+              aria-current={isActive(href) ? "page" : undefined}
             >
               {label}
             </Link>
@@ -87,26 +100,20 @@ export default function Navbar() {
               <ProBadge user={user} />
               <button
                 ref={triggerRef}
-                onClick={() => setAccount(!account)}
+                onClick={() => {
+                  setOpen(false);
+                  setAccount(!account);
+                }}
                 className="account-trigger"
                 aria-label="Open account navigation"
                 aria-expanded={account}
                 aria-controls="account-navigation"
               >
-                {user.avatarUrl ? (
-                  <Image
-                    src={user.avatarUrl}
-                    alt=""
-                    width={32}
-                    height={32}
-                    unoptimized
-                    className="h-8 w-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-sm font-bold text-primary-deep">
-                    {user.name.charAt(0).toUpperCase()}
-                  </span>
-                )}
+                <UserAvatar
+                  key={user._id || user.email}
+                  name={user.name}
+                  avatarUrl={user.avatarUrl}
+                />
                 <Icon name="chevron" className="hidden h-4 w-4 sm:block" />
               </button>
               {account && (
@@ -154,16 +161,28 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <Link href="/login" className="btn-primary text-sm">
-              Join free
-            </Link>
+            <>
+              <Link
+                href="/login"
+                className="nav-link hidden min-h-11 items-center sm:inline-flex"
+              >
+                Sign in
+              </Link>
+              <Link href="/login" className="btn-primary text-sm">
+                Join free
+              </Link>
+            </>
           )}
           <button
-            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 md:hidden"
+            ref={menuRef}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 lg:hidden"
             aria-label={open ? "Close navigation" : "Open navigation"}
             aria-expanded={open}
             aria-controls="mobile-navigation"
-            onClick={() => setOpen(!open)}
+            onClick={() => {
+              setAccount(false);
+              setOpen(!open);
+            }}
           >
             <Icon name={open ? "close" : "menu"} />
           </button>
@@ -173,14 +192,15 @@ export default function Navbar() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile primary"
-          className="border-t border-slate-100 bg-white p-4 md:hidden"
+          className="mobile-nav-panel border-t p-4 lg:hidden"
         >
           {links.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               onClick={close}
-              className={`nav-link block ${pathname.startsWith(href) ? "is-active" : ""}`}
+              className={`nav-link block ${isActive(href) ? "is-active" : ""}`}
+              aria-current={isActive(href) ? "page" : undefined}
             >
               {label}
             </Link>

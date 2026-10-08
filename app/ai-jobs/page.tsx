@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { Suspense } from "react";
-import JobBrowser from "@/components/JobBrowser";
+import ServerJobBrowser from "@/components/ServerJobBrowser";
 import PageHeader from "@/components/PageHeader";
 import Icon from "@/components/ui/Icon";
-export const metadata: Metadata = {
-  title: "Work at the edge of what’s next. | ReerHub",
-  description:
-    "Explore AI and machine learning roles from official hiring pages, from applied ML to LLM engineering.",
-  alternates: { canonical: "/ai-jobs" },
-};
+export const metadata = pageMetadata(
+  "AI & Machine Learning Jobs in India",
+  "Explore AI and machine learning jobs in India, from applied ML to LLM engineering. Read official role details and apply directly to the company.",
+  "/ai-jobs",
+);
 export default function Page() {
   return (
     <div>
@@ -36,7 +35,7 @@ export default function Page() {
           ))}
         </nav>
         <Suspense fallback={<div className="skeleton h-56 rounded-2xl" />}>
-          <JobBrowser initialCategory="ai-ml" heading="AI & ML roles" />
+          <ServerJobBrowser track="ai-ml" heading="AI & ML roles" />
         </Suspense>
       </section>
     </div>

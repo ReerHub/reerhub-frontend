@@ -1,7 +1,9 @@
-export const metadata = {
-  title: "Terms of Service | ReerHub",
-  description: "The rules for using ReerHub.",
-};
+import { pageMetadata } from "@/lib/seo";
+export const metadata = pageMetadata(
+  "Terms of Service | ReerHub",
+  "Read the terms for ReerHub job discovery and Pro subscriptions, including trials, non-refundable payments, cancellation and remaining Pro access.",
+  "/terms",
+);
 
 export default function TermsPage() {
   return (

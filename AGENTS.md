@@ -23,13 +23,15 @@ Self-contained repo: product, deployment, design, and decisions live in README a
 ## Conventions
 
 - Path alias `@/*`. API: `lib/reerhub.ts` (public reads) + `lib/auth.ts` (`credentials:"include"`, silent refresh retry, `safeNext`, auto CSRF). One global session: `components/AuthProvider.tsx` (`useAuth`) — never add per-page `getMe()` fetches. Guards in `proxy.ts`.
-- Styling: Tailwind + `docs/design/design-system.md` (primary `#2F6FED`, ink `#111827`, light surfaces). No new brand colors. Motion is finite opacity/transform feedback only; everything is static under `prefers-reduced-motion`. Logos use `components/CompanyLogo.tsx` when a company mark is needed; remote images need `next.config.ts` `remotePatterns` for `next/image`.
-- Anonymous visitors see teasers only (ADR-011): lists show chips + excerpt, detail shows excerpt + login wall; crawlers see the identical view. Per-job JSON-LD carries the visible excerpt only; auth/dashboard never in sitemap; `robots.ts` disallows them.
+- Styling: Tailwind + `docs/design/design-system.md` (public Indigo `#4F46E5`, charcoal `#18181B`, canvas `#FAFAFC`, lavender `#EEECFF`). `app/public.css` scopes the final palette to `.public-site`; admin uses its own Indigo tokens in app/admin.css. Navigation/footer use solid `--public-chrome` dark Indigo; reserve `--public-gradient` for Pro emphasis. Keep forms/discovery/application panels light and buttons solid. Brand wordmarks are `ReerHub` without a decorative dot. Motion is finite opacity/transform feedback only; everything is static under `prefers-reduced-motion`. Logos use `components/CompanyLogo.tsx`; retain original brand assets. Remote images need `next.config.ts` `remotePatterns` for `next/image`.
+- Anonymous listings show up to 10 previews; full job details and official Apply links are public. Crawlers see identical content. Only eligible active roles emit JobPosting; private/admin pages and staging use noindex and stay out of the split sitemap.
 - Secrets: server-only env (`API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, `TURNSTILE_SITE_KEY`) — no `NEXT_PUBLIC_*`. Browser calls same-origin `/api/v1` (rewrite proxies to `API_URL`); `GET /api/config` serves public widget keys at runtime.
 - Commits `feat:/fix:/chore:/ci:/docs:`, only when asked. Never commit `.env*`/secrets.
 - **Branching: feature branches → PR into `develop` (auto-deploys staging) → tested → PR `develop` → `main` (auto-deploys prod). Never touch `main` directly.**
 
 ## Gotchas
+
+- Public backgrounds are full bleed; content is centered in a 1680px frame with 20–48px gutters. Discovery grids follow container width, stopping at four job columns and eight company tiles. Prose/forms stay readable; billing is capped at 1200px. The homepage matching explainer is the exception to finite motion: it may loop with pause/play, offscreen/tab-hidden suspension and reduced-motion support. Follow this exception over the general finite-motion rule above; other pages remain quiet.
 
 - `API_URL`/`SITE_URL` are build-time — Vercel redeploy after changing. Backend CORS must allow the origin + `credentials:true`.
 - Backend global rate limit is per process; after running backend tests, wait before live-verifying (15-min window).

@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import CityJobs from "@/components/CityJobs";
 
 // Job counts move daily — refresh the prerender on the same cadence.
 
 export const revalidate = 86400;
 
-export const metadata: Metadata = {
-  title: "Tech jobs in Mumbai | ReerHub",
-  description: "Product and fintech engineering roles in Mumbai, hiring now.",
-  alternates: { canonical: "/mumbai-jobs" },
-};
+export const metadata = pageMetadata(
+  "Tech jobs in Mumbai | ReerHub",
+  "Discover product and fintech engineering jobs in Mumbai from official company sources. Read role requirements and apply on the company website.",
+  "/mumbai-jobs",
+);
 
 export default function Page() {
   return (

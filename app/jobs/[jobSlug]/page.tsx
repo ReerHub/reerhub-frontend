@@ -1,12 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { notFound, permanentRedirect } from "next/navigation";
 import { sanitizeHtml } from "@/lib/sanitize";
 import CompanyLogo from "@/components/CompanyLogo";
-import LoginWall from "@/components/LoginWall";
+import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
+import { jobPosting } from "@/lib/job-schema";
 import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
+import JobAccountPrompt from "@/components/JobAccountPrompt";
 import {
   getJob,
   jobSlug,
@@ -20,13 +21,7 @@ import { locationLabel, timeAgo } from "@/lib/format";
 
 async function fetchJob(jobId: string): Promise<Job> {
   try {
-    // Forward the session so members SSR the full job while anonymous
-    // visitors and crawlers (no cookies) get the identical teaser view.
-    const cookieHeader = (await cookies()).toString();
-    return await getJob(
-      jobId,
-      cookieHeader ? { headers: { Cookie: cookieHeader } } : undefined,
-    );
+    return await getJob(jobId);
   } catch (err) {
     if (err instanceof NotFoundError) notFound();
     throw err;
@@ -50,16 +45,12 @@ export async function generateMetadata({
     if (!jobId) return { title: "Job | ReerHub" };
     const job = await fetchJob(jobId);
     const companyName = job.companyId?.name || "Company";
-    const title = `${job.title} at ${companyName} | ReerHub`;
+    const title = `${job.status === "closed" ? "Closed: " : ""}${job.title} at ${companyName} | ReerHub`;
     const description =
       `${job.title} (${job.techRole || "tech role"}) at ${companyName}` +
       `${job.locations?.[0]?.city ? ` in ${job.locations[0].city}` : ""}. ` +
-      `Apply directly on the company's official site.`;
-    return {
-      title,
-      description,
-      alternates: { canonical: `/jobs/${jobSlug(job)}` },
-    };
+      `${job.status === "closed" ? "This opening is closed. Explore related active jobs on ReerHub." : "Read full role requirements and apply on the company's official website."}`;
+    return pageMetadata(title, description, `/jobs/${jobSlug(job)}`);
   } catch {
     return { title: "Job | ReerHub" };
   }
@@ -93,11 +84,11 @@ const faqs = [
   },
   {
     q: "How do I apply for this role?",
-    a: "Log in, then use the Apply button to finish your application on the company's official site. ReerHub never takes a cut or holds your application.",
+    a: "Use the Apply button to finish your application on the company's official site. ReerHub never takes a cut or holds your application.",
   },
   {
-    q: "Why do I need an account to see details?",
-    a: "A free account unlocks full descriptions, skills, Apply links, and your saved shortlist. Sign in with Google or a secure email link; no payment is required.",
+    q: "What does a free account unlock?",
+    a: "Full job details and official Apply links are public. A free account unlocks complete browsing, your profile, and a saved shortlist. Sign in with Google or a secure email link; no payment is required.",
   },
   {
     q: "Is ReerHub free?",
@@ -130,15 +121,11 @@ export default async function JobDetailPage({
   const relatedJobs = company._id
     ? await fetchRelatedJobs(company._id, job._id)
     : [];
-  const isMember = !!job.applicationUrl;
+  const hasApplication = !!job.applicationUrl;
   const sanitizedDescription = job.description
     ? sanitizeHtml(job.description)
     : "";
-  const jsonLdDescription = (
-    job.description
-      ? job.description.replace(/<[^>]*>/g, " ")
-      : job.excerpt || ""
-  ).slice(0, 5000);
+  const schema = jobPosting(job, sanitizedDescription);
 
   const facts: { label: string; value?: string }[] = [
     {
@@ -174,39 +161,25 @@ export default async function JobDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "JobPosting",
-            title: job.title,
-            description: jsonLdDescription,
-            datePosted: job.postedAt || job.firstSeenAt,
-            employmentType: job.employmentType,
-            hiringOrganization: {
-              "@type": "Organization",
-              name: companyName,
-              sameAs: company.website,
-              logo: company.logoUrl,
-            },
-            jobLocation:
-              job.locations?.length > 0
-                ? job.locations.map((l) => ({
-                    "@type": "Place",
-                    address: {
-                      "@type": "PostalAddress",
-                      addressLocality: l.city,
-                      addressRegion: l.state,
-                      addressCountry: l.country || "IN",
-                    },
-                  }))
-                : undefined,
-            directApply: true,
-          }),
+          __html: safeJsonLd(
+            breadcrumb([
+              { name: "Home", path: "/" },
+              { name: "Jobs", path: "/jobs" },
+              { name: job.title, path: canonical },
+            ]),
+          ),
         }}
       />
+      {schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
+        />
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
+          __html: safeJsonLd({
             "@context": "https://schema.org",
             "@type": "FAQPage",
             mainEntity: faqs.map((faq) => ({
@@ -247,7 +220,7 @@ export default async function JobDetailPage({
 
       <div className="grid lg:grid-cols-[1fr_340px] gap-5 items-start">
         <article className="min-w-0">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
+          <div className="job-detail-panel p-6 sm:p-8 mb-4">
             <div className="flex items-center gap-4 mb-5">
               <CompanyLogo
                 name={companyName}
@@ -277,7 +250,7 @@ export default async function JobDetailPage({
                   className={`inline-flex items-center gap-1.5 text-xs font-semibold border px-2.5 py-1 rounded-lg ${job.status === "closed" ? "text-slate-600 bg-slate-100 border-slate-200" : "text-green-700 bg-green-50 border-green-100"}`}
                 >
                   <span
-                    className="w-1.5 h-1.5 rounded-full bg-green-500"
+                    className={`w-1.5 h-1.5 rounded-full ${job.status === "closed" ? "bg-slate-400" : "bg-green-500"}`}
                     aria-hidden
                   />
                   {job.status === "closed" ? "Closed" : "Open role"}
@@ -352,7 +325,10 @@ export default async function JobDetailPage({
                 </p>
               </div>
             ) : (
-              <LoginWall next={canonical} />
+              <p className="surface-panel p-5 text-sm text-slate-600">
+                The official Apply link is unavailable. Check the source listing
+                below.
+              </p>
             )}
           </div>
 
@@ -386,7 +362,7 @@ export default async function JobDetailPage({
             </div>
           )}
 
-          {!isMember && job.excerpt && (
+          {!hasApplication && job.excerpt && (
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
               <h2 className="font-bold text-slate-900 text-[15px] mb-4">
                 About this role
@@ -413,6 +389,10 @@ export default async function JobDetailPage({
             </p>
           )}
 
+          <div className="mt-6">
+            <JobAccountPrompt path={canonical} />
+          </div>
+
           {relatedJobs.length > 0 && (
             <RelatedJobs jobs={relatedJobs} companyName={companyName} />
           )}
@@ -438,11 +418,11 @@ export default async function JobDetailPage({
 
         <aside className="lg:sticky lg:top-24 space-y-4">
           {job.applicationUrl ? (
-            <div className="hidden lg:block bg-ink text-white rounded-2xl p-6 shadow-card-hover">
-              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-teal-300 mb-2">
+            <div className="official-apply-panel hidden lg:block p-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary-deep mb-2">
                 Official application
               </p>
-              <p className="text-sm text-white/70 leading-relaxed mb-5">
+              <p className="text-sm text-slate-600 leading-relaxed mb-5">
                 You&apos;ll finish your application on {companyName}&apos;s own
                 site. ReerHub never takes a cut or holds your data.
               </p>
@@ -470,14 +450,17 @@ export default async function JobDetailPage({
                 </svg>
               </a>
               {applyDomain && (
-                <p className="text-xs text-white/80 text-center mt-2">
+                <p className="text-xs text-slate-600 text-center mt-3 break-words">
                   Opens {applyDomain} in a new tab
                 </p>
               )}
             </div>
           ) : (
             <div className="hidden lg:block">
-              <LoginWall next={canonical} />
+              <p className="surface-panel p-5 text-sm text-slate-600">
+                The official Apply link is unavailable. Check the source listing
+                below.
+              </p>
             </div>
           )}
 

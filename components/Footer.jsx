@@ -47,9 +47,10 @@ export default function Footer() {
                 width={34}
                 height={34}
                 alt=""
+                className="rounded-lg bg-white p-0.5"
               />
               <span className="font-display text-xl font-bold text-ink">
-                ReerHub.
+                ReerHub
               </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-7 text-slate-600">
@@ -79,9 +80,15 @@ export default function Footer() {
             </nav>
           ))}
         </div>
-        <div className="flex flex-col justify-between gap-3 border-t border-slate-200 py-6 text-xs text-slate-600 sm:flex-row">
+        <div className="footer-wordmark" aria-hidden="true">
+          ReerHub
+        </div>
+        <div className="footer-bottom flex flex-col justify-between gap-3 py-6 text-xs sm:flex-row">
+          <div className="flex gap-6">
+            <Link href="/terms">Terms of use</Link>
+            <Link href="/privacy">Privacy policy</Link>
+          </div>
           <p>© {new Date().getFullYear()} ReerHub. All rights reserved.</p>
-          <p>Made for people building what’s next.</p>
         </div>
       </div>
     </footer>

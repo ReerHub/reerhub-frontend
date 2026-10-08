@@ -1,14 +1,13 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import JobBrowser from "@/components/JobBrowser";
+import ServerJobBrowser from "@/components/ServerJobBrowser";
 import JobCard from "@/components/JobCard";
 import { listJobsWithMeta } from "@/lib/reerhub";
 import PageHeader from "@/components/PageHeader";
 import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 
-// Thin markets (< 5 roles) get an "expanding soon" panel plus recommended
-// roles instead of a near-empty list.
-const THIN_THRESHOLD = 5;
+// Show every available city-specific role. Only empty markets get a clearly
+// labelled expanding-coverage panel with alternative suggestions.
 
 function FiltersBarSkeleton() {
   return (
@@ -54,14 +53,12 @@ export default async function CityJobs({
         back={{ href: "/jobs", label: "All tech jobs" }}
       />
       <section className="page-container py-10">
-        {total >= THIN_THRESHOLD ? (
+        {total > 0 ? (
           <Suspense fallback={<FiltersBarSkeleton />}>
-            <JobBrowser
+            <ServerJobBrowser
               heading={heading}
-              showFilters
-              initialFilters={
-                remoteOnly ? { remoteType: "remote" } : { city: city || "" }
-              }
+              city={city}
+              remoteOnly={remoteOnly}
             />
           </Suspense>
         ) : (

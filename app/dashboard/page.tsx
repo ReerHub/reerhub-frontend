@@ -13,6 +13,7 @@ import Icon from "@/components/ui/Icon";
 import { getSavedJobs, saveJob, savedIds, unsaveJob } from "@/lib/auth";
 import { type Job } from "@/lib/reerhub";
 import { isPro } from "@/lib/membership";
+import { profileSignals } from "@/lib/profile-readiness";
 
 function SavedRoles({
   ids,
@@ -26,6 +27,7 @@ function SavedRoles({
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let active = true;
     getSavedJobs(page)
@@ -45,7 +47,7 @@ function SavedRoles({
     return () => {
       active = false;
     };
-  }, [page]);
+  }, [page, attempt]);
   if (loading)
     return (
       <div className="grid gap-5 md:grid-cols-3">
@@ -57,7 +59,21 @@ function SavedRoles({
   if (error)
     return (
       <div className="surface-panel p-8">
-        <p>Saved roles could not load. Refresh to try again.</p>
+        <h2 className="font-semibold text-ink">
+          Your shortlist couldn’t load.
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">
+          Your saved roles are still yours. Try loading them again.
+        </p>
+        <button
+          className="btn-secondary mt-5"
+          onClick={() => {
+            setLoading(true);
+            setAttempt((value) => value + 1);
+          }}
+        >
+          Try again
+        </button>
       </div>
     );
   const visible = jobs.filter((j) => ids.includes(j._id));
@@ -103,7 +119,10 @@ function SavedRoles({
           <button
             className="btn-secondary"
             disabled={page === 1}
-            onClick={() => setPage(page - 1)}
+            onClick={() => {
+              setLoading(true);
+              setPage(page - 1);
+            }}
           >
             Previous
           </button>
@@ -113,7 +132,10 @@ function SavedRoles({
           <button
             className="btn-secondary"
             disabled={page === pages}
-            onClick={() => setPage(page + 1)}
+            onClick={() => {
+              setLoading(true);
+              setPage(page + 1);
+            }}
           >
             Next
           </button>
@@ -183,16 +205,9 @@ function Dashboard() {
       label: `Saved roles${ids.length ? ` (${ids.length})` : ""}`,
     },
   ];
-  const signals = [
-    !!user.profile.techTrack,
-    !!user.profile.currentRole || !!user.profile.techRoles?.length,
-    (user.profile.skills?.length || 0) >= 3,
-    user.profile.experienceYears !== undefined,
-    !!user.profile.city ||
-      (user.profile.remoteType && user.profile.remoteType !== "unknown"),
-  ];
+  const signals = profileSignals(user.profile);
   const completion = Math.round(
-    (signals.filter(Boolean).length / signals.length) * 100,
+    (signals.filter((signal) => signal.complete).length / signals.length) * 100,
   );
   return (
     <div className="page-container py-9 sm:py-12">
@@ -321,6 +336,22 @@ function Dashboard() {
                 ? "Your profile is match-ready. Keep your skills and preferences current as your search changes."
                 : "Add your target role, at least three skills, track, experience, and location or work preference for reliable Pro matches."}
             </p>
+            <ul className="profile-checklist" aria-label="Profile completeness">
+              {signals.map((signal) => (
+                <li key={signal.label} data-complete={signal.complete}>
+                  <Icon
+                    name={signal.complete ? "check" : "user"}
+                    className="h-3.5 w-3.5"
+                  />
+                  <span>
+                    {signal.label}
+                    <span className="sr-only">
+                      {signal.complete ? ": complete" : ": needed"}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
             <Link
               href="/profile"
               className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"
@@ -332,6 +363,24 @@ function Dashboard() {
             </Link>
           </section>
           {!pro && <UpgradePanel compact />}
+          {pro && (
+            <section className="surface-panel p-6">
+              <h2 className="font-semibold text-ink">
+                Prefer to browse yourself?
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Your ranked matches are here. All official openings are still
+                available in discovery.
+              </p>
+              <Link
+                href="/jobs"
+                className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"
+              >
+                Browse all jobs
+                <Icon name="arrow" className="h-4 w-4" />
+              </Link>
+            </section>
+          )}
           <section className="p-5">
             <p className="flex items-center gap-2 text-sm font-semibold text-teal-800">
               <Icon name="shield" className="h-4 w-4" />

@@ -59,11 +59,11 @@
   }
 }
 .admin-ui {
-  --a-ink: #111827;
+  --a-ink: #18181b;
   --a-muted: #64748b;
-  --a-line: #e2e8f0;
-  --a-canvas: #f7f9fc;
-  --a-blue: #2f6fed;
+  --a-line: #e4e2ef;
+  --a-canvas: #fafafc;
+  --a-blue: #4f46e5;
   color: var(--a-ink);
   font:
     14px/1.5 var(--font-inter),
@@ -121,7 +121,7 @@
 }
 .admin-ui
   :is(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 3px solid #2f6fed;
+  outline: 3px solid #4f46e5;
   outline-offset: 3px;
 }
 .admin-ui svg {
@@ -140,8 +140,42 @@
   padding: 30px 18px 20px;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: #25215a;
+  color: #dedcf3;
   border-right: 1px solid var(--a-line);
+}
+.admin-ui .sidebar .brand,
+.admin-ui .sidebar-foot strong {
+  color: #fff;
+}
+.admin-ui .sidebar .brand img {
+  background: #fff;
+  border-radius: 9px;
+}
+.admin-ui .sidebar .brand small,
+.admin-ui .sidebar .nav-group,
+.admin-ui .sidebar .sidebar-note,
+.admin-ui .sidebar .sidebar-note strong,
+.admin-ui .sidebar .sidebar-foot span {
+  color: #c7c2e5;
+}
+.admin-ui .sidebar .nav button {
+  color: #dedcf3;
+}
+.admin-ui .sidebar .nav button:hover {
+  background: #ffffff0d;
+  color: #fff;
+}
+.admin-ui .sidebar .nav button[aria-current="page"] {
+  background: #eeecff;
+  border-color: #eeecff;
+  color: #3730a3;
+}
+.admin-ui .sidebar :is(button, a):focus-visible {
+  outline-color: #c7c2ff;
+}
+.admin-ui .sidebar .sidebar-foot {
+  border-color: #ffffff24;
 }
 .admin-ui .brand {
   display: flex;
@@ -193,13 +227,13 @@
   font-weight: 550;
 }
 .admin-ui .nav button:hover {
-  background: #f7f9fc;
-  color: #111827;
+  background: #fafafc;
+  color: #18181b;
 }
 .admin-ui .nav button[aria-current="page"] {
-  color: #2458bf;
-  background: #e8f0ff;
-  border-color: #d8e5fe;
+  color: #4338ca;
+  background: #eeecff;
+  border-color: #dfdcff;
   font-weight: 650;
 }
 .admin-ui .nav svg {
@@ -258,9 +292,9 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #e8f0ff;
-  border: 1px solid #d8e5fe;
-  color: #2458bf;
+  background: #eeecff;
+  border: 1px solid #dfdcff;
+  color: #4338ca;
   font-weight: 650;
 }
 .admin-ui .company-initial {
@@ -334,10 +368,10 @@
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
-  box-shadow: 0 1px 2px #11182704;
+  box-shadow: 0 1px 2px #18181b04;
 }
 .admin-ui .button:hover:not(:disabled) {
-  background: #f7f9fc;
+  background: #fafafc;
   border-color: #aabbd4;
 }
 .admin-ui .button svg {
@@ -345,14 +379,14 @@
   height: 16px;
 }
 .admin-ui .button.primary {
-  background: #2f6fed;
+  background: #4f46e5;
   color: white;
-  border-color: #2f6fed;
-  box-shadow: 0 2px 4px #2f6fed20;
+  border-color: #4f46e5;
+  box-shadow: 0 2px 4px #4f46e520;
 }
 .admin-ui .button.primary:hover:not(:disabled) {
-  background: #2559c4;
-  border-color: #2559c4;
+  background: #4338ca;
+  border-color: #4338ca;
 }
 .admin-ui .button.compact {
   padding: 8px 11px;
@@ -365,7 +399,7 @@
   min-height: 44px;
   border: 0;
   background: transparent;
-  color: #2458bf;
+  color: #4338ca;
   padding: 6px 4px;
   font-size: 12px;
   font-weight: 600;
@@ -390,7 +424,7 @@
   color: inherit;
 }
 .admin-ui .icon-button:hover:not(:disabled) {
-  background: #11182708;
+  background: #18181b08;
 }
 .admin-ui .full-width {
   width: 100%;
@@ -450,7 +484,7 @@
   background: #fff;
   border: 1px solid var(--a-line);
   border-radius: 12px;
-  box-shadow: 0 2px 4px #11182703;
+  box-shadow: 0 2px 4px #18181b03;
 }
 .admin-ui .metric:hover {
   border-color: #a8c3f8;
@@ -494,7 +528,7 @@
   background: #fff;
   border: 1px solid var(--a-line);
   border-radius: 12px;
-  box-shadow: 0 2px 4px #11182703;
+  box-shadow: 0 2px 4px #18181b03;
   min-width: 0;
   overflow: hidden;
 }
@@ -542,7 +576,7 @@
   height: 36px;
   border: 1px solid #e2e8f0;
   border-radius: 9px;
-  background: #f7f9fc;
+  background: #fafafc;
   color: #64748b;
 }
 .admin-ui .row-copy {
@@ -697,12 +731,12 @@
   border: 0;
   outline: 0;
   background: transparent;
-  color: #111827;
+  color: #18181b;
   font-size: 12px;
   padding: 10px 0;
 }
 .admin-ui .search-box:focus-within {
-  outline: 2px solid #2f6fed;
+  outline: 2px solid #4f46e5;
   outline-offset: 2px;
 }
 .admin-ui .search-box input:focus-visible {
@@ -746,7 +780,7 @@
   font-size: 12px;
 }
 .admin-ui .table tbody tr:hover {
-  background: #fbfcff;
+  background: #fafafc;
 }
 .admin-ui .table tr:last-child td {
   border-bottom: 0;
@@ -774,7 +808,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #2458bf;
+  color: #4338ca;
   font-weight: 550;
   min-height: 32px;
 }
@@ -848,8 +882,8 @@
   margin-bottom: 20px;
   padding: 12px 16px;
   border: 1px solid #cbdcfb;
-  background: #edf4ff;
-  color: #2458bf;
+  background: #eeecff;
+  color: #4338ca;
   border-radius: 9px;
   font-size: 12px;
 }
@@ -886,8 +920,8 @@
   transform: translateY(-200%);
   padding: 12px;
   background: white;
-  color: #2458bf;
-  border: 1px solid #2f6fed;
+  color: #4338ca;
+  border: 1px solid #4f46e5;
   border-radius: 8px;
 }
 .admin-ui .admin-skip:focus {
@@ -902,10 +936,10 @@
   max-height: 90dvh;
   overflow: auto;
   background: white;
-  box-shadow: 0 24px 80px #11182740;
+  box-shadow: 0 24px 80px #18181b40;
 }
 .admin-ui.modal::backdrop {
-  background: #11182780;
+  background: #18181b80;
 }
 .admin-ui .modal-head {
   display: flex;
@@ -958,7 +992,7 @@
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: white;
-  color: #111827;
+  color: #18181b;
   font-size: 13px;
 }
 .admin-ui .field small {
@@ -990,7 +1024,7 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  accent-color: #2f6fed;
+  accent-color: #4f46e5;
   margin-top: 1px;
 }
 .admin-ui .check-field strong {
@@ -1004,7 +1038,7 @@
   font-size: 11px;
 }
 .admin-ui .confirmation {
-  background: #edf4ff;
+  background: #eeecff;
   border-color: #d5e3fb;
 }
 .admin-ui .required-marker {
@@ -1052,7 +1086,7 @@
   font-size: 12px;
   padding: 12px 0;
   cursor: pointer;
-  color: #2458bf;
+  color: #4338ca;
 }
 .admin-ui .detail-summary {
   background: #f8fafc;
@@ -1107,7 +1141,7 @@
 }
 .admin-ui .access-card > svg {
   margin: 0 auto 20px;
-  color: #2f6fed;
+  color: #4f46e5;
   width: 36px;
   height: 36px;
 }
@@ -1129,8 +1163,8 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 48px clamp(32px, 6vw, 90px);
-  background: #f0f5ff;
-  border-right: 1px solid #dce7fa;
+  background: #f5f4ff;
+  border-right: 1px solid #dfdcff;
 }
 .admin-ui .auth-story .brand {
   padding: 0;
@@ -1141,7 +1175,7 @@
   max-width: 480px;
 }
 .admin-ui .auth-story h1 span {
-  color: #2f6fed;
+  color: #4f46e5;
 }
 .admin-ui .auth-story > div > p {
   margin-top: 22px;
@@ -1162,7 +1196,7 @@
   font-size: 13px;
 }
 .admin-ui .auth-features svg {
-  color: #2f6fed;
+  color: #4f46e5;
 }
 .admin-ui .auth-bottom {
   font-size: 11px;
@@ -1182,10 +1216,10 @@
   place-items: center;
   width: 52px;
   height: 52px;
-  border: 1px solid #d8e5fe;
+  border: 1px solid #dfdcff;
   border-radius: 14px;
-  background: #e8f0ff;
-  color: #2f6fed;
+  background: #eeecff;
+  color: #4f46e5;
   margin-bottom: 24px;
 }
 .admin-ui .auth-card h2 {

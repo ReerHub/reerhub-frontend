@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import GoogleButton from "@/components/GoogleButton";
@@ -14,7 +14,6 @@ const inputCls =
   "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-[15px] text-slate-900 placeholder:text-slate-400 outline-none focus:border-electric-dark focus:ring-2 focus:ring-electric-soft transition-all";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading } = useAuth();
   const next = safeNext(searchParams.get("next"));
@@ -25,8 +24,10 @@ function LoginForm() {
   const turnstileRef = useRef<TurnstileHandle>(null);
 
   useEffect(() => {
-    if (!loading && user) router.replace(next);
-  }, [loading, user, next, router]);
+    // A full navigation drops anonymous router-cache entries and makes the
+    // protected-route guard read the newly issued session cookies.
+    if (!loading && user) window.location.replace(next);
+  }, [loading, user, next]);
 
   const send = async () => {
     setBusy(true);
@@ -52,8 +53,16 @@ function LoginForm() {
     await send();
   };
 
+  if (loading || user) {
+    return (
+      <div className="page-container py-20 text-center" role="status">
+        {user ? "Signed in. Opening your workspace…" : "Checking your session…"}
+      </div>
+    );
+  }
+
   return (
-    <div className="page-container grid min-h-[75vh] items-center gap-12 py-12 lg:grid-cols-2 lg:py-16">
+    <div className="auth-shell page-container grid min-h-[75vh] items-center gap-12 py-12 lg:grid-cols-2 lg:py-16">
       <aside className="hidden max-w-lg lg:block">
         <div className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-teal-800">
           <Icon name="shield" />
@@ -63,13 +72,13 @@ function LoginForm() {
           A better starting point for your next chapter.
         </h2>
         <p className="mt-5 text-lg leading-8 text-slate-600">
-          One free account. Every detail you need to take your next step.
+          Your search, in one place. Save a shortlist and explore every opening.
         </p>
         <ul className="mt-8 space-y-5">
           {[
-            "Read full role descriptions and requirements",
+            "Unlock complete browsing and search filters",
             "Save the opportunities worth coming back to",
-            "Apply directly on official company hiring pages",
+            "Build your profile for personalized Pro matching",
           ].map((x) => (
             <li
               key={x}
@@ -81,7 +90,7 @@ function LoginForm() {
           ))}
         </ul>
       </aside>
-      <div className="surface-panel mx-auto w-full max-w-md p-6 sm:p-9">
+      <div className="auth-card surface-panel mx-auto w-full max-w-md p-6 sm:p-9">
         <h1 className="font-display text-3xl font-bold text-slate-900 tracking-tight mb-3">
           Your next move starts here.
         </h1>
