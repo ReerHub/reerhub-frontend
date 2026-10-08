@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:ui:fixtures": "node scripts/ui-fixtures.mjs",
+    "test:admin": "node --test scripts/admin-contracts.test.mjs",
     "prepare": "husky"
   },
   "dependencies": {

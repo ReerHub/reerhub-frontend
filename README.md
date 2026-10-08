@@ -25,6 +25,14 @@ npm run build
 
 The app runs at `http://localhost:3000` and proxies browser API requests to `API_URL`, which defaults to the local backend at port 8000. `npm run test:ui:fixtures` starts an isolated UI-only fixture server at port 3001; it does not contact MongoDB, SMTP, or Razorpay.
 
+## Admin workspace
+
+The same deployment serves Google-only admin login at `admin.reerhub.com/auth` and the console at `/dashboard`. Localhost and staging use `/admin/auth` and `/admin/dashboard`; production public hosts cannot access these routes. Backend authorization requires a dedicated admin session and the current database admin role.
+
+The console includes source health, company/source editing, sync history and confirmed sync triggers, safe job-quality editing, paginated member/subscription support views, and before/after audit inspection. Members and billing remain read-only. Tabs are shareable using dashboard URL hashes. Admin styles are isolated from the public UI.
+
+Run `npm run test:admin` for API/host regression checks. For synthetic admin UI testing, start the fixture server and open `/api/v1/fixture-admin` on port 3001 (`?state=empty`, `error`, or `denied` exercise alternate states). Set `FIXTURE_PORT` and `FIXTURE_API_PORT` if those ports are occupied; fixture build caches are isolated per frontend port.
+
 ## Architecture
 
 - App Router routes cover public job/company discovery, authentication, billing, profile, and dashboard flows.

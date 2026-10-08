@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  distDir: process.env.REERHUB_UI_FIXTURES === "1" ? ".next-fixtures" : ".next",
+  distDir:
+    process.env.REERHUB_UI_FIXTURES === "1"
+      ? `.next-fixtures/${process.env.FIXTURE_PORT || "3001"}`
+      : ".next",
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "www.google.com" },

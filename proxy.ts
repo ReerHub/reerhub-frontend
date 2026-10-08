@@ -14,6 +14,9 @@ const hidden = (req: NextRequest) => {
 
 const adminRewrite = (req: NextRequest, pathname: string) => {
   const url = req.nextUrl.clone();
+  // Preserve the incoming authority when Next normalizes development URLs.
+  // The guarded marker below also handles proxy re-entry after a rewrite.
+  url.host = req.headers.get("host") || url.host;
   url.pathname = pathname;
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-reerhub-admin-surface", "1");
@@ -25,8 +28,24 @@ export function proxy(req: NextRequest) {
   const host = req.headers.get("host") || "";
   const admin = isDedicatedAdminHost(host);
   const sharedTestHost = isSharedAdminTestHost(host);
+  // Rewrites can re-enter the proxy in local development. Only allow the
+  // marked internal destination on hosts that already permit the admin UI.
+  if (
+    (admin || sharedTestHost) &&
+    req.headers.get("x-reerhub-admin-surface") === "1" &&
+    (pathname === "/admin-auth" ||
+      pathname === "/admin-dashboard" ||
+      pathname.startsWith("/admin-api/"))
+  ) {
+    return NextResponse.next();
+  }
 
   if (admin) {
+    // The admin login needs public widget configuration and the brand asset.
+    // These contain no secrets and must remain reachable on the dedicated host.
+    if (pathname === "/api/config" || pathname === "/reerhub-icon-logo.png") {
+      return NextResponse.next();
+    }
     if (pathname === "/" || pathname === "/dashboard") {
       return adminRewrite(req, "/admin-dashboard");
     }
