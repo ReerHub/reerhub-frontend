@@ -119,7 +119,7 @@ export default function SearchFilters({
   const pillActive = "bg-electric text-white shadow-sm";
 
   return (
-    <div className="surface-panel p-5 sm:p-6">
+    <div className="search-filters surface-panel p-5 sm:p-6">
       <form
         onSubmit={(e) => {
           e.preventDefault();

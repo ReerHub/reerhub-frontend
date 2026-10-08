@@ -113,7 +113,7 @@ export default function RecommendationPanel({
     }
   };
   return (
-    <section aria-labelledby="matches-title">
+    <section aria-labelledby="matches-title" aria-busy={loading}>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2
@@ -156,11 +156,19 @@ export default function RecommendationPanel({
                   : "border-slate-200 bg-white text-slate-700 hover:border-primary/40 hover:text-primary"
               }`}
             >
-              {tier.label} <span className="ml-1 opacity-80">{count}</span>
+              {tier.label}{" "}
+              <span className="match-tier-count ml-1">
+                {loading ? "—" : count}
+              </span>
             </button>
           );
         })}
       </div>
+      <p className="mb-6 text-xs leading-6 text-slate-600">
+        Daily emails stay at 75%+ regardless of this dashboard filter. You’ll
+        receive one digest with up to five qualifying roles, only when matches
+        are available.
+      </p>
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -180,7 +188,10 @@ export default function RecommendationPanel({
       ) : jobs.length ? (
         <div className="space-y-4">
           {jobs.map((job, index) => (
-            <article key={job._id} className="surface-panel p-5 sm:p-7">
+            <article
+              key={job._id}
+              className="recommendation-card surface-panel p-5 sm:p-7"
+            >
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <div className="mb-4 flex items-center gap-3">
@@ -246,7 +257,7 @@ export default function RecommendationPanel({
                 </ul>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex gap-2">
+                <div className="match-actions flex gap-2">
                   <Link href={jobUrl(job)} className="btn-primary">
                     View role & apply
                     <Icon name="arrow" className="h-4 w-4" />
@@ -262,7 +273,7 @@ export default function RecommendationPanel({
                     {savedIds.includes(job._id) ? "Saved" : "Save"}
                   </button>
                 </div>
-                <div className="flex gap-2">
+                <div className="match-actions flex gap-2">
                   <button
                     disabled={busy === job._id || liked.includes(job._id)}
                     className="min-h-11 rounded-lg px-3 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60"
@@ -343,7 +354,7 @@ export default function RecommendationPanel({
             <Link href="/profile" className="btn-primary mt-6">
               Complete my profile
             </Link>
-          ) : (
+          ) : minimumScore > 0 ? (
             <button
               type="button"
               className="btn-primary mt-6"
@@ -357,6 +368,10 @@ export default function RecommendationPanel({
                   ? "Show 25%+ matches"
                   : "Explore all ranked roles"}
             </button>
+          ) : (
+            <Link href="/profile" className="btn-secondary mt-6">
+              Review my preferences
+            </Link>
           )}
         </div>
       )}

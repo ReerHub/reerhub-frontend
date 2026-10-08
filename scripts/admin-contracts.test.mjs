@@ -23,6 +23,80 @@ const source = await readFile(
   "utf8",
 );
 
+test("all admin workspaces share Indigo tokens without legacy blue accents", async () => {
+  const css = await readFile(
+    new URL("../app/admin.css", import.meta.url),
+    "utf8",
+  );
+  assert.match(css, /--a-blue: #4f46e5/);
+  assert.match(css, /--a-ink: #18181b/);
+  assert.match(css, /--a-canvas: #fafafc/);
+  assert.match(css, /background: #25215a/);
+  assert.doesNotMatch(css, /#2f6fed|#2458bf|#2559c4|#e8f0ff/);
+});
+
+test("Slice replaces its legacy favicon without overriding custom logos", async () => {
+  const source = await readFile(
+    new URL("../lib/company-logo.ts", import.meta.url),
+    "utf8",
+  );
+  const { companyLogoUrl } = await import(moduleUrl(compile(source)));
+  const official = "https://slice.bank.in/favicon-96x96.png";
+  assert.equal(
+    companyLogoUrl(
+      "Slice",
+      "https://www.google.com/s2/favicons?domain=sliceit.com&sz=128",
+    ),
+    official,
+  );
+  assert.equal(
+    companyLogoUrl(
+      "slice",
+      "https://t2.gstatic.com/faviconV2?url=http%3A%2F%2Fsliceit.com",
+    ),
+    official,
+  );
+  assert.equal(companyLogoUrl("Slice"), official);
+  assert.equal(companyLogoUrl("Slice", "/custom-logo.svg"), "/custom-logo.svg");
+  assert.equal(
+    companyLogoUrl(
+      "Other",
+      "https://www.google.com/s2/favicons?domain=sliceit.com",
+    ),
+    "https://www.google.com/s2/favicons?domain=sliceit.com",
+  );
+});
+
+test("public layout caps wide screens and grids respond to their container", async () => {
+  const css = await readFile(
+    new URL("../app/public.css", import.meta.url),
+    "utf8",
+  );
+  const home = await readFile(
+    new URL("../components/HomePage.module.css", import.meta.url),
+    "utf8",
+  );
+  const billing = await readFile(
+    new URL("../app/billing/Billing.module.css", import.meta.url),
+    "utf8",
+  );
+  assert.match(
+    css,
+    /\.public-site \.page-container\s*\{[^}]*max-width: 1680px/,
+  );
+  assert.match(css, /padding-inline: clamp\(20px, 3vw, 48px\)/);
+  assert.match(css, /container-type: inline-size/);
+  assert.match(css, /@container \(min-width: 1248px\)/);
+  assert.match(css, /minmax\(min\(100%, 300px\), 1fr\)/);
+  assert.doesNotMatch(css, /repeat\(5, minmax/);
+  assert.match(home, /max-width: 64rem/);
+  assert.match(home, /max-width: 100%/);
+  assert.match(home, /text-align: center/);
+  assert.doesNotMatch(home, /grid-template-columns: minmax\(0, 1fr\) minmax/);
+  assert.match(home, /minmax\(min\(100%, 160px\), 1fr\)/);
+  assert.match(billing, /max-width: 1200px/);
+});
+
 test("admin API contracts, pagination, refresh and CSRF", async () => {
   const original = {
     window: globalThis.window,
@@ -126,6 +200,141 @@ test("admin API contracts, pagination, refresh and CSRF", async () => {
   } finally {
     Object.assign(globalThis, original);
   }
+});
+
+test("public Indigo styling is isolated from legacy admin and meets core contrast", async () => {
+  const css = await readFile(
+    new URL("../app/public.css", import.meta.url),
+    "utf8",
+  );
+  const layout = await readFile(
+    new URL("../app/layout.tsx", import.meta.url),
+    "utf8",
+  );
+  const base = await readFile(
+    new URL("../app/globals.css", import.meta.url),
+    "utf8",
+  );
+  assert.match(layout, /isAdminHost \? "admin-site" : "public-site"/);
+  assert.match(css, /--color-primary: #4f46e5/);
+  assert.match(base, /--color-primary: #2f6fed/);
+  assert.match(css, /\.public-site \.bg-primary/);
+  assert.match(css, /prefers-reduced-motion: reduce/);
+  const luminance = (hex) => {
+    const values = hex
+      .match(/\w\w/g)
+      .map((value) => parseInt(value, 16) / 255)
+      .map((value) =>
+        value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4,
+      );
+    return values[0] * 0.2126 + values[1] * 0.7152 + values[2] * 0.0722;
+  };
+  for (const [foreground, background] of [
+    ["ffffff", "4f46e5"],
+    ["475569", "fafafc"],
+    ["64748b", "ffffff"],
+    ["dedcf3", "312e81"],
+  ]) {
+    const a = luminance(foreground),
+      b = luminance(background);
+    assert.ok((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 4.5);
+  }
+});
+
+test("public branding reserves gradients for Pro and uses quiet chrome", async () => {
+  const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
+  const css = await read("../app/public.css");
+  assert.match(css, /linear-gradient\(130deg, #25215a, #312e81\)/);
+  for (const selector of ["site-nav", "mobile-nav-panel", "site-footer"]) {
+    assert.match(
+      css,
+      new RegExp(`\\.${selector} \\{\\s*background: var\\(--public-chrome\\)`),
+    );
+  }
+  const footer = await read("../components/Footer.jsx");
+  assert.doesNotMatch(footer, /footer-intro|ReerHub<|ReerHub\.<\//);
+  assert.match(footer, /footer-wordmark[\s\S]*?ReerHub/);
+  const home = await read("../components/HomePage.module.css");
+  assert.match(
+    home,
+    /\.proPromotion \{[\s\S]*?background: var\(--public-gradient\)/,
+  );
+  assert.match(home, /\.closing \{[\s\S]*?#fff/);
+  assert.match(
+    await read("../app/billing/Billing.module.css"),
+    /background: var\(--public-gradient\)/,
+  );
+  assert.doesNotMatch(
+    await read("../app/share-image/route.tsx"),
+    />ReerHub\.</,
+  );
+});
+
+test("homepage ranks real hiring companies and limits the grid to sixteen", async () => {
+  const source = await readFile(
+    new URL("../lib/home-companies.ts", import.meta.url),
+    "utf8",
+  );
+  const { topHiringCompanies } = await import(moduleUrl(compile(source)));
+  const companies = Array.from({ length: 20 }, (_, index) => ({
+    _id: String(index),
+    name: `Company ${index}`,
+    activeJobs: index,
+  }));
+  const original = [...companies];
+  const ranked = topHiringCompanies(companies);
+  assert.equal(ranked.length, 16);
+  assert.equal(ranked[0].activeJobs, 19);
+  assert.equal(ranked[15].activeJobs, 4);
+  assert.deepEqual(companies, original);
+  assert.deepEqual(topHiringCompanies([{ _id: "1", name: "No openings" }]), []);
+  assert.equal(
+    topHiringCompanies([
+      { _id: "b", name: "Beta", activeJobs: 1 },
+      { _id: "a", name: "Alpha", activeJobs: 1 },
+    ])[0].name,
+    "Alpha",
+  );
+  const motion = await readFile(
+    new URL("../components/MatchJourney.module.css", import.meta.url),
+    "utf8",
+  );
+  assert.match(motion, /prefers-reduced-motion: reduce/);
+  assert.match(motion, /animation-play-state: paused/);
+});
+
+test("public profile guidance treats zero experience as complete, not missing", async () => {
+  const source = await readFile(
+    new URL("../lib/profile-readiness.ts", import.meta.url),
+    "utf8",
+  );
+  const { profileSignals } = await import(moduleUrl(compile(source)));
+  const complete = {
+    techTrack: "software",
+    currentRole: "Backend Engineer",
+    skills: ["Node.js", "SQL", "TypeScript"],
+    experienceYears: 0,
+    remoteType: "remote",
+  };
+  assert.ok(profileSignals(complete).every((signal) => signal.complete));
+  assert.equal(
+    profileSignals({}).filter((signal) => signal.complete).length,
+    0,
+  );
+  for (const experienceYears of [undefined, null, NaN, -1]) {
+    assert.equal(
+      profileSignals({ ...complete, experienceYears }).find(
+        (signal) => signal.label === "Experience",
+      ).complete,
+      false,
+    );
+  }
+  assert.equal(
+    profileSignals({ ...complete, skills: ["SQL"] }).find(
+      (signal) => signal.label === "3+ skills",
+    ).complete,
+    false,
+  );
 });
 
 test("admin host routes stay isolated and required public config remains accessible", async () => {

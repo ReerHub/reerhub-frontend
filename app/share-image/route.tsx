@@ -6,11 +6,11 @@ export function GET() {
       style={{
         width: "100%",
         height: "100%",
-        background: "#F5F8FF",
+        background: "#EEECFF",
         display: "flex",
         flexDirection: "column",
         padding: "80px",
-        color: "#111827",
+        color: "#18181B",
       }}
     >
       <div
@@ -18,10 +18,10 @@ export function GET() {
           display: "flex",
           fontSize: 42,
           fontWeight: 700,
-          color: "#2F6FED",
+          color: "#4F46E5",
         }}
       >
-        ReerHub.
+        ReerHub
       </div>
       <div
         style={{

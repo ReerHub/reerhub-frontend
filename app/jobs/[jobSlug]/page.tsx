@@ -158,7 +158,6 @@ export default async function JobDetailPage({
 
   return (
     <div className="page-container py-8 sm:py-12">
-      <JobAccountPrompt path={canonical} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -221,7 +220,7 @@ export default async function JobDetailPage({
 
       <div className="grid lg:grid-cols-[1fr_340px] gap-5 items-start">
         <article className="min-w-0">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
+          <div className="job-detail-panel p-6 sm:p-8 mb-4">
             <div className="flex items-center gap-4 mb-5">
               <CompanyLogo
                 name={companyName}
@@ -251,7 +250,7 @@ export default async function JobDetailPage({
                   className={`inline-flex items-center gap-1.5 text-xs font-semibold border px-2.5 py-1 rounded-lg ${job.status === "closed" ? "text-slate-600 bg-slate-100 border-slate-200" : "text-green-700 bg-green-50 border-green-100"}`}
                 >
                   <span
-                    className="w-1.5 h-1.5 rounded-full bg-green-500"
+                    className={`w-1.5 h-1.5 rounded-full ${job.status === "closed" ? "bg-slate-400" : "bg-green-500"}`}
                     aria-hidden
                   />
                   {job.status === "closed" ? "Closed" : "Open role"}
@@ -390,6 +389,10 @@ export default async function JobDetailPage({
             </p>
           )}
 
+          <div className="mt-6">
+            <JobAccountPrompt path={canonical} />
+          </div>
+
           {relatedJobs.length > 0 && (
             <RelatedJobs jobs={relatedJobs} companyName={companyName} />
           )}
@@ -415,11 +418,11 @@ export default async function JobDetailPage({
 
         <aside className="lg:sticky lg:top-24 space-y-4">
           {job.applicationUrl ? (
-            <div className="hidden lg:block bg-ink text-white rounded-2xl p-6 shadow-card-hover">
-              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-teal-300 mb-2">
+            <div className="official-apply-panel hidden lg:block p-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-primary-deep mb-2">
                 Official application
               </p>
-              <p className="text-sm text-white/70 leading-relaxed mb-5">
+              <p className="text-sm text-slate-600 leading-relaxed mb-5">
                 You&apos;ll finish your application on {companyName}&apos;s own
                 site. ReerHub never takes a cut or holds your data.
               </p>
@@ -447,7 +450,7 @@ export default async function JobDetailPage({
                 </svg>
               </a>
               {applyDomain && (
-                <p className="text-xs text-white/80 text-center mt-2">
+                <p className="text-xs text-slate-600 text-center mt-3 break-words">
                   Opens {applyDomain} in a new tab
                 </p>
               )}

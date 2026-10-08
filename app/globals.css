@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* REERHUB COLOR SYSTEM v3 (see docs/design/design-system.md)
-     Primary #2F6FED · Ink #111827 · Gray #9AA8BC · Light blue #E8F0FF
-     Light surfaces only on public pages; ink reserved for workspace chrome. */
+  /* Frozen legacy/admin base. Final public Indigo tokens and compatibility
+     utilities are scoped in public.css; see docs/design/design-system.md.
+     Keep these values stable until the separate admin redesign phase. */
   --color-primary: #2f6fed; /* Primary actions */
   --color-primary-dark: #2559c4; /* Primary hover */
   --color-primary-deep: #1d47a1; /* Primary active + on-tint text */

@@ -1,5 +1,6 @@
 import "./globals.css";
 import "./admin.css";
+import "./public.css";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
 import { ReactNode } from "react";
@@ -42,7 +43,7 @@ export default async function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body
-        className={`${inter.className} ${inter.variable} ${spaceGrotesk.variable} antialiased`}
+        className={`${inter.className} ${inter.variable} ${spaceGrotesk.variable} antialiased ${isAdminHost ? "admin-site" : "public-site"}`}
       >
         {isAdminHost ? (
           <>{children}</>

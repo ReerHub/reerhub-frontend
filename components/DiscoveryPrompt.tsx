@@ -4,10 +4,10 @@ import { useAuth } from "@/components/AuthProvider";
 import { usePathname, useSearchParams } from "next/navigation";
 import Icon from "@/components/ui/Icon";
 export default function DiscoveryPrompt({ count }: { count?: number }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const pathname = usePathname();
   const params = useSearchParams();
-  if (user) return null;
+  if (user || loading) return null;
   const next = `${pathname}${params.size ? `?${params.toString()}` : ""}`;
   return (
     <section
@@ -19,7 +19,9 @@ export default function DiscoveryPrompt({ count }: { count?: number }) {
       </div>
       <div className="flex-1">
         <p className="mb-1 text-xs font-semibold text-primary-deep">
-          You’re exploring a preview{count ? ` of ${count} roles` : ""}
+          {count
+            ? `You’re exploring a preview of ${count} ${count === 1 ? "role" : "roles"}`
+            : "Your free discovery account"}
         </p>
         <h2
           id="discovery-prompt-title"
