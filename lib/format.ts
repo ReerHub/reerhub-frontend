@@ -36,9 +36,8 @@ export function locationLabel(job: Pick<Job, "locations">): string {
 
 /**
  * Company logo tile (design system §19).
- * No stored logos yet, so initial-letter tiles: soft blue-to-indigo gradient
- * with white letter — identical everywhere for consistency.
+ * Solid Cobalt Blue initial-letter fallback when a company logo is unavailable.
  */
 export function companyTile(): string {
-  return "bg-gradient-to-br from-blue-500 to-indigo-600 text-white";
+  return "bg-primary text-white";
 }

@@ -23,16 +23,16 @@ const source = await readFile(
   "utf8",
 );
 
-test("all admin workspaces share Indigo tokens without legacy blue accents", async () => {
+test("all admin workspaces share Cobalt Blue tokens without legacy blue accents", async () => {
   const css = await readFile(
     new URL("../app/admin.css", import.meta.url),
     "utf8",
   );
-  assert.match(css, /--a-blue: #4f46e5/);
-  assert.match(css, /--a-ink: #18181b/);
-  assert.match(css, /--a-canvas: #fafafc/);
-  assert.match(css, /background: #25215a/);
-  assert.doesNotMatch(css, /#2f6fed|#2458bf|#2559c4|#e8f0ff/);
+  assert.match(css, /--a-blue: #2563eb/);
+  assert.match(css, /--a-ink: #0f172a/);
+  assert.match(css, /--a-canvas: #f8fafc/);
+  assert.match(css, /background: #172554/);
+  assert.doesNotMatch(css, /#4f46e5|#4338ca|#25215a|#eeecff/);
 });
 
 test("Slice replaces its legacy favicon without overriding custom logos", async () => {
@@ -202,7 +202,7 @@ test("admin API contracts, pagination, refresh and CSRF", async () => {
   }
 });
 
-test("public Indigo styling is isolated from legacy admin and meets core contrast", async () => {
+test("public Cobalt Blue styling is scoped and meets core contrast", async () => {
   const css = await readFile(
     new URL("../app/public.css", import.meta.url),
     "utf8",
@@ -216,8 +216,8 @@ test("public Indigo styling is isolated from legacy admin and meets core contras
     "utf8",
   );
   assert.match(layout, /isAdminHost \? "admin-site" : "public-site"/);
-  assert.match(css, /--color-primary: #4f46e5/);
-  assert.match(base, /--color-primary: #2f6fed/);
+  assert.match(css, /--color-primary: #2563eb/);
+  assert.match(base, /--color-primary: #2563eb/);
   assert.match(css, /\.public-site \.bg-primary/);
   assert.match(css, /prefers-reduced-motion: reduce/);
   const luminance = (hex) => {
@@ -230,10 +230,12 @@ test("public Indigo styling is isolated from legacy admin and meets core contras
     return values[0] * 0.2126 + values[1] * 0.7152 + values[2] * 0.0722;
   };
   for (const [foreground, background] of [
-    ["ffffff", "4f46e5"],
-    ["475569", "fafafc"],
+    ["ffffff", "2563eb"],
+    ["475569", "f8fafc"],
     ["64748b", "ffffff"],
-    ["dedcf3", "312e81"],
+    ["dbeafe", "1e40af"],
+    ["ffffff", "172554"],
+    ["dbeafe", "172554"],
   ]) {
     const a = luminance(foreground),
       b = luminance(background);
@@ -244,7 +246,7 @@ test("public Indigo styling is isolated from legacy admin and meets core contras
 test("public branding reserves gradients for Pro and uses quiet chrome", async () => {
   const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
   const css = await read("../app/public.css");
-  assert.match(css, /linear-gradient\(130deg, #25215a, #312e81\)/);
+  assert.match(css, /linear-gradient\(130deg, #172554, #1e40af\)/);
   for (const selector of ["site-nav", "mobile-nav-panel", "site-footer"]) {
     assert.match(
       css,
@@ -253,7 +255,8 @@ test("public branding reserves gradients for Pro and uses quiet chrome", async (
   }
   const footer = await read("../components/Footer.jsx");
   assert.doesNotMatch(footer, /footer-intro|ReerHub<|ReerHub\.<\//);
-  assert.match(footer, /footer-wordmark[\s\S]*?ReerHub/);
+  assert.match(footer, /src="\/reerhub-sticker-logo-text\.png"/);
+  assert.doesNotMatch(footer, /footer-wordmark|src="\/reerhub-icon-logo\.png"/);
   const home = await read("../components/HomePage.module.css");
   assert.match(
     home,

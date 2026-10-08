@@ -59,11 +59,11 @@
   }
 }
 .admin-ui {
-  --a-ink: #18181b;
+  --a-ink: #0f172a;
   --a-muted: #64748b;
-  --a-line: #e4e2ef;
-  --a-canvas: #fafafc;
-  --a-blue: #4f46e5;
+  --a-line: #e2e8f0;
+  --a-canvas: #f8fafc;
+  --a-blue: #2563eb;
   color: var(--a-ink);
   font:
     14px/1.5 var(--font-inter),
@@ -121,7 +121,7 @@
 }
 .admin-ui
   :is(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 3px solid #4f46e5;
+  outline: 3px solid #2563eb;
   outline-offset: 3px;
 }
 .admin-ui svg {
@@ -140,8 +140,8 @@
   padding: 30px 18px 20px;
   display: flex;
   flex-direction: column;
-  background: #25215a;
-  color: #dedcf3;
+  background: #172554;
+  color: #dbeafe;
   border-right: 1px solid var(--a-line);
 }
 .admin-ui .sidebar .brand,
@@ -157,22 +157,22 @@
 .admin-ui .sidebar .sidebar-note,
 .admin-ui .sidebar .sidebar-note strong,
 .admin-ui .sidebar .sidebar-foot span {
-  color: #c7c2e5;
+  color: #bfdbfe;
 }
 .admin-ui .sidebar .nav button {
-  color: #dedcf3;
+  color: #dbeafe;
 }
 .admin-ui .sidebar .nav button:hover {
   background: #ffffff0d;
   color: #fff;
 }
 .admin-ui .sidebar .nav button[aria-current="page"] {
-  background: #eeecff;
-  border-color: #eeecff;
-  color: #3730a3;
+  background: #eff6ff;
+  border-color: #eff6ff;
+  color: #1e40af;
 }
 .admin-ui .sidebar :is(button, a):focus-visible {
-  outline-color: #c7c2ff;
+  outline-color: #bfdbfe;
 }
 .admin-ui .sidebar .sidebar-foot {
   border-color: #ffffff24;
@@ -227,13 +227,13 @@
   font-weight: 550;
 }
 .admin-ui .nav button:hover {
-  background: #fafafc;
-  color: #18181b;
+  background: #f8fafc;
+  color: #0f172a;
 }
 .admin-ui .nav button[aria-current="page"] {
-  color: #4338ca;
-  background: #eeecff;
-  border-color: #dfdcff;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
   font-weight: 650;
 }
 .admin-ui .nav svg {
@@ -292,9 +292,9 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #eeecff;
-  border: 1px solid #dfdcff;
-  color: #4338ca;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
   font-weight: 650;
 }
 .admin-ui .company-initial {
@@ -368,10 +368,10 @@
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
-  box-shadow: 0 1px 2px #18181b04;
+  box-shadow: 0 1px 2px #0f172a04;
 }
 .admin-ui .button:hover:not(:disabled) {
-  background: #fafafc;
+  background: #f8fafc;
   border-color: #aabbd4;
 }
 .admin-ui .button svg {
@@ -379,14 +379,14 @@
   height: 16px;
 }
 .admin-ui .button.primary {
-  background: #4f46e5;
+  background: #2563eb;
   color: white;
-  border-color: #4f46e5;
-  box-shadow: 0 2px 4px #4f46e520;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px #2563eb20;
 }
 .admin-ui .button.primary:hover:not(:disabled) {
-  background: #4338ca;
-  border-color: #4338ca;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
 }
 .admin-ui .button.compact {
   padding: 8px 11px;
@@ -399,7 +399,7 @@
   min-height: 44px;
   border: 0;
   background: transparent;
-  color: #4338ca;
+  color: #1d4ed8;
   padding: 6px 4px;
   font-size: 12px;
   font-weight: 600;
@@ -424,7 +424,7 @@
   color: inherit;
 }
 .admin-ui .icon-button:hover:not(:disabled) {
-  background: #18181b08;
+  background: #0f172a08;
 }
 .admin-ui .full-width {
   width: 100%;
@@ -484,7 +484,7 @@
   background: #fff;
   border: 1px solid var(--a-line);
   border-radius: 12px;
-  box-shadow: 0 2px 4px #18181b03;
+  box-shadow: 0 2px 4px #0f172a03;
 }
 .admin-ui .metric:hover {
   border-color: #a8c3f8;
@@ -528,7 +528,7 @@
   background: #fff;
   border: 1px solid var(--a-line);
   border-radius: 12px;
-  box-shadow: 0 2px 4px #18181b03;
+  box-shadow: 0 2px 4px #0f172a03;
   min-width: 0;
   overflow: hidden;
 }
@@ -576,7 +576,7 @@
   height: 36px;
   border: 1px solid #e2e8f0;
   border-radius: 9px;
-  background: #fafafc;
+  background: #f8fafc;
   color: #64748b;
 }
 .admin-ui .row-copy {
@@ -731,12 +731,12 @@
   border: 0;
   outline: 0;
   background: transparent;
-  color: #18181b;
+  color: #0f172a;
   font-size: 12px;
   padding: 10px 0;
 }
 .admin-ui .search-box:focus-within {
-  outline: 2px solid #4f46e5;
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
 .admin-ui .search-box input:focus-visible {
@@ -780,7 +780,7 @@
   font-size: 12px;
 }
 .admin-ui .table tbody tr:hover {
-  background: #fafafc;
+  background: #f8fafc;
 }
 .admin-ui .table tr:last-child td {
   border-bottom: 0;
@@ -808,7 +808,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #4338ca;
+  color: #1d4ed8;
   font-weight: 550;
   min-height: 32px;
 }
@@ -882,8 +882,8 @@
   margin-bottom: 20px;
   padding: 12px 16px;
   border: 1px solid #cbdcfb;
-  background: #eeecff;
-  color: #4338ca;
+  background: #eff6ff;
+  color: #1d4ed8;
   border-radius: 9px;
   font-size: 12px;
 }
@@ -920,8 +920,8 @@
   transform: translateY(-200%);
   padding: 12px;
   background: white;
-  color: #4338ca;
-  border: 1px solid #4f46e5;
+  color: #1d4ed8;
+  border: 1px solid #2563eb;
   border-radius: 8px;
 }
 .admin-ui .admin-skip:focus {
@@ -936,10 +936,10 @@
   max-height: 90dvh;
   overflow: auto;
   background: white;
-  box-shadow: 0 24px 80px #18181b40;
+  box-shadow: 0 24px 80px #0f172a40;
 }
 .admin-ui.modal::backdrop {
-  background: #18181b80;
+  background: #0f172a80;
 }
 .admin-ui .modal-head {
   display: flex;
@@ -992,7 +992,7 @@
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: white;
-  color: #18181b;
+  color: #0f172a;
   font-size: 13px;
 }
 .admin-ui .field small {
@@ -1024,7 +1024,7 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  accent-color: #4f46e5;
+  accent-color: #2563eb;
   margin-top: 1px;
 }
 .admin-ui .check-field strong {
@@ -1038,7 +1038,7 @@
   font-size: 11px;
 }
 .admin-ui .confirmation {
-  background: #eeecff;
+  background: #eff6ff;
   border-color: #d5e3fb;
 }
 .admin-ui .required-marker {
@@ -1086,7 +1086,7 @@
   font-size: 12px;
   padding: 12px 0;
   cursor: pointer;
-  color: #4338ca;
+  color: #1d4ed8;
 }
 .admin-ui .detail-summary {
   background: #f8fafc;
@@ -1141,7 +1141,7 @@
 }
 .admin-ui .access-card > svg {
   margin: 0 auto 20px;
-  color: #4f46e5;
+  color: #2563eb;
   width: 36px;
   height: 36px;
 }
@@ -1163,8 +1163,8 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 48px clamp(32px, 6vw, 90px);
-  background: #f5f4ff;
-  border-right: 1px solid #dfdcff;
+  background: #eff6ff;
+  border-right: 1px solid #bfdbfe;
 }
 .admin-ui .auth-story .brand {
   padding: 0;
@@ -1175,7 +1175,7 @@
   max-width: 480px;
 }
 .admin-ui .auth-story h1 span {
-  color: #4f46e5;
+  color: #2563eb;
 }
 .admin-ui .auth-story > div > p {
   margin-top: 22px;
@@ -1196,7 +1196,7 @@
   font-size: 13px;
 }
 .admin-ui .auth-features svg {
-  color: #4f46e5;
+  color: #2563eb;
 }
 .admin-ui .auth-bottom {
   font-size: 11px;
@@ -1216,10 +1216,10 @@
   place-items: center;
   width: 52px;
   height: 52px;
-  border: 1px solid #dfdcff;
+  border: 1px solid #bfdbfe;
   border-radius: 14px;
-  background: #eeecff;
-  color: #4f46e5;
+  background: #eff6ff;
+  color: #2563eb;
   margin-bottom: 24px;
 }
 .admin-ui .auth-card h2 {

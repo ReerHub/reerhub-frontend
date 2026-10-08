@@ -41,17 +41,18 @@ export default function Footer() {
       <div className="page-container">
         <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2.5">
+            <Link
+              href="/"
+              className="inline-flex max-w-full rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              aria-label="ReerHub home"
+            >
               <Image
-                src="/reerhub-icon-logo.png"
-                width={34}
-                height={34}
+                src="/reerhub-sticker-logo-text.png"
+                width={2172}
+                height={724}
                 alt=""
-                className="rounded-lg bg-white p-0.5"
+                className="h-auto w-[240px] max-w-full rounded-lg"
               />
-              <span className="font-display text-xl font-bold text-ink">
-                ReerHub
-              </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-7 text-slate-600">
               Find your next role where it actually lives. Official tech
@@ -79,9 +80,6 @@ export default function Footer() {
               </ul>
             </nav>
           ))}
-        </div>
-        <div className="footer-wordmark" aria-hidden="true">
-          ReerHub
         </div>
         <div className="footer-bottom flex flex-col justify-between gap-3 py-6 text-xs sm:flex-row">
           <div className="flex gap-6">

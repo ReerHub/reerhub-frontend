@@ -6,11 +6,11 @@ export function GET() {
       style={{
         width: "100%",
         height: "100%",
-        background: "#EEECFF",
+        background: "#eff6ff",
         display: "flex",
         flexDirection: "column",
         padding: "80px",
-        color: "#18181B",
+        color: "#0f172a",
       }}
     >
       <div
@@ -18,7 +18,7 @@ export function GET() {
           display: "flex",
           fontSize: 42,
           fontWeight: 700,
-          color: "#4F46E5",
+          color: "#2563eb",
         }}
       >
         ReerHub

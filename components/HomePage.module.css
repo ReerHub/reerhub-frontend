@@ -1,6 +1,6 @@
 .home {
-  --indigo: #4f46e5;
-  --ink: #18181b;
+  --cobalt: #2563eb;
+  --ink: #0f172a;
   background: #fff;
   color: var(--ink);
 }
@@ -9,16 +9,16 @@
 }
 .home :global(.text-primary),
 .home :global(.text-primary-deep) {
-  color: #4338ca;
+  color: #1d4ed8;
 }
 .home :global(.bg-primary-soft) {
-  background: #eeecff;
+  background: #eff6ff;
 }
 .home :global(.btn-primary) {
-  background: var(--indigo);
-  border-color: var(--indigo);
+  background: var(--cobalt);
+  border-color: var(--cobalt);
   border-radius: 10px;
-  box-shadow: 0 4px 12px #4f46e51a;
+  box-shadow: 0 4px 12px #2563eb1a;
   min-height: 48px;
   transition:
     transform 0.2s,
@@ -26,33 +26,33 @@
     box-shadow 0.2s;
 }
 .home :global(.btn-primary):hover {
-  background: #4338ca;
-  border-color: #4338ca;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
   transform: translateY(-2px);
-  box-shadow: 0 7px 18px #4f46e52a;
+  box-shadow: 0 7px 18px #2563eb2a;
 }
 .home :global(.btn-secondary) {
   border-radius: 10px;
   min-height: 48px;
-  border-color: #d9d9e4;
+  border-color: #e2e8f0;
   transition:
     background 0.2s,
     transform 0.2s;
 }
 .home :global(.btn-secondary):hover {
-  background: #f5f4ff;
+  background: #eff6ff;
   transform: translateY(-2px);
 }
 .home a:focus-visible,
 .home button:focus-visible {
-  outline: 3px solid var(--indigo);
+  outline: 3px solid var(--cobalt);
   outline-offset: 4px;
 }
 .home .hero {
   background:
-    radial-gradient(ellipse at 85% 15%, #efedff, transparent 48%), #fafafc;
+    radial-gradient(ellipse at 85% 15%, #eff6ff, transparent 48%), #f8fafc;
   overflow: hidden;
-  border-color: #e7e7ee;
+  border-color: #e2e8f0;
 }
 .home .heroGrid {
   padding-block: 64px;
@@ -77,12 +77,12 @@
   letter-spacing: -0.055em;
 }
 .highlight {
-  color: var(--indigo);
+  color: var(--cobalt);
 }
 .home .heroLabel {
-  background: #eeecff;
-  border-color: #dfdcff;
-  color: #4338ca;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
   font-size: 10px;
   letter-spacing: 0.065em;
   padding: 9px 12px;
@@ -106,7 +106,7 @@
   display: none;
 }
 .home .previewHeader {
-  border-bottom: 1px solid #dfdcf0;
+  border-bottom: 1px solid #e2e8f0;
   padding-bottom: 24px;
   margin-bottom: 24px;
 }
@@ -115,9 +115,9 @@
   letter-spacing: -0.035em;
 }
 .previewBadge {
-  background: #eeecff;
-  color: #3730a3;
-  border: 1px solid #dedafb;
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #dbeafe;
   border-radius: 5px;
   padding: 4px 8px;
   font-size: 10px;
@@ -128,14 +128,14 @@
   max-width: 900px;
   margin-inline: auto;
   background: #fff;
-  border: 1px solid #dcd9f6;
+  border: 1px solid #dbeafe;
   border-radius: 12px;
-  box-shadow: 0 16px 48px #312e8109;
+  box-shadow: 0 16px 48px #1e40af09;
   animation: entrance 0.7s 0.2s ease-out both;
 }
 .home :global(.match-score) {
   background: transparent;
-  color: #4338ca;
+  color: #1d4ed8;
 }
 .scoreRing {
   position: absolute;
@@ -184,7 +184,7 @@
   }
 }
 .home .sources {
-  border-color: #e7e7ee;
+  border-color: #e2e8f0;
 }
 .companySection {
   padding-block: 56px 0;
@@ -192,8 +192,8 @@
 .companyGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
-  border-top: 1px solid #e7e7ee;
-  border-left: 1px solid #e7e7ee;
+  border-top: 1px solid #e2e8f0;
+  border-left: 1px solid #e2e8f0;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -206,18 +206,18 @@
   min-height: 162px;
   padding: 20px 12px;
   background: #fff;
-  border-right: 1px solid #e7e7ee;
-  border-bottom: 1px solid #e7e7ee;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
   transition: background 0.2s;
 }
 .companyTile:hover {
-  background: #f8f7ff;
+  background: #eff6ff;
 }
 .companyTile:focus-visible {
   outline-offset: -4px !important;
 }
 .companyTile strong {
-  color: #18181b;
+  color: #0f172a;
   font-size: 13px;
   font-weight: 600;
   text-align: center;
@@ -231,15 +231,15 @@
   font-size: 11px;
 }
 .companyTile:hover > span:last-child {
-  color: #4338ca;
+  color: #1d4ed8;
 }
 .coverageStats {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   margin-top: 16px;
-  border: 1px solid #e7e7ee;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  background: #fafafc;
+  background: #f8fafc;
 }
 .coverageStats p {
   display: flex;
@@ -250,10 +250,10 @@
   padding: 16px;
 }
 .coverageStats p + p {
-  border-left: 1px solid #e7e7ee;
+  border-left: 1px solid #e2e8f0;
 }
 .coverageStats strong {
-  color: #18181b;
+  color: #0f172a;
   font-size: 30px;
   font-family: var(--font-space-grotesk), sans-serif;
   letter-spacing: -0.04em;
@@ -285,7 +285,7 @@
   }
   .coverageStats p + p {
     border-left: 0;
-    border-top: 1px solid #e7e7ee;
+    border-top: 1px solid #e2e8f0;
   }
   .coverageStats strong {
     font-size: 26px;
@@ -299,7 +299,7 @@
   letter-spacing: -0.04em;
 }
 .home :global(.job-card) {
-  border-color: #e7e7ee;
+  border-color: #e2e8f0;
   border-radius: 14px;
   box-shadow: none;
   transition:
@@ -307,16 +307,16 @@
     box-shadow 0.2s;
 }
 .home :global(.job-card):hover {
-  border-color: #c7c3f5;
+  border-color: #bfdbfe;
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px #18181b08;
+  box-shadow: 0 12px 30px #0f172a08;
 }
 .home :global(.group:hover .group-hover\:text-primary) {
-  color: #4338ca;
+  color: #1d4ed8;
 }
 .home .benefits {
-  background: #fafafc;
-  border-color: #e7e7ee;
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }
 .home .benefitsInner {
   padding-block: 80px;
@@ -325,7 +325,7 @@
   gap: 36px;
 }
 .home .benefit {
-  border-top: 1px solid #dddde8;
+  border-top: 1px solid #e2e8f0;
   padding-top: 26px;
 }
 .home .planGrid {
@@ -335,35 +335,35 @@
 .home .proPromotion {
   background: var(--public-gradient);
   color: #fff;
-  border-color: #312e81;
+  border-color: #1e40af;
   border-radius: 16px;
-  box-shadow: 0 8px 30px #4f46e509;
+  box-shadow: 0 8px 30px #2563eb09;
 }
 .browseNote {
   font-size: 12px;
   line-height: 1.8;
-  color: #5c5c6b;
+  color: #475569;
   margin-top: 20px;
 }
 .browseNote a {
-  color: #4338ca;
+  color: #1d4ed8;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 .policy {
   font-size: 11px;
-  color: #5c5c6b;
+  color: #475569;
   line-height: 1.9;
   text-align: center;
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #dedbf2;
+  border-top: 1px solid #dbeafe;
 }
 .closing {
   background:
-    radial-gradient(ellipse at 95% 0%, #eeecff, transparent 65%), #fff;
-  color: #18181b;
-  border-top: 1px solid #e7e7ee;
+    radial-gradient(ellipse at 95% 0%, #eff6ff, transparent 65%), #fff;
+  color: #0f172a;
+  border-top: 1px solid #e2e8f0;
 }
 .closing > div {
   display: flex;
@@ -373,7 +373,7 @@
   padding-block: 60px;
 }
 .eyebrow {
-  color: #4338ca;
+  color: #1d4ed8;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -392,14 +392,14 @@
   margin-top: 16px;
 }
 .closing :global(.btn-primary) {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
   flex-shrink: 0;
 }
 .closing :global(.btn-primary):hover {
-  background: #4338ca;
-  border-color: #4338ca;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
 }
 .home .proPromotion :global(.text-ink),
 .home .proPromotion :global(.text-primary-deep) {
@@ -407,28 +407,28 @@
 }
 .home .proPromotion :global(.text-slate-600),
 .home .proPromotion .policy {
-  color: #dedcf3;
+  color: #dbeafe;
 }
 .home .proPromotion :global(.rounded-full) {
-  color: #4338ca;
+  color: #1d4ed8;
 }
 .home .proPromotion .policy {
   border-color: #ffffff30;
 }
 .home .proPromotion :global(.btn-primary) {
   background: #fff;
-  color: #4338ca;
+  color: #1d4ed8;
   border-color: #fff;
 }
 .home .proPromotion :global(.btn-primary):hover {
-  background: #eeecff;
-  border-color: #eeecff;
+  background: #eff6ff;
+  border-color: #eff6ff;
 }
 .home .proPromotion :global(.btn-primary):focus-visible {
-  outline-color: #c7c2ff;
+  outline-color: #bfdbfe;
 }
 .home :global(.match-score) > span {
-  color: #4338ca;
+  color: #1d4ed8;
 }
 @keyframes entrance {
   from {

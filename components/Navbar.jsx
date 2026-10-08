@@ -65,7 +65,7 @@ export default function Navbar() {
         <Link
           href="/"
           onClick={close}
-          className="flex shrink-0 items-center gap-2.5"
+          className="flex min-h-11 min-w-11 shrink-0 items-center justify-center"
           aria-label="ReerHub home"
         >
           <Image
@@ -76,9 +76,6 @@ export default function Navbar() {
             className="rounded-lg bg-white p-0.5"
             priority
           />
-          <span className="font-display text-xl font-bold tracking-tight text-ink">
-            ReerHub
-          </span>
         </Link>
         <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
           {links.map(({ href, label }) => (
