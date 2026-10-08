@@ -1,14 +1,14 @@
 .login:global(.admin-ui.auth-shell) {
-  background: #fafafc;
-  color: #18181b;
+  background: #f8fafc;
+  color: #0f172a;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
 }
 .login :global(.auth-story) {
   min-width: 0;
   overflow-wrap: anywhere;
   background:
-    radial-gradient(ellipse at 90% 10%, #4f46e530, transparent 65%),
-    linear-gradient(135deg, #25215a, #312e81);
+    radial-gradient(ellipse at 90% 10%, #2563eb30, transparent 65%),
+    linear-gradient(135deg, #172554, #1e40af);
   color: #fff;
   border: 0;
   padding: 48px clamp(24px, 5vw, 96px);
@@ -23,7 +23,7 @@
 }
 .login :global(.brand small),
 .login :global(.auth-bottom) {
-  color: #c7c2e5;
+  color: #bfdbfe;
 }
 .login :global(.auth-story h1) {
   color: #fff;
@@ -32,15 +32,15 @@
   letter-spacing: -0.05em;
 }
 .login :global(.auth-story h1 span) {
-  color: #c7c2ff;
+  color: #bfdbfe;
 }
 .login :global(.auth-story > div > p),
 .login :global(.auth-features > div) {
-  color: #dedcf3;
+  color: #dbeafe;
 }
 .login :global(.auth-story .eyebrow),
 .login :global(.auth-features svg) {
-  color: #c7c2ff;
+  color: #bfdbfe;
 }
 .login :global(.auth-features > div) {
   gap: 14px;
@@ -55,24 +55,24 @@
   overflow-wrap: anywhere;
   max-width: 440px;
   background: #fff;
-  border: 1px solid #e4e2ef;
+  border: 1px solid #e2e8f0;
   border-radius: 24px;
   padding: 36px;
-  box-shadow: 0 20px 64px #25215a08;
+  box-shadow: 0 20px 64px #17255408;
 }
 .login :global(.auth-card > .auth-shield) {
-  background: #eeecff;
-  border-color: #dfdcff;
-  color: #4338ca;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
 }
 .login :global(.auth-card .eyebrow) {
-  color: #4338ca;
+  color: #1d4ed8;
   font-size: 11px;
   letter-spacing: 0.08em;
 }
 .login :global(.auth-card h2) {
   font-size: 34px;
-  color: #18181b;
+  color: #0f172a;
 }
 .login :global(.auth-card > p),
 .login :global(.auth-policy) {
@@ -80,22 +80,22 @@
   line-height: 1.8;
 }
 .login :global(.button) {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: #2563eb;
+  border-color: #2563eb;
   color: #fff;
   min-height: 44px;
 }
 .login :global(.button:hover) {
-  background: #4338ca;
+  background: #1d4ed8;
 }
 .login :global(button:focus-visible) {
-  outline: 3px solid #4f46e5;
+  outline: 3px solid #2563eb;
   outline-offset: 4px;
 }
 .login :global(.notice:not(.error)) {
-  background: #eeecff;
-  border-color: #dfdcff;
-  color: #3730a3;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
 }
 @media (max-width: 1023px) {
   .login:global(.admin-ui.auth-shell) {

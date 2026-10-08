@@ -1,111 +1,111 @@
-/* Approved public design system. Admin keeps the legacy base tokens for phase 2. */
+/* Approved Cobalt Blue public palette; admin has its own scoped styles. */
 .public-site {
-  --color-primary: #4f46e5;
-  --color-primary-dark: #4338ca;
-  --color-primary-deep: #3730a3;
-  --color-primary-soft: #eeecff;
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-primary-deep: #1e40af;
+  --color-primary-soft: #eff6ff;
   --color-electric: var(--color-primary);
   --color-electric-dark: var(--color-primary-dark);
   --color-electric-deep: var(--color-primary-deep);
   --color-electric-soft: var(--color-primary-soft);
-  --color-ink: #18181b;
-  --color-navy: #18181b;
-  --color-slate-900: #18181b;
-  --color-surface: #fafafc;
-  --color-brand-light: #6366f1;
-  --color-brand-purple: #4f46e5;
-  --background: #fafafc;
+  --color-ink: #0f172a;
+  --color-navy: #0f172a;
+  --color-slate-900: #0f172a;
+  --color-surface: #f8fafc;
+  --color-brand-light: #60a5fa;
+  --color-brand-purple: #2563eb;
+  --background: #f8fafc;
   --foreground: #475569;
-  --public-border: #e7e7ee;
-  --public-chrome: #25215a;
+  --public-border: #e2e8f0;
+  --public-chrome: #172554;
   --public-gradient:
-    radial-gradient(ellipse at 95% 0%, #4f46e530, transparent 60%),
-    linear-gradient(130deg, #25215a, #312e81);
-  --shadow-card: 0 2px 6px #18181b04;
-  --shadow-card-hover: 0 10px 30px #18181b0a;
-  --shadow-pop: 0 16px 48px #25215a12;
+    radial-gradient(ellipse at 95% 0%, #2563eb30, transparent 60%),
+    linear-gradient(130deg, #172554, #1e40af);
+  --shadow-card: 0 2px 6px #0f172a04;
+  --shadow-card-hover: 0 10px 30px #0f172a0a;
+  --shadow-pop: 0 16px 48px #17255412;
 }
 /* Tailwind's inline theme emits some literal colors; override those aliases
    only inside the public shell, not the shared admin stylesheet. */
 .public-site .bg-primary,
 .public-site .bg-electric {
-  background-color: #4f46e5;
+  background-color: #2563eb;
 }
 .public-site .bg-primary-soft,
 .public-site .bg-electric-soft {
-  background-color: #eeecff;
+  background-color: #eff6ff;
 }
 .public-site .bg-ink {
-  background-color: #18181b;
+  background-color: #0f172a;
 }
 .public-site .text-primary,
 .public-site .text-electric {
-  color: #4f46e5;
+  color: #2563eb;
 }
 .public-site .text-primary-deep,
 .public-site .text-electric-deep {
-  color: #3730a3;
+  color: #1e40af;
 }
 .public-site .text-ink {
-  color: #18181b;
+  color: #0f172a;
 }
 .public-site .border-primary,
 .public-site .border-electric {
-  border-color: #4f46e5;
+  border-color: #2563eb;
 }
 .public-site .border-electric-dark {
-  border-color: #4338ca;
+  border-color: #1d4ed8;
 }
 .public-site .border-electric-soft {
-  border-color: #eeecff;
+  border-color: #eff6ff;
 }
 .public-site .border-primary\/15 {
-  border-color: #4f46e526;
+  border-color: #2563eb26;
 }
 .public-site .border-primary\/20 {
-  border-color: #4f46e533;
+  border-color: #2563eb33;
 }
 .public-site .hover\:bg-electric-dark:hover {
-  background-color: #4338ca;
+  background-color: #1d4ed8;
 }
 .public-site .hover\:bg-electric-soft:hover {
-  background-color: #eeecff;
+  background-color: #eff6ff;
 }
 .public-site .active\:bg-electric-deep:active {
-  background-color: #3730a3;
+  background-color: #1e40af;
 }
 .public-site .hover\:text-primary:hover,
 .public-site .hover\:text-electric:hover {
-  color: #4f46e5;
+  color: #2563eb;
 }
 .public-site .hover\:text-electric-dark:hover {
-  color: #4338ca;
+  color: #1d4ed8;
 }
 .public-site .hover\:border-primary:hover,
 .public-site .hover\:border-electric:hover {
-  border-color: #4f46e5;
+  border-color: #2563eb;
 }
 .public-site .hover\:border-primary\/40:hover {
-  border-color: #4f46e566;
+  border-color: #2563eb66;
 }
 .public-site .focus\:border-electric-dark:focus {
-  border-color: #4338ca;
+  border-color: #1d4ed8;
 }
 .public-site .focus\:ring-electric-soft:focus {
-  --tw-ring-color: #eeecff;
+  --tw-ring-color: #eff6ff;
 }
 .public-site .ring-electric\/40 {
-  --tw-ring-color: #4f46e566;
+  --tw-ring-color: #2563eb66;
 }
 .public-site .ring-electric-dark\/10 {
-  --tw-ring-color: #4338ca1a;
+  --tw-ring-color: #1d4ed81a;
 }
 .public-site .accent-primary {
-  accent-color: #4f46e5;
+  accent-color: #2563eb;
 }
 .public-site ::selection {
-  background: #eeecff;
-  color: #3730a3;
+  background: #eff6ff;
+  color: #1e40af;
 }
 .public-site .page-container {
   width: 100%;
@@ -137,32 +137,32 @@
   }
 }
 .public-site :where(a, button, input, select, textarea, summary):focus-visible {
-  outline: 3px solid #4f46e5;
+  outline: 3px solid #2563eb;
   outline-offset: 3px;
 }
 .public-site :where(h1, h2, h3) {
   text-wrap: balance;
 }
 .public-site .text-slate-400 {
-  color: #727284;
+  color: #64748b;
 }
 .public-site .nav-link {
   font-weight: 500;
   border-radius: 8px;
 }
 .public-site .nav-link:hover {
-  color: #4338ca;
-  background: #f6f5ff;
+  color: #1d4ed8;
+  background: #eff6ff;
 }
 .public-site .nav-link.is-active {
-  color: #3730a3;
-  background: #eeecff;
+  color: #1e40af;
+  background: #eff6ff;
 }
 .public-site .btn-primary {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: #2563eb;
+  border-color: #2563eb;
   border-radius: 10px;
-  box-shadow: 0 3px 8px #4f46e518;
+  box-shadow: 0 3px 8px #2563eb18;
   min-height: 46px;
   transition:
     background 0.18s,
@@ -170,10 +170,10 @@
     box-shadow 0.18s;
 }
 .public-site .btn-primary:hover {
-  background: #4338ca;
-  border-color: #4338ca;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
   transform: translateY(-1px);
-  box-shadow: 0 5px 14px #4f46e522;
+  box-shadow: 0 5px 14px #2563eb22;
 }
 .public-site .btn-primary:active {
   transform: translateY(0);
@@ -181,13 +181,13 @@
 .public-site .btn-secondary {
   background: #fff;
   color: #334155;
-  border-color: #d8d8e3;
+  border-color: #e2e8f0;
   border-radius: 10px;
   min-height: 46px;
 }
 .public-site .btn-secondary:hover {
-  background: #f6f5ff;
-  border-color: #c9c5ed;
+  background: #eff6ff;
+  border-color: #bfdbfe;
 }
 .public-site button:disabled {
   cursor: not-allowed;
@@ -206,12 +206,12 @@
   gap: 12px;
 }
 .public-site .account-link:hover {
-  color: #4338ca;
-  background: #f6f5ff;
+  color: #1d4ed8;
+  background: #eff6ff;
 }
 .public-site .page-heading {
   background:
-    radial-gradient(ellipse at 95% 0%, #eeecff, transparent 60%), #fff;
+    radial-gradient(ellipse at 95% 0%, #eff6ff, transparent 60%), #fff;
   border-color: var(--public-border);
 }
 .public-site .page-heading h1 {
@@ -221,17 +221,17 @@
 .public-site .profile-form {
   border-color: var(--public-border);
   border-radius: 16px;
-  box-shadow: 0 2px 6px #18181b03;
+  box-shadow: 0 2px 6px #0f172a03;
 }
 .public-site .discovery-prompt {
-  background: #f8f7ff;
-  border-color: #d8d4f9;
+  background: #eff6ff;
+  border-color: #bfdbfe;
   border-radius: 16px;
 }
 .public-site .job-card {
   border-color: var(--public-border);
   border-radius: 14px;
-  box-shadow: 0 2px 6px #18181b03;
+  box-shadow: 0 2px 6px #0f172a03;
   transition:
     transform 0.2s,
     border-color 0.2s,
@@ -239,7 +239,7 @@
 }
 .public-site .job-card:hover {
   transform: translateY(-3px);
-  border-color: #c9c5ed;
+  border-color: #bfdbfe;
   box-shadow: var(--shadow-card-hover);
 }
 .public-site .job-card-link {
@@ -249,16 +249,16 @@
   letter-spacing: -0.025em;
 }
 .public-site .job-save {
-  background: #fafafc;
+  background: #f8fafc;
   border-color: var(--public-border);
 }
 .public-site .job-save[aria-pressed="true"] {
-  color: #3730a3;
-  background: #eeecff;
-  border-color: #c9c5ed;
+  color: #1e40af;
+  background: #eff6ff;
+  border-color: #bfdbfe;
 }
 .public-site .workspace-tabs {
-  background: #f0eff6;
+  background: #f1f5f9;
   border: 1px solid var(--public-border);
   border-radius: 10px;
 }
@@ -266,67 +266,67 @@
   border-radius: 7px;
 }
 .public-site .workspace-tabs button[aria-selected="true"] {
-  color: #3730a3;
+  color: #1e40af;
   background: #fff;
-  box-shadow: 0 2px 6px #18181b06;
+  box-shadow: 0 2px 6px #0f172a06;
 }
 .public-site .match-score {
-  background: conic-gradient(#4f46e5 calc(var(--score) * 1%), #eeecff 0);
+  background: conic-gradient(#2563eb calc(var(--score) * 1%), #eff6ff 0);
 }
 .public-site .match-score > span {
-  color: #3730a3;
+  color: #1e40af;
 }
 .public-site
   :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
-  border-color: #d8d8e3;
+  border-color: #e2e8f0;
   border-radius: 10px;
-  accent-color: #4f46e5;
+  accent-color: #2563eb;
 }
 .public-site :where(input, textarea)::placeholder {
-  color: #727284;
+  color: #64748b;
 }
 .public-site :where(input, select, textarea):focus {
-  border-color: #4f46e5;
+  border-color: #2563eb;
 }
 .public-site :where(input[type="checkbox"], input[type="radio"]) {
-  accent-color: #4f46e5;
+  accent-color: #2563eb;
 }
 .public-site .search-filters {
-  box-shadow: 0 4px 18px #18181b04;
+  box-shadow: 0 4px 18px #0f172a04;
 }
 .public-site .membership-card {
   background: var(--public-gradient);
-  border: 1px solid #312e81;
+  border: 1px solid #1e40af;
   border-radius: 16px;
 }
 .public-site .membership-card :where(.text-blue-200, .text-slate-300) {
-  color: #dedcf3;
+  color: #dbeafe;
 }
 .public-site .membership-card :where(a, button):focus-visible {
-  outline-color: #c7c2ff;
+  outline-color: #bfdbfe;
 }
 .public-site .upgrade-panel {
-  background: #f6f5ff;
-  border-color: #d8d4f9;
+  background: #eff6ff;
+  border-color: #bfdbfe;
   border-radius: 16px;
 }
 .public-site .pro-badge {
-  color: #3730a3;
-  background: #eeecff;
-  border: 1px solid #dedafb;
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
   padding: 4px 8px;
   font-size: 10px;
   letter-spacing: 0.055em;
 }
 .public-site .recommendation-card {
-  border-left: 3px solid #d8d4f9;
+  border-left: 3px solid #bfdbfe;
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
 }
 .public-site .recommendation-card:hover {
-  border-left-color: #4f46e5;
-  box-shadow: 0 8px 24px #18181b06;
+  border-left-color: #2563eb;
+  box-shadow: 0 8px 24px #0f172a06;
 }
 .public-site .company-card {
   border-color: var(--public-border);
@@ -343,21 +343,21 @@
   min-height: 44px;
 }
 .public-site .site-footer nav a:hover {
-  color: #4338ca;
+  color: #1d4ed8;
 }
 .public-site .auth-shell {
-  background: radial-gradient(ellipse at 0% 10%, #eeecff, transparent 65%);
+  background: radial-gradient(ellipse at 0% 10%, #eff6ff, transparent 65%);
   border-radius: 24px;
 }
 .public-site .auth-card {
-  box-shadow: 0 18px 50px #25215a07;
-  border-color: #dedce9;
+  box-shadow: 0 18px 50px #17255407;
+  border-color: #e2e8f0;
 }
 .public-site .legal-page {
   background: #fff;
   border: 1px solid var(--public-border);
   border-radius: 16px;
-  box-shadow: 0 4px 20px #18181b03;
+  box-shadow: 0 4px 20px #0f172a03;
   padding: clamp(24px, 5vw, 48px);
   margin-block: 40px;
 }
@@ -365,24 +365,24 @@
   letter-spacing: -0.045em;
 }
 .public-site .legal-page section + section {
-  border-top: 1px solid #f0eff6;
+  border-top: 1px solid #f1f5f9;
   padding-top: 24px;
 }
 .public-site .skip-link {
-  background: #3730a3;
+  background: #1e40af;
   color: #fff;
 }
 .public-site .site-nav {
   background: var(--public-chrome);
   border-color: #ffffff14;
-  box-shadow: 0 5px 24px #25215a12;
-  color: #dedcf3;
+  box-shadow: 0 5px 24px #17255412;
+  color: #dbeafe;
 }
 .public-site .site-nav .text-ink {
   color: #fff;
 }
 .public-site .site-nav .nav-link {
-  color: #dedcf3;
+  color: #dbeafe;
   padding-inline: 15px;
 }
 .public-site .site-nav .nav-link:hover {
@@ -392,12 +392,12 @@
 .public-site .site-nav .nav-link.is-active {
   background: #ffffff12;
   color: #fff;
-  box-shadow: inset 0 -2px #a5a0ff;
+  box-shadow: inset 0 -2px #93c5fd;
 }
 .public-site .site-nav .btn-primary {
-  background: #eeecff;
-  border-color: #eeecff;
-  color: #3730a3;
+  background: #eff6ff;
+  border-color: #eff6ff;
+  color: #1e40af;
   box-shadow: none;
 }
 .public-site .site-nav .btn-primary:hover {
@@ -407,14 +407,14 @@
 .public-site .site-nav .account-trigger {
   background: #ffffff08;
   border-color: #ffffff26;
-  color: #dedcf3;
+  color: #dbeafe;
 }
 .public-site .site-nav .account-popover {
   background: #fff;
   color: #475569;
 }
 .public-site .site-nav .account-popover .text-ink {
-  color: #18181b;
+  color: #0f172a;
 }
 .public-site .site-nav .mobile-nav-panel {
   background: var(--public-chrome);
@@ -424,45 +424,32 @@
   border-color: #ffffff26;
 }
 .public-site .site-nav :where(a, button):focus-visible {
-  outline-color: #c7c2ff;
+  outline-color: #bfdbfe;
 }
 .public-site .site-footer {
   background: var(--public-chrome);
   border-color: #ffffff14;
-  color: #bdb9d1;
+  color: #bfdbfe;
   overflow: hidden;
 }
 .public-site .site-footer .text-ink {
   color: #fff;
 }
 .public-site .site-footer .text-slate-600 {
-  color: #bdb9d1;
+  color: #bfdbfe;
 }
 .public-site .site-footer .text-teal-800 {
-  color: #c7c2ff;
+  color: #bfdbfe;
 }
 .public-site .site-footer nav a:hover {
   color: #fff;
 }
 .public-site .site-footer :where(a, button):focus-visible {
-  outline-color: #c7c2ff;
-}
-.public-site .footer-wordmark {
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-size: clamp(64px, 17vw, 210px);
-  font-weight: 700;
-  letter-spacing: -0.065em;
-  line-height: 1.1;
-  text-align: center;
-  color: transparent;
-  -webkit-text-stroke: 1px #8076c7;
-  mask-image: linear-gradient(#000 15%, #0008 65%, transparent 100%);
-  padding-block: 20px 28px;
-  user-select: none;
+  outline-color: #bfdbfe;
 }
 .public-site .footer-bottom {
   border-top: 1px solid #ffffff14;
-  color: #bdb9d1;
+  color: #bfdbfe;
   padding-block: 26px;
   align-items: center;
 }
@@ -481,7 +468,7 @@
   box-shadow: var(--shadow-card);
 }
 .public-site .official-apply-panel {
-  border-top: 3px solid #4f46e5;
+  border-top: 3px solid #2563eb;
 }
 .public-site .profile-checklist {
   display: flex;
@@ -494,16 +481,16 @@
   align-items: center;
   gap: 6px;
   padding: 7px 10px;
-  border: 1px solid #dedce9;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   background: #fff;
   color: #475569;
   font-size: 12px;
 }
 .public-site .profile-checklist li[data-complete="true"] {
-  background: #eeecff;
-  color: #3730a3;
-  border-color: #d8d4f9;
+  background: #eff6ff;
+  color: #1e40af;
+  border-color: #bfdbfe;
 }
 .public-site .match-actions {
   flex-wrap: wrap;
@@ -514,7 +501,7 @@
 .public-site .match-tier-count {
   border-radius: 5px;
   padding: 2px 5px;
-  background: #f0eff6;
+  background: #f1f5f9;
   font-size: 11px;
   color: #475569;
 }

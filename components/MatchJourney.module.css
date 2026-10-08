@@ -12,18 +12,18 @@
   flex-shrink: 0;
   font-size: 11px;
   font-weight: 600;
-  color: #4338ca;
+  color: #1d4ed8;
   padding: 0 8px;
   border-radius: 6px;
 }
 .pause:hover {
-  background: #eeecff;
+  background: #eff6ff;
 }
 .stage {
   position: relative;
   height: 340px;
   border-radius: 0;
-  background: radial-gradient(ellipse at 50% 50%, #eeecffb3, transparent 60%);
+  background: radial-gradient(ellipse at 50% 50%, #eff6ffb3, transparent 60%);
   overflow: hidden;
 }
 .stepLabels {
@@ -38,7 +38,7 @@
 }
 .stepLabels b {
   margin-right: 8px;
-  color: #4338ca;
+  color: #1d4ed8;
   font-size: 10px;
 }
 .connections {
@@ -60,12 +60,12 @@
   justify-items: center;
 }
 .source {
-  filter: drop-shadow(0 6px 8px #312e810a);
+  filter: drop-shadow(0 6px 8px #1e40af0a);
 }
 .sourceLabel {
   font-size: 10px;
   background: #fff;
-  border: 1px solid #e7e7ee;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
   padding: 6px;
   color: #475569;
@@ -83,11 +83,11 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background: #4f46e5;
+  background: #2563eb;
   color: #fff;
   border-radius: 18px;
-  border: 5px solid #eeecff;
-  box-shadow: 0 12px 36px #4f46e51a;
+  border: 5px solid #eff6ff;
+  box-shadow: 0 12px 36px #2563eb1a;
 }
 .engine span {
   font-size: 14px;
@@ -95,7 +95,7 @@
 }
 .engine small {
   font-size: 11px;
-  color: #eeecff;
+  color: #eff6ff;
 }
 .shortlist {
   position: absolute;
@@ -109,13 +109,13 @@
   gap: 6px;
   padding: 28px 16px;
   background: #fff;
-  border: 1px solid #d8d4f9;
+  border: 1px solid #bfdbfe;
   border-radius: 12px;
-  color: #3730a3;
+  color: #1e40af;
   box-shadow:
-    0 12px 32px #4f46e50a,
-    0 8px 0 -3px #eeecff,
-    0 16px 0 -6px #dfdcff;
+    0 12px 32px #2563eb0a,
+    0 8px 0 -3px #eff6ff,
+    0 16px 0 -6px #bfdbfe;
 }
 .shortlist strong {
   font-size: 15px;
@@ -140,12 +140,12 @@
   align-items: center;
   text-align: left;
   padding: 10px 0;
-  border-top: 1px solid #eeecff;
+  border-top: 1px solid #eff6ff;
   animation: rank-confirm 8s ease-in-out var(--row-delay) infinite;
 }
 .rankedRow b {
   font-size: 12px;
-  color: #18181b;
+  color: #0f172a;
   overflow-wrap: anywhere;
 }
 .rankedRow strong {
