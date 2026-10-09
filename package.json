@@ -16,6 +16,8 @@
     "test:profile": "node --test scripts/profile-editor.test.mjs",
     "test:dashboard": "node --test scripts/dashboard.test.mjs",
     "test:operations": "node --test scripts/admin-operations.test.mjs",
+    "test:performance": "node --test scripts/performance.test.mjs scripts/session-performance.test.mjs",
+    "test:network:fixtures": "node scripts/network-fixtures.mjs",
     "prepare": "husky"
   },
   "dependencies": {

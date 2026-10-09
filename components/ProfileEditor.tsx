@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import Icon from "@/components/ui/Icon";
 import { useAuth } from "@/components/AuthProvider";
 import { updateMe, type AuthUser } from "@/lib/auth";
-import { API_BASE } from "@/lib/reerhub";
+import { readProfileOptions } from "@/lib/profile-options";
 import ProfileOptionPicker from "@/components/ProfileOptionPicker";
 import { profileSignals } from "@/lib/profile-readiness";
 import {
@@ -34,13 +34,10 @@ export default function ProfileEditor({ user }: { user: AuthUser }) {
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${API_BASE}/profile-options`, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("Could not load profile choices.");
-        const json = await response.json();
-        if (!json.data?.tracks || !json.data?.skills || !json.data?.cities)
-          throw new Error("Profile choices are unavailable.");
-        setOptions(json.data);
+    readProfileOptions()
+      .then((options) => {
+        if (controller.signal.aborted) return;
+        setOptions(options);
         setLoadError("");
       })
       .catch((error) => {

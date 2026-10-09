@@ -1,4 +1,5 @@
 import { API_BASE, type Job } from "@/lib/reerhub";
+import { sharedRead } from "./read-sharing";
 
 export type AuthUser = {
   id: string;
@@ -57,6 +58,7 @@ async function ensureCsrf(): Promise<string | null> {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const revision = sessionRevision;
   const res = await doFetch(path, init);
   if (res.status === 401 && !path.startsWith("/auth/")) {
     // Access cookie may have expired while the refresh cookie is still
@@ -64,8 +66,19 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     // NOTE: the refresh call itself is a POST and always needs a CSRF
     // token, even when the original request was a GET (e.g. GET /users/me
     // on page load — the most common refresh trigger).
+    if (revision !== sessionRevision || (await refreshSession())) {
+      const retry = await doFetch(path, init);
+      return readBody<T>(retry);
+    }
+  }
+  return readBody<T>(res);
+}
+let refreshing: Promise<boolean> | undefined;
+let sessionRevision = 0;
+async function refreshSession() {
+  return (refreshing ||= (async () => {
     const csrf = await ensureCsrf();
-    const refreshed = await fetch(`${API_BASE}/auth/refresh`, {
+    const result = await fetch(`${API_BASE}/auth/refresh`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -73,12 +86,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
         ...(csrf ? { "x-csrf-token": csrf } : {}),
       },
     });
-    if (refreshed.ok) {
-      const retry = await doFetch(path, init);
-      return readBody<T>(retry);
-    }
-  }
-  return readBody<T>(res);
+    if (result.ok) sessionRevision += 1;
+    return result.ok;
+  })().finally(() => {
+    refreshing = undefined;
+  }));
 }
 
 async function doFetch(path: string, init?: RequestInit) {
@@ -147,7 +159,8 @@ export const googleLogin = (idToken: string) =>
 export const logout = () =>
   request<{ loggedOut: boolean }>("/auth/logout", { method: "POST" });
 
-export const getMe = () => request<AuthUser>("/users/me");
+export const getMe = () =>
+  sharedRead("me", () => request<AuthUser | null>("/users/session"));
 
 export type ProfileUpdate = Omit<
   Partial<AuthUser["profile"]>,
@@ -182,11 +195,17 @@ export const verifyEmail = (token: string) =>
   });
 
 export const savedIds = () => request<string[]>("/users/me/saved/ids");
-export const getSavedJobs = async (page = 1) => {
-  const res = await doFetch(`/users/me/saved?page=${page}&limit=21`);
+export const getSavedJobs = async (page = 1, signal?: AbortSignal) => {
+  const revision = sessionRevision;
+  const res = await doFetch(`/users/me/saved?page=${page}&limit=21`, {
+    signal,
+  });
   if (res.status === 401) {
-    await getMe();
-    const retry = await doFetch(`/users/me/saved?page=${page}&limit=21`);
+    if (revision === sessionRevision && !(await refreshSession()))
+      throw new Error("Please sign in again");
+    const retry = await doFetch(`/users/me/saved?page=${page}&limit=21`, {
+      signal,
+    });
     if (!retry.ok) throw new Error("Could not load saved roles");
     return retry.json() as Promise<{
       data: Job[];
@@ -237,7 +256,7 @@ export type Recommendation = {
   };
 };
 
-export const getRecommendations = (minScore = 75) =>
+export const getRecommendations = (minScore = 75, signal?: AbortSignal) =>
   request<{
     profileCompletion: number;
     profileReady: boolean;
@@ -246,7 +265,7 @@ export const getRecommendations = (minScore = 75) =>
     highMatchScore: number;
     matchCounts: Record<"90" | "75" | "50" | "25" | "all", number>;
     jobs: Recommendation[];
-  }>(`/recommendations?minScore=${minScore}&limit=50`);
+  }>(`/recommendations?minScore=${minScore}&limit=50`, { signal });
 
 export const setRecommendationFeedback = (jobId: string, feedback: string) =>
   request<{ feedback: string }>(`/recommendations/${jobId}/feedback`, {
@@ -273,7 +292,8 @@ export type BillingState = {
     }[];
   };
 };
-export const getBilling = () => request<BillingState>("/billing");
+export const getBilling = () =>
+  sharedRead("billing", () => request<BillingState>("/billing"));
 export const beginCheckout = (planId = "pro-monthly") =>
   request<{
     subscription: BillingState["subscription"];

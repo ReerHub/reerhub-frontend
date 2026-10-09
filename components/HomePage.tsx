@@ -1,58 +1,19 @@
-"use client";
 import Link from "next/link";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { useAuth } from "@/components/AuthProvider";
+import { type CSSProperties } from "react";
+import { HomeAccountAction, HomeGuestNote } from "./HomeAccountAction";
 import JobCard from "@/components/JobCard";
 import Icon from "@/components/ui/Icon";
 import CompanyLogo from "@/components/CompanyLogo";
 import MatchJourney from "@/components/MatchJourney";
 import { topHiringCompanies } from "@/lib/home-companies";
 import styles from "./HomePage.module.css";
-import {
-  listCompanies,
-  listJobsWithMeta,
-  TECH_TRACKS,
-  type Company,
-  type Job,
-} from "@/lib/reerhub";
-export default function HomePage() {
-  const { user } = useAuth();
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [error, setError] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const scoreRef = useRef<HTMLDivElement>(null);
-  const [scoreVisible, setScoreVisible] = useState(false);
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setScoreVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 },
-    );
-    if (scoreRef.current) observer.observe(scoreRef.current);
-    return () => observer.disconnect();
-  }, []);
-  useEffect(() => {
-    let cancelled = false;
-    Promise.all([listJobsWithMeta({ limit: 3 }), listCompanies()])
-      .then(([data, companies]) => {
-        if (cancelled) return;
-        setJobs(data.jobs);
-        setCompanies(companies);
-        setLoaded(true);
-      })
-      .catch(() => {
-        if (!cancelled) setError(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-  const total = companies.reduce((sum, c) => sum + (c.activeJobs || 0), 0);
+import { TECH_TRACKS, type HomeSnapshot } from "@/lib/reerhub";
+export default function HomePage({ data }: { data: HomeSnapshot | null }) {
+  const jobs = data?.jobs || [],
+    companies = data?.companies || [];
+  const error = !data,
+    loaded = !!data;
+  const total = data?.totalJobs || 0;
   const featuredCompanies = topHiringCompanies(companies);
   return (
     <div className={styles.home}>
@@ -81,12 +42,10 @@ export default function HomePage() {
                 Discover jobs
                 <Icon name="arrow" className="h-4 w-4" />
               </Link>
-              <Link
-                href={user ? "/dashboard" : "/login?next=/dashboard"}
+              <HomeAccountAction
                 className="btn-secondary"
-              >
-                {user ? "Open my dashboard" : "Start for free"}
-              </Link>
+                guest="Start for free"
+              />
             </div>
             <p className="mt-4 text-xs leading-6 text-slate-600">
               Public job details. Official Apply links. No middlemen.
@@ -121,8 +80,7 @@ export default function HomePage() {
                   </div>
                   <div
                     className="match-score"
-                    ref={scoreRef}
-                    data-visible={scoreVisible}
+                    data-visible={true}
                     style={{ "--score": 86 } as CSSProperties}
                   >
                     <svg
@@ -226,7 +184,7 @@ export default function HomePage() {
         <div className="page-container flex flex-wrap items-center justify-between gap-5 py-6">
           <p className="text-sm font-medium text-slate-600">
             {total > 0
-              ? `${total} open tech roles across ${companies.length} companies`
+              ? `${total} open tech roles across ${data?.totalCompanies || 0} companies`
               : "Tech roles from official company hiring sources"}
           </p>
           <div className="flex flex-wrap gap-5 text-xs font-semibold text-slate-600">
@@ -279,6 +237,7 @@ export default function HomePage() {
               <Link
                 key={company._id}
                 href={`/companies/${company.slug}`}
+                prefetch={false}
                 className={styles.companyTile}
               >
                 <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
@@ -314,7 +273,7 @@ export default function HomePage() {
             <span>current openings</span>
           </p>
           <p>
-            <strong>{loaded ? companies.length : "—"}</strong>
+            <strong>{loaded ? data?.totalCompanies : "—"}</strong>
             <span>companies in our directory</span>
           </p>
           <p>
@@ -386,13 +345,13 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
-        {!user && (
+        <HomeGuestNote>
           <p className={styles.browseNote}>
             Preview openings freely.{" "}
             <Link href="/login?next=/jobs">Create a free account</Link> for full
             browsing and saved jobs.
           </p>
-        )}
+        </HomeGuestNote>
       </section>
       <section
         id="why"
@@ -470,13 +429,10 @@ export default function HomePage() {
                 </p>
               ))}
             </div>
-            <Link
-              href={user ? "/dashboard" : "/login?next=/dashboard"}
+            <HomeAccountAction
               className="btn-secondary mt-8"
-            >
-              {user ? "Open my dashboard" : "Start your free search"}
-              <Icon name="arrow" />
-            </Link>
+              guest="Start your free search"
+            />
           </div>
           <div
             className={`${styles.proPromotion} rounded-3xl border p-7 sm:p-9`}
@@ -500,15 +456,11 @@ export default function HomePage() {
               profile. Your default shortlist starts at 75%+, with broader
               profile-ranked tiers available when you want to explore.
             </p>
-            <Link
-              href={user?.membership?.isPro ? "/dashboard" : "/billing"}
+            <HomeAccountAction
+              pro
               className="btn-primary mt-6 w-full"
-            >
-              {user?.membership?.isPro
-                ? "Open my Pro dashboard"
-                : "Explore Pro plans"}
-              <Icon name="arrow" className="h-4 w-4" />
-            </Link>
+              guest="Explore Pro plans"
+            />
             <p className="mt-4 text-center text-xs text-slate-600">
               Also available: ₹49/week or ₹299/quarter.
             </p>

@@ -10,7 +10,8 @@ import MembershipStatus from "@/components/MembershipStatus";
 import RecommendationPanel from "@/components/RecommendationPanel";
 import UpgradePanel from "@/components/UpgradePanel";
 import Icon from "@/components/ui/Icon";
-import { getSavedJobs, saveJob, savedIds, unsaveJob } from "@/lib/auth";
+import { getSavedJobs } from "@/lib/auth";
+import { useSavedJobs, toggleSaved } from "@/lib/saved-store";
 import { type Job } from "@/lib/reerhub";
 import { isPro } from "@/lib/membership";
 import DashboardGuidance from "@/components/DashboardGuidance";
@@ -33,7 +34,8 @@ function SavedRoles({
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let active = true;
-    getSavedJobs(page)
+    const controller = new AbortController();
+    getSavedJobs(page, controller.signal)
       .then((data) => {
         if (active) {
           const totalPages = data.meta?.totalPages || 1;
@@ -54,6 +56,7 @@ function SavedRoles({
       });
     return () => {
       active = false;
+      controller.abort();
     };
   }, [page, attempt, ids]);
   if (loading)
@@ -164,23 +167,13 @@ function Dashboard() {
   const params = useSearchParams();
   const router = useRouter();
   const pro = isPro(user);
-  const [ids, setIds] = useState<string[]>([]);
+  const ids = useSavedJobs(user?.id);
   const pendingSaves = useRef(new Set<string>());
   const mounted = useRef(false);
   const [savingIds, setSavingIds] = useState<string[]>([]);
   useEffect(() => {
-    let active = true;
     mounted.current = true;
-    if (user)
-      savedIds()
-        .then((value) => {
-          if (active) setIds(value);
-        })
-        .catch(() => {
-          if (active) toast.error("Saved roles could not load");
-        });
     return () => {
-      active = false;
       mounted.current = false;
     };
   }, [user]);
@@ -189,12 +182,8 @@ function Dashboard() {
     pendingSaves.current.add(id);
     setSavingIds([...pendingSaves.current]);
     try {
-      if (saved) await saveJob(id);
-      else await unsaveJob(id);
+      await toggleSaved(id, saved);
       if (!mounted.current) return;
-      setIds((prev) =>
-        saved ? [...new Set([...prev, id])] : prev.filter((x) => x !== id),
-      );
       toast.success(
         saved ? "Added to your shortlist" : "Removed from your shortlist",
       );

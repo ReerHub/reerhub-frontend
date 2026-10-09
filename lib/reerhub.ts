@@ -2,6 +2,7 @@
 // so the backend URL never ships in client JS). Server components/SSR use
 // server-only API_URL directly.
 const SERVER_API_BASE = process.env.API_URL || "http://localhost:8000/api/v1";
+import { sharedRead } from "./read-sharing";
 
 export const API_BASE =
   typeof window === "undefined" ? SERVER_API_BASE : "/api/v1";
@@ -98,6 +99,7 @@ export class NotFoundError extends Error {
 
 async function get<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
+    cache: "no-store",
     ...init,
     headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
   });
@@ -109,6 +111,7 @@ async function get<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const listJobsWithMeta = async (
   params: Record<string, string | number> = {},
+  signal?: AbortSignal,
 ): Promise<{ jobs: Job[]; total: number; totalPages: number }> => {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
@@ -117,6 +120,7 @@ export const listJobsWithMeta = async (
   const query = search.toString();
   const res = await fetch(`${API_BASE}/jobs${query ? `?${query}` : ""}`, {
     cache: "no-store",
+    signal,
   });
   if (!res.ok) throw new Error(`API ${res.status}: /jobs`);
   const json = await res.json();
@@ -130,7 +134,39 @@ export const listJobsWithMeta = async (
 export const getJob = (jobId: string, init?: RequestInit) =>
   get<Job>(`/jobs/${jobId}`, init);
 
-export const listCompanies = () => get<Company[]>("/companies");
+export const listCompanies = () =>
+  typeof window === "undefined"
+    ? get<Company[]>("/companies")
+    : sharedRead("companies", () => get<Company[]>("/companies"));
+export type HomeSnapshot = {
+  jobs: Job[];
+  companies: Company[];
+  totalCompanies: number;
+  totalJobs: number;
+  snapshotAt: string;
+};
+export const getHome = () => get<HomeSnapshot>("/home");
+export type CompanyPage = {
+  summary?: { totalCompanies: number; totalJobs: number };
+  data: Company[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+export const listCompanyPage = async (
+  params: Record<string, string | number>,
+  signal?: AbortSignal,
+): Promise<CompanyPage> => {
+  const res = await fetch(
+    `${API_BASE}/companies?${new URLSearchParams(Object.entries(params).map(([key, value]) => [key, String(value)]))}`,
+    { cache: "no-store", signal },
+  );
+  if (!res.ok) throw new Error("Could not load companies");
+  return res.json();
+};
 
 export const getCompany = (slug: string) => get<Company>(`/companies/${slug}`);
 

@@ -34,6 +34,7 @@ let profileMode = "partial";
 let dashboardMode = "populated";
 let fixtureDelay = 0;
 let fixtureRequests = { recommendations: 0, saves: 0, feedback: 0 };
+const performanceMetrics = [];
 const company = {
   _id: "111111111111111111111111",
   name: "Fixture Labs",
@@ -75,6 +76,10 @@ const job = {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://127.0.0.1:8801");
   const path = url.pathname.replace("/api/v1", "");
+  if (!path.startsWith("/fixture")) {
+    fixtureRequests.reads ||= {};
+    fixtureRequests.reads[path] = (fixtureRequests.reads[path] || 0) + 1;
+  }
   const state =
     /fixtureState=([^;]+)/.exec(req.headers.cookie || "")?.[1] || "anonymous";
   if (path === "/fixture") {
@@ -168,6 +173,10 @@ const server = http.createServer(async (req, res) => {
       JSON.stringify({ success: status < 400, data: value, pagination: meta }),
     );
   };
+  if (path === "/fixture-metrics") {
+    if (req.method === "POST") performanceMetrics.push(data);
+    return json(performanceMetrics);
+  }
   // Explicit admin fixture entry point; never talks to a real database or Google.
   if (path === "/fixture-admin") {
     const mode = url.searchParams.get("state") || "populated";
@@ -509,7 +518,8 @@ const server = http.createServer(async (req, res) => {
   }
   if (path === "/auth/csrf") return json({ csrfToken: "fixture-csrf" });
   if (path === "/profile-options") return json(PROFILE_OPTIONS);
-  if (path === "/users/me") {
+  if (path === "/users/me" || path === "/users/session") {
+    if (path === "/users/session" && state === "anonymous") return json(null);
     if (state === "anonymous") return json(null, 401);
     if (req.method === "PATCH") {
       if (profileMode === "error") return json(null, 503);
@@ -615,7 +625,42 @@ const server = http.createServer(async (req, res) => {
         : [...new Set([...saved, jobId])];
     return json({ saved: saved.length > 0 });
   }
-  if (path === "/companies") return json([company]);
+  if (path === "/home")
+    return json({
+      jobs: [job],
+      companies: [company],
+      totalCompanies: 1,
+      totalJobs: 1,
+      snapshotAt: new Date().toISOString(),
+    });
+  if (path === "/companies") {
+    if (dashboardMode === "error") return json(null, 503);
+    const catalog =
+      dashboardMode === "company-pages"
+        ? Array.from({ length: 101 }, (_, i) => ({
+            ...company,
+            _id: String(i + 500).padStart(24, "0"),
+            name: `Fixture Company ${String(i + 1).padStart(3, "0")}`,
+            slug: `fixture-company-${i + 1}`,
+            activeJobs: i % 2 ? 0 : 3,
+          }))
+        : [company];
+    if (!url.searchParams.has("page")) return json(catalog);
+    const q = (url.searchParams.get("q") || "").toLowerCase();
+    const filtered = catalog.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) &&
+        (url.searchParams.get("hiring") !== "true" || c.activeJobs > 0),
+    );
+    const page = Number(url.searchParams.get("page")) || 1,
+      limit = Number(url.searchParams.get("limit")) || 50;
+    return json(filtered.slice((page - 1) * limit, page * limit), 200, {
+      page,
+      limit,
+      total: filtered.length,
+      totalPages: Math.ceil(filtered.length / limit),
+    });
+  }
   if (path === "/companies/fixture-labs") return json(company);
   if (path === "/jobs/sitemap") return json([job]);
   if (path === `/jobs/${job._id}`) return json(job);
@@ -626,12 +671,14 @@ const server = http.createServer(async (req, res) => {
   return json(null, 404);
 });
 server.listen(Number(apiPort), "127.0.0.1", () => {
+  if (process.env.FIXTURE_API_ONLY === "1") return;
   const child = spawn(
     process.execPath,
     [
       "node_modules/next/dist/bin/next",
-      "dev",
-      "--webpack",
+      ...(process.env.FIXTURE_PRODUCTION === "1"
+        ? ["start"]
+        : ["dev", "--webpack"]),
       "--port",
       frontendPort,
       "--hostname",

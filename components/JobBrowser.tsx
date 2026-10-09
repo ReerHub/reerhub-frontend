@@ -1,12 +1,12 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import JobCard from "@/components/JobCard";
 import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 import { useAuth } from "@/components/AuthProvider";
-import { savedIds as fetchSavedIds, saveJob, unsaveJob } from "@/lib/auth";
+import { useSavedJobs, toggleSaved } from "@/lib/saved-store";
 import SearchFilters, { Filters } from "@/components/SearchFilters";
 import {
   listCompanies,
@@ -158,8 +158,7 @@ export default function JobBrowser({
   onToggleSave?: (jobId: string, saved: boolean) => void;
   initialData?: Awaited<ReturnType<typeof listJobsWithMeta>>;
 }) {
-  const { user } = useAuth();
-  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -198,26 +197,14 @@ export default function JobBrowser({
   const [loadingMore, setLoadingMore] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState(false);
-  const [localSaved, setLocalSaved] = useState<string[]>([]);
-  useEffect(() => {
-    if (user && !savedIds)
-      fetchSavedIds()
-        .then(setLocalSaved)
-        .catch(() => {});
-  }, [user, savedIds]);
+  const localSaved = useSavedJobs(user?.id);
   const toggleSave = async (jobId: string, saved: boolean) => {
     if (onToggleSave) {
       onToggleSave(jobId, saved);
       return;
     }
     try {
-      if (saved) await saveJob(jobId);
-      else await unsaveJob(jobId);
-      setLocalSaved((previous) =>
-        saved
-          ? [...new Set([...previous, jobId])]
-          : previous.filter((id) => id !== jobId),
-      );
+      await toggleSaved(jobId, saved);
       toast.success(
         saved ? "Added to your shortlist" : "Removed from your shortlist",
       );
@@ -228,6 +215,15 @@ export default function JobBrowser({
 
   const filtersRef = useRef(filters);
   const requestRef = useRef(0);
+  const readController = useRef<AbortController | null>(null);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      readController.current?.abort();
+      if (searchTimer.current) clearTimeout(searchTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     filtersRef.current = filters;
@@ -240,9 +236,9 @@ export default function JobBrowser({
       const sp = filtersToSearchParams(next);
       if (pathname === "/dashboard") sp.set("view", "discover");
       const qs = sp.toString();
-      router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+      window.history.replaceState(null, "", `${pathname}${qs ? `?${qs}` : ""}`);
     },
-    [router, pathname],
+    [pathname],
   );
 
   const fetchJobs = useCallback(
@@ -253,11 +249,18 @@ export default function JobBrowser({
       signal?: AbortSignal,
     ) => {
       const request = ++requestRef.current;
+      readController.current?.abort();
+      const controller = new AbortController();
+      readController.current = controller;
+      const activeSignal = signal
+        ? AbortSignal.any([signal, controller.signal])
+        : controller.signal;
       try {
         const result = await listJobsWithMeta(
           buildJobQuery(activeFilters, pageToLoad),
+          activeSignal,
         );
-        if (signal?.aborted || request !== requestRef.current) return;
+        if (activeSignal.aborted || request !== requestRef.current) return;
         setJobs((prev) =>
           append
             ? [
@@ -272,13 +275,13 @@ export default function JobBrowser({
         setPage(pageToLoad);
         setError(false);
       } catch {
-        if (signal?.aborted || request !== requestRef.current) return;
+        if (activeSignal.aborted || request !== requestRef.current) return;
         setError(true);
         toast.error(
           "Couldn't load roles. Check your connection and try again.",
         );
       } finally {
-        if (!signal?.aborted && request === requestRef.current) {
+        if (!activeSignal.aborted && request === requestRef.current) {
           setLoading(false);
           setLoadingMore(false);
         }
@@ -301,13 +304,16 @@ export default function JobBrowser({
   }, []);
 
   // Initial jobs fetch when INITIAL changes (URL back/forward).
+  const originalInitial = useRef(INITIAL);
   useEffect(() => {
+    if (authLoading) return;
+    if (initialData && !user && INITIAL === originalInitial.current) return;
     const ac = new AbortController();
     void Promise.resolve().then(() => {
       if (!ac.signal.aborted) return fetchJobs(1, INITIAL, false, ac.signal);
     });
     return () => ac.abort();
-  }, [INITIAL, user?.id, fetchJobs]);
+  }, [INITIAL, user, authLoading, initialData, fetchJobs]);
 
   const clearAll = () => {
     const next = filtersFromSearchParams(
@@ -318,11 +324,14 @@ export default function JobBrowser({
     setSearched(false);
     setLoading(true);
     pushToUrl(next);
-    fetchJobs(1, next, false);
+    if (JSON.stringify(next) === JSON.stringify(INITIAL))
+      fetchJobs(1, next, false);
   };
 
   const submit = useCallback(
     (overrides?: Partial<Filters>) => {
+      if (searchTimer.current) clearTimeout(searchTimer.current);
+      searchTimer.current = null;
       setSearched(true);
       setLoading(true);
       const next = overrides
@@ -330,9 +339,9 @@ export default function JobBrowser({
         : filtersRef.current;
       if (overrides) setFilters(next);
       pushToUrl(next);
-      fetchJobs(1, next);
+      if (JSON.stringify(next) === JSON.stringify(INITIAL)) fetchJobs(1, next);
     },
-    [fetchJobs, pushToUrl],
+    [fetchJobs, pushToUrl, INITIAL],
   );
 
   const savedSet = useMemo(
@@ -351,7 +360,16 @@ export default function JobBrowser({
         <SearchFilters
           filters={filters}
           companies={companies}
-          onChange={(patch) => setFilters((f) => ({ ...f, ...patch }))}
+          onChange={(patch) => {
+            setFilters((f) => ({ ...f, ...patch }));
+            if (patch.q !== undefined) {
+              if (searchTimer.current) clearTimeout(searchTimer.current);
+              searchTimer.current = setTimeout(
+                () => submit({ q: patch.q }),
+                300,
+              );
+            }
+          }}
           onSubmit={submit}
           onClear={clearAll}
         />
