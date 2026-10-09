@@ -334,7 +334,7 @@ function Dashboard() {
             <p className="text-sm leading-6 text-slate-600">
               {completion === 100
                 ? "Your profile is match-ready. Keep your skills and preferences current as your search changes."
-                : "Add your target role, at least three skills, track, experience, and location or work preference for reliable Pro matches."}
+                : "Choose a track, role preferences (or any role), at least three skills, experience, and cities (or All India) to complete your matching essentials."}
             </p>
             <ul className="profile-checklist" aria-label="Profile completeness">
               {signals.map((signal) => (

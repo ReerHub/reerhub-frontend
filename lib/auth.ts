@@ -13,6 +13,8 @@ export type AuthUser = {
     currentRole?: string;
     techTrack?: string;
     techRoles?: string[];
+    rolePreference?: "any" | "selected";
+    locationPreference?: "all-india" | "selected";
     skills?: string[];
     city?: string;
     experienceYears?: number;
@@ -147,7 +149,18 @@ export const logout = () =>
 
 export const getMe = () => request<AuthUser>("/users/me");
 
-export const updateMe = (body: Record<string, unknown>) =>
+export type ProfileUpdate = Omit<
+  Partial<AuthUser["profile"]>,
+  "techTrack" | "experienceYears"
+> & {
+  name?: string;
+  avatarUrl?: string;
+  techTrack?: string | null;
+  experienceYears?: number | null;
+  notificationPreferences?: AuthUser["notificationPreferences"];
+};
+
+export const updateMe = (body: ProfileUpdate) =>
   request<AuthUser>("/users/me", {
     method: "PATCH",
     body: JSON.stringify(body),

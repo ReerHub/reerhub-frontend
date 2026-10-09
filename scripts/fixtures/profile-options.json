@@ -1,0 +1,1785 @@
+{
+  "version": 1,
+  "tracks": [
+    {
+      "value": "software",
+      "label": "Software engineering",
+      "description": "Build web applications, APIs and software products.",
+      "roles": [
+        {
+          "value": "SDE",
+          "label": "SDE",
+          "aliases": ["software development engineer", " sde "]
+        },
+        {
+          "value": "Backend Engineer",
+          "label": "Backend Engineer",
+          "aliases": ["backend", "back-end"]
+        },
+        {
+          "value": "Frontend Engineer",
+          "label": "Frontend Engineer",
+          "aliases": ["frontend", "front-end"]
+        },
+        {
+          "value": "Full Stack Engineer",
+          "label": "Full Stack Engineer",
+          "aliases": ["fullstack", "full-stack", "full stack"]
+        },
+        {
+          "value": "Software Engineer",
+          "label": "Software Engineer",
+          "aliases": [
+            "software engineer",
+            "software developer",
+            "member of technical staff",
+            "software development",
+            "technical program manager",
+            "developer",
+            "engineer"
+          ]
+        }
+      ],
+      "suggestedSkills": [
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Node.js",
+        "Java",
+        "Python",
+        "SQL"
+      ]
+    },
+    {
+      "value": "ai-ml",
+      "label": "AI & machine learning",
+      "description": "Build intelligent systems, models and AI applications.",
+      "roles": [
+        {
+          "value": "GenAI Engineer",
+          "label": "GenAI Engineer",
+          "aliases": ["genai", "generative ai"]
+        },
+        {
+          "value": "Applied Scientist",
+          "label": "Applied Scientist",
+          "aliases": ["applied scientist", "ai scientist"]
+        },
+        {
+          "value": "LLM Engineer",
+          "label": "LLM Engineer",
+          "aliases": ["language model", "prompt engineer", "llm"]
+        },
+        {
+          "value": "AI Engineer",
+          "label": "AI Engineer",
+          "aliases": ["ai engineer", "ai agent"]
+        },
+        {
+          "value": "ML Engineer",
+          "label": "ML Engineer",
+          "aliases": [
+            "ml engineer",
+            "machine learning engineer",
+            "machine learning",
+            "deep learning",
+            "mlops",
+            "ml platform",
+            "ai platform"
+          ]
+        },
+        {
+          "value": "Research Engineer",
+          "label": "Research Engineer",
+          "aliases": [
+            "research engineer",
+            "research scientist",
+            "computer vision",
+            "natural language",
+            "artificial intelligence",
+            "large language",
+            "nlp"
+          ]
+        }
+      ],
+      "suggestedSkills": [
+        "Python",
+        "PyTorch",
+        "TensorFlow",
+        "Machine learning",
+        "LLM",
+        "LangChain"
+      ]
+    },
+    {
+      "value": "data",
+      "label": "Data engineering & analytics",
+      "description": "Build data pipelines and turn data into insights.",
+      "roles": [
+        {
+          "value": "ML Data Engineer",
+          "label": "ML Data Engineer",
+          "aliases": ["ml data"]
+        },
+        {
+          "value": "Data Scientist",
+          "label": "Data Scientist",
+          "aliases": ["data scientist", "data science"]
+        },
+        {
+          "value": "Analytics Engineer",
+          "label": "Analytics Engineer",
+          "aliases": ["analytics engineer", "data analyst"]
+        },
+        {
+          "value": "BI Engineer",
+          "label": "BI Engineer",
+          "aliases": ["bi engineer", "bi developer", "business intelligence"]
+        },
+        {
+          "value": "Data Engineer",
+          "label": "Data Engineer",
+          "aliases": ["data engineer", "data architect", "database", "dba"]
+        }
+      ],
+      "suggestedSkills": [
+        "SQL",
+        "Python",
+        "Spark",
+        "Airflow",
+        "dbt",
+        "Snowflake"
+      ]
+    },
+    {
+      "value": "cloud-infra",
+      "label": "Cloud & infrastructure",
+      "description": "Run reliable platforms, cloud services and infrastructure.",
+      "roles": [
+        {
+          "value": "DevOps Engineer",
+          "label": "DevOps Engineer",
+          "aliases": ["devops", "devsecops"]
+        },
+        {
+          "value": "SRE",
+          "label": "SRE",
+          "aliases": ["site reliability", " sre "]
+        },
+        {
+          "value": "Platform Engineer",
+          "label": "Platform Engineer",
+          "aliases": ["platform engineer", "observability"]
+        },
+        {
+          "value": "Infrastructure Engineer",
+          "label": "Infrastructure Engineer",
+          "aliases": ["infrastructure engineer"]
+        },
+        {
+          "value": "Cloud Architect",
+          "label": "Cloud Architect",
+          "aliases": ["cloud architect"]
+        },
+        {
+          "value": "Cloud Engineer",
+          "label": "Cloud Engineer",
+          "aliases": ["cloud engineer", "infrastructure", "iam"]
+        }
+      ],
+      "suggestedSkills": [
+        "AWS",
+        "Azure",
+        "Kubernetes",
+        "Docker",
+        "Terraform",
+        "Linux"
+      ]
+    },
+    {
+      "value": "mobile",
+      "label": "Mobile development",
+      "description": "Build Android, iOS and cross-platform applications.",
+      "roles": [
+        {
+          "value": "Android Developer",
+          "label": "Android Developer",
+          "aliases": ["android"]
+        },
+        {
+          "value": "iOS Developer",
+          "label": "iOS Developer",
+          "aliases": ["ios", "iphone"]
+        },
+        {
+          "value": "Flutter Developer",
+          "label": "Flutter Developer",
+          "aliases": ["flutter"]
+        },
+        {
+          "value": "React Native Developer",
+          "label": "React Native Developer",
+          "aliases": ["react native"]
+        },
+        {
+          "value": "Mobile Engineer",
+          "label": "Mobile Engineer",
+          "aliases": ["mobile engineer", "mobile developer", "mobile"]
+        }
+      ],
+      "suggestedSkills": ["Kotlin", "Swift", "Flutter", "React Native", "Java"]
+    },
+    {
+      "value": "security",
+      "label": "Security engineering",
+      "description": "Protect applications, infrastructure and information.",
+      "roles": [
+        {
+          "value": "AppSec Engineer",
+          "label": "AppSec Engineer",
+          "aliases": ["application security", "appsec"]
+        },
+        {
+          "value": "Cloud Security Engineer",
+          "label": "Cloud Security Engineer",
+          "aliases": ["cloud security"]
+        },
+        {
+          "value": "Cybersecurity Engineer",
+          "label": "Cybersecurity Engineer",
+          "aliases": ["cybersecurity", "cyber security"]
+        },
+        {
+          "value": "Security Architect",
+          "label": "Security Architect",
+          "aliases": ["security architect"]
+        },
+        {
+          "value": "Security Engineer",
+          "label": "Security Engineer",
+          "aliases": [
+            "security engineer",
+            "security analyst",
+            "offensive security"
+          ]
+        }
+      ],
+      "suggestedSkills": [
+        "Linux",
+        "Python",
+        "AWS",
+        "Penetration Testing",
+        "Threat Modeling"
+      ]
+    },
+    {
+      "value": "qa",
+      "label": "Quality assurance & testing",
+      "description": "Test software and build automation for quality.",
+      "roles": [
+        {
+          "value": "SDET",
+          "label": "SDET",
+          "aliases": ["sdet"]
+        },
+        {
+          "value": "Automation Engineer",
+          "label": "Automation Engineer",
+          "aliases": ["automation engineer", "automation"]
+        },
+        {
+          "value": "Performance Engineer",
+          "label": "Performance Engineer",
+          "aliases": ["performance engineer", "performance testing"]
+        },
+        {
+          "value": "Test Engineer",
+          "label": "Test Engineer",
+          "aliases": ["test engineer"]
+        },
+        {
+          "value": "QA Engineer",
+          "label": "QA Engineer",
+          "aliases": ["qa engineer", " qa "]
+        }
+      ],
+      "suggestedSkills": ["Selenium", "Playwright", "Java", "REST API", "CI/CD"]
+    },
+    {
+      "value": "systems",
+      "label": "Systems & embedded engineering",
+      "description": "Work on embedded, firmware, networking and integration systems.",
+      "roles": [
+        {
+          "value": "Embedded Engineer",
+          "label": "Embedded Engineer",
+          "aliases": ["embedded"]
+        },
+        {
+          "value": "Firmware Engineer",
+          "label": "Firmware Engineer",
+          "aliases": ["firmware"]
+        },
+        {
+          "value": "Network Engineer",
+          "label": "Network Engineer",
+          "aliases": ["network engineer", "network"]
+        },
+        {
+          "value": "Solutions Engineer",
+          "label": "Solutions Engineer",
+          "aliases": [
+            "solutions engineer",
+            "solution engineer",
+            "solutions architect",
+            "solutions consultant",
+            "solution architect",
+            "sales engineer",
+            "value engineer"
+          ]
+        },
+        {
+          "value": "Integration Engineer",
+          "label": "Integration Engineer",
+          "aliases": [
+            "integration engineer",
+            "implementation engineer",
+            "support engineer",
+            "success engineer"
+          ]
+        },
+        {
+          "value": "Systems Engineer",
+          "label": "Systems Engineer",
+          "aliases": ["systems engineer"]
+        }
+      ],
+      "suggestedSkills": ["C++", "Rust", "Linux", "Golang", "RTOS"]
+    },
+    {
+      "value": "eng-management",
+      "label": "Engineering management",
+      "description": "Lead engineering teams and technical delivery.",
+      "roles": [
+        {
+          "value": "CTO",
+          "label": "CTO",
+          "aliases": ["cto", "chief technology"]
+        },
+        {
+          "value": "VP Engineering",
+          "label": "VP Engineering",
+          "aliases": [
+            "vp engineering",
+            "vice president engineering",
+            "vp of engineering"
+          ]
+        },
+        {
+          "value": "Director of Engineering",
+          "label": "Director of Engineering",
+          "aliases": [
+            "director of engineering",
+            "director engineering",
+            "head of engineering",
+            "engineering director"
+          ]
+        },
+        {
+          "value": "Senior Engineering Manager",
+          "label": "Senior Engineering Manager",
+          "aliases": ["senior engineering manager", "sr engineering manager"]
+        },
+        {
+          "value": "Engineering Manager",
+          "label": "Engineering Manager",
+          "aliases": ["engineering manager"]
+        }
+      ],
+      "suggestedSkills": [
+        "System Design",
+        "Technical leadership",
+        "People management",
+        "AWS"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "value": ".NET",
+      "label": ".NET",
+      "aliases": [".NET", ".net", "dotnet"]
+    },
+    {
+      "value": "A/B Testing",
+      "label": "A/B Testing",
+      "aliases": ["a/b testing"]
+    },
+    {
+      "value": "Agile",
+      "label": "Agile",
+      "aliases": ["Agile"]
+    },
+    {
+      "value": "AI",
+      "label": "AI",
+      "aliases": ["AI", "ai", "artificial intelligence"]
+    },
+    {
+      "value": "Airflow",
+      "label": "Airflow",
+      "aliases": ["airflow"]
+    },
+    {
+      "value": "Angular",
+      "label": "Angular",
+      "aliases": ["angular"]
+    },
+    {
+      "value": "Anomaly Detection",
+      "label": "Anomaly Detection",
+      "aliases": ["anomaly detection"]
+    },
+    {
+      "value": "Ansible",
+      "label": "Ansible",
+      "aliases": ["Ansible"]
+    },
+    {
+      "value": "Anthropic",
+      "label": "Anthropic",
+      "aliases": ["anthropic"]
+    },
+    {
+      "value": "Apache",
+      "label": "Apache",
+      "aliases": ["Apache"]
+    },
+    {
+      "value": "API Gateway",
+      "label": "API Gateway",
+      "aliases": ["API Gateway", "api gateway"]
+    },
+    {
+      "value": "Appium",
+      "label": "Appium",
+      "aliases": ["Appium"]
+    },
+    {
+      "value": "Application Security",
+      "label": "Application Security",
+      "aliases": ["application security"]
+    },
+    {
+      "value": "Argo CD",
+      "label": "Argo CD",
+      "aliases": ["Argo CD"]
+    },
+    {
+      "value": "Artifactory",
+      "label": "Artifactory",
+      "aliases": ["artifactory"]
+    },
+    {
+      "value": "ASP.NET",
+      "label": "ASP.NET",
+      "aliases": ["ASP.NET"]
+    },
+    {
+      "value": "AUTOSAR",
+      "label": "AUTOSAR",
+      "aliases": ["AUTOSAR"]
+    },
+    {
+      "value": "AWS",
+      "label": "AWS",
+      "aliases": ["AWS", "aws", "amazon web services"]
+    },
+    {
+      "value": "Azure",
+      "label": "Azure",
+      "aliases": ["Azure", "azure", "microsoft azure"]
+    },
+    {
+      "value": "Azure Devops",
+      "label": "Azure Devops",
+      "aliases": ["azure devops"]
+    },
+    {
+      "value": "Bash",
+      "label": "Bash",
+      "aliases": ["bash"]
+    },
+    {
+      "value": "BigQuery",
+      "label": "BigQuery",
+      "aliases": ["BigQuery"]
+    },
+    {
+      "value": "Bitbucket",
+      "label": "Bitbucket",
+      "aliases": ["bitbucket"]
+    },
+    {
+      "value": "Bluetooth",
+      "label": "Bluetooth",
+      "aliases": ["Bluetooth"]
+    },
+    {
+      "value": "Burp Suite",
+      "label": "Burp Suite",
+      "aliases": ["Burp Suite"]
+    },
+    {
+      "value": "C",
+      "label": "C",
+      "aliases": ["C"]
+    },
+    {
+      "value": "C#",
+      "label": "C#",
+      "aliases": ["C#", "c#", "csharp"]
+    },
+    {
+      "value": "C++",
+      "label": "C++",
+      "aliases": ["C++", "c++", "cpp"]
+    },
+    {
+      "value": "CAN",
+      "label": "CAN",
+      "aliases": ["CAN"]
+    },
+    {
+      "value": "Cassandra",
+      "label": "Cassandra",
+      "aliases": ["Cassandra"]
+    },
+    {
+      "value": "CDP",
+      "label": "CDP",
+      "aliases": ["CDP", "cdp"]
+    },
+    {
+      "value": "Chroma",
+      "label": "Chroma",
+      "aliases": ["Chroma"]
+    },
+    {
+      "value": "CI/CD",
+      "label": "CI/CD",
+      "aliases": ["CI/CD", "ci/cd"]
+    },
+    {
+      "value": "ClickHouse",
+      "label": "ClickHouse",
+      "aliases": ["ClickHouse"]
+    },
+    {
+      "value": "Cloud Security",
+      "label": "Cloud Security",
+      "aliases": ["cloud security"]
+    },
+    {
+      "value": "Computer Vision",
+      "label": "Computer Vision",
+      "aliases": ["computer vision"]
+    },
+    {
+      "value": "CRM",
+      "label": "CRM",
+      "aliases": ["CRM", "crm"]
+    },
+    {
+      "value": "Cryptography",
+      "label": "Cryptography",
+      "aliases": ["Cryptography"]
+    },
+    {
+      "value": "CSS",
+      "label": "CSS",
+      "aliases": ["CSS"]
+    },
+    {
+      "value": "Cucumber",
+      "label": "Cucumber",
+      "aliases": ["Cucumber"]
+    },
+    {
+      "value": "Cypress",
+      "label": "Cypress",
+      "aliases": ["Cypress"]
+    },
+    {
+      "value": "Dart",
+      "label": "Dart",
+      "aliases": ["Dart"]
+    },
+    {
+      "value": "Databricks",
+      "label": "Databricks",
+      "aliases": ["databricks"]
+    },
+    {
+      "value": "Datadog",
+      "label": "Datadog",
+      "aliases": ["datadog"]
+    },
+    {
+      "value": "dbt",
+      "label": "dbt",
+      "aliases": ["dbt"]
+    },
+    {
+      "value": "Deep Learning",
+      "label": "Deep Learning",
+      "aliases": ["deep learning"]
+    },
+    {
+      "value": "Delta Lake",
+      "label": "Delta Lake",
+      "aliases": ["Delta Lake"]
+    },
+    {
+      "value": "DevSecOps",
+      "label": "DevSecOps",
+      "aliases": ["DevSecOps", "devsecops"]
+    },
+    {
+      "value": "Distributed Systems",
+      "label": "Distributed Systems",
+      "aliases": ["distributed systems"]
+    },
+    {
+      "value": "Django",
+      "label": "Django",
+      "aliases": ["django"]
+    },
+    {
+      "value": "Docker",
+      "label": "Docker",
+      "aliases": ["docker"]
+    },
+    {
+      "value": "DuckDB",
+      "label": "DuckDB",
+      "aliases": ["DuckDB"]
+    },
+    {
+      "value": "DynamoDB",
+      "label": "DynamoDB",
+      "aliases": ["DynamoDB"]
+    },
+    {
+      "value": "Edge Computing",
+      "label": "Edge Computing",
+      "aliases": ["edge computing"]
+    },
+    {
+      "value": "Elasticsearch",
+      "label": "Elasticsearch",
+      "aliases": ["elasticsearch"]
+    },
+    {
+      "value": "Embeddings",
+      "label": "Embeddings",
+      "aliases": ["embeddings"]
+    },
+    {
+      "value": "ERP",
+      "label": "ERP",
+      "aliases": ["ERP", "erp"]
+    },
+    {
+      "value": "Event-Driven",
+      "label": "Event-Driven",
+      "aliases": ["event-driven"]
+    },
+    {
+      "value": "Express",
+      "label": "Express",
+      "aliases": ["express"]
+    },
+    {
+      "value": "FAISS",
+      "label": "FAISS",
+      "aliases": ["FAISS"]
+    },
+    {
+      "value": "FastAPI",
+      "label": "FastAPI",
+      "aliases": ["FastAPI", "fastapi"]
+    },
+    {
+      "value": "Figma",
+      "label": "Figma",
+      "aliases": ["figma"]
+    },
+    {
+      "value": "Fine-Tuning",
+      "label": "Fine-Tuning",
+      "aliases": ["fine-tuning"]
+    },
+    {
+      "value": "Fivetran",
+      "label": "Fivetran",
+      "aliases": ["Fivetran"]
+    },
+    {
+      "value": "Flask",
+      "label": "Flask",
+      "aliases": ["flask"]
+    },
+    {
+      "value": "Flink",
+      "label": "Flink",
+      "aliases": ["Flink"]
+    },
+    {
+      "value": "Flutter",
+      "label": "Flutter",
+      "aliases": ["flutter"]
+    },
+    {
+      "value": "Forecasting",
+      "label": "Forecasting",
+      "aliases": ["forecasting"]
+    },
+    {
+      "value": "FPGA",
+      "label": "FPGA",
+      "aliases": ["FPGA"]
+    },
+    {
+      "value": "Fraud Detection",
+      "label": "Fraud Detection",
+      "aliases": ["fraud detection"]
+    },
+    {
+      "value": "FreeRTOS",
+      "label": "FreeRTOS",
+      "aliases": ["FreeRTOS"]
+    },
+    {
+      "value": "GCP",
+      "label": "GCP",
+      "aliases": ["GCP", "gcp", "google cloud"]
+    },
+    {
+      "value": "Generative AI",
+      "label": "Generative AI",
+      "aliases": ["Generative AI", "generative ai", "genai"]
+    },
+    {
+      "value": "Git",
+      "label": "Git",
+      "aliases": ["git"]
+    },
+    {
+      "value": "GitHub Actions",
+      "label": "GitHub Actions",
+      "aliases": ["GitHub Actions", "github actions"]
+    },
+    {
+      "value": "Gitlab",
+      "label": "Gitlab",
+      "aliases": ["gitlab"]
+    },
+    {
+      "value": "Golang",
+      "label": "Golang",
+      "aliases": ["Golang", "golang", "go"]
+    },
+    {
+      "value": "Grafana",
+      "label": "Grafana",
+      "aliases": ["grafana"]
+    },
+    {
+      "value": "GraphQL",
+      "label": "GraphQL",
+      "aliases": ["GraphQL", "graphql"]
+    },
+    {
+      "value": "gRPC",
+      "label": "gRPC",
+      "aliases": ["gRPC", "grpc"]
+    },
+    {
+      "value": "Hadoop",
+      "label": "Hadoop",
+      "aliases": ["hadoop"]
+    },
+    {
+      "value": "Helm",
+      "label": "Helm",
+      "aliases": ["Helm"]
+    },
+    {
+      "value": "Hive",
+      "label": "Hive",
+      "aliases": ["hive"]
+    },
+    {
+      "value": "HTML",
+      "label": "HTML",
+      "aliases": ["HTML"]
+    },
+    {
+      "value": "Hugging Face",
+      "label": "Hugging Face",
+      "aliases": ["Hugging Face", "huggingface", "hugging face"]
+    },
+    {
+      "value": "IAM",
+      "label": "IAM",
+      "aliases": ["IAM", "iam"]
+    },
+    {
+      "value": "Incident Response",
+      "label": "Incident Response",
+      "aliases": ["incident response"]
+    },
+    {
+      "value": "IoT",
+      "label": "IoT",
+      "aliases": ["IoT"]
+    },
+    {
+      "value": "ISO 27001",
+      "label": "ISO 27001",
+      "aliases": ["ISO 27001"]
+    },
+    {
+      "value": "Java",
+      "label": "Java",
+      "aliases": ["java"]
+    },
+    {
+      "value": "JavaScript",
+      "label": "JavaScript",
+      "aliases": ["JavaScript", "javascript", "js"]
+    },
+    {
+      "value": "Jenkins",
+      "label": "Jenkins",
+      "aliases": ["jenkins"]
+    },
+    {
+      "value": "Jest",
+      "label": "Jest",
+      "aliases": ["Jest"]
+    },
+    {
+      "value": "JMeter",
+      "label": "JMeter",
+      "aliases": ["JMeter"]
+    },
+    {
+      "value": "JUnit",
+      "label": "JUnit",
+      "aliases": ["JUnit"]
+    },
+    {
+      "value": "Jupyter",
+      "label": "Jupyter",
+      "aliases": ["Jupyter"]
+    },
+    {
+      "value": "Kafka",
+      "label": "Kafka",
+      "aliases": ["kafka"]
+    },
+    {
+      "value": "Kafka Streams",
+      "label": "Kafka Streams",
+      "aliases": ["Kafka Streams"]
+    },
+    {
+      "value": "Keras",
+      "label": "Keras",
+      "aliases": ["Keras"]
+    },
+    {
+      "value": "Kotlin",
+      "label": "Kotlin",
+      "aliases": ["kotlin"]
+    },
+    {
+      "value": "Kubernetes",
+      "label": "Kubernetes",
+      "aliases": ["Kubernetes", "kubernetes", "k8s"]
+    },
+    {
+      "value": "LangChain",
+      "label": "LangChain",
+      "aliases": ["LangChain", "langchain"]
+    },
+    {
+      "value": "LangGraph",
+      "label": "LangGraph",
+      "aliases": ["LangGraph", "langgraph"]
+    },
+    {
+      "value": "LightGBM",
+      "label": "LightGBM",
+      "aliases": ["LightGBM"]
+    },
+    {
+      "value": "Linux",
+      "label": "Linux",
+      "aliases": ["linux"]
+    },
+    {
+      "value": "LLM",
+      "label": "LLM",
+      "aliases": ["LLM", "llm", "large language models"]
+    },
+    {
+      "value": "Looker",
+      "label": "Looker",
+      "aliases": ["looker"]
+    },
+    {
+      "value": "Machine learning",
+      "label": "Machine learning",
+      "aliases": ["Machine learning", "machine learning", "ml"]
+    },
+    {
+      "value": "MATLAB",
+      "label": "MATLAB",
+      "aliases": ["MATLAB"]
+    },
+    {
+      "value": "Message Queue",
+      "label": "Message Queue",
+      "aliases": ["message queue"]
+    },
+    {
+      "value": "Metasploit",
+      "label": "Metasploit",
+      "aliases": ["Metasploit"]
+    },
+    {
+      "value": "Microservices",
+      "label": "Microservices",
+      "aliases": ["microservices"]
+    },
+    {
+      "value": "MLOps",
+      "label": "MLOps",
+      "aliases": ["MLOps"]
+    },
+    {
+      "value": "Model Training",
+      "label": "Model Training",
+      "aliases": ["model training"]
+    },
+    {
+      "value": "MongoDB",
+      "label": "MongoDB",
+      "aliases": ["MongoDB", "mongodb", "mongo"]
+    },
+    {
+      "value": "Mysql",
+      "label": "Mysql",
+      "aliases": ["mysql"]
+    },
+    {
+      "value": "NestJS",
+      "label": "NestJS",
+      "aliases": ["NestJS"]
+    },
+    {
+      "value": "Neural Network",
+      "label": "Neural Network",
+      "aliases": ["neural network"]
+    },
+    {
+      "value": "New Relic",
+      "label": "New Relic",
+      "aliases": ["new relic"]
+    },
+    {
+      "value": "Next.js",
+      "label": "Next.js",
+      "aliases": ["Next.js", "next.js", "nextjs"]
+    },
+    {
+      "value": "Nginx",
+      "label": "Nginx",
+      "aliases": ["Nginx"]
+    },
+    {
+      "value": "NLP",
+      "label": "NLP",
+      "aliases": ["NLP", "nlp", "natural language processing"]
+    },
+    {
+      "value": "Node.js",
+      "label": "Node.js",
+      "aliases": ["Node.js", "nodejs", "node.js", "node"]
+    },
+    {
+      "value": "NoSQL",
+      "label": "NoSQL",
+      "aliases": ["NoSQL", "nosql"]
+    },
+    {
+      "value": "NumPy",
+      "label": "NumPy",
+      "aliases": ["NumPy"]
+    },
+    {
+      "value": "OAuth",
+      "label": "OAuth",
+      "aliases": ["OAuth", "oauth"]
+    },
+    {
+      "value": "Objective-C",
+      "label": "Objective-C",
+      "aliases": ["Objective-C"]
+    },
+    {
+      "value": "Okta",
+      "label": "Okta",
+      "aliases": ["okta"]
+    },
+    {
+      "value": "ONNX",
+      "label": "ONNX",
+      "aliases": ["ONNX"]
+    },
+    {
+      "value": "OpenAI",
+      "label": "OpenAI",
+      "aliases": ["OpenAI", "openai"]
+    },
+    {
+      "value": "OpenCV",
+      "label": "OpenCV",
+      "aliases": ["OpenCV"]
+    },
+    {
+      "value": "OpenTelemetry",
+      "label": "OpenTelemetry",
+      "aliases": ["OpenTelemetry", "opentelemetry"]
+    },
+    {
+      "value": "OWASP",
+      "label": "OWASP",
+      "aliases": ["OWASP", "owasp"]
+    },
+    {
+      "value": "Pandas",
+      "label": "Pandas",
+      "aliases": ["Pandas"]
+    },
+    {
+      "value": "Penetration Testing",
+      "label": "Penetration Testing",
+      "aliases": ["penetration testing"]
+    },
+    {
+      "value": "People management",
+      "label": "People management",
+      "aliases": ["People management"]
+    },
+    {
+      "value": "Php",
+      "label": "Php",
+      "aliases": ["php"]
+    },
+    {
+      "value": "Pinecone",
+      "label": "Pinecone",
+      "aliases": ["Pinecone"]
+    },
+    {
+      "value": "Playwright",
+      "label": "Playwright",
+      "aliases": ["Playwright"]
+    },
+    {
+      "value": "PostgreSQL",
+      "label": "PostgreSQL",
+      "aliases": ["PostgreSQL", "postgresql", "postgres"]
+    },
+    {
+      "value": "Postman",
+      "label": "Postman",
+      "aliases": ["Postman"]
+    },
+    {
+      "value": "Power BI",
+      "label": "Power BI",
+      "aliases": ["Power BI", "power bi"]
+    },
+    {
+      "value": "Presto",
+      "label": "Presto",
+      "aliases": ["presto"]
+    },
+    {
+      "value": "Prometheus",
+      "label": "Prometheus",
+      "aliases": ["prometheus"]
+    },
+    {
+      "value": "Prompt Engineering",
+      "label": "Prompt Engineering",
+      "aliases": ["prompt engineering"]
+    },
+    {
+      "value": "Pub/Sub",
+      "label": "Pub/Sub",
+      "aliases": ["pub/sub"]
+    },
+    {
+      "value": "Pulumi",
+      "label": "Pulumi",
+      "aliases": ["Pulumi"]
+    },
+    {
+      "value": "Pytest",
+      "label": "Pytest",
+      "aliases": ["Pytest"]
+    },
+    {
+      "value": "Python",
+      "label": "Python",
+      "aliases": ["python"]
+    },
+    {
+      "value": "PyTorch",
+      "label": "PyTorch",
+      "aliases": ["PyTorch", "pytorch"]
+    },
+    {
+      "value": "R",
+      "label": "R",
+      "aliases": ["R"]
+    },
+    {
+      "value": "Rabbitmq",
+      "label": "Rabbitmq",
+      "aliases": ["rabbitmq"]
+    },
+    {
+      "value": "RAG",
+      "label": "RAG",
+      "aliases": ["RAG", "rag"]
+    },
+    {
+      "value": "React",
+      "label": "React",
+      "aliases": ["React", "react", "react.js", "reactjs"]
+    },
+    {
+      "value": "React Native",
+      "label": "React Native",
+      "aliases": ["React Native", "react native"]
+    },
+    {
+      "value": "Real-Time Bidding",
+      "label": "Real-Time Bidding",
+      "aliases": ["real-time bidding"]
+    },
+    {
+      "value": "Recommendation System",
+      "label": "Recommendation System",
+      "aliases": ["recommendation system"]
+    },
+    {
+      "value": "Red teaming",
+      "label": "Red teaming",
+      "aliases": ["Red teaming", "red team", "red teaming"]
+    },
+    {
+      "value": "Redis",
+      "label": "Redis",
+      "aliases": ["redis"]
+    },
+    {
+      "value": "Redshift",
+      "label": "Redshift",
+      "aliases": ["Redshift"]
+    },
+    {
+      "value": "Redux",
+      "label": "Redux",
+      "aliases": ["Redux"]
+    },
+    {
+      "value": "REST API",
+      "label": "REST API",
+      "aliases": ["REST API", "rest api", "restful api"]
+    },
+    {
+      "value": "RTOS",
+      "label": "RTOS",
+      "aliases": ["RTOS"]
+    },
+    {
+      "value": "Ruby",
+      "label": "Ruby",
+      "aliases": ["ruby"]
+    },
+    {
+      "value": "Rust",
+      "label": "Rust",
+      "aliases": ["rust"]
+    },
+    {
+      "value": "SaaS",
+      "label": "SaaS",
+      "aliases": ["SaaS", "saas"]
+    },
+    {
+      "value": "Sass",
+      "label": "Sass",
+      "aliases": ["Sass"]
+    },
+    {
+      "value": "Scala",
+      "label": "Scala",
+      "aliases": ["scala"]
+    },
+    {
+      "value": "Scikit-learn",
+      "label": "Scikit-learn",
+      "aliases": ["Scikit-learn", "scikit-learn", "sklearn"]
+    },
+    {
+      "value": "Scrum",
+      "label": "Scrum",
+      "aliases": ["Scrum"]
+    },
+    {
+      "value": "Security Operations",
+      "label": "Security Operations",
+      "aliases": ["security operations"]
+    },
+    {
+      "value": "Selenium",
+      "label": "Selenium",
+      "aliases": ["Selenium"]
+    },
+    {
+      "value": "Sentry",
+      "label": "Sentry",
+      "aliases": ["sentry"]
+    },
+    {
+      "value": "Serverless",
+      "label": "Serverless",
+      "aliases": ["serverless"]
+    },
+    {
+      "value": "SIEM",
+      "label": "SIEM",
+      "aliases": ["SIEM"]
+    },
+    {
+      "value": "Snowflake",
+      "label": "Snowflake",
+      "aliases": ["snowflake"]
+    },
+    {
+      "value": "SOC",
+      "label": "SOC",
+      "aliases": ["SOC", "soc"]
+    },
+    {
+      "value": "SOC 2",
+      "label": "SOC 2",
+      "aliases": ["SOC 2"]
+    },
+    {
+      "value": "Solution architecture",
+      "label": "Solution architecture",
+      "aliases": [
+        "Solution architecture",
+        "solution architecture",
+        "solution architect"
+      ]
+    },
+    {
+      "value": "Sonarqube",
+      "label": "Sonarqube",
+      "aliases": ["sonarqube"]
+    },
+    {
+      "value": "Spark",
+      "label": "Spark",
+      "aliases": ["spark"]
+    },
+    {
+      "value": "Splunk",
+      "label": "Splunk",
+      "aliases": ["splunk"]
+    },
+    {
+      "value": "Spring",
+      "label": "Spring",
+      "aliases": ["spring"]
+    },
+    {
+      "value": "Spring Boot",
+      "label": "Spring Boot",
+      "aliases": ["Spring Boot", "spring boot"]
+    },
+    {
+      "value": "SQL",
+      "label": "SQL",
+      "aliases": ["SQL", "sql"]
+    },
+    {
+      "value": "SQLite",
+      "label": "SQLite",
+      "aliases": ["SQLite"]
+    },
+    {
+      "value": "Statistical Analysis",
+      "label": "Statistical Analysis",
+      "aliases": ["statistical analysis"]
+    },
+    {
+      "value": "Statistical Modeling",
+      "label": "Statistical Modeling",
+      "aliases": ["statistical modeling"]
+    },
+    {
+      "value": "Svelte",
+      "label": "Svelte",
+      "aliases": ["Svelte"]
+    },
+    {
+      "value": "Swift",
+      "label": "Swift",
+      "aliases": ["swift"]
+    },
+    {
+      "value": "System Design",
+      "label": "System Design",
+      "aliases": ["system design"]
+    },
+    {
+      "value": "Tableau",
+      "label": "Tableau",
+      "aliases": ["tableau"]
+    },
+    {
+      "value": "Tailwind CSS",
+      "label": "Tailwind CSS",
+      "aliases": ["Tailwind CSS"]
+    },
+    {
+      "value": "TCP/IP",
+      "label": "TCP/IP",
+      "aliases": ["TCP/IP"]
+    },
+    {
+      "value": "Technical leadership",
+      "label": "Technical leadership",
+      "aliases": ["Technical leadership"]
+    },
+    {
+      "value": "TensorFlow",
+      "label": "TensorFlow",
+      "aliases": ["TensorFlow", "tensorflow"]
+    },
+    {
+      "value": "Terraform",
+      "label": "Terraform",
+      "aliases": ["terraform"]
+    },
+    {
+      "value": "TestNG",
+      "label": "TestNG",
+      "aliases": ["TestNG"]
+    },
+    {
+      "value": "Threat Modeling",
+      "label": "Threat Modeling",
+      "aliases": ["threat modeling"]
+    },
+    {
+      "value": "Time Series",
+      "label": "Time Series",
+      "aliases": ["time series"]
+    },
+    {
+      "value": "TypeScript",
+      "label": "TypeScript",
+      "aliases": ["TypeScript", "typescript", "ts"]
+    },
+    {
+      "value": "Vector Database",
+      "label": "Vector Database",
+      "aliases": ["Vector Database", "vector database", "vector databases"]
+    },
+    {
+      "value": "Verilog",
+      "label": "Verilog",
+      "aliases": ["Verilog"]
+    },
+    {
+      "value": "VHDL",
+      "label": "VHDL",
+      "aliases": ["VHDL"]
+    },
+    {
+      "value": "Vite",
+      "label": "Vite",
+      "aliases": ["Vite"]
+    },
+    {
+      "value": "Vitest",
+      "label": "Vitest",
+      "aliases": ["Vitest"]
+    },
+    {
+      "value": "Vue",
+      "label": "Vue",
+      "aliases": ["Vue", "vue", "vue.js", "vuejs"]
+    },
+    {
+      "value": "Vulnerability Management",
+      "label": "Vulnerability Management",
+      "aliases": ["vulnerability management"]
+    },
+    {
+      "value": "Webhooks",
+      "label": "Webhooks",
+      "aliases": ["webhooks"]
+    },
+    {
+      "value": "Wireshark",
+      "label": "Wireshark",
+      "aliases": ["Wireshark"]
+    },
+    {
+      "value": "XGBoost",
+      "label": "XGBoost",
+      "aliases": ["XGBoost"]
+    },
+    {
+      "value": "Zero Trust",
+      "label": "Zero Trust",
+      "aliases": ["zero trust"]
+    }
+  ],
+  "cities": [
+    {
+      "value": "Agra",
+      "label": "Agra",
+      "aliases": []
+    },
+    {
+      "value": "Ahmedabad",
+      "label": "Ahmedabad",
+      "aliases": []
+    },
+    {
+      "value": "Belagavi",
+      "label": "Belagavi",
+      "aliases": ["Belgaum"]
+    },
+    {
+      "value": "Bengaluru",
+      "label": "Bengaluru",
+      "aliases": ["Bangalore"]
+    },
+    {
+      "value": "Bhopal",
+      "label": "Bhopal",
+      "aliases": []
+    },
+    {
+      "value": "Bhubaneswar",
+      "label": "Bhubaneswar",
+      "aliases": ["Bhubaneshwar"]
+    },
+    {
+      "value": "Chandigarh",
+      "label": "Chandigarh",
+      "aliases": []
+    },
+    {
+      "value": "Chennai",
+      "label": "Chennai",
+      "aliases": ["Madras"]
+    },
+    {
+      "value": "Chhatrapati Sambhajinagar",
+      "label": "Chhatrapati Sambhajinagar",
+      "aliases": ["Aurangabad"]
+    },
+    {
+      "value": "Coimbatore",
+      "label": "Coimbatore",
+      "aliases": []
+    },
+    {
+      "value": "Dehradun",
+      "label": "Dehradun",
+      "aliases": []
+    },
+    {
+      "value": "Delhi",
+      "label": "Delhi",
+      "aliases": ["New Delhi"]
+    },
+    {
+      "value": "Faridabad",
+      "label": "Faridabad",
+      "aliases": []
+    },
+    {
+      "value": "Gandhinagar",
+      "label": "Gandhinagar",
+      "aliases": []
+    },
+    {
+      "value": "Ghaziabad",
+      "label": "Ghaziabad",
+      "aliases": []
+    },
+    {
+      "value": "Goa",
+      "label": "Goa",
+      "aliases": []
+    },
+    {
+      "value": "Greater Noida",
+      "label": "Greater Noida",
+      "aliases": []
+    },
+    {
+      "value": "Guntur",
+      "label": "Guntur",
+      "aliases": []
+    },
+    {
+      "value": "Gurugram",
+      "label": "Gurugram",
+      "aliases": ["Gurgaon"]
+    },
+    {
+      "value": "Guwahati",
+      "label": "Guwahati",
+      "aliases": []
+    },
+    {
+      "value": "Hosur",
+      "label": "Hosur",
+      "aliases": []
+    },
+    {
+      "value": "Hubballi",
+      "label": "Hubballi",
+      "aliases": ["Hubli"]
+    },
+    {
+      "value": "Hyderabad",
+      "label": "Hyderabad",
+      "aliases": []
+    },
+    {
+      "value": "Indore",
+      "label": "Indore",
+      "aliases": []
+    },
+    {
+      "value": "Jaipur",
+      "label": "Jaipur",
+      "aliases": []
+    },
+    {
+      "value": "Jodhpur",
+      "label": "Jodhpur",
+      "aliases": []
+    },
+    {
+      "value": "Kanpur",
+      "label": "Kanpur",
+      "aliases": []
+    },
+    {
+      "value": "Kochi",
+      "label": "Kochi",
+      "aliases": ["Cochin"]
+    },
+    {
+      "value": "Kolkata",
+      "label": "Kolkata",
+      "aliases": ["Calcutta"]
+    },
+    {
+      "value": "Kottayam",
+      "label": "Kottayam",
+      "aliases": []
+    },
+    {
+      "value": "Kozhikode",
+      "label": "Kozhikode",
+      "aliases": ["Calicut"]
+    },
+    {
+      "value": "Lucknow",
+      "label": "Lucknow",
+      "aliases": []
+    },
+    {
+      "value": "Madurai",
+      "label": "Madurai",
+      "aliases": []
+    },
+    {
+      "value": "Mangaluru",
+      "label": "Mangaluru",
+      "aliases": ["Mangalore"]
+    },
+    {
+      "value": "Mohali",
+      "label": "Mohali",
+      "aliases": []
+    },
+    {
+      "value": "Mumbai",
+      "label": "Mumbai",
+      "aliases": ["Bombay"]
+    },
+    {
+      "value": "Mysuru",
+      "label": "Mysuru",
+      "aliases": ["Mysore"]
+    },
+    {
+      "value": "Nagpur",
+      "label": "Nagpur",
+      "aliases": []
+    },
+    {
+      "value": "Nashik",
+      "label": "Nashik",
+      "aliases": ["Nasik"]
+    },
+    {
+      "value": "Navi Mumbai",
+      "label": "Navi Mumbai",
+      "aliases": []
+    },
+    {
+      "value": "Noida",
+      "label": "Noida",
+      "aliases": []
+    },
+    {
+      "value": "Panchkula",
+      "label": "Panchkula",
+      "aliases": []
+    },
+    {
+      "value": "Patna",
+      "label": "Patna",
+      "aliases": []
+    },
+    {
+      "value": "Prayagraj",
+      "label": "Prayagraj",
+      "aliases": ["Allahabad"]
+    },
+    {
+      "value": "Pune",
+      "label": "Pune",
+      "aliases": ["Poona"]
+    },
+    {
+      "value": "Raipur",
+      "label": "Raipur",
+      "aliases": []
+    },
+    {
+      "value": "Rajkot",
+      "label": "Rajkot",
+      "aliases": []
+    },
+    {
+      "value": "Ranchi",
+      "label": "Ranchi",
+      "aliases": []
+    },
+    {
+      "value": "Salem",
+      "label": "Salem",
+      "aliases": []
+    },
+    {
+      "value": "Secunderabad",
+      "label": "Secunderabad",
+      "aliases": []
+    },
+    {
+      "value": "Surat",
+      "label": "Surat",
+      "aliases": []
+    },
+    {
+      "value": "Thane",
+      "label": "Thane",
+      "aliases": []
+    },
+    {
+      "value": "Thiruvananthapuram",
+      "label": "Thiruvananthapuram",
+      "aliases": ["Trivandrum"]
+    },
+    {
+      "value": "Thrissur",
+      "label": "Thrissur",
+      "aliases": []
+    },
+    {
+      "value": "Tiruchirappalli",
+      "label": "Tiruchirappalli",
+      "aliases": ["Trichy"]
+    },
+    {
+      "value": "Tirupati",
+      "label": "Tirupati",
+      "aliases": []
+    },
+    {
+      "value": "Udaipur",
+      "label": "Udaipur",
+      "aliases": []
+    },
+    {
+      "value": "Vadodara",
+      "label": "Vadodara",
+      "aliases": ["Baroda"]
+    },
+    {
+      "value": "Varanasi",
+      "label": "Varanasi",
+      "aliases": []
+    },
+    {
+      "value": "Vijayawada",
+      "label": "Vijayawada",
+      "aliases": []
+    },
+    {
+      "value": "Visakhapatnam",
+      "label": "Visakhapatnam",
+      "aliases": ["Vizag"]
+    },
+    {
+      "value": "Warangal",
+      "label": "Warangal",
+      "aliases": []
+    }
+  ]
+}
