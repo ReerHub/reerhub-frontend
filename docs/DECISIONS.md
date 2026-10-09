@@ -1,5 +1,11 @@
 # Frontend decisions
 
+## Security and staging follow-up
+
+The earlier full-audit and staging blockers recorded below were resolved on 2026-10-09. A scoped override replaces only the Next ESLint plugin's fast-glob dependency with compatible tinyglobby 0.2.15. Next, TypeScript, ESLint and lint rules remain unchanged; no forced framework downgrade or disabled audit gate is used. Full `npm audit` reports zero vulnerabilities after a clean install. `npm run test:security` verifies wildcard Next project-root discovery, directory-only behavior and actual no-html-link-for-pages rule enforcement, and runs in CI. Frontend lint, TypeScript, all 34 regression checks and the production build passed.
+
+Real staging checks verified public browsing, profile save/reload, cross-surface saved-state updates, Razorpay Test-mode trial activation and Pro recommendation thresholds/evidence. Not relevant persisted after reload and removed the role from every recommendation tier. Broad preferences produced no invented evidence. These checks used the isolated staging database and no real payment; actual scheduled email delivery and production capacity are not certified by them.
+
 ## Discovery-first access
 
 Anonymous visitors get a 10-role listing preview; full descriptions, skills and official Apply links are public. A free account unlocks complete browsing, profile and saved roles. Pro matching remains protected. Crawlers receive the same public content as visitors.
