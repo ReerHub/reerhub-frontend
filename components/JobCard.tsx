@@ -8,11 +8,13 @@ export default function JobCard({
   job,
   saved,
   showSave,
+  savePending,
   onToggleSave,
 }: {
   job: Job;
   saved?: boolean;
   showSave?: boolean;
+  savePending?: boolean;
   onToggleSave?: (jobId: string, saved: boolean) => void;
 }) {
   const name = job.companyId?.name || "Company";
@@ -22,6 +24,8 @@ export default function JobCard({
       {showSave && (
         <button
           className="job-save"
+          disabled={savePending}
+          aria-busy={savePending}
           aria-label={saved ? `Unsave ${job.title}` : `Save ${job.title}`}
           aria-pressed={!!saved}
           onClick={() => onToggleSave?.(job._id, !saved)}

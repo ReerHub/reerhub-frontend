@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Icon from "@/components/ui/Icon";
+import AdminOperations from "@/components/AdminOperations";
 import {
   adminLogout,
   adminSession,
@@ -25,6 +26,7 @@ import {
 
 type Tab =
   | "overview"
+  | "operations"
   | "companies"
   | "sources"
   | "jobs"
@@ -134,6 +136,14 @@ const NAV: {
   icon: IconName;
   group: string;
 }[] = [
+  {
+    key: "operations",
+    label: "Daily operations",
+    description:
+      "Today's job changes, source runs, and match-email activity in IST.",
+    icon: "clock",
+    group: "Workspace",
+  },
   {
     key: "overview",
     label: "Overview",
@@ -347,6 +357,7 @@ export default function AdminConsole() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [overview, setOverview] = useState<Overview | null>(null);
+  const [operationsVersion, setOperationsVersion] = useState(0);
   const [result, setResult] = useState<AdminPage<Row>>(emptyPage);
   const [sources, setSources] = useState<Source[]>([]);
   const [query, setQuery] = useState("");
@@ -379,7 +390,10 @@ export default function AdminConsole() {
         if (state && target === "companies") params.set("active", state);
         if (state && ["jobs", "subscriptions"].includes(target))
           params.set("status", state);
-        if (target === "overview") {
+        if (target === "operations") {
+          if (id === request.current)
+            setOperationsVersion((value) => value + 1);
+        } else if (target === "overview") {
           const data = await getAdmin<Overview>("/admin/overview");
           if (
             !data?.counts ||
@@ -694,7 +708,9 @@ export default function AdminConsole() {
               </button>
             </div>
           )}
-          {tab === "overview" ? (
+          {tab === "operations" ? (
+            <AdminOperations version={operationsVersion} />
+          ) : tab === "overview" ? (
             loading ? (
               <Loading />
             ) : overview ? (

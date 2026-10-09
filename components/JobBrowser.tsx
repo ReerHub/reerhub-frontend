@@ -142,6 +142,7 @@ export default function JobBrowser({
   initialFilters,
   savedOnly,
   savedIds,
+  savingIds = [],
   showSave,
   onToggleSave,
   initialData,
@@ -152,6 +153,7 @@ export default function JobBrowser({
   initialFilters?: Partial<Filters>;
   savedOnly?: boolean;
   savedIds?: string[];
+  savingIds?: string[];
   showSave?: boolean;
   onToggleSave?: (jobId: string, saved: boolean) => void;
   initialData?: Awaited<ReturnType<typeof listJobsWithMeta>>;
@@ -393,6 +395,7 @@ export default function JobBrowser({
             <JobCard
               key={job._id}
               job={job}
+              savePending={savingIds.includes(job._id)}
               saved={savedSet.has(job._id)}
               showSave={showSave ?? !!user}
               onToggleSave={toggleSave}

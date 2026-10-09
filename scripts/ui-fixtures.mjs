@@ -31,6 +31,9 @@ let hidden = false;
 let profilePatch = {};
 let profileName;
 let profileMode = "partial";
+let dashboardMode = "populated";
+let fixtureDelay = 0;
+let fixtureRequests = { recommendations: 0, saves: 0, feedback: 0 };
 const company = {
   _id: "111111111111111111111111",
   name: "Fixture Labs",
@@ -52,6 +55,7 @@ const job = {
   postedAt: "2025-01-01T00:00:00.000Z",
   updatedAt: "2025-01-02T00:00:00.000Z",
   skills: ["Node.js", "MongoDB", "TypeScript"],
+  experience: { min: 2, max: 6 },
   remoteType: "hybrid",
   firstSeenAt: new Date().toISOString(),
   status: "active",
@@ -64,6 +68,7 @@ const job = {
       "Matches your Node.js skills",
       "Aligned with your preferred location",
       "Matches your experience",
+      "Matches your software track",
     ],
   },
 };
@@ -81,6 +86,13 @@ const server = http.createServer(async (req, res) => {
       profilePatch = {};
       profileName = undefined;
       profileMode = url.searchParams.get("profile") || "partial";
+      dashboardMode = url.searchParams.get("dashboard") || "populated";
+      fixtureDelay = Math.min(Number(url.searchParams.get("delay")) || 0, 5000);
+      fixtureRequests = { recommendations: 0, saves: 0, feedback: 0 };
+      if (dashboardMode === "saved-pages")
+        saved = Array.from({ length: 22 }, (_, i) =>
+          String(i + 200).padStart(24, "0"),
+        );
       res.writeHead(302, {
         "Set-Cookie": [
           `fixtureState=${chosen}; Path=/; SameSite=Lax`,
@@ -89,7 +101,8 @@ const server = http.createServer(async (req, res) => {
         Location:
           chosen === "anonymous"
             ? "/jobs"
-            : url.searchParams.has("profile")
+            : url.searchParams.has("profile") &&
+                !url.searchParams.has("dashboard")
               ? "/profile"
               : "/dashboard",
       });
@@ -266,6 +279,130 @@ const server = http.createServer(async (req, res) => {
           })),
         recentAudit: audits.slice(0, 5),
       });
+    if (path === "/admin/operations" || path === "/admin/operations/rows") {
+      const day =
+        url.searchParams.get("date") ||
+        new Date(Date.now() + 19800000).toISOString().slice(0, 10);
+      const time = new Date(`${day}T08:00:00+05:30`).toISOString();
+      const empty = mode === "empty";
+      const kinds = ["created", "updated", "reopened", "closed"];
+      const changes = empty
+        ? []
+        : Array.from({ length: 32 }, (_, i) => ({
+            _id: id(i + 700),
+            type: kinds[i % 4],
+            detectedAt: time,
+            jobId: {
+              _id: job._id,
+              title: job.title,
+              companyId: company,
+              sourceId: { name: "Fixture Greenhouse" },
+            },
+            changes:
+              i % 4 === 1
+                ? { title: { old: "Backend Engineer", new: job.title } }
+                : {},
+          }));
+      const emails = empty
+        ? []
+        : ["delivered", "failed", "review", "sending"].map((status, i) => ({
+            _id: id(i + 800),
+            status,
+            attemptedAt: time,
+            deliveredAt: i === 0 ? time : undefined,
+            userId: { name: "Synthetic Member", email: "member@example.com" },
+            jobIds: [job],
+          }));
+      const syncs = empty
+        ? []
+        : ["success", "partial", "failed"].map((status, i) => ({
+            _id: id(i + 850),
+            status,
+            startedAt: time,
+            completedAt: time,
+            sourceId: { name: "Fixture Greenhouse" },
+            companyId: company,
+            stats: {
+              fetched: 40,
+              newJobs: 8,
+              updatedJobs: 16,
+              closedJobs: 8,
+              unchangedJobs: 8,
+            },
+            errors:
+              i === 2 ? ["Official feed unavailable; jobs preserved."] : [],
+            warnings: i === 1 ? ["Some listings could not be parsed."] : [],
+          }));
+      if (path === "/admin/operations")
+        return json({
+          day,
+          timezone: "Asia/Kolkata",
+          generatedAt: new Date().toISOString(),
+          changes: Object.fromEntries(kinds.map((key) => [key, empty ? 0 : 8])),
+          syncs: {
+            running: 0,
+            success: empty ? 0 : 1,
+            partial: empty ? 0 : 1,
+            failed: empty ? 0 : 1,
+          },
+          deliveries: {
+            delivered: empty ? 0 : 1,
+            failed: empty ? 0 : 1,
+            review: empty ? 0 : 1,
+            sending: empty ? 0 : 1,
+          },
+          digestRun: empty
+            ? null
+            : {
+                status: "completed",
+                startedAt: time,
+                completedAt: time,
+                summary: {
+                  evaluated: 12,
+                  sent: 1,
+                  failed: 1,
+                  reviewRequired: 1,
+                  skipped: {
+                    unverifiedEmail: 1,
+                    preference: 2,
+                    incompleteProfile: 3,
+                    existingDelivery: 1,
+                    noQualifiedUnseenMatches: 3,
+                  },
+                },
+              },
+          scheduler: {
+            enabled: true,
+            sourceTimes: ["06:00–06:14", "20:00–20:14"],
+            digestTime: "08:00",
+            tasks: [
+              {
+                key: "daily-match-digest",
+                dueAt: new Date(Date.now() + 86400000).toISOString(),
+                lastCompletedAt: time,
+              },
+            ],
+          },
+        });
+      const kind = url.searchParams.get("kind") || "changes",
+        status = url.searchParams.get("status");
+      const rows =
+        kind === "changes"
+          ? changes
+          : kind === "emails"
+            ? emails
+            : kind === "syncs"
+              ? syncs
+              : sources.map((source) => ({
+                  ...source,
+                  nextScheduledSyncAt: new Date(
+                    Date.now() + 3600000,
+                  ).toISOString(),
+                }));
+      return page(
+        rows.filter((row) => !status || (row.type || row.status) === status),
+      );
+    }
     if (req.method === "POST" || req.method === "PATCH")
       return json({ ...data, _id: id(900), status: "success" });
     if (path === "/admin/companies") {
@@ -392,39 +529,90 @@ const server = http.createServer(async (req, res) => {
     return json(user);
   }
   if (path === "/billing") return json({ subscription });
+  if (path === "/fixture-stats") return json(fixtureRequests);
   if (path === "/recommendations") {
+    fixtureRequests.recommendations++;
+    if (fixtureDelay)
+      await new Promise((resolve) => setTimeout(resolve, fixtureDelay));
+    if (dashboardMode === "error") return json(null, 503);
+    const missing = [
+      !user.profile.techTrack && "tech track",
+      !(
+        user.profile.rolePreference === "any" || user.profile.techRoles?.length
+      ) && "role preferences",
+      !(user.profile.skills?.length >= 3) && "three skills",
+      !Number.isFinite(user.profile.experienceYears) && "experience years",
+      !(
+        user.profile.locationPreference === "all-india" ||
+        user.profile.targetLocations?.length
+      ) && "location preferences",
+    ].filter(Boolean);
+    const ready = missing.length === 0;
+    const candidate = {
+      ...job,
+      fit: {
+        ...job.fit,
+        relevanceScore: dashboardMode === "threshold-empty" ? 62 : 86,
+      },
+    };
+    const available = ready && !hidden && dashboardMode !== "all-empty";
     const minimumScore = Number(url.searchParams.get("minScore") || 75);
     return json(
       {
-        profileCompletion: 100,
-        profileReady: true,
-        missingProfileFields: [],
+        profileCompletion: (5 - missing.length) * 20,
+        profileReady: ready,
+        missingProfileFields: missing,
         minimumRelevanceScore: minimumScore,
         highMatchScore: 75,
         matchCounts: {
           90: 0,
-          75: hidden ? 0 : 1,
-          50: hidden ? 0 : 1,
-          25: hidden ? 0 : 1,
-          all: hidden ? 0 : 1,
+          75: available && candidate.fit.relevanceScore >= 75 ? 1 : 0,
+          50: available ? 1 : 0,
+          25: available ? 1 : 0,
+          all: available ? 1 : 0,
         },
         jobs:
-          hidden || (minimumScore && job.fit.relevanceScore < minimumScore)
+          !available ||
+          (minimumScore && candidate.fit.relevanceScore < minimumScore)
             ? []
-            : [job],
+            : [candidate],
       },
       pro ? 200 : 403,
     );
   }
   if (path.includes("/feedback")) {
+    fixtureRequests.feedback++;
+    if (fixtureDelay)
+      await new Promise((resolve) => setTimeout(resolve, fixtureDelay));
+    if (!pro) return json(null, 403);
+    if (dashboardMode === "feedback-error") return json(null, 503);
     if (data.feedback === "not_relevant") hidden = true;
     return json({ feedback: data.feedback });
   }
   if (path === "/users/me/saved/ids") return json(saved);
-  if (path === "/users/me/saved")
-    return json(saved.length ? [job] : [], 200, { totalPages: 1 });
+  if (path === "/users/me/saved") {
+    if (dashboardMode === "saved-error") return json(null, 503);
+    const page = Number(url.searchParams.get("page") || 1);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(
+      JSON.stringify({
+        data: saved
+          .slice((page - 1) * 21, page * 21)
+          .map((_id) => ({ ...job, _id })),
+        meta: { totalPages: Math.max(1, Math.ceil(saved.length / 21)) },
+      }),
+    );
+  }
   if (path.startsWith("/users/me/saved/")) {
-    saved = req.method === "DELETE" ? [] : [job._id];
+    fixtureRequests.saves++;
+    if (fixtureDelay)
+      await new Promise((resolve) => setTimeout(resolve, fixtureDelay));
+    if (dashboardMode === "save-error") return json(null, 503);
+    const jobId = path.split("/").at(-1);
+    saved =
+      req.method === "DELETE"
+        ? saved.filter((id) => id !== jobId)
+        : [...new Set([...saved, jobId])];
     return json({ saved: saved.length > 0 });
   }
   if (path === "/companies") return json([company]);

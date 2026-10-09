@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/AuthProvider";
@@ -13,14 +13,17 @@ import Icon from "@/components/ui/Icon";
 import { getSavedJobs, saveJob, savedIds, unsaveJob } from "@/lib/auth";
 import { type Job } from "@/lib/reerhub";
 import { isPro } from "@/lib/membership";
-import { profileSignals } from "@/lib/profile-readiness";
+import DashboardGuidance from "@/components/DashboardGuidance";
+import { dashboardView } from "@/lib/dashboard";
 
 function SavedRoles({
   ids,
   onSave,
+  savingIds,
 }: {
   ids: string[];
   onSave: (id: string, saved: boolean) => void;
+  savingIds: string[];
 }) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +36,11 @@ function SavedRoles({
     getSavedJobs(page)
       .then((data) => {
         if (active) {
+          const totalPages = data.meta?.totalPages || 1;
+          if (page > totalPages || (page > 1 && !(data.data || []).length)) {
+            setPage(Math.max(1, Math.min(page - 1, totalPages)));
+            return;
+          }
           setJobs(data.data || []);
           setPages(data.meta?.totalPages || 1);
           setError(false);
@@ -47,7 +55,7 @@ function SavedRoles({
     return () => {
       active = false;
     };
-  }, [page, attempt]);
+  }, [page, attempt, ids]);
   if (loading)
     return (
       <div className="grid gap-5 md:grid-cols-3">
@@ -77,6 +85,12 @@ function SavedRoles({
       </div>
     );
   const visible = jobs.filter((j) => ids.includes(j._id));
+  if (page > 1 && visible.length === 0)
+    return (
+      <div role="status" className="surface-panel p-8">
+        Loading your shortlist…
+      </div>
+    );
   return (
     <>
       <div className="mb-6">
@@ -95,6 +109,7 @@ function SavedRoles({
               job={job}
               saved
               showSave
+              savePending={savingIds.includes(job._id)}
               onToggleSave={onSave}
             />
           ))}
@@ -150,16 +165,33 @@ function Dashboard() {
   const router = useRouter();
   const pro = isPro(user);
   const [ids, setIds] = useState<string[]>([]);
+  const pendingSaves = useRef(new Set<string>());
+  const mounted = useRef(false);
+  const [savingIds, setSavingIds] = useState<string[]>([]);
   useEffect(() => {
+    let active = true;
+    mounted.current = true;
     if (user)
       savedIds()
-        .then(setIds)
-        .catch(() => toast.error("Saved roles could not load"));
+        .then((value) => {
+          if (active) setIds(value);
+        })
+        .catch(() => {
+          if (active) toast.error("Saved roles could not load");
+        });
+    return () => {
+      active = false;
+      mounted.current = false;
+    };
   }, [user]);
   const toggleSave = useCallback(async (id: string, saved: boolean) => {
+    if (pendingSaves.current.has(id)) return;
+    pendingSaves.current.add(id);
+    setSavingIds([...pendingSaves.current]);
     try {
       if (saved) await saveJob(id);
       else await unsaveJob(id);
+      if (!mounted.current) return;
       setIds((prev) =>
         saved ? [...new Set([...prev, id])] : prev.filter((x) => x !== id),
       );
@@ -167,7 +199,10 @@ function Dashboard() {
         saved ? "Added to your shortlist" : "Removed from your shortlist",
       );
     } catch {
-      toast.error("Could not update saved role");
+      if (mounted.current) toast.error("Could not update saved role");
+    } finally {
+      pendingSaves.current.delete(id);
+      if (mounted.current) setSavingIds([...pendingSaves.current]);
     }
   }, []);
   if (loading)
@@ -189,26 +224,15 @@ function Dashboard() {
       </div>
     );
   const requested = params.get("view");
-  const view =
-    requested === "saved"
-      ? "saved"
-      : !pro && requested === "discover"
-        ? "discover"
-        : pro
-          ? "matches"
-          : "discover";
+  const view = dashboardView(requested, pro);
   const tabs = [
     ...(pro ? [{ id: "matches", label: "Your matches" }] : []),
-    ...(!pro ? [{ id: "discover", label: "Discover jobs" }] : []),
+    { id: "discover", label: "Discover jobs" },
     {
       id: "saved",
       label: `Saved roles${ids.length ? ` (${ids.length})` : ""}`,
     },
   ];
-  const signals = profileSignals(user.profile);
-  const completion = Math.round(
-    (signals.filter((signal) => signal.complete).length / signals.length) * 100,
-  );
   return (
     <div className="page-container py-9 sm:py-12">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-5">
@@ -221,7 +245,7 @@ function Dashboard() {
           </h1>
           <p className="mt-3 text-sm leading-6 text-slate-600">
             {pro
-              ? "Your shortlist is built for you. Start with the strongest matches, then broaden only when you want to."
+              ? "Explore your ranked recommendations, official openings, and saved shortlist."
               : "Find official openings, build your shortlist, and choose your next move."}
           </p>
         </div>
@@ -232,6 +256,7 @@ function Dashboard() {
       </div>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0">
+          <DashboardGuidance profile={user.profile} pro={pro} />
           {pro ? (
             <MembershipStatus user={user} />
           ) : (
@@ -304,13 +329,18 @@ function Dashboard() {
             aria-labelledby={`tab-${view}`}
           >
             {view === "matches" ? (
-              <RecommendationPanel savedIds={ids} onToggleSave={toggleSave} />
+              <RecommendationPanel
+                savedIds={ids}
+                savingIds={savingIds}
+                onToggleSave={toggleSave}
+              />
             ) : view === "saved" ? (
-              <SavedRoles ids={ids} onSave={toggleSave} />
+              <SavedRoles ids={ids} savingIds={savingIds} onSave={toggleSave} />
             ) : (
               <JobBrowser
                 heading="Open roles to explore"
                 savedIds={ids}
+                savingIds={savingIds}
                 showSave
                 onToggleSave={toggleSave}
               />
@@ -318,50 +348,6 @@ function Dashboard() {
           </section>
         </div>
         <aside className="space-y-5">
-          <section className="surface-panel p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-ink">Your profile signals</h2>
-              <span className="text-sm font-bold text-primary-deep">
-                {completion}%
-              </span>
-            </div>
-            <div className="my-4 h-1.5 overflow-hidden rounded-full bg-slate-100">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{ width: `${completion}%` }}
-              />
-            </div>
-            <p className="text-sm leading-6 text-slate-600">
-              {completion === 100
-                ? "Your profile is match-ready. Keep your skills and preferences current as your search changes."
-                : "Choose a track, role preferences (or any role), at least three skills, experience, and cities (or All India) to complete your matching essentials."}
-            </p>
-            <ul className="profile-checklist" aria-label="Profile completeness">
-              {signals.map((signal) => (
-                <li key={signal.label} data-complete={signal.complete}>
-                  <Icon
-                    name={signal.complete ? "check" : "user"}
-                    className="h-3.5 w-3.5"
-                  />
-                  <span>
-                    {signal.label}
-                    <span className="sr-only">
-                      {signal.complete ? ": complete" : ": needed"}
-                    </span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/profile"
-              className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"
-            >
-              {completion === 100
-                ? "Review preferences"
-                : "Complete my profile"}
-              <Icon name="arrow" className="h-4 w-4" />
-            </Link>
-          </section>
           {!pro && <UpgradePanel compact />}
           {pro && (
             <section className="surface-panel p-6">
