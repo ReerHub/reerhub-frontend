@@ -1,4 +1,5 @@
 "use client";
+import { publicConfig } from "@/lib/read-sharing";
 
 import {
   forwardRef,
@@ -52,11 +53,7 @@ const Turnstile = forwardRef<TurnstileHandle>(function Turnstile(_, ref) {
   const configLoaded = useRef(false);
 
   useEffect(() => {
-    fetch("/api/config")
-      .then((r) => {
-        if (!r.ok) throw new Error("Configuration unavailable");
-        return r.json();
-      })
+    publicConfig()
       .then((j) => {
         configLoaded.current = true;
         setSiteKey(j.turnstileSiteKey || "");

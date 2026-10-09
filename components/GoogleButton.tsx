@@ -1,4 +1,5 @@
 "use client";
+import { publicConfig } from "@/lib/read-sharing";
 
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -40,8 +41,7 @@ export default function GoogleButton({ next }: { next: string }) {
   const [clientId, setClientId] = useState("");
 
   useEffect(() => {
-    fetch("/api/config")
-      .then((r) => r.json())
+    publicConfig()
       .then((j) => setClientId(j.googleClientId || ""))
       .catch(() => {});
   }, []);

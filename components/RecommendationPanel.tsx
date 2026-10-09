@@ -61,8 +61,9 @@ export default function RecommendationPanel({
   };
   useEffect(() => {
     let active = true;
+    const controller = new AbortController();
     mounted.current = true;
-    getRecommendations(minimumScore)
+    getRecommendations(minimumScore, controller.signal)
       .then((data) => {
         if (active) {
           setJobs(data.jobs);
@@ -79,6 +80,7 @@ export default function RecommendationPanel({
       });
     return () => {
       active = false;
+      controller.abort();
       mounted.current = false;
     };
   }, [minimumScore, attempt]);
@@ -230,6 +232,7 @@ export default function RecommendationPanel({
                   </div>
                   <Link
                     href={jobUrl(job)}
+                    prefetch={false}
                     className="font-display text-xl font-bold leading-snug tracking-tight text-ink hover:text-primary"
                   >
                     {job.title}
@@ -301,7 +304,11 @@ export default function RecommendationPanel({
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="match-actions flex gap-2">
-                  <Link href={jobUrl(job)} className="btn-primary">
+                  <Link
+                    prefetch={false}
+                    href={jobUrl(job)}
+                    className="btn-primary"
+                  >
                     View role & apply
                     <Icon name="arrow" className="h-4 w-4" />
                   </Link>

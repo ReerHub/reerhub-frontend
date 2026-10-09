@@ -30,6 +30,7 @@ export default function CompanyMarquee({
           <Link
             key={`${company._id}-${index}`}
             href={`/companies/${company.slug}`}
+            prefetch={false}
             role="listitem"
             aria-hidden={index >= companies.length}
             tabIndex={index >= companies.length ? -1 : 0}

@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
 import { isDedicatedAdminHost } from "@/lib/admin-host";
+import PerformanceProbe from "@/components/PerformanceProbe";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -65,6 +66,7 @@ export default async function RootLayout({
         )}
         {!isAdminHost && <CookieConsent />}
         <Toaster position="top-right" reverseOrder={false} />
+        {process.env.REERHUB_UI_FIXTURES === "1" && <PerformanceProbe />}
       </body>
     </html>
   );

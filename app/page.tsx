@@ -1,11 +1,13 @@
 import HomePage from "@/components/HomePage";
+import { getHome } from "@/lib/reerhub";
 import { pageMetadata, safeJsonLd, SITE } from "@/lib/seo";
 export const metadata = pageMetadata(
   "Engineering, AI & Tech Jobs in India",
   "Discover engineering, AI and data jobs from official company career pages in India. Apply free, save roles, or get personalized matches with Pro.",
   "/",
 );
-export default function Home() {
+export default async function Home() {
+  const data = await getHome().catch(() => null);
   return (
     <>
       <script
@@ -31,7 +33,7 @@ export default function Home() {
           ]),
         }}
       />
-      <HomePage />
+      <HomePage data={data} />
     </>
   );
 }
