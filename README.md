@@ -8,7 +8,7 @@ Live: `https://reerhub.com`. Staging: `https://staging.reerhub.com` from `develo
 
 - Anonymous visitors can preview up to 10 listings and read full job descriptions, skills and official Apply links without signing in. A free account unlocks complete browsing, profile editing and saved roles.
 - Free accounts use a manual discovery dashboard. They never receive ranked matches or match emails.
-- Pro members with a valid entitlement, including remaining time after cancellation, receive a default 75%+ ranked shortlist, tiered 90/75/50/25% dashboard filters, relevance feedback, and one daily email with up to five fresh 75%+ roles. A match-ready profile needs a track, target role, three skills, experience, and a city or work-mode preference. A score describes profile relevance, never hiring probability; freshness only orders already-qualified roles.
+- Pro members with a valid entitlement, including remaining time after cancellation, receive a default 75%+ ranked shortlist, tiered 90/75/50/25% dashboard filters, relevance feedback, and one daily email with up to five fresh 75%+ roles. A match-ready profile needs a track, role preferences (or any role), three skills, experience, and location preferences (or All India). A score describes profile relevance, never hiring probability; freshness only orders already-qualified roles.
 - Pro plans are weekly ₹49, monthly ₹149, and quarterly ₹299. Each has a seven-day trial. Subscription payments are non-refundable; cancellation stops renewal while access remains available until the displayed end date.
 
 ## Local setup
@@ -49,3 +49,5 @@ Vercel deploys `develop` to staging and `main` to production. Set Node 24 and co
 ## Reference
 
 Read `AGENTS.md` first. Product decisions are in `docs/DECISIONS.md`; the current visual system is in `docs/design/design-system.md`.
+
+Profile setup loads searchable choices from the backend's public `/api/v1/profile-options` catalog. Choose one of nine tracks, any role or up to three preferred roles, up to ten canonical skills, and All India or up to three cities. Aliases are searchable; free text is never saved as a selection. City and work-mode preferences influence ranking without hiding other locations or modes. Track changes confirm before clearing incompatible roles. Incomplete profiles remain saveable.

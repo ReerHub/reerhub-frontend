@@ -1,6 +1,15 @@
 // Local visual QA only: synthetic API, no database, email or payment-provider calls.
 // Open http://127.0.0.1:3001/api/v1/fixture after starting this script.
 import http from "node:http";
+import { readFile } from "node:fs/promises";
+// Synthetic snapshot of the backend catalog; keeps this harness self-contained.
+// The actual product always fetches the backend-owned /profile-options endpoint.
+const PROFILE_OPTIONS = JSON.parse(
+  await readFile(
+    new URL("./fixtures/profile-options.json", import.meta.url),
+    "utf8",
+  ),
+);
 import { spawn } from "node:child_process";
 const frontendPort = process.env.FIXTURE_PORT || "3001";
 const apiPort = process.env.FIXTURE_API_PORT || "8801";
@@ -19,6 +28,9 @@ const cases = [
 let paused = false;
 let saved = [];
 let hidden = false;
+let profilePatch = {};
+let profileName;
+let profileMode = "partial";
 const company = {
   _id: "111111111111111111111111",
   name: "Fixture Labs",
@@ -66,12 +78,20 @@ const server = http.createServer(async (req, res) => {
       paused = false;
       saved = [];
       hidden = false;
+      profilePatch = {};
+      profileName = undefined;
+      profileMode = url.searchParams.get("profile") || "partial";
       res.writeHead(302, {
         "Set-Cookie": [
           `fixtureState=${chosen}; Path=/; SameSite=Lax`,
           `accessToken=${chosen === "anonymous" ? "" : "fixture-only"}; Path=/; HttpOnly; SameSite=Lax`,
         ],
-        Location: chosen === "anonymous" ? "/jobs" : "/dashboard",
+        Location:
+          chosen === "anonymous"
+            ? "/jobs"
+            : url.searchParams.has("profile")
+              ? "/profile"
+              : "/dashboard",
       });
       res.end();
       return;
@@ -110,16 +130,22 @@ const server = http.createServer(async (req, res) => {
     emailVerified: true,
     profile: {
       headline: "Backend engineer",
-      currentRole: "Backend Engineer",
+      rolePreference: "selected",
+      techRoles: ["Backend Engineer"],
       techTrack: "software",
       skills: ["Node.js", "MongoDB"],
       experienceYears: 4,
-      city: "Bengaluru",
+      locationPreference: "selected",
+      targetLocations: ["Bengaluru"],
       remoteType: "hybrid",
     },
     notificationPreferences: { digest: paused ? "paused" : "daily" },
     membership: { isPro: pro, subscription },
   };
+  if (profileMode === "empty") user.profile = {};
+  if (profileMode === "complete") user.profile.skills.push("TypeScript");
+  user.profile = { ...user.profile, ...profilePatch };
+  if (profileName !== undefined) user.name = profileName;
   let body = "";
   for await (const chunk of req) body += chunk;
   const data = body ? JSON.parse(body) : {};
@@ -345,10 +371,22 @@ const server = http.createServer(async (req, res) => {
     if (path === "/admin/audit-logs") return page(audits);
   }
   if (path === "/auth/csrf") return json({ csrfToken: "fixture-csrf" });
+  if (path === "/profile-options") return json(PROFILE_OPTIONS);
   if (path === "/users/me") {
     if (state === "anonymous") return json(null, 401);
     if (req.method === "PATCH") {
-      paused = data.notificationPreferences?.digest === "paused";
+      if (profileMode === "error") return json(null, 503);
+      if (data.notificationPreferences)
+        paused = data.notificationPreferences.digest === "paused";
+      if (data.name !== undefined) profileName = data.name;
+      const fields = Object.fromEntries(
+        Object.entries(data).filter(
+          ([key]) => !["name", "notificationPreferences"].includes(key),
+        ),
+      );
+      profilePatch = { ...profilePatch, ...fields };
+      user.profile = { ...user.profile, ...fields };
+      if (data.name !== undefined) user.name = data.name;
       user.notificationPreferences.digest = paused ? "paused" : "daily";
     }
     return json(user);

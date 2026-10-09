@@ -314,10 +314,12 @@ test("public profile guidance treats zero experience as complete, not missing", 
   const { profileSignals } = await import(moduleUrl(compile(source)));
   const complete = {
     techTrack: "software",
-    currentRole: "Backend Engineer",
+    rolePreference: "selected",
+    techRoles: ["Backend Engineer"],
     skills: ["Node.js", "SQL", "TypeScript"],
     experienceYears: 0,
     remoteType: "remote",
+    locationPreference: "all-india",
   };
   assert.ok(profileSignals(complete).every((signal) => signal.complete));
   assert.equal(

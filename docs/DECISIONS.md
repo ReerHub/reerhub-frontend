@@ -6,7 +6,7 @@ Anonymous visitors get a 10-role listing preview; full descriptions, skills and 
 
 ## Pro is career relevance, not hiring prediction
 
-Only a valid Pro entitlement shows ranked recommendations, feedback controls, and daily alerts; that includes remaining access after a cancellation. A match-ready profile needs a track, target role, three skills, experience, and a city or work-mode preference. Scores communicate relevance to the member profile and never predict interviews, offers, or selection; freshness only breaks ties between qualified roles.
+Only a valid Pro entitlement shows ranked recommendations, feedback controls, and daily alerts; that includes remaining access after a cancellation. A match-ready profile needs a track, role preferences (selected roles or any role), three skills, experience, and location preferences (selected cities or All India). Profile roles, skills and cities are searchable selections from the backend-owned catalog, not free-text matching inputs. Scores communicate relevance to the member profile and never predict interviews, offers, or selection; freshness only breaks ties between qualified roles.
 
 ## Billing presentation follows backend entitlement
 

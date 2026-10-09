@@ -24,6 +24,7 @@ ReerHub is a calm, trustworthy career-discovery product. The interface should ma
 - Homepage shows up to 16 companies with current openings, ordered by opening count descending with stable name/id ties. Show real logos/counts and link to each company; omit zero-opening companies, never invent brands, endorsements or totals.
 - Job-detail hierarchy: breadcrumb, role information, official application, requirements, then optional account/Pro promotion. Never put an upgrade panel ahead of the job itself. Signed-out saving returns to the same job after login.
 - Dashboard/profile use the same five-signal completion checklist; readiness guidance must not claim an incomplete profile is ready. The recommendations API remains authoritative. Pro dashboard filters never change the 75%+ daily email policy.
+- Edit Profile groups role, skills, and work preferences into three light sections. Put track first, with any role or up to three catalog roles; use searchable selections for ten skills and three cities, plus All India. Aliases are search terms, not separate saved values. Desktop readiness sits beside the form; mobile readiness precedes it. Use explicit save/discard actions and protect unsaved edits. Account settings remain separate below; sign-in guidance reflects Google or magic links.
 - Buttons and touch targets are at least 44px when practical. Inputs have visible labels, useful errors, and clear disabled/loading states.
 - Keyboard focus is always visible. Radio groups, tabs, menus, filters, accordions, and feedback controls must work without a pointer.
 
