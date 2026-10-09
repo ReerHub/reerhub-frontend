@@ -14,6 +14,8 @@
     "test:admin": "node --test scripts/admin-contracts.test.mjs",
     "test:seo": "node --test scripts/seo.test.mjs",
     "test:profile": "node --test scripts/profile-editor.test.mjs",
+    "test:dashboard": "node --test scripts/dashboard.test.mjs",
+    "test:operations": "node --test scripts/admin-operations.test.mjs",
     "prepare": "husky"
   },
   "dependencies": {

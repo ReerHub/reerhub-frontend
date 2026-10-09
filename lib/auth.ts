@@ -226,6 +226,8 @@ export type Recommendation = {
   companyId: { name: string; slug: string; logoUrl?: string };
   locations: { city?: string }[];
   firstSeenAt: string;
+  remoteType?: string;
+  experience?: { min?: number; max?: number };
   fit: {
     relevanceScore: number;
     /** Compatibility alias while clients migrate to relevanceScore. */
