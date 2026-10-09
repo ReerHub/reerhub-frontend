@@ -22,6 +22,10 @@ The final public interface uses Cobalt Blue (`#2563eb`, hover `#1d4ed8`), charco
 
 ## Deployment and UI verification
 
+Admin Daily Operations reports IST-day ingestion changes, sync outcomes and daily match-email attempts through read-only protected admin APIs. Counts are events, not unique jobs; job links show current details. It distinguishes SMTP acceptance from inbox delivery and unavailable historical skip summaries from zero skips. Source schedules reflect current state, not the selected report date.
+
+The dashboard derives next-step guidance from current profile essentials and membership, with discovery and saved roles available to both Free and Pro. Pro recommendations show only backend-provided evidence; scores are relevance, not hiring predictions. Empty thresholds, no ranked jobs and request failures remain distinct. Application outcomes are explicitly member-reported, never inferred from link clicks. Dashboard analytics is deferred.
+
 Public page containers use a centered 1680px maximum frame with responsive 20–48px gutters and full-bleed backgrounds; extra viewport width becomes outer margins. Discovery grids follow container width and stop at four job columns or eight company tiles; long prose and forms retain reading-width limits and billing is capped at 1200px. The homepage shows up to 16 real companies ranked by active openings (zero-opening companies excluded). Its clearly labelled illustrative market-to-match animation is the one looping exception to finite motion, with pause/play, offscreen/tab-hidden suspension and a static reduced-motion state. Company tiles remain static and never imply partnership or endorsement.
 
 `develop` is staging and `main` is production. Staging is public but served with noindex directives. `npm run test:ui:fixtures` is an in-memory local membership-state harness; it never calls database, email, or payment services and does not replace real staging checkout tests.
