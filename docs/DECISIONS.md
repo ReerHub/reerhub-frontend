@@ -1,5 +1,11 @@
 # Frontend decisions
 
+## Security and staging follow-up
+
+The earlier full-audit and staging blockers recorded below were resolved on 2026-10-09. A scoped override replaces only the Next ESLint plugin's fast-glob dependency with compatible tinyglobby 0.2.15. Next, TypeScript, ESLint and lint rules remain unchanged; no forced framework downgrade or disabled audit gate is used. Full `npm audit` reports zero vulnerabilities after a clean install. `npm run test:security` verifies wildcard Next project-root discovery, directory-only behavior and actual no-html-link-for-pages rule enforcement, and runs in CI. Frontend lint, TypeScript, all 34 regression checks and the production build passed.
+
+Real staging checks verified public browsing, profile save/reload, cross-surface saved-state updates, Razorpay Test-mode trial activation and Pro recommendation thresholds/evidence. Not relevant persisted after reload and removed the role from every recommendation tier. Broad preferences produced no invented evidence. These checks used the isolated staging database and no real payment; actual scheduled email delivery and production capacity are not certified by them.
+
 ## Discovery-first access
 
 Anonymous visitors get a 10-role listing preview; full descriptions, skills and official Apply links are public. A free account unlocks complete browsing, profile and saved roles. Pro matching remains protected. Crawlers receive the same public content as visitors.
@@ -30,6 +36,28 @@ Public page containers use a centered 1680px maximum frame with responsive 20–
 
 `develop` is staging and `main` is production. Staging is public but served with noindex directives. `npm run test:ui:fixtures` is an in-memory local membership-state harness; it never calls database, email, or payment services and does not replace real staging checkout tests.
 
+## Shared reads and performance verification
+
+Homepage content is server-rendered from one `/home` read without a hydration refetch. The directory requests 50 companies/counts together, debounces API search by 300ms and keeps URL state. Repeated company/job cards disable detail prefetch; primary navigation remains prefetched. Company/job metadata and rendering share request-scoped reads, never independent five-minute frontend caches.
+
+One session authority shares session reads and serializes refresh, including late concurrent 401s. Member-scoped saved IDs load once and synchronize across discovery, detail and dashboard; account switching clears state, failed reads retain known values, and focus revalidation is bounded to once per minute. In-flight reads merge successful saves rather than overwrite them. Obsolete searches and tab reads use AbortSignal; shared reads cannot be cancelled by another consumer. Public config/catalog reads are shared; catalog version changes replace the catalog. Google/Turnstile remain authentication-only and Razorpay loads on checkout with a bounded load failure. Billing/account mutations remain uncached.
+
+`npm run test:performance` checks request contracts, refresh concurrency and saved-state races. The synthetic fixture API records route counts at `/api/v1/fixture-stats`; `FIXTURE_API_ONLY=1` can pair it with an independently built production preview. `FIXTURE_PRODUCTION=1` starts an already-built fixture preview. The fixture-only performance probe reports LCP/CLS and supported event latency; it is excluded from ordinary builds.
+
+Verified production-mode fixture requests: homepage one `/home` plus necessary session; directory one `/companies` and no per-card detail reads; Pro dashboard-to-discovery one shared saved-ID read with immediate save synchronization. Mobile 390×844 localhost homepage measured LCP 104ms/CLS 0.042, unthrottled; these are not fixed slow-network mobile budget results. Interaction latency was unavailable in this browser, and no field INP claim is made. Full deployment-equivalent mobile/network, payment-provider and staging checks remain required. Promote compatible backend support through staging before frontend deployment.
+
 ## Public search metadata
+
+## Pre-release fixed-network checks
+
+Release follow-up updates the lockfile to DOMPurify 3.4.16, sharp 0.35.5 (with matching native binaries/libvips), and source-map-js 1.2.2 using compatible security patches. `npm audit --omit=dev --audit-level=high` now reports zero vulnerabilities. The full audit still reports five high-severity entries in one dev-only dependency chain: ESLint's Next plugin → fast-glob → micromatch → braces. npm offers only a breaking downgrade to eslint-config-next 14.2.35, which is not applied to this Next 16 project. The full-audit CI gate remains enabled and unresolved; production-only audit success is not full CI success.
+
+After the `develop` merge on 2026-10-09, an unauthenticated request to `https://staging.reerhub.com/` still returned 302 to Vercel SSO. The staging API woke successfully but still lacked the new `/home` and anonymous session contracts. Deployed end-to-end checks remain blocked until the merged backend is live and frontend protection is removed for this deployment/domain.
+
+The compatible security patches passed frontend lint, TypeScript, all 33 regression tests and the production build. Next 16.3.8, ESLint 9.39.5 and TypeScript 6.0.3 remain unchanged.
+
+`npm run test:network:fixtures` proxies only a localhost production fixture preview (default target 3004, listening on 3011). Its documented network profile adds 150ms request latency and caps aggregate response traffic at 1.6Mbps; CPU is unthrottled and external assets are outside that cap. Use a fresh origin/cache for cold assets. This is a lab network simulation, not a real-phone or field-INP test.
+
+On 2026-10-09, the 390×844 local production preview measured homepage LCP 1,868ms/CLS 0.063 and directory LCP 584ms/CLS 0.019. Profile edits persisted after save/reload, and synthetic billing confirmation refreshed Pro entitlement without a payment. These checks use only in-memory fixture accounts; real Razorpay staging confirmation remains unverified. Rechecked staging still redirects to Vercel SSO, and the staging API health read timed out after 30 seconds. Do not promote the frontend before backend support is staged and the blocked end-to-end checks are completed.
 
 Public pages have unique metadata, social previews and self-referencing canonicals. Only sufficiently documented active jobs emit JobPosting markup; historical closed-role URLs remain without it. The metadata-only cursor feed populates a split sitemap index at `/sitemap.xml`, independent of the anonymous listing cap. Private/admin pages and staging use readable noindex directives. Search indexing and rich results are never guaranteed.

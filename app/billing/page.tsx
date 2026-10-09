@@ -1,7 +1,7 @@
 "use client";
 import { safeJsonLd } from "@/lib/seo";
 
-import Script from "next/script";
+import { loadCheckout } from "@/lib/checkout-script";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -195,6 +195,7 @@ export default function BillingPage() {
     }
     setBusy(true);
     try {
+      await loadCheckout();
       const data = await beginCheckout(planId);
       if (!data.checkout) {
         setBilling({ subscription: data.subscription });
@@ -289,10 +290,6 @@ export default function BillingPage() {
   const selected = PLANS.find((p) => p.id === planId) || PLANS[1];
   return (
     <div className={`${styles.billing} mx-auto max-w-5xl px-5 py-10 sm:py-16`}>
-      <Script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        strategy="afterInteractive"
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(FAQ_JSON_LD) }}

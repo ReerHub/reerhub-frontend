@@ -16,6 +16,9 @@
     "test:profile": "node --test scripts/profile-editor.test.mjs",
     "test:dashboard": "node --test scripts/dashboard.test.mjs",
     "test:operations": "node --test scripts/admin-operations.test.mjs",
+    "test:performance": "node --test scripts/performance.test.mjs scripts/session-performance.test.mjs",
+    "test:security": "node --test scripts/lint-security.test.mjs",
+    "test:network:fixtures": "node scripts/network-fixtures.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -39,6 +42,11 @@
     "prettier": "^3.9.9",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "@next/eslint-plugin-next": {
+      "fast-glob": "npm:tinyglobby@0.2.15"
+    }
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [

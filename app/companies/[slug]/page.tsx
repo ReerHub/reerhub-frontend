@@ -4,7 +4,8 @@ import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 import { notFound } from "next/navigation";
 import CompanyLogo from "@/components/CompanyLogo";
 import JobCard from "@/components/JobCard";
-import { getCompany, listCompanyJobs, NotFoundError } from "@/lib/reerhub";
+import { listJobsWithMeta, NotFoundError } from "@/lib/reerhub";
+import { readCompany as getCompany } from "@/lib/server-reads";
 import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
 
 export async function generateMetadata({
@@ -33,20 +34,19 @@ export default async function CompanyDetailPage({
 }) {
   const { slug } = await params;
   let company;
-  try {
-    company = await getCompany(slug);
-  } catch (err) {
-    if (err instanceof NotFoundError) notFound();
-    throw err;
-  }
   let jobs: React.ComponentProps<typeof JobCard>["job"][] = [];
   let total = 0;
   try {
-    const result = await listCompanyJobs(company._id, 50);
-    jobs = result.jobs;
-    total = result.total;
-  } catch {
-    // Jobs failing must not 404 the company page; count falls back below.
+    const [summary, roles] = await Promise.all([
+      getCompany(slug),
+      listJobsWithMeta({ companySlug: slug, limit: 50 }).catch(() => null),
+    ]);
+    company = summary;
+    jobs = roles?.jobs || [];
+    total = roles?.total || 0;
+  } catch (err) {
+    if (err instanceof NotFoundError) notFound();
+    throw err;
   }
   // Backend counts and job lists both default to indiaOnly=true, so these
   // always agree. Use the server count as the source of truth.

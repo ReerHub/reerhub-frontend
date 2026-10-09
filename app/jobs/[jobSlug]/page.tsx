@@ -9,7 +9,6 @@ import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
 import JobAccountPrompt from "@/components/JobAccountPrompt";
 import {
-  getJob,
   jobSlug,
   listJobsWithMeta,
   NotFoundError,
@@ -17,6 +16,7 @@ import {
   TECH_TRACKS,
   type Job,
 } from "@/lib/reerhub";
+import { readJob as getJob } from "@/lib/server-reads";
 import { locationLabel, timeAgo } from "@/lib/format";
 
 async function fetchJob(jobId: string): Promise<Job> {

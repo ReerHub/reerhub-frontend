@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import toast from "react-hot-toast";
 import JobCard from "@/components/JobCard";
-import { saveJob, savedIds, unsaveJob } from "@/lib/auth";
+import { useSavedJobs, toggleSaved } from "@/lib/saved-store";
+import { useAuth } from "./AuthProvider";
 import type { Job } from "@/lib/reerhub";
 
 /**
@@ -17,34 +18,14 @@ export default function RelatedJobs({
   jobs: Job[];
   companyName: string;
 }) {
-  const [ids, setIds] = useState<string[]>([]);
-  const [authed, setAuthed] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    savedIds()
-      .then((list) => {
-        if (!cancelled) {
-          setIds(list);
-          setAuthed(true);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { user } = useAuth();
+  const ids = useSavedJobs(user?.id);
+  const authed = !!user;
 
   const toggleSave = useCallback(async (jobId: string, next: boolean) => {
     try {
-      if (next) {
-        await saveJob(jobId);
-        setIds((prev) => (prev.includes(jobId) ? prev : [...prev, jobId]));
-        toast.success("Saved");
-      } else {
-        await unsaveJob(jobId);
-        setIds((prev) => prev.filter((id) => id !== jobId));
-      }
+      await toggleSaved(jobId, next);
+      if (next) toast.success("Saved");
     } catch {
       toast.error("Could not save. Please log in and try again.");
     }

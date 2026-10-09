@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import toast from "react-hot-toast";
-import { saveJob, savedIds, unsaveJob } from "@/lib/auth";
+import { useSavedJobs, toggleSaved } from "@/lib/saved-store";
 
 /**
  * Standalone bookmark toggle for server-rendered pages (job detail).
@@ -18,29 +18,10 @@ export default function SaveJobButton({
   jobId: string;
   variant?: "pill" | "icon";
 }) {
-  const [saved, setSaved] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
   const { user, loading } = useAuth();
+  const saved = useSavedJobs(user?.id).includes(jobId);
   const pathname = usePathname();
-
-  useEffect(() => {
-    let cancelled = false;
-    if (!user) return;
-    savedIds()
-      .then((list) => {
-        if (!cancelled) {
-          setSaved(list.includes(jobId));
-          setVisible(true);
-        }
-      })
-      .catch(() => {
-        // Logged out: no saved list, so no button (nothing to toggle).
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [jobId, user?.id, user]);
 
   if (loading) return null;
   if (!user)
@@ -53,20 +34,13 @@ export default function SaveJobButton({
         Save role
       </Link>
     );
-  if (!visible) return null;
 
   const toggle = async () => {
     if (busy) return;
     setBusy(true);
     try {
-      if (saved) {
-        await unsaveJob(jobId);
-        setSaved(false);
-      } else {
-        await saveJob(jobId);
-        setSaved(true);
-        toast.success("Saved");
-      }
+      await toggleSaved(jobId, !saved);
+      if (!saved) toast.success("Saved");
     } catch {
       toast.error("Could not save. Please log in and try again.");
     } finally {

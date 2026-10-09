@@ -30,6 +30,8 @@ jobs:
       - run: npm run test:profile
       - run: npm run test:dashboard
       - run: npm run test:operations
+      - run: npm run test:performance
+      - run: npm run test:security
       - run: npm run build
 
 # Production is deployed directly from GitHub by Vercel (auto-deploy on push to

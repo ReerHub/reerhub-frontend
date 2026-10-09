@@ -1,6 +1,7 @@
 import PageHeader from "@/components/PageHeader";
 import CompanyDirectory from "@/components/CompanyDirectory";
-import { listCompanies } from "@/lib/reerhub";
+import { listCompanyPage } from "@/lib/reerhub";
+import { Suspense } from "react";
 import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata(
   "Product Companies Hiring in India",
@@ -8,8 +9,22 @@ export const metadata = pageMetadata(
   "/companies",
 );
 export const dynamic = "force-dynamic";
-export default async function CompaniesPage() {
-  const companies = await listCompanies();
+export default async function CompaniesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const query = params.q || "",
+    hiring = params.hiring === "true",
+    page = Math.max(1, Number.parseInt(params.page || "1", 10) || 1);
+  const initialData = await listCompanyPage({
+    page,
+    limit: 50,
+    q: query,
+    hiring: String(hiring),
+  });
+  const companies = initialData.data;
   const roles = companies.reduce((sum, c) => sum + (c.activeJobs || 0), 0);
   return (
     <div>
@@ -20,20 +35,26 @@ export default async function CompaniesPage() {
         <div className="flex gap-8">
           <div>
             <p className="font-display text-3xl font-bold text-ink">
-              {companies.length}
+              {initialData.summary?.totalCompanies ??
+                initialData.pagination.total}
             </p>
             <p className="mt-1 text-xs text-slate-600">Companies indexed</p>
           </div>
           <div>
             <p className="font-display text-3xl font-bold text-primary">
-              {roles}
+              {initialData.summary?.totalJobs ?? roles}
             </p>
             <p className="mt-1 text-xs text-slate-600">Open tech roles</p>
           </div>
         </div>
       </PageHeader>
       <section className="page-container py-10">
-        <CompanyDirectory companies={companies} />
+        <Suspense fallback={<p>Loading companies…</p>}>
+          <CompanyDirectory
+            initialData={initialData}
+            initialKey={JSON.stringify([query, hiring, page])}
+          />
+        </Suspense>
       </section>
     </div>
   );
