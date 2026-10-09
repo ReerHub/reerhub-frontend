@@ -44,7 +44,11 @@ Verified production-mode fixture requests: homepage one `/home` plus necessary s
 
 ## Pre-release fixed-network checks
 
-Pre-push `npm audit --audit-level=high` failed on existing dependency advisories (braces through ESLint tooling, DOMPurify, sharp and source-map-js). No forced framework downgrade or dependency upgrade was bundled into the performance change. Security remediation and a clean audit are additional release gates, not passing checks.
+Release follow-up updates the lockfile to DOMPurify 3.4.16, sharp 0.35.5 (with matching native binaries/libvips), and source-map-js 1.2.2 using compatible security patches. `npm audit --omit=dev --audit-level=high` now reports zero vulnerabilities. The full audit still reports five high-severity entries in one dev-only dependency chain: ESLint's Next plugin → fast-glob → micromatch → braces. npm offers only a breaking downgrade to eslint-config-next 14.2.35, which is not applied to this Next 16 project. The full-audit CI gate remains enabled and unresolved; production-only audit success is not full CI success.
+
+After the `develop` merge on 2026-10-09, an unauthenticated request to `https://staging.reerhub.com/` still returned 302 to Vercel SSO. The staging API woke successfully but still lacked the new `/home` and anonymous session contracts. Deployed end-to-end checks remain blocked until the merged backend is live and frontend protection is removed for this deployment/domain.
+
+The compatible security patches passed frontend lint, TypeScript, all 33 regression tests and the production build. Next 16.3.8, ESLint 9.39.5 and TypeScript 6.0.3 remain unchanged.
 
 `npm run test:network:fixtures` proxies only a localhost production fixture preview (default target 3004, listening on 3011). Its documented network profile adds 150ms request latency and caps aggregate response traffic at 1.6Mbps; CPU is unthrottled and external assets are outside that cap. Use a fresh origin/cache for cold assets. This is a lab network simulation, not a real-phone or field-INP test.
 
