@@ -92,7 +92,7 @@ test("admin import UI retains failed saves, requires approval and prevents dupli
   source = source
     .replace(
       /import \{ getAdmin, writeAdmin \} from "@\/lib\/admin";/,
-      "const getAdmin = globalThis.__importTestApi.get; const writeAdmin = globalThis.__importTestApi.write;",
+      "const getAdmin = (...args) => globalThis.__importTestApi.get(...args); const writeAdmin = (...args) => globalThis.__importTestApi.write(...args);",
     )
     .replace(
       /import styles from "\.\/AdminCompanyImport.module.css";/,
@@ -170,6 +170,72 @@ test("admin import UI retains failed saves, requires approval and prevents dupli
     });
     assert.match(document.body.textContent, /File exceeds 500 KiB/);
     assert.equal(calls, 2);
+    const metadataBatch = {
+      ...structuredClone(batch),
+      rows: [
+        {
+          ...structuredClone(batch.rows[0]),
+          status: "already-exists",
+          metadataPreview: {
+            eligible: true,
+            updatedAt: "2026-10-10T01:00:00.000Z",
+            changes: { industry: { before: "", after: "Analytics" } },
+          },
+        },
+      ],
+    };
+    globalThis.__importTestApi.get = async () => structuredClone(metadataBatch);
+    globalThis.__importTestApi.write = async (path, method, body) => {
+      calls += 1;
+      assert.ok(path.endsWith("/metadata"));
+      assert.equal(method, "POST");
+      assert.equal(body.acknowledgeMetadata, true);
+      assert.deepEqual(body.expectations, [
+        { row: 0, updatedAt: "2026-10-10T01:00:00.000Z" },
+      ]);
+      await settle();
+      return {
+        ...metadataBatch,
+        rows: [
+          {
+            ...metadataBatch.rows[0],
+            metadataUpdatedAt: "2026-10-10T01:01:00.000Z",
+            metadataPreview: {
+              eligible: false,
+              reason: "Metadata already applied by this batch.",
+            },
+          },
+        ],
+      };
+    };
+    await act(async () => {
+      [...document.querySelectorAll("button")]
+        .find((item) => item.textContent === "Refresh status")
+        .click();
+      await settle();
+    });
+    assert.match(document.body.textContent, /Already exists/);
+    assert.match(document.body.textContent, /Metadata-only update preview/);
+    const updateButton = () =>
+      [...document.querySelectorAll("button")].find((item) =>
+        item.textContent.startsWith("Update metadata only"),
+      );
+    assert.equal(updateButton().disabled, true);
+    await act(async () =>
+      document.querySelector('input[type="checkbox"]').click(),
+    );
+    await act(async () => {
+      updateButton().click();
+      updateButton().click();
+      await settle();
+      await settle();
+    });
+    assert.equal(calls, 3);
+    assert.match(
+      document.body.textContent,
+      /Company identity, jobs and sources preserved/,
+    );
+    assert.equal(updateButton(), undefined);
   } finally {
     await act(async () => root.unmount());
     dom.window.close();

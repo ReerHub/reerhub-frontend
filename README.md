@@ -69,6 +69,12 @@ Console capabilities: source health/schedules, company/source editing, confirmed
 
 No server seed command is needed. File format, evidence policy, first researched batch and backend endpoints are documented in the backend README. Release backend import support before this UI.
 
+Existing-company updates are separate: upload a revised batch with a new batch ID, refresh/review metadata before/after values, approve the metadata checkbox and choose **Update metadata only**. “Already exists” still identifies an existing record; it does not create duplicates or update automatically. Only logo, industry, descriptive company type and country change; IDs, names, links, sources, active state, jobs and history are preserved. A `purpose: metadata-only` file cannot import new companies or sources. Stale previews and partial failures require refresh/review; applied rows remain applied. Do not delete production collections or rerun seeds to refresh metadata.
+
+Company/source rows also expose Delete with a native keyboard-accessible confirmation dialog and exact-name entry. Records must first be inactive and unused; the backend rejects job/sync/source dependencies and retains audit history. Ordinary used records should remain inactive. Jobs, users, subscriptions and audit records have no new delete action.
+
+For an incorrect used source, **Job sources → Remove source** archives it and closes only its linked active jobs after exact-name confirmation. It does not delete job records, saved references or history. Running syncs block removal; repeated clicks/retries cannot duplicate the closure/audit. Archived rows appear under **Archived · history only**, with editing/reactivation/sync disabled. **Delete unused** remains a different permanent action for genuinely unused inactive sources. Deploy the backend archive route/lease guards before this UI.
+
 ## Local setup and checks
 
 ```bash

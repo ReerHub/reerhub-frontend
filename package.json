@@ -11,7 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:ui:fixtures": "node scripts/ui-fixtures.mjs",
-    "test:admin": "node --test scripts/admin-contracts.test.mjs scripts/company-import.test.mjs",
+    "test:admin": "node --test scripts/admin-contracts.test.mjs scripts/company-import.test.mjs scripts/admin-delete.test.mjs",
     "test:seo": "node --test scripts/seo.test.mjs",
     "test:profile": "node --test scripts/profile-editor.test.mjs",
     "test:dashboard": "node --test scripts/dashboard.test.mjs",
