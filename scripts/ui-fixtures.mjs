@@ -211,6 +211,16 @@ const server = http.createServer(async (req, res) => {
             industry: "Software & technology",
             isActive: i % 5 !== 0,
             country: "India",
+            // Native image shapes exercise containment, failures and fallback
+            // without loading employer assets or contacting third parties.
+            logoUrl:
+              i < 3
+                ? `data:image/svg+xml;base64,${Buffer.from(
+                    `<svg xmlns="http://www.w3.org/2000/svg" width="${[128, 256, 48][i]}" height="${[128, 48, 256][i]}"><rect width="100%" height="100%" rx="8" fill="${["#2563eb", "#059669", "#d97706"][i]}"/></svg>`,
+                  ).toString("base64")}`
+                : i === 3
+                  ? "/fixture-missing-company-icon.png"
+                  : undefined,
           }));
     const sources =
       mode === "empty"

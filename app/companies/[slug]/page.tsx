@@ -84,11 +84,7 @@ export default async function CompanyDetailPage({
             <span className="text-slate-900 font-semibold">{company.name}</span>
           </nav>
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-            <CompanyLogo
-              name={company.name}
-              logoUrl={company.logoUrl}
-              size="lg"
-            />
+            <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
             <div className="min-w-0">
               <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
                 {company.name}
