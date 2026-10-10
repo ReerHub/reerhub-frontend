@@ -14,6 +14,7 @@ import Icon from "@/components/ui/Icon";
 import AdminOperations from "@/components/AdminOperations";
 import AdminCompanyImport from "@/components/AdminCompanyImport";
 import AdminDeleteDialog from "@/components/AdminDeleteDialog";
+import CompanyLogo from "@/components/CompanyLogo";
 import {
   adminLogout,
   adminSession,
@@ -1279,9 +1280,7 @@ function Tables({
                   <>
                     <td>
                       <div className="identity">
-                        <span className="company-initial">
-                          {c.name?.slice(0, 1).toUpperCase()}
-                        </span>
+                        <CompanyLogo name={c.name} logoUrl={c.logoUrl} />
                         <div>
                           <strong>{c.name}</strong>
                           <span className="subtle">{c.industry || c.slug}</span>

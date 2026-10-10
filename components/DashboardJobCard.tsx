@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import CompanyLogo from "@/components/CompanyLogo";
 import Link from "next/link";
 import type { Job } from "@/lib/reerhub";
 import { jobUrl } from "@/lib/reerhub";
@@ -108,22 +108,7 @@ export default function DashboardJobCard({
           >
             {job.title}
           </Link>
-          <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden">
-            {job.companyId?.logoUrl ? (
-              <Image
-                src={job.companyId.logoUrl}
-                alt={`${companyName} logo`}
-                width={28}
-                height={28}
-                loading="lazy"
-                className="object-contain"
-              />
-            ) : (
-              <span className="font-bold text-slate-900">
-                {companyName.charAt(0).toUpperCase()}
-              </span>
-            )}
-          </span>
+          <CompanyLogo name={companyName} logoUrl={job.companyId?.logoUrl} />
         </div>
         <div className="flex flex-wrap gap-1.5 mt-4">
           {chips.slice(0, 4).map((chip) => (

@@ -92,11 +92,7 @@ export default function MatchJourney({ companies }: { companies: Company[] }) {
               className={styles.source}
               title={company.name}
             >
-              <CompanyLogo
-                name={company.name}
-                logoUrl={company.logoUrl}
-                size="sm"
-              />
+              <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
             </div>
           ))}
           {!companies.length &&

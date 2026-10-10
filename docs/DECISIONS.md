@@ -1,5 +1,11 @@
 # Frontend decisions
 
+## Uniform company image frames — 2026-10-10
+
+The user selected one 48×48px company image frame everywhere rather than context-specific sizes. The shared component reserves a non-shrinking white rounded square with 12px corners, a subtle border and 4px padding; centered `object-fit: contain` artwork preserves proportions. Initials use the identical frame after missing URLs or loading failures, and a changed URL can recover. Dashboard cards now reuse this component instead of a circular image treatment. The admin Companies list renders its existing `logoUrl` without extra API reads. Account avatars, ReerHub branding, description images, backend contracts and research JSON are unchanged.
+
+Rendered DOM regressions cover square/tall/wide images, missing/broken assets and changed URLs. Local isolated fixture browser checks measured 48×48px frames on desktop/mobile directory and company detail views; admin rows also retained uniform frames with loaded square/wide/tall SVGs and broken/missing fallbacks. These checks use synthetic data, not production writes. Admin, dashboard, profile and performance regressions, lint and TypeScript passed. The standard Turbopack production build still fails on this host's CSS-worker port-binding permission; the production Webpack diagnostic passed and does not substitute for a standard deployment build.
+
 ## Metadata previews and safe source removal — 2026-10-10
 
 Company imports distinguish identity status from action: Already exists does not overwrite automatically. Admin sees metadata before/after values, separately approves Update metadata only, and sends reviewed timestamps. Failed results remain visible; duplicate clicks are excluded. Explicit metadata-only batches cannot create companies or sources. New file versions use new batch IDs. IDs, jobs, sources, links, active state and history remain intact.

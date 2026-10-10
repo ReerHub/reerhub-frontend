@@ -39,7 +39,7 @@ export default function JobCard({
       )}
       <Link prefetch={false} href={jobUrl(job)} className="job-card-link group">
         <div className={`flex items-center gap-3 ${showSave ? "pr-12" : ""}`}>
-          <CompanyLogo name={name} logoUrl={job.companyId?.logoUrl} size="sm" />
+          <CompanyLogo name={name} logoUrl={job.companyId?.logoUrl} />
           <div>
             <p className="text-sm font-semibold text-ink">{name}</p>
             <p className="mt-1 flex items-center gap-1 text-xs text-teal-800">
