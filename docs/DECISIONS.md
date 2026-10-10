@@ -1,5 +1,9 @@
 # Frontend decisions
 
+## Production profile readiness correction — 2026-10-10
+
+Read-only production QA found a legacy profile showing 5/5 in the editor but 3/5 on the dashboard: the editor synthesized broad preferences and used them as its saved baseline. Missing role/location preferences now remain unset, with neither radio preselected and clear completion guidance. Explicit selection enables Save; incomplete saves still omit unset preferences. Discard restores the actual baseline. Rendered regressions cover selection, discard, failed-save retention/retry and save/reload. Profile, dashboard and performance checks, lint and TypeScript pass. The standard Turbopack build remains blocked by this host's CSS-worker port permission, including an escalated retry; the Webpack diagnostic production build passes. No production profile was modified; deployment verification remains required.
+
 ## Uniform company image frames — 2026-10-10
 
 The user selected one 48×48px company image frame everywhere rather than context-specific sizes. The shared component reserves a non-shrinking white rounded square with 12px corners, a subtle border and 4px padding; centered `object-fit: contain` artwork preserves proportions. Initials use the identical frame after missing URLs or loading failures, and a changed URL can recover. Dashboard cards now reuse this component instead of a circular image treatment. The admin Companies list renders its existing `logoUrl` without extra API reads. Account avatars, ReerHub branding, description images, backend contracts and research JSON are unchanged.
