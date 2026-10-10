@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Icon from "@/components/ui/Icon";
 import AdminOperations from "@/components/AdminOperations";
+import AdminCompanyImport from "@/components/AdminCompanyImport";
 import {
   adminLogout,
   adminSession,
@@ -54,6 +55,7 @@ type Source = {
   isActive: boolean;
   companyId?: { _id: string; name: string };
   lastSuccessfulSyncAt?: string;
+  nextScheduledSyncAt?: string;
   syncClaimedUntil?: string;
   isStale: boolean;
   latestRun?: { status: string; errors?: string[] };
@@ -231,9 +233,11 @@ const sourceState = (s: Source) =>
       ? "running"
       : s.latestRun?.status === "failed"
         ? "failed"
-        : s.isStale
-          ? "stale"
-          : s.latestRun?.status || "not synced";
+        : !s.lastSuccessfulSyncAt && !s.latestRun
+          ? "awaiting first sync"
+          : s.isStale
+            ? "stale"
+            : s.latestRun?.status || "not synced";
 
 function Status({ value = "unknown" }: { value?: string }) {
   const tone = ["success", "active", "trialing"].includes(value)
@@ -353,6 +357,7 @@ export default function AdminConsole() {
   const [me, setMe] = useState<AdminUser | null>(null);
   const [sessionError, setSessionError] = useState("");
   const [tab, setTab] = useState<Tab>("overview");
+  const [showImport, setShowImport] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -665,6 +670,15 @@ export default function AdminConsole() {
               <p className="page-description">{item.description}</p>
             </div>
             <div className="header-actions">
+              {tab === "companies" && (
+                <button
+                  className="button"
+                  aria-expanded={showImport}
+                  onClick={() => setShowImport(!showImport)}
+                >
+                  Import companies
+                </button>
+              )}
               <button className="button" disabled={loading} onClick={refresh}>
                 <Icon name="clock" />
                 {loading ? "Refreshing…" : "Refresh data"}
@@ -708,6 +722,7 @@ export default function AdminConsole() {
               </button>
             </div>
           )}
+          {tab === "companies" && showImport && <AdminCompanyImport />}
           {tab === "operations" ? (
             <AdminOperations version={operationsVersion} />
           ) : tab === "overview" ? (
@@ -1286,6 +1301,11 @@ function Tables({
                     <td>
                       <span className="date-cell">
                         {date(s.lastSuccessfulSyncAt)}
+                        {s.nextScheduledSyncAt && (
+                          <span className="subtle">
+                            Next sync {date(s.nextScheduledSyncAt)}
+                          </span>
+                        )}
                       </span>
                     </td>
                     <td>

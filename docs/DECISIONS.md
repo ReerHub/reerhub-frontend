@@ -1,5 +1,11 @@
 # Frontend decisions
 
+## Weekly company import — 2026-10-10
+
+Companies includes a JSON upload/preview panel using existing dedicated admin authentication and CSRF helpers. It distinguishes research evidence from technical feed checks, accepts verified zero-opening companies, requires one explicit approval and retains failed-request results. Server batch history, bounded polling, retry/recheck and downloadable results replace server seed commands. Imported sources show their next scheduler slot and current sync state; upload/confirmation never implies jobs have already been fetched.
+
+Rendered DOM tests cover approval, failed confirmation recovery, double-click exclusion and oversized uploads. The local synthetic browser flow verified upload, preview, keyboard approval and successful import results without database/payment/email calls. Browser access was stopped before the mobile visual check. The default Turbopack build is blocked by this environment's CSS-worker port binding restriction; a production Webpack build passes. Verify the standard deployment build and mobile layout before release. Backend changes must deploy first.
+
 ## Security and staging follow-up
 
 The earlier full-audit and staging blockers recorded below were resolved on 2026-10-09. A scoped override replaces only the Next ESLint plugin's fast-glob dependency with compatible tinyglobby 0.2.15. Next, TypeScript, ESLint and lint rules remain unchanged; no forced framework downgrade or disabled audit gate is used. Full `npm audit` reports zero vulnerabilities after a clean install. `npm run test:security` verifies wildcard Next project-root discovery, directory-only behavior and actual no-html-link-for-pages rule enforcement, and runs in CI. Frontend lint, TypeScript, all 34 regression checks and the production build passed.

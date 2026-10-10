@@ -37,6 +37,10 @@ Run `npm run test:admin` for API/host regression checks. For synthetic admin UI 
 
 ## Architecture
 
+### Weekly company import
+
+In admin Companies, choose **Import companies**, upload a researched JSON batch, review official-link evidence and feed counts, then approve Ready rows once. Up to 25 companies / 50 sources / 500 KiB; research file format is documented in the backend README. Empty verified feeds are valid. Imports do not fetch/store jobs immediately: source cards/results show the next scheduler slot and Awaiting first sync. Recent batches, recheck/retry and downloadable results support recovery without server commands. Backend feed availability checks are not proof of employer ownership. Deploy the compatible backend first.
+
 - App Router routes cover public job/company discovery, authentication, billing, profile, and dashboard flows.
 - `lib/reerhub.ts` handles public API reads; `lib/auth.ts` handles credentialed requests, CSRF, one refresh retry, and safe return paths.
 - `AuthProvider` is the only client session source. `proxy.ts` protects Dashboard and Profile routes.
