@@ -1,5 +1,13 @@
 # Frontend decisions
 
+## Complete company listings — 2026-10-10
+
+Production QA found company headers reporting the full count while the server-rendered anonymous preview stopped at ten cards even for members. Company pages now reuse JobBrowser: anonymous SSR previews remain capped without duplicate hydration reads; resolved members fetch complete paginated listings, shared saves and retry/error handling. A fixed company scope ignores unrelated query filters and remains fixed across pagination/clear. Hidden company filters no longer fetch the directory. Failed SSR reads are not presented as empty openings; empty company results explain the twice-daily refresh instead of offering irrelevant filter controls.
+
+Rendered regression coverage checks preview reuse, member upgrade, pagination, URL scope isolation and failed-read retry. Backend scope/title correction must deploy first; existing stored counts change only after affected sources successfully sync. The standard local Turbopack build remains blocked by CSS-worker port permissions; Webpack is a separate diagnostic, not proof of the deployment build.
+
+Final verification: dashboard/company listing, profile, SEO and performance regressions pass; lint and TypeScript pass. The final Webpack production diagnostic passes. No production session/profile/save mutations were performed.
+
 ## Simpler discovery controls — 2026-10-10
 
 The member-requested search redesign replaces simultaneous track/company/work-mode pills with a compact keyword/city search row, one Filters disclosure and a quiet India/sort summary. Secondary edits are local until Apply filters, submitted together; Cancel, Close and Escape discard pending changes. Active criteria are removable chips and Clear all preserves the browser's existing route defaults. The shared component updates public discovery and dashboard discovery; matching, backend APIs, entitlements and profile fields are unchanged. Existing keyword debounce and URL navigation remain intact. Rendered regressions cover compact defaults, explicit apply/cancel, chip removal, India scope, clear and focus return. Isolated localhost desktop/mobile checks cover layout and filter URL updates; these do not certify production deployment. Dashboard/profile/performance regressions, lint and TypeScript pass. The Webpack diagnostic production build passes; standard Turbopack remains blocked by the local CSS-worker port-binding permission.

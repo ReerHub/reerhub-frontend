@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 import { notFound } from "next/navigation";
 import CompanyLogo from "@/components/CompanyLogo";
-import JobCard from "@/components/JobCard";
+import JobBrowser from "@/components/JobBrowser";
 import { listJobsWithMeta, NotFoundError } from "@/lib/reerhub";
 import { readCompany as getCompany } from "@/lib/server-reads";
 import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
@@ -34,23 +33,21 @@ export default async function CompanyDetailPage({
 }) {
   const { slug } = await params;
   let company;
-  let jobs: React.ComponentProps<typeof JobCard>["job"][] = [];
-  let total = 0;
+  let initialData;
   try {
     const [summary, roles] = await Promise.all([
       getCompany(slug),
-      listJobsWithMeta({ companySlug: slug, limit: 50 }).catch(() => null),
+      listJobsWithMeta({ companySlug: slug, limit: 21 }).catch(() => undefined),
     ]);
     company = summary;
-    jobs = roles?.jobs || [];
-    total = roles?.total || 0;
+    initialData = roles;
   } catch (err) {
     if (err instanceof NotFoundError) notFound();
     throw err;
   }
   // Backend counts and job lists both default to indiaOnly=true, so these
   // always agree. Use the server count as the source of truth.
-  const openCount = company.activeJobs ?? total ?? jobs.length;
+  const openCount = company.activeJobs ?? initialData?.total ?? 0;
 
   return (
     <div>
@@ -147,28 +144,14 @@ export default async function CompanyDetailPage({
       </section>
 
       <section className="page-container py-10">
-        <h2 className="font-bold text-slate-900 text-xl mb-5">
-          Open roles{" "}
-          <span className="text-slate-500 font-medium">({openCount})</span>
-        </h2>
-        {jobs.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {jobs.map((job: React.ComponentProps<typeof JobCard>["job"]) => (
-              <JobCard key={job._id} job={job} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 bg-white border border-slate-200/80 rounded-2xl">
-            <p className="font-semibold text-slate-900 mb-1">
-              No open roles right now
-            </p>
-            <p className="text-sm text-slate-500">
-              Check back tomorrow — we sync daily.
-            </p>
-          </div>
-        )}
         <Suspense>
-          <DiscoveryPrompt count={jobs.length} />
+          <JobBrowser
+            key={company._id}
+            companyId={company._id}
+            heading="Open roles"
+            showFilters={false}
+            initialData={initialData}
+          />
         </Suspense>
       </section>
     </div>
