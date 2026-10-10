@@ -1,0 +1,113 @@
+.panel {
+  margin: 0 0 24px;
+  padding: 24px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  color: #0f172a;
+}
+.panel h2 {
+  font-size: 20px;
+  margin: 0 0 8px;
+}
+.panel p {
+  color: #475569;
+  line-height: 1.6;
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: end;
+  margin: 16px 0;
+}
+.file {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.file input,
+.file select {
+  min-height: 44px;
+  max-width: 100%;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+.panel :focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+.rows {
+  display: grid;
+  gap: 12px;
+}
+.row {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.heading h3 {
+  font-size: 16px;
+  margin: 0;
+}
+.heading span {
+  font-size: 13px;
+  background: #eff6ff;
+  color: #1e40af;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+.links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.panel a {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+.confirm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+.confirm input {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+.actions {
+  border-top: 1px solid #e2e8f0;
+  margin-top: 20px;
+  padding-top: 16px;
+}
+.panel .error {
+  color: #b91c1c;
+}
+@media (max-width: 600px) {
+  .panel {
+    padding: 16px;
+  }
+  .controls {
+    align-items: stretch;
+  }
+  .controls button {
+    flex: 1 1 100%;
+    min-height: 44px;
+  }
+}

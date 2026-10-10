@@ -35,6 +35,7 @@ let dashboardMode = "populated";
 let fixtureDelay = 0;
 let fixtureRequests = { recommendations: 0, saves: 0, feedback: 0 };
 const performanceMetrics = [];
+const companyImports = new Map();
 const company = {
   _id: "111111111111111111111111",
   name: "Fixture Labs",
@@ -411,6 +412,64 @@ const server = http.createServer(async (req, res) => {
       return page(
         rows.filter((row) => !status || (row.type || row.status) === status),
       );
+    }
+    if (path === "/admin/company-imports" && req.method === "POST") {
+      if (
+        !Array.isArray(data.companies) ||
+        !data.companies.length ||
+        data.companies.length > 25
+      )
+        return json(null, 400);
+      const existing = [...companyImports.values()].find(
+        (batch) => batch.batchId === data.batchId,
+      );
+      if (existing) return json(existing, 202);
+      const batch = {
+        _id: id(1000 + companyImports.size),
+        batchId: data.batchId,
+        status: "review",
+        rows: data.companies.map((entry) => ({
+          entry,
+          status: entry.sources.some((source) => source.type === "custom")
+            ? "unsupported"
+            : "ready",
+          checkedAt: new Date().toISOString(),
+          feedResults: entry.sources.map((source) => ({
+            name: source.name,
+            fetched: 0,
+            indiaEngineering: 0,
+          })),
+        })),
+      };
+      companyImports.set(batch._id, batch);
+      return json(batch, 202);
+    }
+    if (path === "/admin/company-imports")
+      return json([...companyImports.values()]);
+    if (path.startsWith("/admin/company-imports/")) {
+      const [, , , batchId, action] = path.split("/");
+      const batch = companyImports.get(batchId);
+      if (!batch) return json(null, 404);
+      if (action === "confirm" && req.method === "POST") {
+        if (!data.acknowledgeEvidence) return json(null, 400);
+        batch.rows = batch.rows.map((row, index) =>
+          row.status === "ready"
+            ? {
+                ...row,
+                status: "imported",
+                sources: row.entry.sources.map((source, sourceIndex) => ({
+                  id: id(2000 + index * 5 + sourceIndex),
+                  name: source.name,
+                  nextScheduledSyncAt: new Date(
+                    Date.now() + 3600000,
+                  ).toISOString(),
+                })),
+              }
+            : row,
+        );
+        batch.status = "completed";
+      }
+      return json(batch);
     }
     if (req.method === "POST" || req.method === "PATCH")
       return json({ ...data, _id: id(900), status: "success" });

@@ -1,5 +1,19 @@
 # Frontend decisions
 
+## Current product documentation — 2026-10-10
+
+README now describes the complete current member/admin journey, profile catalog selections/readiness, direct dashboard `?view=` links, matching/alert evidence, billing, weekly import workflow, shared reads and executable local checks. Deployment/design/agent guides align with it. This review changes documentation only; it does not certify new deployment checks, mobile validation, standard build success or real email delivery.
+
+Read older sections below as dated history. The Security and staging follow-up supersedes the earlier dev-dependency audit and Vercel-protection blockers. Public/profile/save/Razorpay Test-mode/Pro checks performed on 2026-10-09 are distinct from the newer import feature's still-needed deployment checks. Preserve historical measurements instead of claiming they describe today's production.
+
+Before a requested weekly batch, research compares the database's company/source identities, including inactive records, plus existing backend `data/company-imports/*.json`. That repo stores dated verified evidence; files do not prove import. Database/admin batch history remains authoritative. Admin previews technical feed checks separately from uploaded ownership evidence and never implies confirmation fetched jobs. Source windows remain twice daily; user alerts remain a separate eligible daily process.
+
+## Weekly company import — 2026-10-10
+
+Companies includes a JSON upload/preview panel using existing dedicated admin authentication and CSRF helpers. It distinguishes research evidence from technical feed checks, accepts verified zero-opening companies, requires one explicit approval and retains failed-request results. Server batch history, bounded polling, retry/recheck and downloadable results replace server seed commands. Imported sources show their next scheduler slot and current sync state; upload/confirmation never implies jobs have already been fetched.
+
+Rendered DOM tests cover approval, failed confirmation recovery, double-click exclusion and oversized uploads. The local synthetic browser flow verified upload, preview, keyboard approval and successful import results without database/payment/email calls. Browser access was stopped before the mobile visual check. The default Turbopack build is blocked by this environment's CSS-worker port binding restriction; a production Webpack build passes. Verify the standard deployment build and mobile layout before release. Backend changes must deploy first.
+
 ## Security and staging follow-up
 
 The earlier full-audit and staging blockers recorded below were resolved on 2026-10-09. A scoped override replaces only the Next ESLint plugin's fast-glob dependency with compatible tinyglobby 0.2.15. Next, TypeScript, ESLint and lint rules remain unchanged; no forced framework downgrade or disabled audit gate is used. Full `npm audit` reports zero vulnerabilities after a clean install. `npm run test:security` verifies wildcard Next project-root discovery, directory-only behavior and actual no-html-link-for-pages rule enforcement, and runs in CI. Frontend lint, TypeScript, all 34 regression checks and the production build passed.
@@ -46,9 +60,9 @@ One session authority shares session reads and serializes refresh, including lat
 
 Verified production-mode fixture requests: homepage one `/home` plus necessary session; directory one `/companies` and no per-card detail reads; Pro dashboard-to-discovery one shared saved-ID read with immediate save synchronization. Mobile 390×844 localhost homepage measured LCP 104ms/CLS 0.042, unthrottled; these are not fixed slow-network mobile budget results. Interaction latency was unavailable in this browser, and no field INP claim is made. Full deployment-equivalent mobile/network, payment-provider and staging checks remain required. Promote compatible backend support through staging before frontend deployment.
 
-## Public search metadata
+## Historical pre-release fixed-network checks
 
-## Pre-release fixed-network checks
+This section records earlier failures; the later Security and staging follow-up above resolves the audit/protection/real-checkout blockers. Its local network profile and measurements remain useful evidence, not a fresh release certification.
 
 Release follow-up updates the lockfile to DOMPurify 3.4.16, sharp 0.35.5 (with matching native binaries/libvips), and source-map-js 1.2.2 using compatible security patches. `npm audit --omit=dev --audit-level=high` now reports zero vulnerabilities. The full audit still reports five high-severity entries in one dev-only dependency chain: ESLint's Next plugin → fast-glob → micromatch → braces. npm offers only a breaking downgrade to eslint-config-next 14.2.35, which is not applied to this Next 16 project. The full-audit CI gate remains enabled and unresolved; production-only audit success is not full CI success.
 
@@ -59,5 +73,7 @@ The compatible security patches passed frontend lint, TypeScript, all 33 regress
 `npm run test:network:fixtures` proxies only a localhost production fixture preview (default target 3004, listening on 3011). Its documented network profile adds 150ms request latency and caps aggregate response traffic at 1.6Mbps; CPU is unthrottled and external assets are outside that cap. Use a fresh origin/cache for cold assets. This is a lab network simulation, not a real-phone or field-INP test.
 
 On 2026-10-09, the 390×844 local production preview measured homepage LCP 1,868ms/CLS 0.063 and directory LCP 584ms/CLS 0.019. Profile edits persisted after save/reload, and synthetic billing confirmation refreshed Pro entitlement without a payment. These checks use only in-memory fixture accounts; real Razorpay staging confirmation remains unverified. Rechecked staging still redirects to Vercel SSO, and the staging API health read timed out after 30 seconds. Do not promote the frontend before backend support is staged and the blocked end-to-end checks are completed.
+
+## Public search metadata
 
 Public pages have unique metadata, social previews and self-referencing canonicals. Only sufficiently documented active jobs emit JobPosting markup; historical closed-role URLs remain without it. The metadata-only cursor feed populates a split sitemap index at `/sitemap.xml`, independent of the anonymous listing cap. Private/admin pages and staging use readable noindex directives. Search indexing and rich results are never guaranteed.
