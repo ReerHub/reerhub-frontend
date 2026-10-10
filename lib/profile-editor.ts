@@ -16,11 +16,11 @@ export type ProfileOptions = {
 export type ProfileDraft = {
   name: string;
   techTrack: string;
-  rolePreference: "any" | "selected";
+  rolePreference?: "any" | "selected";
   techRoles: string[];
   skills: string[];
   experienceYears: string;
-  locationPreference: "all-india" | "selected";
+  locationPreference?: "all-india" | "selected";
   targetLocations: string[];
   remoteType: string;
 };
@@ -28,11 +28,11 @@ export function draftFromUser(user: AuthUser): ProfileDraft {
   return {
     name: user.name || "",
     techTrack: user.profile.techTrack || "",
-    rolePreference: user.profile.rolePreference || "any",
+    rolePreference: user.profile.rolePreference,
     techRoles: [...(user.profile.techRoles || [])],
     skills: [...(user.profile.skills || [])],
     experienceYears: user.profile.experienceYears?.toString() ?? "",
-    locationPreference: user.profile.locationPreference || "all-india",
+    locationPreference: user.profile.locationPreference,
     targetLocations: [...(user.profile.targetLocations || [])],
     remoteType: user.profile.remoteType || "unknown",
   };
