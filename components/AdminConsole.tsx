@@ -13,6 +13,7 @@ import Image from "next/image";
 import Icon from "@/components/ui/Icon";
 import AdminOperations from "@/components/AdminOperations";
 import AdminCompanyImport from "@/components/AdminCompanyImport";
+import AdminDeleteDialog from "@/components/AdminDeleteDialog";
 import {
   adminLogout,
   adminSession,
@@ -53,6 +54,7 @@ type Source = {
   careersUrl: string;
   config?: Record<string, unknown>;
   isActive: boolean;
+  archivedAt?: string;
   companyId?: { _id: string; name: string };
   lastSuccessfulSyncAt?: string;
   nextScheduledSyncAt?: string;
@@ -227,17 +229,20 @@ const emptyPage = (): AdminPage<Row> => ({
   pagination: { page: 1, limit: PAGE_SIZE, total: 0, totalPages: 0 },
 });
 const sourceState = (s: Source) =>
-  !s.isActive
-    ? "inactive"
-    : s.syncClaimedUntil && new Date(s.syncClaimedUntil).getTime() > Date.now()
-      ? "running"
-      : s.latestRun?.status === "failed"
-        ? "failed"
-        : !s.lastSuccessfulSyncAt && !s.latestRun
-          ? "awaiting first sync"
-          : s.isStale
-            ? "stale"
-            : s.latestRun?.status || "not synced";
+  s.archivedAt
+    ? "archived"
+    : !s.isActive
+      ? "inactive"
+      : s.syncClaimedUntil &&
+          new Date(s.syncClaimedUntil).getTime() > Date.now()
+        ? "running"
+        : s.latestRun?.status === "failed"
+          ? "failed"
+          : !s.lastSuccessfulSyncAt && !s.latestRun
+            ? "awaiting first sync"
+            : s.isStale
+              ? "stale"
+              : s.latestRun?.status || "not synced";
 
 function Status({ value = "unknown" }: { value?: string }) {
   const tone = ["success", "active", "trialing"].includes(value)
@@ -371,6 +376,11 @@ export default function AdminConsole() {
   const [page, setPage] = useState(1);
   const [updatedAt, setUpdatedAt] = useState<string>();
   const [editor, setEditor] = useState<EditorState | null>(null);
+  const [deletion, setDeletion] = useState<{
+    kind: "company" | "source";
+    record: Company | Source;
+    archive?: boolean;
+  } | null>(null);
   const [sync, setSync] = useState<Source | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState("");
@@ -518,6 +528,7 @@ export default function AdminConsole() {
   }
   const visibleSources = sources.filter(
     (s) =>
+      (!s.archivedAt || filter === "archived") &&
       `${s.name} ${s.companyId?.name || ""} ${s.type}`
         .toLowerCase()
         .includes(query.toLowerCase()) &&
@@ -542,12 +553,13 @@ export default function AdminConsole() {
         ]
       : tab === "sources"
         ? [
-            ["", "All sources"],
+            ["", "Current sources"],
             ["active", "Active"],
             ["inactive", "Inactive"],
             ["stale", "Needs attention"],
             ["failed", "Failed"],
             ["running", "Running"],
+            ["archived", "Archived · history only"],
           ]
         : tab === "jobs"
           ? [
@@ -757,7 +769,7 @@ export default function AdminConsole() {
                       ? "Read-only · no account or payment changes"
                       : tab === "audit"
                         ? "Immutable history · newest first"
-                        : "Official data · safe edits · no hard deletion"}
+                        : "Official data · audited edits · safe removal"}
                   </p>
                 </div>
                 {updatedAt && (
@@ -835,6 +847,7 @@ export default function AdminConsole() {
                   tab={tab}
                   rows={rows}
                   edit={setEditor}
+                  remove={setDeletion}
                   sync={(s) => {
                     setSync(s);
                     setSyncError("");
@@ -892,6 +905,26 @@ export default function AdminConsole() {
               "Changes saved. Before and after values are recorded in the audit trail.",
             );
             await refresh();
+          }}
+        />
+      )}
+      {deletion && (
+        <AdminDeleteDialog
+          key={deletion.record._id}
+          {...deletion}
+          onClose={() => setDeletion(null)}
+          onDeleted={(result) => {
+            setDeletion(null);
+            setNotice(
+              result.alreadyArchived
+                ? "Source was already removed. Job records, saved references and history remain stored."
+                : deletion.archive
+                  ? `Source archived; ${result.closedJobs || 0} linked active jobs closed. History and saved references preserved.`
+                  : "Unused record deleted. Its before-values remain in the audit trail.",
+            );
+            if (tab === "companies" && page > 1 && rows.length === 1)
+              setPage((value) => value - 1);
+            else void refresh();
           }}
         />
       )}
@@ -1159,6 +1192,7 @@ function Tables({
   tab,
   rows,
   edit,
+  remove,
   sync,
   history,
   detail,
@@ -1166,6 +1200,11 @@ function Tables({
   tab: Tab;
   rows: Row[];
   edit: (s: EditorState) => void;
+  remove: (s: {
+    kind: "company" | "source";
+    record: Company | Source;
+    archive?: boolean;
+  }) => void;
   sync: (s: Source) => void;
   history: (s: Source) => void;
   detail: (s: { title: string; data: unknown }) => void;
@@ -1273,6 +1312,13 @@ function Tables({
                       >
                         Edit company
                       </button>
+                      <button
+                        className="button compact danger"
+                        aria-label={`Delete ${c.name}`}
+                        onClick={() => remove({ kind: "company", record: c })}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </>
                 );
@@ -1326,9 +1372,32 @@ function Tables({
                         <button
                           className="text-button"
                           aria-label={`Edit ${s.name}`}
+                          disabled={Boolean(s.archivedAt)}
                           onClick={() => edit({ kind: "source", record: s })}
                         >
                           Edit
+                        </button>
+                        <button
+                          className="button compact danger"
+                          disabled={
+                            state === "running" || Boolean(s.archivedAt)
+                          }
+                          aria-label={`Remove ${s.name} and close linked active jobs`}
+                          onClick={() =>
+                            remove({ kind: "source", record: s, archive: true })
+                          }
+                        >
+                          Remove source
+                        </button>
+                        <button
+                          className="text-button"
+                          disabled={
+                            state === "running" || Boolean(s.archivedAt)
+                          }
+                          onClick={() => remove({ kind: "source", record: s })}
+                          aria-label={`Permanently delete unused source ${s.name}`}
+                        >
+                          Delete unused
                         </button>
                       </div>
                     </td>

@@ -384,6 +384,16 @@
   border-color: #2563eb;
   box-shadow: 0 2px 4px #2563eb20;
 }
+.admin-ui .button.danger {
+  border-color: #fecaca;
+  color: #b91c1c;
+  background: #fff7f7;
+  min-height: 44px;
+}
+.admin-ui .button.danger:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #f87171;
+}
 .admin-ui .button.primary:hover:not(:disabled) {
   background: #1d4ed8;
   border-color: #1d4ed8;
