@@ -284,8 +284,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.admin-ui .avatar,
-.admin-ui .company-initial {
+.admin-ui .avatar {
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -296,9 +295,6 @@
   border: 1px solid #bfdbfe;
   color: #1d4ed8;
   font-weight: 650;
-}
-.admin-ui .company-initial {
-  border-radius: 10px;
 }
 .admin-ui .workspace {
   min-width: 0;

@@ -218,7 +218,6 @@ export default function RecommendationPanel({
                     <CompanyLogo
                       name={job.companyId.name}
                       logoUrl={job.companyId.logoUrl}
-                      size="sm"
                     />
                     <div>
                       <p className="text-sm font-semibold text-ink">
