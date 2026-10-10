@@ -1,5 +1,7 @@
 # ReerHub design system
 
+Reviewed against the current profile, dashboard and admin import components on 2026-10-10. This is a behavior/layout reference, not certification that every mobile/browser state was visually tested.
+
 ## Product direction
 
 ReerHub is a calm, trustworthy career-discovery product. The interface should make official roles easy to scan, make the free path clearly valuable, and reserve personalized intelligence for Pro without fabricating scores or obscuring useful information.
@@ -25,6 +27,10 @@ ReerHub is a calm, trustworthy career-discovery product. The interface should ma
 - Job-detail hierarchy: breadcrumb, role information, official application, requirements, then optional account/Pro promotion. Never put an upgrade panel ahead of the job itself. Signed-out saving returns to the same job after login.
 - Dashboard/profile use the same five-signal completion checklist; readiness guidance must not claim an incomplete profile is ready. The recommendations API remains authoritative. Pro dashboard filters never change the 75%+ daily email policy.
 - Edit Profile groups role, skills, and work preferences into three light sections. Put track first, with any role or up to three catalog roles; use searchable selections for ten skills and three cities, plus All India. Aliases are search terms, not separate saved values. Desktop readiness sits beside the form; mobile readiness precedes it. Use explicit save/discard actions and protect unsaved edits. Account settings remain separate below; sign-in guidance reflects Google or magic links.
+- Profile multi-selects use compact anchored popovers, not permanently expanded full-height lists. Show small selected chips/counts above a labelled search, bounded scrollable checkbox rows, no-result guidance and Done/Escape closing. Popovers may open above when space is constrained. Selected choices remain removable at the limit; never auto-select suggestions or save search text. Keep native Tab/Space checkbox behavior and visible focus.
+- Dashboard guidance precedes tabs/job content on mobile. Discovery and saved roles remain available to Free and Pro; recommendations are Pro-only. Show actual role/work-mode/available-experience data and “Added” dates, never rename ingestion time as an employer posting date. Display up to three backend match reasons with accessible expansion, “Highest relevance” rather than “Exceptional fit,” and the outcome disclaimer.
+- View role & apply and Save/Saved are primary card actions. Interested / Not relevant are explicit feedback; application stages belong in More and are member-reported. Distinguish incomplete, tier-empty, all-empty, loading and request failure. Retry is not a browse-empty state; broader preferences never promise results.
+- Admin import fits the existing Companies workspace: file selection, asynchronous progress, compact evidence/count/status preview, explicit approval and downloadable outcomes/history. Distinguish Ready/Already exists/Conflict/Unsupported/Verification failed and Awaiting first sync. A zero-opening feed may be valid; a successful import is not a job-ingestion success. Keep account/member editing visually separate from operational sync/import confirmations.
 - Buttons and touch targets are at least 44px when practical. Inputs have visible labels, useful errors, and clear disabled/loading states.
 - Keyboard focus is always visible. Radio groups, tabs, menus, filters, accordions, and feedback controls must work without a pointer.
 
@@ -33,6 +39,7 @@ ReerHub is a calm, trustworthy career-discovery product. The interface should ma
 - Anonymous: show a truthful listing preview and a clear free sign-in unlock for full browsing and saved jobs. Full job descriptions and official Apply links are public; saved-role actions require an account.
 - Free: show manual discovery, saved roles, profile completion, and contextual Pro panels. Never show blurred or fake recommendations.
 - Pro: show membership status, ranked relevance cards, reasons, official Apply links, save actions, feedback controls, and alert pause/resume.
+- Admin: show persisted operations/progress and honest timestamps. “Scheduler enabled” reflects configuration, not a live heartbeat; SMTP accepted does not mean inbox delivered. Current schedules stay labelled current even beside historical IST-date reports.
 - Empty, loading, failed, closed-job, pending-checkout, cancelled, past-due, and expired states must explain the next safe action.
 
 ## Match and billing language
@@ -47,3 +54,4 @@ ReerHub is a calm, trustworthy career-discovery product. The interface should ma
 - The matching illustration uses available company logos but is explicitly not a live scan or an actual user recommendation. Never suggest all roles qualify or promise hiring outcomes. Keep other pages quiet rather than adding loops to job lists, forms or billing.
 - Under `prefers-reduced-motion`, content appears in its usable final state.
 - Keep static sections server-rendered where possible. Isolate filters, checkout, feedback, authentication, and alert controls to client components.
+- Preserve one server homepage content read and combined directory page/count reads. Disable repeated card detail prefetch without removing route-loading feedback; keep primary navigation prefetch. Widgets load only on the surfaces that need them. Shared session/saved state must not flash fake empty states after failed requests.

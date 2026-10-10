@@ -1,57 +1,120 @@
 # ReerHub frontend
 
-Next.js 16 and React 19 frontend for ReerHub, an India-first tech-job discovery product. It presents official company openings, passwordless accounts, free manual discovery, and a Pro workspace for ranked role relevance.
+Next.js 16 / React 19 / Tailwind 4 member site and admin console for ReerHub, an India-first official-source technology-job discovery product.
 
-Live: `https://reerhub.com`. Staging: `https://staging.reerhub.com` from `develop`; staging serves noindex directives.
+Production: https://reerhub.com. Staging: https://staging.reerhub.com. Reviewed against this checkout on **2026-10-10**; deployment state must be checked separately.
 
-## Product behaviour
+## What members can do
 
-- Anonymous visitors can preview up to 10 listings and read full job descriptions, skills and official Apply links without signing in. A free account unlocks complete browsing, profile editing and saved roles.
-- Free accounts use a manual discovery dashboard. They never receive ranked matches or match emails.
-- Pro members with a valid entitlement, including remaining time after cancellation, receive a default 75%+ ranked shortlist, tiered 90/75/50/25% dashboard filters, relevance feedback, and one daily email with up to five fresh 75%+ roles. A match-ready profile needs a track, role preferences (or any role), three skills, experience, and location preferences (or All India). A score describes profile relevance, never hiring probability; freshness only orders already-qualified roles.
-- Pro plans are weekly ₹49, monthly ₹149, and quarterly ₹299. Each has a seven-day trial. Subscription payments are non-refundable; cancellation stops renewal while access remains available until the displayed end date.
+| Audience     | Available experience                                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| Anonymous    | Homepage, hiring-company directory/details, ten-role listing previews, full job details and official employer Apply links |
+| Free         | Complete manual discovery, profile editing, saved roles, account export/deletion subject to billing safeguards            |
+| Entitled Pro | Free features plus ranked matches, backend-provided reasons, relevance feedback and eligible daily match alerts           |
 
-## Local setup
+Public routes include `/`, `/companies`, `/companies/[slug]`, `/jobs`, slug-based job details, `/engineering-jobs`, `/ai-jobs`, `/remote-jobs` and Bengaluru/Mumbai/Delhi/Pune/Hyderabad/Chennai landing pages. Passwordless Google/magic-link sign-in uses `/login`; member surfaces are `/profile`, `/dashboard`, `/billing` and `/billing/success`. Legal/privacy pages and public SEO metadata are included.
+
+There is no resume upload, AI profile autofill, automatic application submission or hiring prediction. The homepage animation is illustrative, not a live scan or an actual member recommendation.
+
+## Profile setup
+
+Three calm sections: Your next role, Your skills, Your work preferences. Name remains editable; account settings sit separately below.
+
+- Choose one of nine technology tracks first; choose Any role in this track or up to three catalog roles.
+- Search/select up to ten canonical skills. Aliases such as React.js/NodeJS help search but do not become duplicate saved skills. Track suggestions are optional; arbitrary custom values are not accepted.
+- Choose All India or up to three searchable catalog cities, with aliases such as Bangalore/Bengaluru.
+- Enter experience, including zero and fractions (0–60 years), and choose Any/Onsite/Hybrid/Remote work mode.
+- Compact checkbox popovers show removable chips, counts, selection limits, no-result messages and keyboard focus. Escape/Done/outside interaction close them; lists are bounded and scrollable rather than expanding the whole form.
+- Track changes confirm before incompatible roles are cleared; skills stay selected. Incomplete profiles can save.
+- Explicit Save/Discard, a saved baseline, failed-save recovery and unsaved dashboard/browser-unload protection preserve editing state. Success offers dashboard navigation without forcing it.
+- Google/magic-link account information replaces the unsupported password form. Pro alert preferences, data export and account deletion remain separate.
+
+Five readiness essentials: track, role preference, at least three skills, experience and location preference. Any role and All India count as completed choices; name/work mode are not readiness essentials. Completion means the required inputs are present, not that relevant jobs or hiring outcomes are guaranteed. Single-role/single-city free-text fields are not used for matching; no automatic migration or account wipe occurs.
+
+## Dashboard, discovery and saved jobs
+
+A compact guidance card precedes the tabs, including on mobile. Incomplete members get their next missing essential and a profile link; browsing/saves remain available. Complete Free members see saved preferences and discovery guidance with Pro described separately. Complete Pro members get ranked-match guidance.
+
+Discover jobs and Saved roles work for Free and Pro. Your matches is Pro-only. `/dashboard?view=discover`, `?view=saved` and `?view=matches` preserve shareable tab state; defaults are discovery for Free and matches for Pro. Controls support keyboard navigation.
+
+Recommendation cards show company/title, location, work mode, available experience and “Added” freshness (ingestion time, not a claimed employer posting date). Show up to three actual backend reasons with expansion, relevance percentages/tiers and the hiring-outcome disclaimer. “Highest relevance” is not “guaranteed fit.”
+
+View role & apply opens the existing detail page and official employer link. Save/Saved state is shared across dashboard/discovery/detail/related roles. Interested and Not relevant record relevance feedback; Not relevant hides the role from matches and alerts, not from all public discovery. Applied/Interview/Offer in More are explicit reported outcomes, never inferred from clicks. Duplicate in-flight actions are blocked; failures retain known state.
+
+Incomplete profile, selected-threshold empty, all-ranked empty, loading and failed requests are separate states. Lower-tier suggestions use API counts; otherwise browse and preference editing remain available without guarantees. Saved lists retain pagination and move back to a valid page after the last later-page item is removed.
+
+## Matching and membership
+
+Matching is backend-owned and deterministic: skills up to 40, track 25, roles 20, city five, work mode five, experience five. Any role/All India/Any mode remove their respective weights before normalization; remote jobs ignore city weight. Broad choices produce no invented evidence; location/work mode are soft ranking preferences. All ranked results require two evidence signals including skills or preferred-role evidence, with experience safeguards.
+
+Pro opens at 75%+, with 90/75/50/25% and all-ranked tiers. Dashboard filters do not change daily email policy: eligible members get up to five fresh 75%+ roles, with a count of additional matches. Profile readiness, membership access dates, alert pause/frequency and backend exclusions control eligibility.
+
+Plans: ₹49/week, ₹149/month, ₹299/quarter; seven-day trial. Payments are non-refundable; cancellation stops renewal and preserves remaining entitlement. Checkout confirmation uses bounded polling and refreshes membership. Google/Turnstile load on authentication surfaces; Razorpay loads only when checkout is requested.
+
+## Admin workspace and weekly company imports
+
+The same deployment serves `admin.reerhub.com/auth` and `/dashboard`. Staging/local public hosts expose `/admin/auth` and `/admin/dashboard`; production member hosts block these admin routes. Dedicated admin testing hosts use the production-shaped paths. Google-only admin sign-in requires a separate admin session and the current database admin role.
+
+Console capabilities: source health/schedules, company/source editing, confirmed source syncs, sync history, job-quality editing, read-only member/subscription support and before/after audit history. Daily Operations shows IST-day job-change events, sync runs, email attempts/skip summaries and current schedule state. “Scheduler enabled” is not a heartbeat; SMTP accepted is not confirmed inbox delivery. Refresh requests current data; schedules are not historical snapshots. Admin tabs use URL hashes.
+
+### Research → upload → first sync
+
+1. On request, research new companies after checking current database company/source identities **and prior backend JSON batches**. Include inactive/conflicting identities in exclusions; compare normalized names/slugs, website hosts and ATS board identities. This is manual research, not an automated crawler.
+2. Save verified, dated JSON in the backend's `data/company-imports/`. That repository is the research record; its files do not prove import. Database/admin import history remains authoritative.
+3. Admin → Companies → Import companies → upload. Maximum 25 companies / 50 sources / 500 KiB; supported providers are Greenhouse, Ashby, Lever and SmartRecruiters.
+4. Wait for asynchronous feed validation and review Ready / Already exists / Conflict / Unsupported / Verification failed, feed counts and uploaded official evidence. Reachable feeds alone do not prove ownership.
+5. Approve Ready companies once. Verified zero-opening feeds are valid; existing metadata/sources and disabled records are never silently replaced/reactivated.
+6. Download results or reopen recent batch history. Recheck expired/failed validation (Ready checks expire after 24 hours). Retries retain committed rows.
+7. Imported sources show Awaiting first sync and their next future **06:00–06:14 or 20:00–20:14 IST** slot. Import does not create jobs immediately or send email. Normal successful scheduler runs then populate openings; zero-opening companies stay out of hiring-only views.
+
+No server seed command is needed. File format, evidence policy, first researched batch and backend endpoints are documented in the backend README. Release backend import support before this UI.
+
+## Local setup and checks
 
 ```bash
 nvm use 24
-npm install
+npm ci
 cp .env.example .env.local
 npm run dev
-npx eslint .
+npm run lint
 npx tsc --noEmit
-npm run test:seo
 npm run test:admin
+npm run test:seo
+npm run test:profile
+npm run test:dashboard
+npm run test:operations
+npm run test:performance
+npm run test:security
+npm audit --audit-level=high
 npm run build
 ```
 
-The app runs at `http://localhost:3000` and proxies browser API requests to `API_URL`, which defaults to the local backend at port 8000. `npm run test:ui:fixtures` starts an isolated UI-only fixture server at port 3001; it does not contact MongoDB, SMTP, or Razorpay.
+Development normally listens on port 3000 and proxies to the backend on port 8000. Node 24 is required. Check the actual build output for route counts rather than relying on a fixed documented count.
 
-## Admin workspace
+`npm run build` is the standard release build. A local CSS-worker port-binding restriction previously blocked Turbopack; `npm run build -- --webpack` passed as a diagnostic fallback. It does not replace verification of the configured deployment build. No backend/database/payment/email writes are needed for this documentation-only update.
 
-The same deployment serves Google-only admin login at `admin.reerhub.com/auth` and the console at `/dashboard`. Localhost and staging use `/admin/auth` and `/admin/dashboard`; production public hosts cannot access these routes. Backend authorization requires a dedicated admin session and the current database admin role.
+### Isolated fixtures and performance checks
 
-The console includes source health, company/source editing, sync history and confirmed sync triggers, safe job-quality editing, paginated member/subscription support views, and before/after audit inspection. Members and billing remain read-only. Tabs are shareable using dashboard URL hashes. Admin styles are isolated from the public UI.
+`npm run test:ui:fixtures` starts the synthetic frontend on 3001 and API on 8801. Open `http://127.0.0.1:3001/api/v1/fixture` to choose anonymous/Free/trialing/active/cancelled/past-due/expired/pending accounts. Profile/dashboard modes exercise completion, thresholds, empty/error lists, pagination and delayed responses. `/api/v1/fixture-admin` supports admin states; `/api/v1/fixture-stats` records request counts. These fixtures never contact MongoDB, SMTP or Razorpay.
 
-Run `npm run test:admin` for API/host regression checks. For synthetic admin UI testing, start the fixture server and open `/api/v1/fixture-admin` on port 3001 (`?state=empty`, `error`, or `denied` exercise alternate states). Set `FIXTURE_PORT` and `FIXTURE_API_PORT` if those ports are occupied; fixture build caches are isolated per frontend port.
+Set `FIXTURE_PORT` / `FIXTURE_API_PORT` for free ports. `FIXTURE_API_ONLY=1` starts just the mock API; `FIXTURE_PRODUCTION=1` starts an already-built frontend preview. Ensure the production fixture build points to the mock API and isolated output configuration from `scripts/ui-fixtures.mjs`; never benchmark a development server as production.
 
-## Architecture
+`npm run test:network:fixtures` proxies a localhost production preview (default target 3004, proxy 3011). It adds 150ms/request and caps aggregate response traffic at 1.6Mbps; CPU is unthrottled and external assets are outside the cap. Use a fresh cache. Mobile budgets: LCP ≤2.5s, CLS ≤0.1, lab interaction ≤200ms. Historical results are in DECISIONS; no field-INP or deployed capacity claim follows from fixtures.
 
-### Weekly company import
+## Architecture and request budgets
 
-In admin Companies, choose **Import companies**, upload a researched JSON batch, review official-link evidence and feed counts, then approve Ready rows once. Up to 25 companies / 50 sources / 500 KiB; research file format is documented in the backend README. Empty verified feeds are valid. Imports do not fetch/store jobs immediately: source cards/results show the next scheduler slot and Awaiting first sync. Recent batches, recheck/retry and downloadable results support recovery without server commands. Backend feed availability checks are not proof of employer ownership. Deploy the compatible backend first.
+- Server-rendered homepage uses one `/home` business read; public content does not await authentication or refetch after hydration.
+- Company directory requests 50 summaries/open-role counts/pagination together; API search is debounced 300ms with URL state. No per-card detail requests; repeated company/job links disable automatic detail prefetch. Primary navigation retains prefetch.
+- Company/job metadata and page rendering share request-scoped reads in `lib/server-reads.ts`. Mutable public data freshness belongs to backend caching, not stacked frontend TTLs.
+- `lib/reerhub.ts` handles public reads. `lib/auth.ts` handles credentialed reads, serialized refresh/one permitted retry, CSRF and safe returns. `AuthProvider` is the only session authority; no per-page `getMe()` waterfalls.
+- `lib/saved-store.ts` shares member-scoped saved IDs, save/unsave updates and ≥60-second focus refresh. Logout/account switching clears private state; failures keep known saves. Obsolete independent reads use AbortSignal; one consumer cannot cancel another's shared read.
+- Public config and the versioned profile catalog are shared; billing/account mutations remain live and uncached.
+- Browser calls stay same-origin at `/api/v1`; Next proxies to server-only `API_URL`. The separate admin proxy validates host routing and supplies the backend admin marker. `/api/config` exposes only public Google/Turnstile identifiers.
+- API request budgets exclude session/auth, images, navigation and third-party assets. One content read does not mean the browser makes exactly one network request.
+- SEO includes unique canonicals/social previews, eligible JobPosting markup, split sitemap feeds and readable noindex for private/admin/staging. Closed roles do not emit active JobPosting.
 
-- App Router routes cover public job/company discovery, authentication, billing, profile, and dashboard flows.
-- `lib/reerhub.ts` handles public API reads; `lib/auth.ts` handles credentialed requests, CSRF, one refresh retry, and safe return paths.
-- `AuthProvider` is the only client session source. `proxy.ts` protects Dashboard and Profile routes.
-- `/api/v1/*` is rewritten server-side to `API_URL`. No backend URL or secret is exposed to browser code. `/api/config` exposes only the Google client ID and Turnstile site key at runtime.
+## Deployment and documentation
 
-## Deployment
+Feature PR → `develop` → verify staging → `main`. Vercel uses Node 24 and server/build-time `API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, `TURNSTILE_SITE_KEY`; redeploy after changing them. Deploy compatible backend contracts first.
 
-Vercel deploys `develop` to staging and `main` to production. Set Node 24 and configure `API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, and `TURNSTILE_SITE_KEY`; redeploy after any change because these are server/build-time values. See `docs/04-deployment.md` for the environment matrix and staging checks.
-
-## Reference
-
-Read `AGENTS.md` first. Product decisions are in `docs/DECISIONS.md`; the current visual system is in `docs/design/design-system.md`.
-
-Profile setup loads searchable choices from the backend's public `/api/v1/profile-options` catalog. Choose one of nine tracks, any role or up to three preferred roles, up to ten canonical skills, and All India or up to three cities. Aliases are searchable; free text is never saved as a selection. City and work-mode preferences influence ranking without hiding other locations or modes. Track changes confirm before clearing incompatible roles. Incomplete profiles remain saveable.
+[Deployment](docs/04-deployment.md) covers environment/host setup and release checks. [DECISIONS](docs/DECISIONS.md) retains dated decisions/results; newer notes supersede earlier blockers. [Design system](docs/design/design-system.md) defines current visual/interaction rules. Read [AGENTS](AGENTS.md) before changes.

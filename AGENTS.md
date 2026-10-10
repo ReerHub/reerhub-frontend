@@ -17,7 +17,7 @@ Self-contained repo: product, deployment, design, and decisions live in README a
 ## Runtime
 
 - **Node 24** (`.nvmrc` + `engines`; Node 20 crashes on jsdom). `npm run dev` → `:3000` (needs backend at `:8000` for data).
-- Checks: `npx eslint .` (zero errors; `setState` sync-in-`useEffect` is an error — use initializers + key-remount, promise-callback fetches), `npx tsc --noEmit`, `npm run build` (26 routes).
+- Checks: `npx eslint .` (zero errors; `setState` sync-in-`useEffect` is an error — use initializers + key-remount, promise-callback fetches), `npx tsc --noEmit`, regression scripts `test:admin/seo/profile/dashboard/operations/performance/security`, `npm audit --audit-level=high`, `npm run build`. Use actual build output for route counts. A local `--webpack` diagnostic fallback is not proof the standard deployment build passed.
 - Version holds (do not bump until upstream supports): `typescript@6` (TS 7 unsupported by typescript-eslint, retry at >=7.1) and `eslint@9` (v10 breaks `eslint-config-next`'s bundled react plugin).
 
 ## Conventions
@@ -35,7 +35,11 @@ Self-contained repo: product, deployment, design, and decisions live in README a
 
 - `API_URL`/`SITE_URL` are build-time — Vercel redeploy after changing. Backend CORS must allow the origin + `credentials:true`.
 - Backend global rate limit is per process; after running backend tests, wait before live-verifying (15-min window).
+- Dashboard URL state is `?view=discover|saved|matches`, not `?tab=`. Free defaults to discovery; Pro defaults to matches. Preserve distinct readiness/threshold-empty/all-empty/error states and backend-only match evidence.
+- Profile uses backend catalog choices: one track, any/up to three roles, ten skills, All India/up to three cities, nonnegative fractional experience. Keep compact searchable checkbox popovers, explicit save/discard and unsaved protection; no custom free-text matching entries. Any work mode maps to `unknown`.
+- Shared saved IDs/session reads must stay member-scoped, clear on logout/account switch and serialize refresh. Homepage uses one server content read; directory uses 50-item combined reads. Repeated card links disable detail prefetch. Backend owns mutable-content TTL; do not add another independent five-minute SSR cache.
+- Weekly JSON import lives in admin Companies: bounded async preview, evidence approval, recent history/recheck/download and Awaiting first sync. Feed availability is not employer ownership. Research is manual on request, checks database identities and previous backend batches, and never uses a seed command. Deploy backend support first.
 
 ## Docs discipline (minimal by design)
 
-`docs/` holds exactly three entries: `DECISIONS.md`, `04-deployment.md` (env matrix mirrors `.env.example`), and `design/` (the active design system). README covers setup, product behavior, architecture, and deployment. Do NOT create new doc files, TODO lists, or issue logs without a triggering incident or user-visible requirement.
+`docs/` holds exactly three entries: `DECISIONS.md`, `04-deployment.md` (env matrix mirrors `.env.example`), and `design/` (the active design system). README covers current setup, product behavior, admin/import workflows, architecture, and deployment. Preserve dated historical results in DECISIONS and label superseded blockers; never imply a local fixture proves production behavior. Update these existing guides when behavior changes. Do NOT create new doc files, TODO lists, or issue logs without a triggering incident or user-visible requirement.
