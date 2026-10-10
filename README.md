@@ -37,6 +37,8 @@ A compact guidance card precedes the tabs, including on mobile. Incomplete membe
 
 Discover jobs and Saved roles work for Free and Pro. Your matches is Pro-only. `/dashboard?view=discover`, `?view=saved` and `?view=matches` preserve shareable tab state; defaults are discovery for Free and matches for Pro. Controls support keyboard navigation.
 
+Discovery keeps keyword/city search prominent and secondary options behind one Filters control. Apply filters submits track, company, work mode, role title, skills, career level, employment, scope and sorting together; Cancel/Escape discard pending filter edits. Removable chips show active criteria, with Clear all and existing URL state/keyword debounce retained.
+
 Recommendation cards show company/title, location, work mode, available experience and “Added” freshness (ingestion time, not a claimed employer posting date). Show up to three actual backend reasons with expansion, relevance percentages/tiers and the hiring-outcome disclaimer. “Highest relevance” is not “guaranteed fit.”
 
 View role & apply opens the existing detail page and official employer link. Save/Saved state is shared across dashboard/discovery/detail/related roles. Interested and Not relevant record relevance feedback; Not relevant hides the role from matches and alerts, not from all public discovery. Applied/Interview/Offer in More are explicit reported outcomes, never inferred from clicks. Duplicate in-flight actions are blocked; failures retain known state.

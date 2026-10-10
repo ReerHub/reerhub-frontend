@@ -214,11 +214,11 @@ function Editor({
     setDraft({
       name: baseline.name || "",
       techTrack: baseline.techTrack || "",
-      rolePreference: baseline.rolePreference || "any",
+      rolePreference: baseline.rolePreference,
       techRoles: [...(baseline.techRoles || [])],
       skills: [...(baseline.skills || [])],
       experienceYears: baseline.experienceYears?.toString() ?? "",
-      locationPreference: baseline.locationPreference || "all-india",
+      locationPreference: baseline.locationPreference,
       targetLocations: [...(baseline.targetLocations || [])],
       remoteType: baseline.remoteType || "unknown",
     });
@@ -389,6 +389,8 @@ function Editor({
                 Choose preferred roles
               </label>
               <p className={styles.hint}>
+                {!draft.rolePreference &&
+                  "Choose a role preference to complete this essential. "}
                 Not sure about a job title? Any role is a good place to start.
               </p>
               {draft.rolePreference === "selected" && (
@@ -504,6 +506,8 @@ function Editor({
                 />
               )}
               <p className={styles.hint}>
+                {!draft.locationPreference &&
+                  "Choose All India or preferred cities to complete this essential. "}
                 Preferences help rank jobs. Roles in other cities can still
                 appear; remote roles do not need a matching office city.
               </p>
