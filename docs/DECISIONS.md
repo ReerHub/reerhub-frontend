@@ -1,5 +1,13 @@
 # Frontend decisions
 
+## Metadata previews and safe source removal — 2026-10-10
+
+Company imports distinguish identity status from action: Already exists does not overwrite automatically. Admin sees metadata before/after values, separately approves Update metadata only, and sends reviewed timestamps. Failed results remain visible; duplicate clicks are excluded. Explicit metadata-only batches cannot create companies or sources. New file versions use new batch IDs. IDs, jobs, sources, links, active state and history remain intact.
+
+Companies and sources now offer exact-name confirmation for permanent deletion of unused inactive records. Used incorrect sources instead expose Remove source, clearly explaining archival and closure of linked active jobs without deleting saved references or history. Current source views omit archived records; a labelled Archived filter retains History access and disables sync/edit/reactivation. Native dialog focus, Escape handling, pending-action guards and visible failures are covered by rendered DOM regressions. No production mutations were performed in verification.
+
+Lint, TypeScript and admin DOM checks pass. Standard Turbopack build remains blocked here by a CSS-worker port-binding permission error, even with the tool escalation; the Webpack production-build diagnostic passes, but is not proof the standard deployment build passed. Deploy and verify backend metadata/archive/lease support before enabling these controls in the frontend.
+
 ## Current product documentation — 2026-10-10
 
 README now describes the complete current member/admin journey, profile catalog selections/readiness, direct dashboard `?view=` links, matching/alert evidence, billing, weekly import workflow, shared reads and executable local checks. Deployment/design/agent guides align with it. This review changes documentation only; it does not certify new deployment checks, mobile validation, standard build success or real email delivery.

@@ -99,6 +99,13 @@
 .panel .error {
   color: #b91c1c;
 }
+.metadata {
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 8px;
+  background: #f8fafc;
+  overflow-wrap: anywhere;
+}
 @media (max-width: 600px) {
   .panel {
     padding: 16px;

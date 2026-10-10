@@ -141,6 +141,6 @@ export const getAdminPage = async <T>(path: string): Promise<AdminPage<T>> => {
 };
 export const writeAdmin = <T>(
   path: string,
-  method: "POST" | "PATCH",
+  method: "POST" | "PATCH" | "DELETE",
   body?: unknown,
 ) => call<T>(path, { method, body: JSON.stringify(body || {}) });

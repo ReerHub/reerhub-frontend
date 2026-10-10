@@ -8,6 +8,14 @@ type Row = {
   status: string;
   message?: string;
   checkedAt?: string;
+  metadataUpdatedAt?: string;
+  metadataError?: string;
+  metadataPreview?: {
+    eligible: boolean;
+    updatedAt?: string;
+    reason?: string;
+    changes?: Record<string, { before: string; after: string }>;
+  };
   entry: {
     company: { name: string; website: string; careersUrl: string };
     sources: {
@@ -21,7 +29,7 @@ type Row = {
   sources?: {
     id: string;
     name: string;
-    nextScheduledSyncAt: string;
+    nextScheduledSyncAt?: string | null;
     lastSuccessfulSyncAt?: string;
     syncState?: string;
   }[];
@@ -31,6 +39,7 @@ type Batch = {
   batchId: string;
   status: string;
   claimedUntil?: string;
+  purpose?: "import" | "metadata-only";
   interrupted?: boolean;
   rows: Row[];
 };
@@ -58,6 +67,7 @@ export default function AdminCompanyImport() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
+  const [metadataApproved, setMetadataApproved] = useState(false);
   const lock = useRef(false);
   const live = useRef(true);
   const request = useRef(0);
@@ -133,6 +143,7 @@ export default function AdminCompanyImport() {
       if (!live.current || version !== request.current) return;
       setBatch(next);
       setAcknowledged(false);
+      setMetadataApproved(false);
       setHistory((old) => [
         { _id: next._id, batchId: next.batchId, status: next.status },
         ...old.filter((item) => item._id !== next._id),
@@ -154,6 +165,12 @@ export default function AdminCompanyImport() {
     !interrupted,
   );
   const ready = batch?.rows.filter((row) => row.status === "ready").length || 0;
+  const metadataRows =
+    batch?.rows.flatMap((row, index) =>
+      row.metadataPreview?.eligible && row.metadataPreview.updatedAt
+        ? [{ row: index, updatedAt: row.metadataPreview.updatedAt }]
+        : [],
+    ) || [];
   const download = () => {
     if (!batch) return;
     const url = URL.createObjectURL(
@@ -238,9 +255,15 @@ export default function AdminCompanyImport() {
             · {ready} ready / {batch.rows.length} companies
           </p>
           <p>
-            Feed checks verify availability, not employer ownership. Review the
-            research evidence. Valid feeds with zero India engineering roles can
-            still be imported.
+            {batch.purpose === "metadata-only" ? (
+              "Metadata-only file: no companies, sources or jobs can be created. Review the changes below and approve the separate update action."
+            ) : (
+              <>
+                Feed checks verify availability, not employer ownership. Review
+                the research evidence. Valid feeds with zero India engineering
+                roles can still be imported.
+              </>
+            )}
           </p>
           <div className={styles.rows}>
             {batch.rows.map((row, index) => (
@@ -291,24 +314,92 @@ export default function AdminCompanyImport() {
                   </p>
                 )}
                 {row.message && <p>{row.message}</p>}
+                {row.metadataPreview?.eligible && (
+                  <div className={styles.metadata}>
+                    <strong>Metadata-only update preview</strong>
+                    {Object.entries(row.metadataPreview.changes || {}).map(
+                      ([field, change]) => (
+                        <p key={field}>
+                          <strong>{field}</strong>: {change.before || "Not set"}{" "}
+                          → {change.after || "Clear value"}
+                        </p>
+                      ),
+                    )}
+                  </div>
+                )}
+                {row.metadataPreview?.reason && (
+                  <p>{row.metadataPreview.reason}</p>
+                )}
+                {row.metadataUpdatedAt && (
+                  <p role="status">
+                    Metadata updated {time(row.metadataUpdatedAt)} IST. Company
+                    identity, jobs and sources preserved.
+                  </p>
+                )}
+                {row.metadataError && (
+                  <p className={styles.error} role="alert">
+                    {row.metadataError}
+                  </p>
+                )}
                 {row.sources?.map((source) => (
                   <p key={source.id}>
-                    {source.syncState === "unavailable"
-                      ? "Source unavailable"
-                      : source.lastSuccessfulSyncAt
-                        ? `Last synced ${time(source.lastSuccessfulSyncAt)} IST`
-                        : source.syncState === "attempted"
-                          ? "First sync not completed"
-                          : "Awaiting first sync"}{" "}
-                    · {source.name} · scheduled{" "}
-                    {time(source.nextScheduledSyncAt)} IST. See Job sources for
-                    current sync status.
+                    {source.syncState === "archived"
+                      ? "Archived—future syncs disabled"
+                      : source.syncState === "unavailable"
+                        ? "Source unavailable"
+                        : source.lastSuccessfulSyncAt
+                          ? `Last synced ${time(source.lastSuccessfulSyncAt)} IST`
+                          : source.syncState === "attempted"
+                            ? "First sync not completed"
+                            : "Awaiting first sync"}{" "}
+                    · {source.name}
+                    {source.nextScheduledSyncAt && (
+                      <> · scheduled {time(source.nextScheduledSyncAt)} IST</>
+                    )}
+                    . See Job sources for current sync status.
                   </p>
                 ))}
               </article>
             ))}
           </div>
           <div className={styles.actions}>
+            {metadataRows.length > 0 && !processing && (
+              <>
+                <label className={styles.confirm}>
+                  <input
+                    type="checkbox"
+                    checked={metadataApproved}
+                    disabled={busy}
+                    onChange={(event) =>
+                      setMetadataApproved(event.target.checked)
+                    }
+                  />
+                  I reviewed the metadata changes. Update only logos, industry,
+                  company type and country; preserve identities, jobs, sources
+                  and history.
+                </label>
+                <button
+                  className="button primary"
+                  disabled={busy || !metadataApproved}
+                  onClick={() =>
+                    void perform(() =>
+                      writeAdmin<Batch>(
+                        `/admin/company-imports/${batch._id}/metadata`,
+                        "POST",
+                        {
+                          acknowledgeMetadata: true,
+                          expectations: metadataRows,
+                        },
+                      ),
+                    )
+                  }
+                >
+                  {busy
+                    ? "Updating…"
+                    : `Update metadata only · ${metadataRows.length} companies`}
+                </button>
+              </>
+            )}
             {ready > 0 && !processing && (
               <label className={styles.confirm}>
                 <input
@@ -322,21 +413,23 @@ export default function AdminCompanyImport() {
               </label>
             )}
             <div className={styles.controls}>
-              <button
-                className="button primary"
-                disabled={busy || processing || !ready || !acknowledged}
-                onClick={() =>
-                  void perform(() =>
-                    writeAdmin<Batch>(
-                      `/admin/company-imports/${batch._id}/confirm`,
-                      "POST",
-                      { acknowledgeEvidence: true },
-                    ),
-                  )
-                }
-              >
-                {busy ? "Processing…" : `Import ${ready} verified companies`}
-              </button>
+              {batch.purpose !== "metadata-only" && (
+                <button
+                  className="button primary"
+                  disabled={busy || processing || !ready || !acknowledged}
+                  onClick={() =>
+                    void perform(() =>
+                      writeAdmin<Batch>(
+                        `/admin/company-imports/${batch._id}/confirm`,
+                        "POST",
+                        { acknowledgeEvidence: true },
+                      ),
+                    )
+                  }
+                >
+                  {busy ? "Processing…" : `Import ${ready} verified companies`}
+                </button>
+              )}
               <button
                 className="button"
                 disabled={busy || processing}
