@@ -47,7 +47,13 @@ function SkeletonCard() {
   );
 }
 
-function EmptyState({ onClear }: { onClear: () => void }) {
+function EmptyState({
+  onClear,
+  companyOnly = false,
+}: {
+  onClear: () => void;
+  companyOnly?: boolean;
+}) {
   return (
     <div className="col-span-full text-center py-16 px-6 bg-white border border-slate-200/80 rounded-2xl shadow-card">
       <div className="mx-auto w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-5">
@@ -67,17 +73,23 @@ function EmptyState({ onClear }: { onClear: () => void }) {
         </svg>
       </div>
       <h2 className="font-bold text-slate-900 text-lg mb-1.5">
-        No tech roles match those filters
+        {companyOnly
+          ? "No open India tech roles right now"
+          : "No tech roles match those filters"}
       </h2>
       <p className="text-slate-500 text-[15px] mb-6">
-        Try a shorter keyword, another city, or browse everything.
+        {companyOnly
+          ? "We check official sources twice daily. Check back for new openings."
+          : "Try a shorter keyword, another city, or browse everything."}
       </p>
-      <button
-        onClick={onClear}
-        className="px-6 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark transition-all shadow-sm"
-      >
-        Clear filters
-      </button>
+      {!companyOnly && (
+        <button
+          onClick={onClear}
+          className="px-6 py-2.5 bg-electric text-white rounded-xl text-sm font-semibold hover:bg-electric-dark transition-all shadow-sm"
+        >
+          Clear filters
+        </button>
+      )}
     </div>
   );
 }
@@ -146,6 +158,7 @@ export default function JobBrowser({
   showSave,
   onToggleSave,
   initialData,
+  companyId,
 }: {
   initialCategory?: "" | TechTrack;
   heading?: string;
@@ -157,6 +170,7 @@ export default function JobBrowser({
   showSave?: boolean;
   onToggleSave?: (jobId: string, saved: boolean) => void;
   initialData?: Awaited<ReturnType<typeof listJobsWithMeta>>;
+  companyId?: string;
 }) {
   const { user, loading: authLoading } = useAuth();
   const pathname = usePathname();
@@ -166,9 +180,10 @@ export default function JobBrowser({
 
   const INITIAL: Filters = useMemo(() => {
     const fromUrl = filtersFromSearchParams(
-      new URLSearchParams(searchParamsKey),
+      new URLSearchParams(companyId ? "" : searchParamsKey),
       initialCategory,
     );
+    if (companyId) fromUrl.companyId = companyId;
     if (!initialFilters) return fromUrl;
     // Prefill empty slots from profile; explicit URL params always win.
     const merged: Filters = { ...fromUrl };
@@ -178,7 +193,7 @@ export default function JobBrowser({
       if (!merged[key] && preset) merged[key] = preset as never;
     }
     return merged;
-  }, [searchParamsKey, initialCategory, initialFilters]);
+  }, [searchParamsKey, initialCategory, initialFilters, companyId]);
 
   const [filters, setFilters] = useState<Filters>(INITIAL);
   const [prevInitial, setPrevInitial] = useState<Filters>(INITIAL);
@@ -292,6 +307,7 @@ export default function JobBrowser({
 
   // Companies load once; abort on unmount.
   useEffect(() => {
+    if (!showFilters) return;
     const ac = new AbortController();
     listCompanies()
       .then((c) => {
@@ -301,7 +317,7 @@ export default function JobBrowser({
         if (!ac.signal.aborted) toast.error("Could not load companies");
       });
     return () => ac.abort();
-  }, []);
+  }, [showFilters]);
 
   // Initial jobs fetch when INITIAL changes (URL back/forward).
   const originalInitial = useRef(INITIAL);
@@ -320,6 +336,7 @@ export default function JobBrowser({
       new URLSearchParams(),
       initialCategory,
     );
+    if (companyId) next.companyId = companyId;
     setFilters(next);
     setSearched(false);
     setLoading(true);
@@ -420,7 +437,7 @@ export default function JobBrowser({
             />
           ))
         ) : (
-          <EmptyState onClear={clearAll} />
+          <EmptyState onClear={clearAll} companyOnly={!!companyId} />
         )}
       </div>
       {!loading && !error && <DiscoveryPrompt count={jobs.length} />}
