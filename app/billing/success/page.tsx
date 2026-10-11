@@ -66,7 +66,7 @@ export default function BillingSuccessPage() {
             {ready ? "✓" : "…"}
           </span>
           <p className="mt-7 text-sm font-bold text-primary-deep">
-            ReerHub Pro
+            REERHUB Pro
           </p>
           <h1 className="mt-2 font-display text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
             {ready

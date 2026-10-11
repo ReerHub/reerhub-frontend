@@ -6,7 +6,7 @@ import CityJobs from "@/components/CityJobs";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata(
-  "Tech jobs in Hyderabad | ReerHub",
+  "Tech jobs in Hyderabad | REERHUB",
   "Browse engineering, AI and data jobs in Hyderabad from official company career pages. Explore role details and apply directly to the hiring team.",
   "/hyderabad-jobs",
 );

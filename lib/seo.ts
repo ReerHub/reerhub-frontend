@@ -20,16 +20,16 @@ export function pageMetadata(
   description: string,
   path: string,
 ): Metadata {
-  const brand = " | ReerHub";
+  const brand = " | REERHUB";
   const fullTitle =
-    concise(title.replace(/\s*\|\s*ReerHub$/, ""), 60 - brand.length) + brand;
+    concise(title.replace(/\s*\|\s*REERHUB$/i, ""), 60 - brand.length) + brand;
   const summary = concise(description, 155);
   const images = [
     {
       url: "/share-image",
       width: 1200,
       height: 630,
-      alt: "ReerHub — official tech openings and Pro career intelligence",
+      alt: "REERHUB — official tech openings and Pro career intelligence",
     },
   ];
   return {
@@ -41,7 +41,7 @@ export function pageMetadata(
       description: summary,
       url: path,
       type: "website",
-      siteName: "ReerHub",
+      siteName: "REERHUB",
       locale: "en_IN",
       images,
     },

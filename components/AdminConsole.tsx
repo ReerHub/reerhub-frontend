@@ -358,7 +358,7 @@ function Dialog({
     >
       <header className="modal-head">
         <div>
-          <p className="eyebrow">ReerHub operations</p>
+          <p className="eyebrow">REERHUB operations</p>
           <h2 id="admin-dialog-title">{title}</h2>
           {description && <p id="admin-dialog-description">{description}</p>}
         </div>
@@ -621,7 +621,7 @@ export default function AdminConsole() {
               ? "Connection needs attention"
               : "Checking administrator access"}
           </h1>
-          <p>{sessionError || "Verifying your secure ReerHub session…"}</p>
+          <p>{sessionError || "Verifying your secure REERHUB session…"}</p>
           {sessionError && (
             <button
               className="button primary"
@@ -649,7 +649,7 @@ export default function AdminConsole() {
         >
           <Image src="/reerhub-icon-logo.png" width={34} height={34} alt="" />
           <span>
-            ReerHub<small>OPERATIONS CONSOLE</small>
+            REERHUB<small>OPERATIONS CONSOLE</small>
           </span>
         </a>
         <nav className="nav" aria-label="Admin navigation">
@@ -707,7 +707,7 @@ export default function AdminConsole() {
         <main id="admin-content" className="content" tabIndex={-1}>
           <header className="topbar">
             <div>
-              <p className="eyebrow">ReerHub / {item.group}</p>
+              <p className="eyebrow">REERHUB / {item.group}</p>
               <h1>{item.label}</h1>
               <p className="page-description">{item.description}</p>
             </div>
@@ -920,7 +920,7 @@ export default function AdminConsole() {
             </section>
           )}
           <footer className="workspace-footer">
-            <span>ReerHub · Operations</span>
+            <span>REERHUB · Operations</span>
             <span>
               <Icon name="shield" /> Authorized operators only
             </span>
@@ -1670,7 +1670,7 @@ function MemberDetails({ member }: { member: User }) {
         </span>
         <div>
           <h3>{member.name || "Unnamed member"}</h3>
-          <p className="subtle">{profile?.headline || "ReerHub member"}</p>
+          <p className="subtle">{profile?.headline || "REERHUB member"}</p>
         </div>
       </div>
       <dl className="detail-fields">

@@ -254,9 +254,12 @@ test("public branding reserves gradients for Pro and uses quiet chrome", async (
     );
   }
   const footer = await read("../components/Footer.jsx");
-  assert.doesNotMatch(footer, /footer-intro|ReerHub<|ReerHub\.<\//);
-  assert.match(footer, /src="\/reerhub-sticker-logo-text\.png"/);
-  assert.doesNotMatch(footer, /footer-wordmark|src="\/reerhub-icon-logo\.png"/);
+  assert.doesNotMatch(footer, /footer-intro|REERHUB<|REERHUB\.<\//);
+  assert.match(footer, /src="\/reerhub-icon-logo\.png"/);
+  assert.match(footer, /BrandWordmark/);
+  assert.doesNotMatch(footer, /src="\/reerhub-sticker-logo-text\.png"/);
+  assert.match(footer, /REERHUB TECHNOLOGIES/);
+  assert.match(footer, /registration in progress/);
   const home = await read("../components/HomePage.module.css");
   assert.match(
     home,
@@ -269,7 +272,7 @@ test("public branding reserves gradients for Pro and uses quiet chrome", async (
   );
   assert.doesNotMatch(
     await read("../app/share-image/route.tsx"),
-    />ReerHub\.</,
+    />REERHUB\.</,
   );
 });
 

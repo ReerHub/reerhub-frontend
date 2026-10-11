@@ -6,7 +6,7 @@ import CityJobs from "@/components/CityJobs";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata(
-  "Tech jobs in Pune | ReerHub",
+  "Tech jobs in Pune | REERHUB",
   "Find software engineering and data jobs in Pune from official company career pages. Explore requirements and apply directly on the hiring site.",
   "/pune-jobs",
 );

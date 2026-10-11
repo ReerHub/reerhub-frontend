@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+.brand-wordmark {
+  font-family: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
 @theme inline {
   /* Shared Cobalt Blue base; public and admin scopes retain independent layouts.
      See docs/design/design-system.md for the approved palette. */

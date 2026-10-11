@@ -1,10 +1,10 @@
-# ReerHub design system
+# REERHUB design system
 
 Reviewed against the current profile, dashboard and admin import components on 2026-10-10. This is a behavior/layout reference, not certification that every mobile/browser state was visually tested.
 
 ## Product direction
 
-ReerHub is a calm, trustworthy career-discovery product. The interface should make official roles easy to scan, make the free path clearly valuable, and reserve personalized intelligence for Pro without fabricating scores or obscuring useful information.
+REERHUB is a calm, trustworthy career-discovery product. The interface should make official roles easy to scan, make the free path clearly valuable, and reserve personalized intelligence for Pro without fabricating scores or obscuring useful information.
 
 ## Foundations
 
@@ -13,15 +13,15 @@ ReerHub is a calm, trustworthy career-discovery product. The interface should ma
 - Canvas `#f8fafc`; white cards `#FFFFFF`; borders `#e2e8f0`.
 - Shared static dark gradient: `--public-gradient` combines a 130-degree Midnight Navy `#172554` to Royal Blue `#1e40af` gradient with a restrained low-opacity `#2563eb` radial highlight. Dark-surface text is white or pale ice blue `#dbeafe`; use solid white buttons with Cobalt Blue text.
 - Use solid Midnight Navy `#172554` (`--public-chrome`) for navigation, mobile navigation and footer. Reserve the shared gradient for membership/Pro promotions, featured Monthly pricing and checkout panels. Keep discovery, official application panels, forms, account popovers and long descriptions light. The homepage final CTA is white with a soft ice blue accent, charcoal heading and solid Cobalt Blue button. Selection/check indicators are independent of the Recommended label.
-- The footer has no duplicate CTA row. It retains navigation columns, the combined reerhub-sticker-logo-text image, legal links and copyright. Public navigation uses the icon alone; the footer has no separately rendered brand wordmark.
+- The footer has no duplicate CTA row. It retains navigation columns, the original icon with a live-text wordmark, the slogan, legal links and enterprise copyright. Navigation shows the icon plus wordmark from the small breakpoint upward, retaining the compact icon on narrow phones.
 - The public theme lives in `app/public.css`, scoped to `.public-site`, including compatibility aliases for existing `primary` and `electric` utilities. Admin uses the same Cobalt Blue palette in its separately scoped app/admin.css; do not apply public layout overrides to admin.
 - Success uses green with AA text contrast; error uses red; warnings use amber. Use semantic status rather than decorative color.
-- The brand wordmark is exactly `ReerHub`, without a decorative trailing dot, including social previews. Preserve ordinary sentence punctuation. Retain the original blue logo artwork. Do not introduce unrelated purple/cyan gradients, a theme toggle, or a replacement logo.
+- The brand/word mark is exactly `REERHUB`, without a decorative trailing dot, including social previews, metadata and email. Use `BrandWordmark`: existing Space Grotesk Bold (700), 0.035em tracking, no new font download. Preserve ordinary sentence punctuation and the original blue icon. Replace old mixed-case raster wordmarks in rendered UI with live text. Enterprise name: `REERHUB TECHNOLOGIES`; use it in business identity/legal notices, not instead of the public brand. Slogan: `Real Effective Engineering Roles Hub`. Website: `reerhub.com`. Sole proprietorship/Udyam registration is in progress; do not claim completed registration, trademark registration or display ® without confirmation. Do not introduce unrelated purple/cyan gradients, a theme toggle, or a replacement icon.
 
 ## Components and layout
 
 - Use the shared navigation, footer, `PageHeader`, `JobCard`, `MembershipStatus`, `UpgradePanel`, `RecommendationPanel`, and icon system before creating parallel patterns.
-- Every company image uses `CompanyLogo`: one fixed 48×48px non-shrinking rounded-square frame, 12px corners, white background, subtle border and 4px padding. Center the original artwork with `object-fit: contain`; never stretch or crop its proportions. Missing/broken images use initials in the identical frame. Apply this to all member surfaces and the admin Companies list, including detail headers; account avatars, ReerHub branding and description images are separate. Prefer sharp official square/near-square icons rather than wide wordmarks.
+- Every company image uses `CompanyLogo`: one fixed 48×48px non-shrinking rounded-square frame, 12px corners, white background, subtle border and 4px padding. Center the original artwork with `object-fit: contain`; never stretch or crop its proportions. Missing/broken images use initials in the identical frame. Apply this to all member surfaces and the admin Companies list, including detail headers; account avatars, REERHUB branding and description images are separate. Prefer sharp official square/near-square icons rather than wide wordmarks.
 - Page content uses the shared page container and responsive spacing. Cards have clear hierarchy, an official-source signal where relevant, and an obvious primary action.
 - Public backgrounds are full bleed, while content uses a centered 1680px maximum frame with 20–48px responsive gutters. Extra screen width becomes outer margins. Discovery grids follow container width: job cards have a 300px minimum (or available mobile width) and at most four columns; company tiles have a 160px minimum and at most eight columns. The homepage hero uses centered copy above an unboxed illustrative workspace aligned to the full content frame, never side-by-side hero columns. Its animation shows up to 15 real directory companies and stacks vertically on mobile; only the example match retains a focused card. Billing is capped at 1200px; forms and long prose retain reading widths. Admin uses an independent responsive operations layout.
 - Homepage shows up to 16 companies with current openings, ordered by opening count descending with stable name/id ties. Show real logos/counts and link to each company; omit zero-opening companies, never invent brands, endorsements or totals.

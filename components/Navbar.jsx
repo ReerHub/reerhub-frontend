@@ -7,6 +7,7 @@ import { useAuth } from "@/components/AuthProvider";
 import ProBadge from "@/components/ProBadge";
 import Icon from "@/components/ui/Icon";
 import UserAvatar from "@/components/UserAvatar";
+import BrandWordmark from "@/components/BrandWordmark";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function Navbar() {
     { href: "/companies", label: "Companies" },
     {
       href: "/billing",
-      label: user?.membership?.isPro ? "Manage Pro" : "ReerHub Pro",
+      label: user?.membership?.isPro ? "Manage Pro" : "REERHUB Pro",
     },
     ...(user ? [{ href: "/dashboard", label: "My dashboard" }] : []),
   ];
@@ -65,8 +66,8 @@ export default function Navbar() {
         <Link
           href="/"
           onClick={close}
-          className="flex min-h-11 min-w-11 shrink-0 items-center justify-center"
-          aria-label="ReerHub home"
+          className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2.5"
+          aria-label="REERHUB home"
         >
           <Image
             src="/reerhub-icon-logo.png"
@@ -76,6 +77,7 @@ export default function Navbar() {
             className="rounded-lg bg-white p-0.5"
             priority
           />
+          <BrandWordmark className="hidden text-xl text-white sm:inline" />
         </Link>
         <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
           {links.map(({ href, label }) => (

@@ -1,6 +1,6 @@
-const BODY = `# ReerHub — llms.txt
+const BODY = `# REERHUB — llms.txt
 
-ReerHub (Real Effective Engineering Roles Hub, reerhub.com) is an
+REERHUB (Real Effective Engineering Roles Hub, reerhub.com) is an
 India-first tech-job discovery engine. Listings are indexed daily from
 official company career pages and ATS boards — never scraped third-party
 reposts. Applications always happen on the company's official site.
@@ -39,6 +39,11 @@ reposts. Applications always happen on the company's official site.
 - Profile: /profile
 
 ## Company
+
+- Brand: REERHUB
+- Enterprise name: REERHUB TECHNOLOGIES
+- Sole proprietorship registration: in progress
+- Slogan: Real Effective Engineering Roles Hub
 
 - About: /#why
 - Privacy: /privacy

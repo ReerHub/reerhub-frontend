@@ -18,6 +18,14 @@ const sitemapSource = (await source("../lib/sitemap.ts"))
 const sitemap = await import(url(sitemapSource));
 
 test("metadata is bounded, unique and consistent across social tags", () => {
+  assert.equal(
+    seo.pageMetadata("Jobs | REERHUB", "Jobs", "/jobs").title,
+    "Jobs | REERHUB",
+  );
+  assert.equal(
+    seo.pageMetadata("Jobs | ReerHub", "Jobs", "/jobs").title,
+    "Jobs | REERHUB",
+  );
   const m = seo.pageMetadata(
     "Very long engineering role ".repeat(8),
     "A useful summary ".repeat(30),
@@ -34,6 +42,31 @@ test("metadata is bounded, unique and consistent across social tags", () => {
       .safeJsonLd({ name: "</script><script>alert(1)</script>" })
       .includes("<"),
   );
+});
+
+test("uppercase identity uses live text and distinguishes ongoing enterprise registration", async () => {
+  const wordmark = await source("../components/BrandWordmark.tsx");
+  assert.match(wordmark, />REERHUB</);
+  const css = await source("../app/globals.css");
+  assert.match(
+    css,
+    /\.brand-wordmark[\s\S]*?--font-space-grotesk[\s\S]*?font-weight: 700/,
+  );
+  for (const file of ["../components/Navbar.jsx", "../components/Footer.jsx"]) {
+    const text = await source(file);
+    assert.match(text, /BrandWordmark/);
+    assert.doesNotMatch(text, /src="[^"\n]*(?:logo-text|footer-logo)/);
+  }
+  for (const file of ["../app/terms/page.tsx", "../app/privacy/page.tsx"]) {
+    const text = await source(file);
+    assert.match(text, /REERHUB TECHNOLOGIES/);
+    assert.match(text, /registration is in progress/);
+    assert.doesNotMatch(text, /®|registered trademark/i);
+  }
+  const page = await source("../app/page.tsx");
+  assert.match(page, /name: "REERHUB"/);
+  assert.match(page, /alternateName: "REERHUB TECHNOLOGIES"/);
+  assert.match(page, /slogan: "Real Effective Engineering Roles Hub"/);
 });
 
 test("only eligible active jobs emit complete structured data", () => {

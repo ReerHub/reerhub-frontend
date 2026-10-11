@@ -18,10 +18,14 @@ export function GET() {
           display: "flex",
           fontSize: 42,
           fontWeight: 700,
+          letterSpacing: "0.035em",
           color: "#2563eb",
         }}
       >
-        ReerHub
+        REERHUB
+      </div>
+      <div style={{ display: "flex", fontSize: 24, marginTop: 18 }}>
+        Real Effective Engineering Roles Hub
       </div>
       <div
         style={{
