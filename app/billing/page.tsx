@@ -347,7 +347,7 @@ export default function BillingPage() {
           {subscription.checkoutNeedsReview && (
             <p className="mt-3 text-sm">
               Checkout needs confirmation. Please{" "}
-              <a className="underline" href="mailto:hello@reerhub.com">
+              <a className="underline" href="mailto:support@reerhub.com">
                 contact support
               </a>{" "}
               before retrying.

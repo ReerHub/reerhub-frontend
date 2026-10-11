@@ -64,7 +64,7 @@ export default function PrivacyPage() {
             You can download everything we store about you from Profile → Your
             data, update your profile at any time, and delete your account
             (including saved jobs) permanently from the same page. For any other
-            request, email privacy@reerhub.com and we will respond within 30
+            request, email support@reerhub.com and we will respond within 30
             days.
           </p>
         </section>
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-bold text-slate-900 text-lg mb-2">Contact</h2>
           <p>
-            Questions about this policy: privacy@reerhub.com. If we make
+            Questions about this policy: support@reerhub.com. If we make
             material changes, we will highlight them here and, where
             appropriate, notify you by email.
           </p>
