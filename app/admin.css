@@ -184,7 +184,7 @@
   padding: 0 12px 26px;
   color: var(--a-ink);
   font:
-    700 22px/1.1 var(--font-space-grotesk),
+    700 22px/1.1 var(--font-inter),
     sans-serif;
   letter-spacing: 0.035em;
 }
