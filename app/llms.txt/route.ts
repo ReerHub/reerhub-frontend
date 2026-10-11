@@ -42,7 +42,7 @@ reposts. Applications always happen on the company's official site.
 
 - Brand: REERHUB
 - Enterprise name: REERHUB TECHNOLOGIES
-- Sole proprietorship registration: in progress
+- Business type: Sole proprietorship
 - Slogan: Real Effective Engineering Roles Hub
 
 - About: /#why

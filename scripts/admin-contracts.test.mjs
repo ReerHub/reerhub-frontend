@@ -259,7 +259,7 @@ test("public branding reserves gradients for Pro and uses quiet chrome", async (
   assert.match(footer, /BrandWordmark/);
   assert.doesNotMatch(footer, /src="\/reerhub-sticker-logo-text\.png"/);
   assert.match(footer, /REERHUB TECHNOLOGIES/);
-  assert.match(footer, /registration in progress/);
+  assert.doesNotMatch(footer, /registration in progress/);
   const home = await read("../components/HomePage.module.css");
   assert.match(
     home,
