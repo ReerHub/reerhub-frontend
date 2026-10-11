@@ -35,6 +35,7 @@ export const TECH_TRACKS: { value: TechTrack; label: string }[] = [
 ];
 
 export type Job = {
+  publicEligible?: boolean;
   _id: string;
   title: string;
   normalizedTitle?: string;
