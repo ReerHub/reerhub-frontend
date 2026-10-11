@@ -48,6 +48,10 @@ test("only eligible active jobs emit complete structured data", () => {
     locations: [{ city: "Pune", country: "India" }],
   };
   const schema = jobs.jobPosting(job, "<p>Build and maintain services.</p>");
+  assert.equal(
+    jobs.jobPosting({ ...job, publicEligible: false }, "description"),
+    null,
+  );
   assert.equal(schema.employmentType, "FULL_TIME");
   assert.ok(!("directApply" in schema));
   assert.equal(

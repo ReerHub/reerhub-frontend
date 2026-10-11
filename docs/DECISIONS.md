@@ -1,5 +1,11 @@
 # Frontend decisions
 
+## Evidence-backed publication and admin outcomes — 2026-10-10
+
+Local verification passes lint, TypeScript and 42 admin/dashboard/profile/SEO/performance/operations regressions, including evidence confirmation, failed-input retention and duplicate-write protection. Webpack diagnostic production build passes. Standard Turbopack build fails in the local CSS worker with port-binding `Operation not permitted`, including the permission-enabled retry; this is an environment-blocked standard build, not a certified release build. No production deployment is claimed.
+
+Admin gains durable repair status/retry, separately labelled India/worldwide/review counts, location/provenance filters and an official-link location decision control. Evidence links are recorded by the protected backend, never fetched by the browser/server as ownership proof. Failures retain input; ordinary edits and review writes cannot run simultaneously. Source/import outcomes come from grouped backend records without per-company requests. Public details remain readable but explicitly unpublished jobs emit no JobPosting schema. Unknown locations are not assumed India, and temporary verification failures are not empty results. No new research-JSON requirement, scoring change or broad component refactor was introduced. Promotion requires backend repair completion and count parity; implementation alone is not deployment verification.
+
 ## Complete company listings — 2026-10-10
 
 Production QA found company headers reporting the full count while the server-rendered anonymous preview stopped at ten cards even for members. Company pages now reuse JobBrowser: anonymous SSR previews remain capped without duplicate hydration reads; resolved members fetch complete paginated listings, shared saves and retry/error handling. A fixed company scope ignores unrelated query filters and remains fixed across pagination/clear. Hidden company filters no longer fetch the directory. Failed SSR reads are not presented as empty openings; empty company results explain the twice-daily refresh instead of offering irrelevant filter controls.
