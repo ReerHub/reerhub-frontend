@@ -1,5 +1,9 @@
 # Frontend decisions
 
+## Completed sole proprietorship registration — 2026-10-11
+
+The owner confirms registration is completed and requests removal of the pending notice. Footer no longer shows "registration in progress"; legal pages retain REERHUB TECHNOLOGIES as the sole-proprietorship business identity, and llms.txt/current guides no longer describe registration as pending. This supersedes earlier dated status entries without rewriting history. No registration number, GST status or registered trademark is inferred; ® remains prohibited without separate confirmation.
+
 ## Inter Bold website wordmark — 2026-10-11
 
 The user selected Inter Bold (700) for REERHUB website brand labels, superseding the earlier Space Grotesk wordmark decision. Shared member navigation/footer and admin live branding reuse the already-loaded Inter font with 0.035em tracking. Ordinary body copy retains readable existing weights; non-brand headings are not redesigned. Email HTML retains Arial/Helvetica fallbacks because web fonts are not reliably supported across mail clients. Social-preview image font rendering is independent of website CSS.

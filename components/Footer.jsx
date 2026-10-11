@@ -94,7 +94,6 @@ export default function Footer() {
               © {new Date().getFullYear()} REERHUB TECHNOLOGIES. All rights
               reserved.
             </p>
-            <p>Sole proprietorship registration in progress.</p>
           </div>
         </div>
       </div>
