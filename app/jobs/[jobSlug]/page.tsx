@@ -42,17 +42,17 @@ export async function generateMetadata({
   try {
     const { jobSlug: slug } = await params;
     const jobId = resolveJobId(slug);
-    if (!jobId) return { title: "Job | ReerHub" };
+    if (!jobId) return { title: "Job | REERHUB" };
     const job = await fetchJob(jobId);
     const companyName = job.companyId?.name || "Company";
-    const title = `${job.status === "closed" ? "Closed: " : ""}${job.title} at ${companyName} | ReerHub`;
+    const title = `${job.status === "closed" ? "Closed: " : ""}${job.title} at ${companyName} | REERHUB`;
     const description =
       `${job.title} (${job.techRole || "tech role"}) at ${companyName}` +
       `${job.locations?.[0]?.city ? ` in ${job.locations[0].city}` : ""}. ` +
-      `${job.status === "closed" ? "This opening is closed. Explore related active jobs on ReerHub." : "Read full role requirements and apply on the company's official website."}`;
+      `${job.status === "closed" ? "This opening is closed. Explore related active jobs on REERHUB." : "Read full role requirements and apply on the company's official website."}`;
     return pageMetadata(title, description, `/jobs/${jobSlug(job)}`);
   } catch {
-    return { title: "Job | ReerHub" };
+    return { title: "Job | REERHUB" };
   }
 }
 
@@ -80,18 +80,18 @@ function Fact({ label, value }: { label: string; value?: string }) {
 const faqs = [
   {
     q: "Where does this listing come from?",
-    a: "ReerHub indexes official company career pages and ATS boards daily. The company site is always the source of truth.",
+    a: "REERHUB indexes official company career pages and ATS boards daily. The company site is always the source of truth.",
   },
   {
     q: "How do I apply for this role?",
-    a: "Use the Apply button to finish your application on the company's official site. ReerHub never takes a cut or holds your application.",
+    a: "Use the Apply button to finish your application on the company's official site. REERHUB never takes a cut or holds your application.",
   },
   {
     q: "What does a free account unlock?",
     a: "Full job details and official Apply links are public. A free account unlocks complete browsing, your profile, and a saved shortlist. Sign in with Google or a secure email link; no payment is required.",
   },
   {
-    q: "Is ReerHub free?",
+    q: "Is REERHUB free?",
     a: "Yes. Browsing, saving roles, and applying are free for job seekers.",
   },
 ];
@@ -424,7 +424,7 @@ export default async function JobDetailPage({
               </p>
               <p className="text-sm text-slate-600 leading-relaxed mb-5">
                 You&apos;ll finish your application on {companyName}&apos;s own
-                site. ReerHub never takes a cut or holds your data.
+                site. REERHUB never takes a cut or holds your data.
               </p>
               <a
                 href={job.applicationUrl}

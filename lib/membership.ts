@@ -23,7 +23,7 @@ export const planLabel = (plan?: string) =>
     "pro-weekly": "Pro Weekly",
     "pro-monthly": "Pro Monthly",
     "pro-quarterly": "Pro Quarterly",
-  })[plan || ""] || "ReerHub Pro";
+  })[plan || ""] || "REERHUB Pro";
 
 export const membershipDate = (subscription?: BillingState["subscription"]) => {
   if (!subscription) return null;

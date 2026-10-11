@@ -11,7 +11,7 @@ export default function UpgradePanel({
     >
       <span className="inline-flex items-center gap-2 text-sm font-bold text-primary-deep">
         <Icon name="spark" className="h-4 w-4" />
-        ReerHub Pro
+        REERHUB Pro
       </span>
       <h2
         className={`mt-4 font-display font-bold leading-tight tracking-tight text-ink ${compact ? "text-2xl" : "text-3xl"}`}

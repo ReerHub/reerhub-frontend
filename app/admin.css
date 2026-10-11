@@ -184,9 +184,9 @@
   padding: 0 12px 26px;
   color: var(--a-ink);
   font:
-    650 22px/1.1 var(--font-space-grotesk),
+    700 22px/1.1 var(--font-space-grotesk),
     sans-serif;
-  letter-spacing: -0.04em;
+  letter-spacing: 0.035em;
 }
 .admin-ui .brand img {
   flex-shrink: 0;

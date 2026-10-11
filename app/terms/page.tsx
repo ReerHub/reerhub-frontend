@@ -1,7 +1,7 @@
 import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata(
-  "Terms of Service | ReerHub",
-  "Read the terms for ReerHub job discovery and Pro subscriptions, including trials, non-refundable payments, cancellation and remaining Pro access.",
+  "Terms of Service | REERHUB",
+  "Read the terms for REERHUB job discovery and Pro subscriptions, including trials, non-refundable payments, cancellation and remaining Pro access.",
   "/terms",
 );
 
@@ -15,10 +15,21 @@ export default function TermsPage() {
       <div className="space-y-6 text-[15px] leading-relaxed text-slate-600">
         <section>
           <h2 className="font-bold text-slate-900 text-lg mb-2">
-            What ReerHub is
+            Business identity
           </h2>
           <p>
-            ReerHub is a job-discovery service. We index publicly listed tech
+            REERHUB is the public brand of REERHUB TECHNOLOGIES. Sole
+            proprietorship registration is in progress. Our slogan is
+            &ldquo;Real Effective Engineering Roles Hub&rdquo; and our website
+            is reerhub.com.
+          </p>
+        </section>
+        <section>
+          <h2 className="font-bold text-slate-900 text-lg mb-2">
+            What REERHUB is
+          </h2>
+          <p>
+            REERHUB is a job-discovery service. We index publicly listed tech
             roles from official company career pages and link you to the
             company&apos;s own application page. We do not host applications,
             guarantee listings are current, or act as a recruiter or employer.
@@ -57,7 +68,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-bold text-slate-900 text-lg mb-2">Liability</h2>
           <p>
-            ReerHub is provided &quot;as is&quot;. To the maximum extent
+            REERHUB is provided &quot;as is&quot;. To the maximum extent
             permitted by law, we are not liable for hiring outcomes, missed
             opportunities, or reliance on listing data.
           </p>
@@ -83,7 +94,7 @@ export default function TermsPage() {
           <p className="mt-3">
             Razorpay may collect a separate payment-method authorization amount
             during setup. Any reversal of that authorization is handled by
-            Razorpay and your payment provider; it is not a refund of a ReerHub
+            Razorpay and your payment provider; it is not a refund of a REERHUB
             subscription fee. Review the amount shown before authorizing
             checkout.
           </p>

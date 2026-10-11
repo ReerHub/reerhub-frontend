@@ -1,7 +1,7 @@
 import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata(
-  "Privacy Policy | ReerHub",
-  "Learn how ReerHub collects and protects account and profile data, uses cookies, and handles your privacy choices while you discover tech jobs.",
+  "Privacy Policy | REERHUB",
+  "Learn how REERHUB collects and protects account and profile data, uses cookies, and handles your privacy choices while you discover tech jobs.",
   "/privacy",
 );
 
@@ -11,10 +11,18 @@ export default function PrivacyPage() {
       <h1 className="text-4xl font-bold text-slate-900 tracking-tight mb-2">
         Privacy Policy
       </h1>
-      <p className="text-sm text-slate-500 mb-8">
-        Last updated: September 2026
-      </p>
+      <p className="text-sm text-slate-500 mb-8">Last updated: October 2026</p>
       <div className="space-y-6 text-[15px] leading-relaxed text-slate-600">
+        <section>
+          <h2 className="font-bold text-slate-900 text-lg mb-2">
+            Business identity
+          </h2>
+          <p>
+            REERHUB is the public brand of REERHUB TECHNOLOGIES. Sole
+            proprietorship registration is in progress. This policy covers the
+            REERHUB service at reerhub.com.
+          </p>
+        </section>
         <section>
           <h2 className="font-bold text-slate-900 text-lg mb-2">
             What we collect
@@ -37,7 +45,7 @@ export default function PrivacyPage() {
           <p>
             To run your account, personalize job recommendations, send
             verification and password-reset emails, keep the service secure, and
-            improve ReerHub. We never sell your personal data and never share it
+            improve REERHUB. We never sell your personal data and never share it
             with advertisers.
           </p>
         </section>

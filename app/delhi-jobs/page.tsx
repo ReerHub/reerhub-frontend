@@ -6,7 +6,7 @@ import CityJobs from "@/components/CityJobs";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata(
-  "Tech jobs in Delhi | ReerHub",
+  "Tech jobs in Delhi | REERHUB",
   "Explore tech jobs across Delhi NCR, Gurgaon and Noida from official company career pages. Read role details and apply directly on the hiring site.",
   "/delhi-jobs",
 );

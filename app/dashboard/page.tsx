@@ -362,7 +362,7 @@ function Dashboard() {
               Always apply at the source
             </p>
             <p className="mt-3 text-xs leading-6 text-slate-600">
-              ReerHub helps you discover roles. Applications are completed
+              REERHUB helps you discover roles. Applications are completed
               directly on the company’s official hiring page.
             </p>
           </section>

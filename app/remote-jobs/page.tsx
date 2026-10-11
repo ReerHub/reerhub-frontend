@@ -6,7 +6,7 @@ import CityJobs from "@/components/CityJobs";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata(
-  "Remote Tech Jobs in India | ReerHub",
+  "Remote Tech Jobs in India | REERHUB",
   "Discover remote tech jobs open to India from official company career pages. Read work-mode details and apply directly on the company hiring site.",
   "/remote-jobs",
 );

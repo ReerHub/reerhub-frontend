@@ -1,5 +1,11 @@
 # Frontend decisions
 
+## Uppercase brand and enterprise identity — 2026-10-11
+
+Local verification: lint, TypeScript and 43 frontend regressions pass; the Webpack production-build diagnostic passes. Isolated fixture-browser checks confirm desktop navigation/footer wordmarks, mobile containment and uppercase social image with the slogan. The standard Turbopack build remains environment-blocked by its CSS worker's port permission; the diagnostic is not proof of a standard deployment build. No production configuration, database or provider identity was changed; deployment and an operator-configured SMTP sender display name remain separate.
+
+The user's current public word mark is `REERHUB`; the enterprise name is `REERHUB TECHNOLOGIES`, with sole proprietorship/Udyam registration still in progress. Slogan: `Real Effective Engineering Roles Hub`; website: `reerhub.com`. This supersedes the historical mixed-case branding guidance below. No completed business/trademark registration or registered-mark symbol is asserted. Brand text, accessibility labels, metadata, social previews and checkout presentation use uppercase; footer and legal pages distinguish enterprise identity and ongoing registration. Navigation/footer use the original icon with live uppercase text instead of the old raster wordmark. Space Grotesk Bold with restrained tracking reuses existing self-hosted fonts; mobile navigation keeps its compact icon. Existing unused raster assets are retained, not regenerated. Domain names, API identifiers and third-party company brands are unchanged.
+
 ## Evidence-backed publication and admin outcomes — 2026-10-10
 
 Local verification passes lint, TypeScript and 42 admin/dashboard/profile/SEO/performance/operations regressions, including evidence confirmation, failed-input retention and duplicate-write protection. Webpack diagnostic production build passes. Standard Turbopack build fails in the local CSS worker with port-binding `Operation not permitted`, including the permission-enabled retry; this is an environment-blocked standard build, not a certified release build. No production deployment is claimed.

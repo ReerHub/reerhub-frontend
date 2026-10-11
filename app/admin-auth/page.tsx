@@ -141,7 +141,7 @@ export default function AdminAuth() {
         <div className="brand">
           <Image src="/reerhub-icon-logo.png" width={38} height={38} alt="" />
           <span>
-            ReerHub<small>OPERATIONS CONSOLE</small>
+            REERHUB<small>OPERATIONS CONSOLE</small>
           </span>
         </div>
         <div>
@@ -171,7 +171,7 @@ export default function AdminAuth() {
             </div>
           </div>
         </div>
-        <p className="auth-bottom">ReerHub · Authorized operators only</p>
+        <p className="auth-bottom">REERHUB · Authorized operators only</p>
       </section>
       <section className="auth-main">
         <div className="auth-card">

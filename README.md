@@ -1,6 +1,8 @@
-# ReerHub frontend
+# REERHUB frontend
 
-Next.js 16 / React 19 / Tailwind 4 member site and admin console for ReerHub, an India-first official-source technology-job discovery product.
+Brand: **REERHUB**. Enterprise name: **REERHUB TECHNOLOGIES** (sole proprietorship/Udyam registration in progress). Slogan: **Real Effective Engineering Roles Hub**. Website: **reerhub.com**. Use uppercase consistently, without implying registered trademark or completed enterprise registration. The wordmark uses existing Space Grotesk Bold; see design guidance.
+
+Next.js 16 / React 19 / Tailwind 4 member site and admin console for REERHUB, an India-first official-source technology-job discovery product.
 
 Production: https://reerhub.com. Staging: https://staging.reerhub.com. Reviewed against this checkout on **2026-10-10**; deployment state must be checked separately.
 
@@ -119,7 +121,7 @@ Set `FIXTURE_PORT` / `FIXTURE_API_PORT` for free ports. `FIXTURE_API_ONLY=1` sta
 
 ## Architecture and request budgets
 
-- Company images share one 48×48px rounded-square `CompanyLogo` frame across public pages, dashboard/saved jobs, detail headers and the admin Companies list. Artwork is contained without cropping/stretching; missing or failed images retain the same frame with initials. Admin uses the list's existing `logoUrl`, without per-company API reads. Account avatars and ReerHub branding remain separate.
+- Company images share one 48×48px rounded-square `CompanyLogo` frame across public pages, dashboard/saved jobs, detail headers and the admin Companies list. Artwork is contained without cropping/stretching; missing or failed images retain the same frame with initials. Admin uses the list's existing `logoUrl`, without per-company API reads. Account avatars and REERHUB branding remain separate.
 - Server-rendered homepage uses one `/home` business read; public content does not await authentication or refetch after hydration.
 - Company directory requests 50 summaries/open-role counts/pagination together; API search is debounced 300ms with URL state. No per-card detail requests; repeated company/job links disable automatic detail prefetch. Primary navigation retains prefetch.
 - Company/job metadata and page rendering share request-scoped reads in `lib/server-reads.ts`. Mutable public data freshness belongs to backend caching, not stacked frontend TTLs.
