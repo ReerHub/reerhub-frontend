@@ -69,6 +69,19 @@ test("uppercase identity uses live text and distinguishes ongoing enterprise reg
   assert.match(page, /slogan: "Real Effective Engineering Roles Hub"/);
 });
 
+test("public contact surfaces consistently use the support mailbox", async () => {
+  for (const file of [
+    "../components/Footer.jsx",
+    "../app/billing/page.tsx",
+    "../app/terms/page.tsx",
+    "../app/privacy/page.tsx",
+  ]) {
+    const text = await source(file);
+    assert.match(text, /support@reerhub\.com/);
+    assert.doesNotMatch(text, /(?:hello|privacy|billing)@reerhub\.com/);
+  }
+});
+
 test("only eligible active jobs emit complete structured data", () => {
   const job = {
     title: "Engineer",

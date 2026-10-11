@@ -102,10 +102,10 @@ export default function TermsPage() {
             Cancel through Billing → Cancel renewal. The confirmation shows when
             Pro access ends. For billing errors or help, contact{" "}
             <a
-              href="mailto:hello@reerhub.com"
+              href="mailto:support@reerhub.com"
               className="text-primary underline"
             >
-              hello@reerhub.com
+              support@reerhub.com
             </a>
             . This policy does not limit rights that cannot be excluded under
             applicable law.
@@ -119,10 +119,10 @@ export default function TermsPage() {
             We may update these terms; material changes will be highlighted
             here. Continued use after changes means you accept them. Contact:
             <a
-              href="mailto:hello@reerhub.com"
+              href="mailto:support@reerhub.com"
               className="text-primary underline"
             >
-              hello@reerhub.com
+              support@reerhub.com
             </a>
             .
           </p>
