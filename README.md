@@ -1,6 +1,6 @@
 # REERHUB frontend
 
-Brand: **REERHUB**. Enterprise name: **REERHUB TECHNOLOGIES** (sole proprietorship/Udyam registration in progress). Slogan: **Real Effective Engineering Roles Hub**. Website: **reerhub.com**. Use uppercase consistently, without implying registered trademark or completed enterprise registration. The wordmark uses existing Space Grotesk Bold; see design guidance.
+Brand: **REERHUB**. Enterprise name: **REERHUB TECHNOLOGIES** (sole proprietorship/Udyam registration in progress). Slogan: **Real Effective Engineering Roles Hub**. Website: **reerhub.com**. Use uppercase consistently, without implying registered trademark or completed enterprise registration. The live website wordmark uses existing Inter Bold (700); see design guidance.
 
 Public contact for support, billing and privacy: **support@reerhub.com**, display name **REERHUB Support**. Founder/business mailbox: **arfat.sayyed@reerhub.com**; keep it separate from public support links. Confirm the support mailbox receives mail before release.
 

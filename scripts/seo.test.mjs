@@ -50,7 +50,12 @@ test("uppercase identity uses live text and distinguishes ongoing enterprise reg
   const css = await source("../app/globals.css");
   assert.match(
     css,
-    /\.brand-wordmark[\s\S]*?--font-space-grotesk[\s\S]*?font-weight: 700/,
+    /\.brand-wordmark[\s\S]*?--font-inter[\s\S]*?font-weight: 700/,
+  );
+  const adminCss = await source("../app/admin.css");
+  assert.match(
+    adminCss,
+    /\.admin-ui \.brand \{[\s\S]*?700 22px\/1\.1 var\(--font-inter\)/,
   );
   for (const file of ["../components/Navbar.jsx", "../components/Footer.jsx"]) {
     const text = await source(file);

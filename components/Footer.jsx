@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/ui/Icon";
 import BrandWordmark from "@/components/BrandWordmark";
+import SocialLinks from "@/components/SocialLinks";
 const columns = [
   [
     "Discover",
@@ -63,6 +64,7 @@ export default function Footer() {
               <Icon name="shield" className="h-4 w-4" />
               Official sources. Direct applications.
             </div>
+            <SocialLinks />
           </div>
           {columns.map(([title, links]) => (
             <nav key={title} aria-label={title}>

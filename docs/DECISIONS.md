@@ -1,5 +1,15 @@
 # Frontend decisions
 
+## Inter Bold website wordmark — 2026-10-11
+
+The user selected Inter Bold (700) for REERHUB website brand labels, superseding the earlier Space Grotesk wordmark decision. Shared member navigation/footer and admin live branding reuse the already-loaded Inter font with 0.035em tracking. Ordinary body copy retains readable existing weights; non-brand headings are not redesigned. Email HTML retains Arial/Helvetica fallbacks because web fonts are not reliably supported across mail clients. Social-preview image font rendering is independent of website CSS.
+
+## Confirmed social footer — 2026-10-11
+
+The operator confirms LinkedIn, Instagram, YouTube and X with the `reerhub` handle and explicitly confirms the LinkedIn company URL. Shared public Footer includes server-rendered direct social links from `lib/social-links.ts`, with wrapping 44px targets, keyboard focus, secure new tabs and accessible new-tab labels. No social widget, additional API read or admin navigation change. Align links with the separate backend's email footer. Local synthetic preview checks cover desktop/mobile containment and keyboard navigation; they do not certify external account ownership or production deployment.
+
+Verification: lint, TypeScript and seven SEO/social checks pass. The Webpack production diagnostic passes. Standard Turbopack build first failed font fetching in restricted networking; the permission-enabled retry hit the existing CSS-worker port-binding permission error. This remains an environment-blocked standard build, not a deployment-build success. Temporary fixture services/tabs were stopped and generated tsconfig additions removed.
+
 ## One public support mailbox — 2026-10-11
 
 The user chose support@reerhub.com instead of hello@reerhub.com. Footer, checkout help and legal-page billing/privacy contacts all use support; display name REERHUB Support. Founder/business mail is separately arfat.sayyed@reerhub.com, not published as a support address. Verify mailbox delivery before deployment. Historical documentation retains prior decisions; this entry supersedes older contact names.
