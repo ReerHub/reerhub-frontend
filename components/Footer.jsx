@@ -32,7 +32,7 @@ const columns = [
       ["/billing", "Explore REERHUB Pro"],
       ["/privacy", "Privacy policy"],
       ["/terms", "Terms of use"],
-      ["mailto:hello@reerhub.com", "Contact support"],
+      ["mailto:support@reerhub.com", "Contact support"],
     ],
   ],
 ];

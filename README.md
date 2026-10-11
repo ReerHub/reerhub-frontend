@@ -2,6 +2,8 @@
 
 Brand: **REERHUB**. Enterprise name: **REERHUB TECHNOLOGIES** (sole proprietorship/Udyam registration in progress). Slogan: **Real Effective Engineering Roles Hub**. Website: **reerhub.com**. Use uppercase consistently, without implying registered trademark or completed enterprise registration. The wordmark uses existing Space Grotesk Bold; see design guidance.
 
+Public contact for support, billing and privacy: **support@reerhub.com**, display name **REERHUB Support**. Founder/business mailbox: **arfat.sayyed@reerhub.com**; keep it separate from public support links. Confirm the support mailbox receives mail before release.
+
 Next.js 16 / React 19 / Tailwind 4 member site and admin console for REERHUB, an India-first official-source technology-job discovery product.
 
 Production: https://reerhub.com. Staging: https://staging.reerhub.com. Reviewed against this checkout on **2026-10-10**; deployment state must be checked separately.

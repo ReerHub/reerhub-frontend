@@ -1,5 +1,9 @@
 # Frontend decisions
 
+## One public support mailbox — 2026-10-11
+
+The user chose support@reerhub.com instead of hello@reerhub.com. Footer, checkout help and legal-page billing/privacy contacts all use support; display name REERHUB Support. Founder/business mail is separately arfat.sayyed@reerhub.com, not published as a support address. Verify mailbox delivery before deployment. Historical documentation retains prior decisions; this entry supersedes older contact names.
+
 ## Uppercase brand and enterprise identity — 2026-10-11
 
 Local verification: lint, TypeScript and 43 frontend regressions pass; the Webpack production-build diagnostic passes. Isolated fixture-browser checks confirm desktop navigation/footer wordmarks, mobile containment and uppercase social image with the slogan. The standard Turbopack build remains environment-blocked by its CSS worker's port permission; the diagnostic is not proof of a standard deployment build. No production configuration, database or provider identity was changed; deployment and an operator-configured SMTP sender display name remain separate.
