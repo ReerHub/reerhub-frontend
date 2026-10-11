@@ -18,10 +18,9 @@ export default function TermsPage() {
             Business identity
           </h2>
           <p>
-            REERHUB is the public brand of REERHUB TECHNOLOGIES. Sole
-            proprietorship registration is in progress. Our slogan is
-            &ldquo;Real Effective Engineering Roles Hub&rdquo; and our website
-            is reerhub.com.
+            REERHUB is the public brand of REERHUB TECHNOLOGIES, a sole
+            proprietorship. Our slogan is &ldquo;Real Effective Engineering
+            Roles Hub&rdquo; and our website is reerhub.com.
           </p>
         </section>
         <section>

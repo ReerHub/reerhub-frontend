@@ -65,7 +65,8 @@ test("uppercase identity uses live text and distinguishes ongoing enterprise reg
   for (const file of ["../app/terms/page.tsx", "../app/privacy/page.tsx"]) {
     const text = await source(file);
     assert.match(text, /REERHUB TECHNOLOGIES/);
-    assert.match(text, /registration is in progress/);
+    assert.match(text, /sole\s+proprietorship/);
+    assert.doesNotMatch(text, /registration is in progress/);
     assert.doesNotMatch(text, /®|registered trademark/i);
   }
   const page = await source("../app/page.tsx");

@@ -18,9 +18,9 @@ export default function PrivacyPage() {
             Business identity
           </h2>
           <p>
-            REERHUB is the public brand of REERHUB TECHNOLOGIES. Sole
-            proprietorship registration is in progress. This policy covers the
-            REERHUB service at reerhub.com.
+            REERHUB is the public brand of REERHUB TECHNOLOGIES, a sole
+            proprietorship. This policy covers the REERHUB service at
+            reerhub.com.
           </p>
         </section>
         <section>
