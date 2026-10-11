@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # reerhub-frontend guide (for AI agents)
 
-Next.js 16 App Router + React 19 + Tailwind 4 UI for **ReerHub** (reerhub.com) — India-first tech-job discovery. Teaser-gated public listings (`/jobs`, `/engineering-jobs`, `/ai-jobs`, city + `/remote-jobs`, `/companies`, slug job URLs), protected `/dashboard` with recommendations, passwordless auth, and Pro billing. Live at `https://reerhub.com` (Vercel, auto-deploy on `main` push).
+Next.js 16 App Router + React 19 + Tailwind 4 UI for **REERHUB** (reerhub.com) — India-first tech-job discovery. Teaser-gated public listings (`/jobs`, `/engineering-jobs`, `/ai-jobs`, city + `/remote-jobs`, `/companies`, slug job URLs), protected `/dashboard` with recommendations, passwordless auth, and Pro billing. Live at `https://reerhub.com` (Vercel, auto-deploy on `main` push).
 
 Self-contained repo: product, deployment, design, and decisions live in README and `docs/`. Sibling `reerhub-backend` repo is a separate checkout — never assume shared files. Parent folder is workspace only.
 
@@ -22,8 +22,10 @@ Self-contained repo: product, deployment, design, and decisions live in README a
 
 ## Conventions
 
+- Brand: `REERHUB`; enterprise: `REERHUB TECHNOLOGIES`; slogan: `Real Effective Engineering Roles Hub`; website: `reerhub.com`. Sole proprietorship/Udyam registration is ongoing. No claim of completed registration or ®. Use the enterprise name for legal/business identity, not ordinary product labels. Wordmark uses existing Space Grotesk Bold and `BrandWordmark`; preserve the original icon.
+
 - Path alias `@/*`. API: `lib/reerhub.ts` (public reads) + `lib/auth.ts` (`credentials:"include"`, silent refresh retry, `safeNext`, auto CSRF). One global session: `components/AuthProvider.tsx` (`useAuth`) — never add per-page `getMe()` fetches. Guards in `proxy.ts`.
-- Styling: Tailwind + `docs/design/design-system.md` (public Cobalt Blue `#2563eb`, charcoal `#0f172a`, canvas `#f8fafc`, ice blue `#eff6ff`). `app/public.css` scopes the final palette to `.public-site`; admin uses its own Cobalt Blue tokens in app/admin.css. Navigation/footer use solid `--public-chrome` Midnight Navy; reserve `--public-gradient` for Pro emphasis. Keep forms/discovery/application panels light and buttons solid. Brand wordmarks are `ReerHub` without a decorative dot. Motion is finite opacity/transform feedback only; everything is static under `prefers-reduced-motion`. Logos use `components/CompanyLogo.tsx`; retain original brand assets. Remote images need `next.config.ts` `remotePatterns` for `next/image`.
+- Styling: Tailwind + `docs/design/design-system.md` (public Cobalt Blue `#2563eb`, charcoal `#0f172a`, canvas `#f8fafc`, ice blue `#eff6ff`). `app/public.css` scopes the final palette to `.public-site`; admin uses its own Cobalt Blue tokens in app/admin.css. Navigation/footer use solid `--public-chrome` Midnight Navy; reserve `--public-gradient` for Pro emphasis. Keep forms/discovery/application panels light and buttons solid. Brand wordmarks are `REERHUB` without a decorative dot. Motion is finite opacity/transform feedback only; everything is static under `prefers-reduced-motion`. Logos use `components/CompanyLogo.tsx`; retain original brand assets. Remote images need `next.config.ts` `remotePatterns` for `next/image`.
 - Anonymous listings show up to 10 previews; full job details and official Apply links are public. Crawlers see identical content. Only eligible active roles emit JobPosting; private/admin pages and staging use noindex and stay out of the split sitemap.
 - Secrets: server-only env (`API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, `TURNSTILE_SITE_KEY`) — no `NEXT_PUBLIC_*`. Browser calls same-origin `/api/v1` (rewrite proxies to `API_URL`); `GET /api/config` serves public widget keys at runtime.
 - Commits `feat:/fix:/chore:/ci:/docs:`, only when asked. Never commit `.env*`/secrets.

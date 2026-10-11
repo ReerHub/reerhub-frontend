@@ -28,7 +28,7 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata = {
   metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
-  title: "ReerHub",
+  title: "REERHUB",
   icons: { icon: "/reerhub-icon-logo.png", apple: "/reerhub-icon-logo.png" },
 };
 

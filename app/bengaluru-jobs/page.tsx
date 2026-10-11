@@ -6,7 +6,7 @@ import CityJobs from "@/components/CityJobs";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata(
-  "Tech jobs in Bengaluru | ReerHub",
+  "Tech jobs in Bengaluru | REERHUB",
   "Explore software, AI and data jobs in Bengaluru from official company career pages. Read full role details and apply directly on the hiring site.",
   "/bengaluru-jobs",
 );

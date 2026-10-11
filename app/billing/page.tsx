@@ -107,7 +107,7 @@ const FAQS = [
   ],
   [
     "How do I pay — is UPI supported?",
-    "Yes. Checkout runs on Razorpay and accepts UPI, credit/debit cards, and netbanking. ReerHub never sees or stores your payment details.",
+    "Yes. Checkout runs on Razorpay and accepts UPI, credit/debit cards, and netbanking. REERHUB never sees or stores your payment details.",
   ],
   [
     "How do I cancel?",
@@ -212,7 +212,7 @@ export default function BillingPage() {
       const checkout = new window.Razorpay({
         key: data.checkout.keyId,
         subscription_id: data.checkout.subscriptionId,
-        name: "ReerHub",
+        name: "REERHUB",
         description: `${selectedPlan.name} career intelligence membership`,
         prefill: { name: user?.name, email: user?.email },
         theme: { color: "#2563eb" },
@@ -296,7 +296,7 @@ export default function BillingPage() {
       />
       <p className="rise-in mb-4 flex items-center gap-2 text-sm font-bold text-primary-deep">
         <Icon name="spark" />
-        ReerHub Pro
+        REERHUB Pro
       </p>
       <h1
         className="rise-in max-w-2xl font-display text-4xl sm:text-5xl leading-tight font-bold tracking-tight text-slate-900 mt-2"

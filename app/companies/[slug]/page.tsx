@@ -17,7 +17,7 @@ export async function generateMetadata({
     const company = await getCompany(slug);
     return pageMetadata(
       `${company.name} Careers & Tech Jobs`,
-      `Explore engineering, AI and data openings at ${company.name} in India. Read job details and apply on the official company site with ReerHub.`,
+      `Explore engineering, AI and data openings at ${company.name} in India. Read job details and apply on the official company site with REERHUB.`,
       `/companies/${company.slug}`,
     );
   } catch (error) {

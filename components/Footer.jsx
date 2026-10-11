@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/ui/Icon";
+import BrandWordmark from "@/components/BrandWordmark";
 const columns = [
   [
     "Discover",
@@ -24,11 +25,11 @@ const columns = [
     ],
   ],
   [
-    "Your ReerHub",
+    "Your REERHUB",
     [
       ["/dashboard", "Your dashboard"],
       ["/profile", "Profile & preferences"],
-      ["/billing", "Explore ReerHub Pro"],
+      ["/billing", "Explore REERHUB Pro"],
       ["/privacy", "Privacy policy"],
       ["/terms", "Terms of use"],
       ["mailto:hello@reerhub.com", "Contact support"],
@@ -43,20 +44,20 @@ export default function Footer() {
           <div>
             <Link
               href="/"
-              className="inline-flex max-w-full rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-              aria-label="ReerHub home"
+              className="inline-flex min-h-11 max-w-full items-center gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+              aria-label="REERHUB home"
             >
               <Image
-                src="/reerhub-sticker-logo-text.png"
-                width={2172}
-                height={724}
+                src="/reerhub-icon-logo.png"
+                width={40}
+                height={40}
                 alt=""
-                className="h-auto w-[240px] max-w-full rounded-lg"
+                className="shrink-0 rounded-lg bg-white p-0.5"
               />
+              <BrandWordmark className="text-2xl text-white" />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-7 text-slate-600">
-              Find your next role where it actually lives. Official tech
-              openings, and a clearer way to choose what’s next.
+              Real Effective Engineering Roles Hub
             </p>
             <div className="mt-5 inline-flex items-center gap-2 text-xs font-medium text-teal-800">
               <Icon name="shield" className="h-4 w-4" />
@@ -86,7 +87,13 @@ export default function Footer() {
             <Link href="/terms">Terms of use</Link>
             <Link href="/privacy">Privacy policy</Link>
           </div>
-          <p>© {new Date().getFullYear()} ReerHub. All rights reserved.</p>
+          <div className="space-y-1 sm:text-right">
+            <p>
+              © {new Date().getFullYear()} REERHUB TECHNOLOGIES. All rights
+              reserved.
+            </p>
+            <p>Sole proprietorship registration in progress.</p>
+          </div>
         </div>
       </div>
     </footer>

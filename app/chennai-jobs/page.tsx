@@ -6,7 +6,7 @@ import CityJobs from "@/components/CityJobs";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata(
-  "Tech jobs in Chennai | ReerHub",
+  "Tech jobs in Chennai | REERHUB",
   "Find software engineering and SaaS jobs in Chennai from official company sources. Read full descriptions and apply directly on the hiring site.",
   "/chennai-jobs",
 );

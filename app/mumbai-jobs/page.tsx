@@ -6,7 +6,7 @@ import CityJobs from "@/components/CityJobs";
 export const revalidate = 86400;
 
 export const metadata = pageMetadata(
-  "Tech jobs in Mumbai | ReerHub",
+  "Tech jobs in Mumbai | REERHUB",
   "Discover product and fintech engineering jobs in Mumbai from official company sources. Read role requirements and apply on the company website.",
   "/mumbai-jobs",
 );

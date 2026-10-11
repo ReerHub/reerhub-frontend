@@ -365,7 +365,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
               Your job search, with the noise turned down.
             </h2>
             <p className="mt-4 leading-relaxed text-slate-600">
-              A job search should help you make progress. Every part of ReerHub
+              A job search should help you make progress. Every part of REERHUB
               has a clear job to do.
             </p>
           </div>
@@ -439,7 +439,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
           >
             <div className="flex items-center justify-between">
               <span className="text-lg font-bold text-primary-deep">
-                ReerHub Pro
+                REERHUB Pro
               </span>
               <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-primary-deep">
                 7-day trial
