@@ -13,6 +13,8 @@ import Image from "next/image";
 import Icon from "@/components/ui/Icon";
 import AdminOperations from "@/components/AdminOperations";
 import AdminCompanyImport from "@/components/AdminCompanyImport";
+import AdminDataQuality from "@/components/AdminDataQuality";
+import AdminLocationReview from "@/components/AdminLocationReview";
 import AdminDeleteDialog from "@/components/AdminDeleteDialog";
 import CompanyLogo from "@/components/CompanyLogo";
 import {
@@ -49,6 +51,15 @@ type Company = {
   isActive: boolean;
 };
 type Source = {
+  outcome?: {
+    state: string;
+    counts: {
+      fetched: number | null;
+      technical: number;
+      publicIndia: number | null;
+      unknown: number;
+    };
+  };
   _id: string;
   name: string;
   type: string;
@@ -64,6 +75,11 @@ type Source = {
   latestRun?: { status: string; errors?: string[] };
 };
 type Job = {
+  skills?: string[];
+  locationScope?: string;
+  locationReason?: string;
+  locationSignature?: string;
+  skillProvenance?: string;
   _id: string;
   title: string;
   status: string;
@@ -121,6 +137,8 @@ type Overview = {
     companies: number;
     activeCompanies: number;
     activeJobs: number;
+    publicIndiaJobs?: number | null;
+    locationReviewJobs?: number;
     users: number;
   };
   sourceHealth: { staleSources: number };
@@ -404,7 +422,14 @@ export default function AdminConsole() {
         });
         if (q) params.set("q", q);
         if (state && target === "companies") params.set("active", state);
-        if (state && ["jobs", "subscriptions"].includes(target))
+        if (
+          target === "jobs" &&
+          ["india", "foreign", "unknown"].includes(state)
+        )
+          params.set("locationScope", state);
+        else if (target === "jobs" && state === "skills-review")
+          params.set("skillsReview", "true");
+        else if (state && ["jobs", "subscriptions"].includes(target))
           params.set("status", state);
         if (target === "operations") {
           if (id === request.current)
@@ -567,6 +592,10 @@ export default function AdminConsole() {
               ["", "All job states"],
               ["active", "Active"],
               ["closed", "Closed"],
+              ["india", "Confirmed India"],
+              ["foreign", "Foreign only"],
+              ["unknown", "Location review"],
+              ["skills-review", "Skill provenance review"],
             ]
           : tab === "subscriptions"
             ? [
@@ -742,7 +771,10 @@ export default function AdminConsole() {
             loading ? (
               <Loading />
             ) : overview ? (
-              <OverviewView data={overview} navigate={navigate} />
+              <>
+                <AdminDataQuality />
+                <OverviewView data={overview} navigate={navigate} />
+              </>
             ) : (
               <Empty
                 title="Snapshot unavailable"
@@ -1009,13 +1041,27 @@ function OverviewView({
 }) {
   const pro =
     (data.subscriptions?.active || 0) + (data.subscriptions?.trialing || 0);
-  const metrics: [string, number, string, Tab, IconName][] = [
+  const metrics: [string, number | string, string, Tab, IconName][] = [
     [
-      "Active openings",
-      data.counts.activeJobs,
-      "Official roles in the directory",
+      "Public India openings",
+      data.counts.publicIndiaJobs ?? "Verifying",
+      "Published technical roles at active companies",
       "jobs",
       "briefcase",
+    ],
+    [
+      "Worldwide stored-active",
+      data.counts.activeJobs,
+      "Includes unpublished and foreign records",
+      "jobs",
+      "briefcase",
+    ],
+    [
+      "Location review",
+      data.counts.locationReviewJobs ?? 0,
+      "Unknown eligibility; not published in India",
+      "jobs",
+      "sliders",
     ],
     [
       "Active companies",
@@ -1337,6 +1383,16 @@ function Tables({
                     </td>
                     <td>
                       <Status value={state} />
+                      {s.outcome && (
+                        <span className="subtle">
+                          {s.outcome.state.replaceAll("-", " ")} ·{" "}
+                          {s.outcome.counts.fetched ?? "—"} latest fetched ·{" "}
+                          {s.outcome.counts.technical} stored technical ·{" "}
+                          {s.outcome.counts.publicIndia ?? "verifying"} public
+                          India · {s.outcome.counts.unknown} unclear technical
+                          locations
+                        </span>
+                      )}
                       {s.latestRun?.errors?.[0] && (
                         <span className="subtle exception-copy">
                           {s.latestRun.errors[0]}
@@ -1434,6 +1490,10 @@ function Tables({
                     </td>
                     <td>
                       <Status value={j.status} />
+                      <span className="subtle">
+                        {j.locationScope || "Awaiting verification"} ·{" "}
+                        {j.locationReason}
+                      </span>
                     </td>
                     <td className="date-cell">
                       {date(j.postedAt || j.firstSeenAt)}
@@ -1729,6 +1789,7 @@ function Editor({
   const [ready, setReady] = useState(editor.kind === "company");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const submitting = useRef(false);
   useEffect(() => {
@@ -1766,7 +1827,7 @@ function Editor({
   }, [editor, attempt]);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (submitting.current) return;
+    if (submitting.current || reviewing) return;
     const form = new FormData(event.currentTarget);
     const get = (name: string) => String(form.get(name) || "").trim();
     let body: Record<string, unknown>;
@@ -1837,6 +1898,14 @@ function Editor({
           );
         body = {
           status: get("status"),
+          ...(get("skills") !== (job?.skills || []).join(", ")
+            ? {
+                skills: get("skills")
+                  .split(",")
+                  .map((skill) => skill.trim())
+                  .filter(Boolean),
+              }
+            : {}),
           ...(get("techTrack") ? { techTrack: get("techTrack") } : {}),
           techRole: get("techRole"),
           remoteType: get("remoteType"),
@@ -1888,7 +1957,7 @@ function Editor({
           : "Edits are validated and recorded. Deactivation preserves historical data."
       }
       onClose={onClose}
-      busy={saving}
+      busy={saving || reviewing}
     >
       {!ready ? (
         <div className="modal-body">
@@ -1907,238 +1976,269 @@ function Editor({
           )}
         </div>
       ) : (
-        <form onSubmit={submit}>
-          <div className="modal-body">
-            <fieldset disabled={saving} className="form-grid">
-              {editor.kind === "company" && (
-                <>
-                  <Field
-                    label="Company name"
-                    name="name"
-                    value={c?.name}
-                    required
-                    maxLength={160}
-                  />
-                  <Field
-                    label="URL slug"
-                    name="slug"
-                    value={c?.slug}
-                    required
-                    pattern="[a-z0-9]+(-[a-z0-9]+)*"
-                    hint="Lowercase words separated by hyphens."
-                  />
-                  <Field
-                    label="Website"
-                    name="website"
-                    value={c?.website}
-                    required
-                    type="url"
-                  />
-                  <Field
-                    label="Official careers URL"
-                    name="careersUrl"
-                    value={c?.careersUrl}
-                    required
-                    type="url"
-                  />
-                  <Field label="Industry" name="industry" value={c?.industry} />
-                  <Field
-                    label="Company type"
-                    name="companyType"
-                    value={c?.companyType}
-                  />
-                  <Field
-                    label="Country"
-                    name="country"
-                    value={c?.country || "India"}
-                  />
-                  <Field
-                    label="Logo URL (optional)"
-                    name="logoUrl"
-                    value={c?.logoUrl}
-                    type="url"
-                  />
-                </>
-              )}
-              {editor.kind === "source" && (
-                <>
-                  <Select
-                    label="Company"
-                    name="companyId"
-                    value={s?.companyId?._id || ""}
-                    required
-                    options={[
-                      ["", "Select a company"],
-                      ...companies.map((c) => [c._id, c.name]),
-                    ]}
-                  />
-                  {!companies.length && (
-                    <p className="notice error field-full">
-                      Create a company first before adding a source.
-                    </p>
-                  )}
-                  <Field
-                    label="Source name"
-                    name="name"
-                    value={s?.name}
-                    required
-                  />
-                  <Select
-                    label="Adapter"
-                    name="type"
-                    value={s?.type || "greenhouse"}
-                    options={[
-                      "greenhouse",
-                      "ashby",
-                      "lever",
-                      "smartrecruiters",
-                      "custom",
-                    ].map((t) => [t, label(t)])}
-                  />
-                  <Field
-                    label="Official careers URL"
-                    name="careersUrl"
-                    value={s?.careersUrl}
-                    required
-                    type="url"
-                  />
-                  <label className="field field-full">
-                    <span>Adapter configuration (JSON)</span>
-                    <textarea
-                      className="code-input"
-                      name="config"
-                      rows={5}
-                      defaultValue={JSON.stringify(s?.config || {}, null, 2)}
+        <>
+          {editor.kind === "job" && job && (
+            <details className="modal-body">
+              <summary>Review official location evidence</summary>
+              <AdminLocationReview
+                job={job}
+                onSaved={onSaved}
+                disabled={saving}
+                onPending={setReviewing}
+              />
+            </details>
+          )}
+          <form onSubmit={submit}>
+            <div className="modal-body">
+              <fieldset disabled={saving || reviewing} className="form-grid">
+                {editor.kind === "company" && (
+                  <>
+                    <Field
+                      label="Company name"
+                      name="name"
+                      value={c?.name}
                       required
-                      spellCheck={false}
+                      maxLength={160}
                     />
-                    <small>
-                      Greenhouse: boardToken · Ashby: boardName · Lever:
-                      leverOrg · SmartRecruiters: company. Custom adapter is not
-                      implemented; keep custom sources inactive.
-                    </small>
-                  </label>
-                </>
-              )}
-              {editor.kind === "job" && (
-                <>
-                  <Select
-                    label="Job status"
-                    name="status"
-                    value={job?.status || "active"}
-                    options={[
-                      ["active", "Active"],
-                      ["closed", "Closed"],
-                    ]}
-                  />
-                  <Select
-                    label="Tech track"
-                    name="techTrack"
-                    value={job?.techTrack || ""}
-                    options={[
-                      ...(!job?.techTrack ? [["", "Not classified"]] : []),
-                      ...TRACKS.map((t) => [t, label(t)]),
-                    ]}
-                  />
-                  <Field
-                    label="Technical role"
-                    name="techRole"
-                    value={job?.techRole}
-                  />
-                  <Select
-                    label="Work mode"
-                    name="remoteType"
-                    value={job?.remoteType || "unknown"}
-                    options={["unknown", "onsite", "hybrid", "remote"].map(
-                      (t) => [t, label(t)],
+                    <Field
+                      label="URL slug"
+                      name="slug"
+                      value={c?.slug}
+                      required
+                      pattern="[a-z0-9]+(-[a-z0-9]+)*"
+                      hint="Lowercase words separated by hyphens."
+                    />
+                    <Field
+                      label="Website"
+                      name="website"
+                      value={c?.website}
+                      required
+                      type="url"
+                    />
+                    <Field
+                      label="Official careers URL"
+                      name="careersUrl"
+                      value={c?.careersUrl}
+                      required
+                      type="url"
+                    />
+                    <Field
+                      label="Industry"
+                      name="industry"
+                      value={c?.industry}
+                    />
+                    <Field
+                      label="Company type"
+                      name="companyType"
+                      value={c?.companyType}
+                    />
+                    <Field
+                      label="Country"
+                      name="country"
+                      value={c?.country || "India"}
+                    />
+                    <Field
+                      label="Logo URL (optional)"
+                      name="logoUrl"
+                      value={c?.logoUrl}
+                      type="url"
+                    />
+                  </>
+                )}
+                {editor.kind === "source" && (
+                  <>
+                    <Select
+                      label="Company"
+                      name="companyId"
+                      value={s?.companyId?._id || ""}
+                      required
+                      options={[
+                        ["", "Select a company"],
+                        ...companies.map((c) => [c._id, c.name]),
+                      ]}
+                    />
+                    {!companies.length && (
+                      <p className="notice error field-full">
+                        Create a company first before adding a source.
+                      </p>
                     )}
-                  />
-                  <Field
-                    label="Seniority"
-                    name="seniority"
-                    value={job?.seniority}
-                  />
-                  <Field
-                    label="Department"
-                    name="department"
-                    value={job?.department}
-                  />
-                  <Field
-                    label="Minimum experience (years)"
-                    name="experienceMin"
-                    value={job?.experience?.min}
-                    type="number"
-                    min={0}
-                    max={60}
-                  />
-                  <Field
-                    label="Maximum experience (years)"
-                    name="experienceMax"
-                    value={job?.experience?.max}
-                    type="number"
-                    min={0}
-                    max={60}
-                  />
-                  <LocationFields locations={job?.locations || []} />
-                  <details className="raw-detail field-full">
-                    <summary>Inspect raw source data · read-only</summary>
-                    <pre className="json-preview">
-                      {JSON.stringify(job?.raw ?? {}, null, 2)}
-                    </pre>
-                  </details>
-                </>
-              )}
-              {editor.kind !== "job" && (
-                <label className="check-field field-full">
-                  <input
-                    type="checkbox"
-                    name="isActive"
-                    defaultChecked={c?.isActive ?? true}
-                  />
+                    <Field
+                      label="Source name"
+                      name="name"
+                      value={s?.name}
+                      required
+                    />
+                    <Select
+                      label="Adapter"
+                      name="type"
+                      value={s?.type || "greenhouse"}
+                      options={[
+                        "greenhouse",
+                        "ashby",
+                        "lever",
+                        "smartrecruiters",
+                        "custom",
+                      ].map((t) => [t, label(t)])}
+                    />
+                    <Field
+                      label="Official careers URL"
+                      name="careersUrl"
+                      value={s?.careersUrl}
+                      required
+                      type="url"
+                    />
+                    <label className="field field-full">
+                      <span>Adapter configuration (JSON)</span>
+                      <textarea
+                        className="code-input"
+                        name="config"
+                        rows={5}
+                        defaultValue={JSON.stringify(s?.config || {}, null, 2)}
+                        required
+                        spellCheck={false}
+                      />
+                      <small>
+                        Greenhouse: boardToken · Ashby: boardName · Lever:
+                        leverOrg · SmartRecruiters: company. Custom adapter is
+                        not implemented; keep custom sources inactive.
+                      </small>
+                    </label>
+                  </>
+                )}
+                {editor.kind === "job" && (
+                  <>
+                    <Select
+                      label="Job status"
+                      name="status"
+                      value={job?.status || "active"}
+                      options={[
+                        ["active", "Active"],
+                        ["closed", "Closed"],
+                      ]}
+                    />
+                    <Select
+                      label="Tech track"
+                      name="techTrack"
+                      value={job?.techTrack || ""}
+                      options={[
+                        ...(!job?.techTrack ? [["", "Not classified"]] : []),
+                        ...TRACKS.map((t) => [t, label(t)]),
+                      ]}
+                    />
+                    <Field
+                      label="Technical role"
+                      name="techRole"
+                      value={job?.techRole}
+                    />
+                    <Select
+                      label="Work mode"
+                      name="remoteType"
+                      value={job?.remoteType || "unknown"}
+                      options={["unknown", "onsite", "hybrid", "remote"].map(
+                        (t) => [t, label(t)],
+                      )}
+                    />
+                    <Field
+                      label="Seniority"
+                      name="seniority"
+                      value={job?.seniority}
+                    />
+                    <Field
+                      label="Department"
+                      name="department"
+                      value={job?.department}
+                    />
+                    <Field
+                      label="Minimum experience (years)"
+                      name="experienceMin"
+                      value={job?.experience?.min}
+                      type="number"
+                      min={0}
+                      max={60}
+                    />
+                    <Field
+                      label="Maximum experience (years)"
+                      name="experienceMax"
+                      value={job?.experience?.max}
+                      type="number"
+                      min={0}
+                      max={60}
+                    />
+                    <LocationFields locations={job?.locations || []} />
+                    <Field
+                      label="Verified skills (comma separated)"
+                      name="skills"
+                      value={(job?.skills || []).join(", ")}
+                    />
+                    {job?.skillProvenance === "review" && (
+                      <p className="subtle field-full">
+                        Historical skill ownership is uncertain. Existing skills
+                        were retained; edit and save only after checking the
+                        official requirements.
+                      </p>
+                    )}
+                    <details className="raw-detail field-full">
+                      <summary>Inspect raw source data · read-only</summary>
+                      <pre className="json-preview">
+                        {JSON.stringify(job?.raw ?? {}, null, 2)}
+                      </pre>
+                    </details>
+                  </>
+                )}
+                {editor.kind !== "job" && (
+                  <label className="check-field field-full">
+                    <input
+                      type="checkbox"
+                      name="isActive"
+                      defaultChecked={c?.isActive ?? true}
+                    />
+                    <span>
+                      <strong>Active in operations</strong>
+                      <small>
+                        Inactive records stay in history and can be reactivated.
+                      </small>
+                    </span>
+                  </label>
+                )}
+                <label className="check-field field-full confirmation">
+                  <input type="checkbox" required />
                   <span>
-                    <strong>Active in operations</strong>
-                    <small>
-                      Inactive records stay in history and can be reactivated.
-                    </small>
+                    I have reviewed these changes and confirm they should be
+                    saved.
                   </span>
                 </label>
+              </fieldset>
+              {error && (
+                <p className="notice error" role="alert">
+                  {error}
+                </p>
               )}
-              <label className="check-field field-full confirmation">
-                <input type="checkbox" required />
-                <span>
-                  I have reviewed these changes and confirm they should be
-                  saved.
-                </span>
-              </label>
-            </fieldset>
-            {error && (
-              <p className="notice error" role="alert">
-                {error}
-              </p>
-            )}
-          </div>
-          <footer className="modal-actions">
-            <span className="subtle">
-              <Icon name="shield" /> Audited change
-            </span>
-            <button
-              className="button"
-              type="button"
-              disabled={saving}
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              className="button primary"
-              disabled={
-                saving || (editor.kind === "source" && !companies.length)
-              }
-            >
-              {saving ? "Saving…" : "Confirm & save"}
-            </button>
-          </footer>
-        </form>
+            </div>
+            <footer className="modal-actions">
+              <span className="subtle">
+                <Icon name="shield" /> Audited change
+              </span>
+              <button
+                className="button"
+                type="button"
+                disabled={saving || reviewing}
+                onClick={onClose}
+              >
+                Cancel
+              </button>
+              <button
+                className="button primary"
+                disabled={
+                  saving ||
+                  reviewing ||
+                  (editor.kind === "source" && !companies.length)
+                }
+              >
+                {saving ? "Saving…" : "Confirm & save"}
+              </button>
+            </footer>
+          </form>
+        </>
       )}
     </Dialog>
   );
@@ -2164,7 +2264,7 @@ function LocationFields({
             const key = nextKey.current++;
             setEntries((previous) => [
               ...previous,
-              { key, city: "", state: "", country: "India" },
+              { key, city: "", state: "", country: "" },
             ]);
           }}
         >

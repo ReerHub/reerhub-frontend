@@ -18,6 +18,7 @@ const TYPES: Record<string, string> = {
   other: "OTHER",
 };
 export function jobPosting(job: Job, description: string) {
+  if (job.publicEligible === false) return null;
   const posted = job.postedAt && new Date(job.postedAt);
   const locations = job.locations.filter(
     (l) => l.country && (l.city || l.state),

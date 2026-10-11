@@ -16,6 +16,14 @@ Public routes include `/`, `/companies`, `/companies/[slug]`, `/jobs`, slug-base
 
 There is no resume upload, AI profile autofill, automatic application submission or hiring prediction. The homepage animation is illustrative, not a live scan or an actual member recommendation.
 
+## Job-data verification and admin review
+
+Backend publication now uses one policy across public counts/discovery/sitemap/matches/alerts: active technical job and company, confirmed India eligibility, no archived source. Missing/unqualified remote location evidence is withheld for review, not assumed India. Details and saved references stay accessible. Public detail `publicEligible: false` suppresses JobPosting structured data without removing the detail page.
+
+Admin Overview separates Public India openings, Worldwide stored-active and Location review, with a polling Job data verification panel and failure retry. Initial automatic backend repair temporarily pauses dependent job reads and alerts; the frontend must not present request failure as zero matches. Jobs supports location/provenance filters, recorded reasons and official evidence review. Decisions require link/explanation/acknowledgement and preserve failed input. The ordinary editor and evidence decision cannot submit concurrently. Manual skills stay owned by admin; uncertain historical skills are retained for inspection.
+
+Company-import results and source rows show pending/syncing/success-with-openings/success-with-zero/needs-attention outcomes with grouped backend counts, next scheduled time and last success. Import success does not imply ingestion or employer ownership. Existing JSON files remain valid. Release backend before frontend; verify staging repair completes and public counts agree before production promotion.
+
 ## Profile setup
 
 Three calm sections: Your next role, Your skills, Your work preferences. Name remains editable; account settings sit separately below.

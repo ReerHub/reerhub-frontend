@@ -32,6 +32,15 @@ type Row = {
     nextScheduledSyncAt?: string | null;
     lastSuccessfulSyncAt?: string;
     syncState?: string;
+    outcome?: {
+      state: string;
+      counts: {
+        fetched: number | null;
+        technical: number;
+        publicIndia: number | null;
+        unknown: number;
+      };
+    };
   }[];
 };
 type Batch = {
@@ -343,15 +352,17 @@ export default function AdminCompanyImport() {
                 )}
                 {row.sources?.map((source) => (
                   <p key={source.id}>
-                    {source.syncState === "archived"
-                      ? "Archived—future syncs disabled"
-                      : source.syncState === "unavailable"
-                        ? "Source unavailable"
-                        : source.lastSuccessfulSyncAt
-                          ? `Last synced ${time(source.lastSuccessfulSyncAt)} IST`
-                          : source.syncState === "attempted"
-                            ? "First sync not completed"
-                            : "Awaiting first sync"}{" "}
+                    {source.outcome
+                      ? `${source.outcome.state.replaceAll("-", " ")} · ${source.outcome.counts.fetched ?? "—"} latest fetched · ${source.outcome.counts.technical} stored technical · ${source.outcome.counts.publicIndia ?? "verifying"} public India · ${source.outcome.counts.unknown} unclear technical locations`
+                      : source.syncState === "archived"
+                        ? "Archived—future syncs disabled"
+                        : source.syncState === "unavailable"
+                          ? "Source unavailable"
+                          : source.lastSuccessfulSyncAt
+                            ? `Last synced ${time(source.lastSuccessfulSyncAt)} IST`
+                            : source.syncState === "attempted"
+                              ? "First sync not completed"
+                              : "Awaiting first sync"}{" "}
                     · {source.name}
                     {source.nextScheduledSyncAt && (
                       <> · scheduled {time(source.nextScheduledSyncAt)} IST</>
