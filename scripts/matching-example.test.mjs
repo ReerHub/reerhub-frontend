@@ -88,7 +88,7 @@ test("live examples switch sample profiles, show real evidence and never invent 
       select.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
     });
     assert.match(document.body.textContent, /Python, SQL, PostgreSQL/);
-    assert.match(document.body.textContent, /No current role reaches 75%/);
+    assert.match(document.body.textContent, /No current verified Profile match reaches 75%/);
     assert.doesNotMatch(document.body.textContent, /93%|Real API Engineer/);
     await act(async () =>
       root.render(createElement(Component, { examples: [] })),

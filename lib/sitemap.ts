@@ -1,3 +1,4 @@
+import { JOB_LANDINGS, editorialReady } from "./seo-landings";
 import { SITE } from "./seo";
 import { jobSlug } from "./reerhub";
 
@@ -19,6 +20,15 @@ const STATIC = [
   "pune-jobs",
   "remote-jobs",
   "billing",
+  "backend-jobs",
+  "frontend-jobs",
+  "full-stack-jobs",
+  "data-engineering-jobs",
+  "devops-jobs",
+  "qa-jobs",
+  "about",
+  "matching-methodology",
+  "contact",
   "privacy",
   "terms",
 ];
@@ -59,6 +69,15 @@ async function api(path: string) {
 }
 export async function sitemapEntries(): Promise<Entry[]> {
   const entries: Entry[] = STATIC.map((path) => ({ url: `${SITE}/${path}` }));
+  for (const [path, kind] of [
+    ["fresher-jobs", "fresher"],
+    ["internship-jobs", "internship"],
+  ]) {
+    const inventory = (await api(`/jobs?earlyCareer=${kind}&limit=1`))
+      .editorialInventory;
+    if (editorialReady(JOB_LANDINGS[path], inventory))
+      entries.push({ url: `${SITE}/${path}` });
+  }
   const companies = await api("/companies");
   if (!Array.isArray(companies.data))
     throw new Error("Invalid companies sitemap feed");

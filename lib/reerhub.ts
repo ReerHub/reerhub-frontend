@@ -154,6 +154,7 @@ export const listJobsWithMeta = async (
   signal?: AbortSignal,
 ): Promise<
   CatalogMetadata & {
+    editorialInventory?: { activeRoles: number; employers: number };
     jobs: Job[];
     total: number;
     totalAvailable?: number;
@@ -177,6 +178,9 @@ export const listJobsWithMeta = async (
   return {
     ...catalogMetadata(json),
     jobs: json.data as Job[],
+    ...(json.editorialInventory
+      ? { editorialInventory: json.editorialInventory }
+      : {}),
     total: json.pagination?.total ?? 0,
     totalAvailable: json.pagination?.totalAvailable,
     totalPages: json.pagination?.totalPages ?? 0,

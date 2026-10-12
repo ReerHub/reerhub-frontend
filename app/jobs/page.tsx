@@ -26,7 +26,7 @@ export default async function Page({
   return (
     <div>
       <PageHeader
-        title="Find your next tech role."
+        title="Tech jobs in India"
         description="Engineering and AI jobs with confirmed India eligibility, from official employer sources."
       >
         <span className="inline-flex items-center gap-2 text-xs font-semibold text-teal-800">

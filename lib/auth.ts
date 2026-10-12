@@ -257,6 +257,7 @@ export type Recommendation = {
   firstSeenAt: string;
   remoteType?: string;
   experience?: { min?: number; max?: number };
+  experienceMaximumRequired?: boolean;
   fit: {
     relevanceScore: number;
     /** Compatibility alias while clients migrate to relevanceScore. */

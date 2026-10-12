@@ -38,9 +38,9 @@ test("hiding a role decrements only its eligible tiers without negatives", () =>
   assert.equal(countsAfterHide({ all: 0 }, 90).all, 0);
 });
 test("experience renders available requirements including zero and fractions", () => {
-  assert.equal(experienceLabel({ min: 0, max: 2 }), "0–2 years experience");
-  assert.equal(experienceLabel({ min: 2.5 }), "2.5+ years experience");
-  assert.equal(experienceLabel({ max: 3 }), "Up to 3 years experience");
+  assert.equal(experienceLabel({ min: 0, max: 2 }), "No minimum experience required");
+  assert.equal(experienceLabel({ min: 2.5 }), "Minimum 2.5 years");
+  assert.equal(experienceLabel({ max: 3 }, true), "Maximum 3 years");
   assert.equal(experienceLabel(), "");
 });
 test("cards preserve actual reasons, explicit outcomes and safe request lifetimes", async () => {

@@ -9,7 +9,9 @@ const url = (code) =>
 const seoUrl = url(await source("../lib/seo.ts"));
 const seo = await import(seoUrl);
 const jobs = await import(url(await source("../lib/job-schema.ts")));
+const landingsUrl = url(await source("../lib/seo-landings.ts"));
 const sitemapSource = (await source("../lib/sitemap.ts"))
+  .replace('"./seo-landings"', JSON.stringify(landingsUrl))
   .replace('"./seo"', JSON.stringify(seoUrl))
   .replace(
     'import { jobSlug } from "./reerhub";',
@@ -166,6 +168,11 @@ test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors",
   const id = "abcdefabcdefabcdefabcdef";
   try {
     globalThis.fetch = async (u) => {
+      if (u.includes("earlyCareer="))
+        return Response.json({
+          data: [],
+          editorialInventory: { activeRoles: 0, employers: 0 },
+        });
       if (u.includes("/companies"))
         return Response.json({
           data: [{ slug: "example", updatedAt: "2025-01-01" }],
@@ -186,7 +193,9 @@ test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors",
     calls = 0;
     globalThis.fetch = async (u) =>
       Response.json(
-        u.includes("/companies") ? { data: [] } : { data: [], nextCursor: id },
+        u.includes("/companies") || u.includes("earlyCareer=")
+          ? { data: [] }
+          : { data: [], nextCursor: id },
       );
     await assert.rejects(sitemap.sitemapEntries(), /Invalid sitemap cursor/);
   } finally {
@@ -197,7 +206,9 @@ test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors",
 test("deleted job URLs return real 404s before streaming, without hiding outages", async () => {
   const hostUrl = url(await source("../lib/admin-host.ts"));
   const reerhubSource = await source("../lib/reerhub.ts");
-  const reerhubUrl = url(reerhubSource.slice(reerhubSource.indexOf("export const slugify")));
+  const reerhubUrl = url(
+    reerhubSource.slice(reerhubSource.indexOf("export const slugify")),
+  );
   const proxySource = (await source("../proxy.ts"))
     .replace('"@/lib/reerhub"', JSON.stringify(reerhubUrl))
     .replace('"@/lib/admin-host"', JSON.stringify(hostUrl))

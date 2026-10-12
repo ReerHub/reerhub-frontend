@@ -211,7 +211,11 @@ export default function RecommendationPanel({
                 key={tier.value}
                 type="button"
                 aria-pressed={selected}
-                title={tier.description}
+                title={
+                  tier.value === 75 && group !== "qualified"
+                    ? "Profile relevance"
+                    : tier.description
+                }
                 onClick={() => selectTier(tier.value)}
                 className={`min-h-11 rounded-xl border px-3 text-sm font-semibold transition-colors ${
                   selected
@@ -304,9 +308,15 @@ export default function RecommendationPanel({
                         {job.remoteType}
                       </span>
                     )}
-                    {experienceLabel(job.experience) && (
+                    {experienceLabel(
+                      job.experience,
+                      job.experienceMaximumRequired,
+                    ) && (
                       <span className="rounded-md bg-surface px-2 py-1">
-                        {experienceLabel(job.experience)}
+                        {experienceLabel(
+                          job.experience,
+                          job.experienceMaximumRequired,
+                        )}
                       </span>
                     )}
                   </div>

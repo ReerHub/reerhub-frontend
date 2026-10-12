@@ -72,7 +72,7 @@
   text-wrap: balance;
 }
 .home h1 {
-  font-size: clamp(46px, 5.2vw, 72px);
+  font-size: clamp(38px, 4.5vw, 64px);
   line-height: 1.06;
   letter-spacing: -0.055em;
 }
@@ -430,7 +430,7 @@
     gap: 38px;
   }
   .home h1 {
-    font-size: 54px;
+    font-size: 38px;
   }
   .home .openings,
   .home .plans,
@@ -448,7 +448,7 @@
 }
 @media (max-width: 380px) {
   .home h1 {
-    font-size: 46px;
+    font-size: 36px;
   }
   .home :global(.hero-canvas) {
     padding: 0;
