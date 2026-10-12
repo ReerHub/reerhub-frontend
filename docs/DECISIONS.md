@@ -1,6 +1,10 @@
 # Frontend decisions
 
 
+## Consistent browser icons — 2026-10-12
+
+Inspection found an obsolete default icon in the App Router file-based metadata, which can add icon links alongside the configured REERHUB icon. Replace `app/icon.png` with the existing approved REERHUB PNG; `app/favicon.ico` already matches the approved ICO. No new logo or image transformation is introduced. This removes a real website branding inconsistency; it does not establish or fix the origin of the Amanox icon shown in Codex's activity display. Verify the generated icon URLs and served bytes after deployment.
+
 ## Production journey audit and legacy profile saves — 2026-10-12
 
 Observed the normal 20:00–20:14 IST production source window without triggering a manual sync. The 20:16 IST snapshot recorded 47 successful source runs, 744 retained jobs and zero foreign/unclear classifications; 18 jobs were added and 19 closed. All 19 closure records preserve an earlier last-seen timestamp. There were 536 bounded application checks (maximum 25 per source); four transient failures remained active. Published listings, homepage and company-directory counts agreed at 311, with no exact cross-source duplicates. These are dated observations, not guaranteed future counts.
