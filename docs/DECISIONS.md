@@ -1,5 +1,10 @@
 # Frontend decisions
 
+## Visible feed freshness and quality review — 2026-10-12
+
+Owner requested job-quality improvements and explicitly requires approval before each merge. Cards/detail pages distinguish employer posting dates (or first observation) from last observed presence in official feeds; legacy missing dates are not fabricated. Admin overview summarizes stale active published jobs, link-check outcomes and hidden cross-source copies, with Jobs quality filters for review. Optional admin summary fields preserve compatibility during backend-first rollout. Link checks are operational evidence, never automatic closures. No deployment or configured-database writes accompany this implementation. Dashboard (11), SEO (9), admin (14), operations (3) and performance (6) regressions pass, along with lint, TypeScript and the standard production build. Desktop and 390px mobile synthetic previews distinguish posting/check dates without document overflow.
+
+
 ## Strict India-only retention — 2026-10-12
 
 The owner explicitly requests confirmed India jobs only, no stored foreign/unclear jobs, and cleanup of configured local, staging and production data. Only testing users exist; a brief maintenance window is acceptable. This overrides earlier retention of unpublished foreign/unknown records and optional international discovery. Keep closed India jobs, companies/sources, accounts/subscriptions and email-delivery deduplication.

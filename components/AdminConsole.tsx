@@ -93,6 +93,10 @@ type Job = {
   sourceId?: { name: string };
   postedAt?: string;
   firstSeenAt?: string;
+  lastSeenAt?: string;
+  applicationHealth?: string;
+  applicationHttpStatus?: number;
+  applicationCheckedAt?: string;
   locations?: { city?: string; state?: string; country?: string }[];
   raw?: unknown;
 };
@@ -142,6 +146,13 @@ type Overview = {
     users: number;
   };
   sourceHealth: { staleSources: number };
+  jobQuality?: {
+    staleJobs: number;
+    brokenLinks: number;
+    unavailableLinks: number;
+    uncheckedLinks: number;
+    duplicateJobs: number;
+  };
   subscriptions: Record<string, number>;
   failedSyncs: SyncLog[];
   recentAudit: Audit[];
@@ -427,6 +438,17 @@ export default function AdminConsole() {
           ["india", "foreign", "unknown"].includes(state)
         )
           params.set("locationScope", state);
+        else if (
+          target === "jobs" &&
+          [
+            "stale",
+            "broken",
+            "unavailable",
+            "unchecked",
+            "duplicates",
+          ].includes(state)
+        )
+          params.set("quality", state);
         else if (target === "jobs" && state === "skills-review")
           params.set("skillsReview", "true");
         else if (state && ["jobs", "subscriptions"].includes(target))
@@ -593,8 +615,11 @@ export default function AdminConsole() {
               ["active", "Active"],
               ["closed", "Closed"],
               ["india", "Confirmed India"],
-              ["foreign", "Foreign only"],
-              ["unknown", "Location review"],
+              ["stale", "Not seen in 30+ hours"],
+              ["broken", "Application links: 404 / 410"],
+              ["unavailable", "Application checks unavailable"],
+              ["unchecked", "Application links unchecked"],
+              ["duplicates", "Cross-source duplicates"],
               ["skills-review", "Skill provenance review"],
             ]
           : tab === "subscriptions"
@@ -1052,7 +1077,7 @@ function OverviewView({
     [
       "Stored active India jobs",
       data.counts.activeJobs,
-      "Includes unpublished and foreign records",
+      "Includes unpublished India records",
       "jobs",
       "briefcase",
     ],
@@ -1110,6 +1135,30 @@ function OverviewView({
           Review sources <Icon name="arrow" />
         </button>
       </section>
+      {data.jobQuality && (
+        <section
+          className={`health-banner ${data.jobQuality.staleJobs || data.jobQuality.brokenLinks || data.jobQuality.unavailableLinks ? "attention" : ""}`}
+        >
+          <div>
+            <p className="eyebrow">Job quality</p>
+            <h2>{data.jobQuality.staleJobs} openings not seen in 30+ hours</h2>
+            <p>
+              {data.jobQuality.brokenLinks} application links returned 404 / 410
+              · {data.jobQuality.unavailableLinks} checks unavailable ·{" "}
+              {data.jobQuality.uncheckedLinks} links unchecked ·{" "}
+              {data.jobQuality.duplicateJobs} cross-source duplicates hidden.
+            </p>
+            <p>
+              Use the Jobs quality filters to review these records. Failed
+              checks never close jobs. Checks cover supported ATS hosts; other
+              employer links remain unchecked.
+            </p>
+          </div>
+          <button className="button" onClick={() => navigate("jobs")}>
+            Review jobs <Icon name="arrow" />
+          </button>
+        </section>
+      )}
       <section className="metrics">
         {metrics.map(([name, value, copy, target, icon]) => (
           <button
@@ -1121,7 +1170,11 @@ function OverviewView({
               {name}
               <Icon name={icon} />
             </span>
-            <strong>{Number(value || 0).toLocaleString("en-IN")}</strong>
+            <strong>
+              {typeof value === "number"
+                ? value.toLocaleString("en-IN")
+                : value}
+            </strong>
             <span className="metric-foot">
               {copy}
               <Icon name="arrow" />
@@ -1496,7 +1549,22 @@ function Tables({
                       </span>
                     </td>
                     <td className="date-cell">
+                      {j.postedAt ? "Posted" : "First seen"}{" "}
                       {date(j.postedAt || j.firstSeenAt)}
+                      <span className="subtle">
+                        Last checked: {date(j.lastSeenAt)}
+                      </span>
+                      <span className="subtle">
+                        Application: {j.applicationHealth || "unchecked"}
+                        {j.applicationHttpStatus
+                          ? ` (HTTP ${j.applicationHttpStatus})`
+                          : ""}
+                      </span>
+                      {j.applicationCheckedAt && (
+                        <span className="subtle">
+                          Link check attempted: {date(j.applicationCheckedAt)}
+                        </span>
+                      )}
                     </td>
                     <td>
                       <button

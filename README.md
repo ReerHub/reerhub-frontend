@@ -155,3 +155,7 @@ Deploy compatible backend availability support before these notices. Check runni
 ## India-only discovery
 
 All discovery is for confirmed India-eligible jobs. International/All country controls are removed; city and work-mode filters remain. Old locationScope/indiaOnly URLs redirect to the same page without those parameters and reset pagination, preserving other filters. Backend legacy parameters also resolve to India. Foreign/unclear detail URLs are unavailable. Existing update/initialization notices and Pro matching remain; daily emails wait for current verification. Backend India-only support and staged cleanup precede frontend promotion.
+
+### Freshness and quality
+
+Job cards and details show separate Posted/First seen and Last checked dates. Last checked means observed in the official employer feed, not an application-link availability guarantee. Closed details retain the last observation and show a separately recorded closure time when available. Admin overview reports jobs not seen for 30+ hours, application links returning 404/410, unavailable/pending checks and hidden exact cross-source copies. Use the Jobs quality dropdown to inspect records. Link checks are bounded to supported ATS hosts, ignore redirects and never automatically close a job. Other employer links remain unchecked. Backend rollout precedes the UI, and owner approval is required before each staging/develop and production/main merge.

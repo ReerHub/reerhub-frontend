@@ -7,6 +7,7 @@ import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
 import { jobPosting } from "@/lib/job-schema";
 import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
+import JobFreshness from "@/components/JobFreshness";
 import JobAccountPrompt from "@/components/JobAccountPrompt";
 import {
   jobSlug,
@@ -145,7 +146,7 @@ export default async function JobDetailPage({
     { label: "Department", value: job.department },
     { label: "Seniority", value: job.seniority },
     {
-      label: "Posted",
+      label: job.postedAt ? "Posted" : "First seen",
       value: job.postedAt
         ? new Date(job.postedAt).toLocaleDateString("en-IN", {
             day: "numeric",
@@ -154,6 +155,25 @@ export default async function JobDetailPage({
           })
         : posted || undefined,
     },
+    {
+      label: "Last checked in official feed",
+      value: job.lastSeenAt
+        ? new Date(job.lastSeenAt).toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata",
+          }) + " IST"
+        : "Date unavailable",
+    },
+    ...(job.status === "closed" && job.closedAt
+      ? [
+          {
+            label: "Closure detected",
+            value:
+              new Date(job.closedAt).toLocaleString("en-IN", {
+                timeZone: "Asia/Kolkata",
+              }) + " IST",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -221,12 +241,12 @@ export default async function JobDetailPage({
       <div className="grid lg:grid-cols-[1fr_340px] gap-5 items-start">
         <article className="min-w-0">
           <div className="job-detail-panel p-6 sm:p-8 mb-4">
-            <div className="flex items-center gap-4 mb-5">
+            <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 sm:flex sm:items-center mb-5">
               <CompanyLogo
                 name={companyName}
                 logoUrl={job.companyId?.logoUrl}
               />
-              <div className="min-w-0">
+              <div className="min-w-0 sm:flex-1">
                 {company.slug ? (
                   <Link
                     href={`/companies/${company.slug}`}
@@ -239,13 +259,11 @@ export default async function JobDetailPage({
                     {companyName}
                   </p>
                 )}
-                {posted && (
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Posted {posted.toLowerCase()}
-                  </p>
-                )}
+                <div className="text-xs text-slate-500 mt-0.5">
+                  <JobFreshness job={job} />
+                </div>
               </div>
-              <span className="ml-auto inline-flex items-center gap-2 shrink-0">
+              <span className="col-span-2 inline-flex items-center gap-2 sm:ml-auto sm:shrink-0">
                 <span
                   className={`inline-flex items-center gap-1.5 text-xs font-semibold border px-2.5 py-1 rounded-lg ${job.status === "closed" ? "text-slate-600 bg-slate-100 border-slate-200" : "text-green-700 bg-green-50 border-green-100"}`}
                 >
