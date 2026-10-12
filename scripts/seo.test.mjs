@@ -17,6 +17,14 @@ const sitemapSource = (await source("../lib/sitemap.ts"))
   );
 const sitemap = await import(url(sitemapSource));
 
+test("discovery keeps India-first positioning while accurately offering international extras", async () => {
+  const page = await source("../app/jobs/page.tsx");
+  assert.match(page, /"Tech Jobs in India"/);
+  assert.match(page, /description="India-first engineering and AI jobs from official employer sources\. You can also explore international openings as an optional extra\."/);
+  assert.doesNotMatch(page, /description="Official openings from companies hiring in India/);
+  assert.match(page, /locationScope=\{locationScope\}/);
+});
+
 test("metadata is bounded, unique and consistent across social tags", () => {
   assert.equal(
     seo.pageMetadata("Jobs | REERHUB", "Jobs", "/jobs").title,

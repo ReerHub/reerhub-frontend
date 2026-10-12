@@ -1,5 +1,9 @@
 # Frontend decisions
 
+## India-first positioning with international extras — 2026-10-12
+
+The owner reiterates that REERHUB is built for India and foreign openings are an additional service. Jobs-page introduction and metadata now describe India-first engineering/AI discovery with optional international openings, so the static introduction stays accurate when client-side scope controls change. Keep the India-focused SEO title and existing defaults, counts, filters, membership, matching and alerts. Record this positioning in the design guidance for future copy; no backend or production settings change.
+
 ## Visible India-first location choices — 2026-10-12
 
 Jobs, company directory and company detail use the same native radio group: India, International, All locations. Explicit URL scope wins over legacy India flags, scope changes reset pagination and retain relevant filters. Company identity stays fixed; scope navigation refreshes server header counts and scope-keyed initial previews. Client loads reject obsolete/aborted results and hide stale directory cards during pending/error states. Anonymous counts use backend `totalAvailable`; members retain full pagination. Cards show country evidence and no longer invent India when location is absent. Homepage, ranking, alerts and sitemap remain India-first; no new membership restriction or sponsorship claim.
