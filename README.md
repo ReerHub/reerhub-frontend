@@ -24,6 +24,8 @@ There is no resume upload, AI profile autofill, automatic application submission
 
 ## Job-data verification and admin review
 
+Jobs, company directory and company detail offer visible India / International / All locations controls. India is default; International means confirmed foreign-only technical roles, All includes both, and unknown jobs remain excluded. URL scope persists across reload/Back/login; counts and previews follow scope, with complete filtered `totalAvailable` supplied by the backend. Free sign-in unlocks full pagination, not Pro payment. Country labels reflect employer evidence. Homepage, recommendations, daily alerts and sitemap remain India-first. Deploy backend support before frontend.
+
 Backend publication now uses one policy across public counts/discovery/sitemap/matches/alerts: active technical job and company, confirmed India eligibility, no archived source. Missing/unqualified remote location evidence is withheld for review, not assumed India. Details and saved references stay accessible. Public detail `publicEligible: false` suppresses JobPosting structured data without removing the detail page.
 
 Admin Overview separates Public India openings, Worldwide stored-active and Location review, with a polling Job data verification panel and failure retry. Initial automatic backend repair temporarily pauses dependent job reads and alerts; the frontend must not present request failure as zero matches. Jobs supports location/provenance filters, recorded reasons and official evidence review. Decisions require link/explanation/acknowledgement and preserve failed input. The ordinary editor and evidence decision cannot submit concurrently. Manual skills stay owned by admin; uncertain historical skills are retained for inspection.

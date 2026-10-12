@@ -6,6 +6,10 @@ import JobBrowser from "@/components/JobBrowser";
 import { listJobsWithMeta, NotFoundError } from "@/lib/reerhub";
 import { readCompany as getCompany } from "@/lib/server-reads";
 import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
+import {
+  locationScopeFromParams,
+  locationScopeLabel,
+} from "@/lib/location-scope";
 
 export async function generateMetadata({
   params,
@@ -28,16 +32,28 @@ export async function generateMetadata({
 
 export default async function CompanyDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const { slug } = await params;
+  const query = await searchParams;
+  const locationScope = locationScopeFromParams(
+    new URLSearchParams(
+      Object.entries(query).filter(
+        (entry): entry is [string, string] => entry[1] !== undefined,
+      ),
+    ),
+  );
   let company;
   let initialData;
   try {
     const [summary, roles] = await Promise.all([
-      getCompany(slug),
-      listJobsWithMeta({ companySlug: slug, limit: 21 }).catch(() => undefined),
+      getCompany(slug, locationScope),
+      listJobsWithMeta({ companySlug: slug, limit: 21, locationScope }).catch(
+        () => undefined,
+      ),
     ]);
     company = summary;
     initialData = roles;
@@ -92,7 +108,7 @@ export default async function CompanyDetailPage({
                     className="w-1.5 h-1.5 rounded-full bg-green-500"
                     aria-hidden
                   />
-                  {openCount} open roles
+                  {openCount} open roles · {locationScopeLabel(locationScope)}
                 </span>
               </p>
             </div>
@@ -145,9 +161,10 @@ export default async function CompanyDetailPage({
       <section className="page-container py-10">
         <Suspense>
           <JobBrowser
-            key={company._id}
+            key={`${company._id}:${locationScope}`}
             companyId={company._id}
             companyTotal={company.activeJobs}
+            initialLocationScope={locationScope}
             heading="Open roles"
             showFilters={false}
             initialData={initialData}

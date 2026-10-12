@@ -1,5 +1,17 @@
 # Frontend decisions
 
+## India-first positioning with international extras — 2026-10-12
+
+The owner reiterates that REERHUB is built for India and foreign openings are an additional service. Jobs-page introduction and metadata now describe India-first engineering/AI discovery with optional international openings, so the static introduction stays accurate when client-side scope controls change. Keep the India-focused SEO title and existing defaults, counts, filters, membership, matching and alerts. Record this positioning in the design guidance for future copy; no backend or production settings change.
+
+## Visible India-first location choices — 2026-10-12
+
+Jobs, company directory and company detail use the same native radio group: India, International, All locations. Explicit URL scope wins over legacy India flags, scope changes reset pagination and retain relevant filters. Company identity stays fixed; scope navigation refreshes server header counts and scope-keyed initial previews. Client loads reject obsolete/aborted results and hide stale directory cards during pending/error states. Anonymous counts use backend `totalAvailable`; members retain full pagination. Cards show country evidence and no longer invent India when location is absent. Homepage, ranking, alerts and sitemap remain India-first; no new membership restriction or sponsorship claim.
+
+Storage remains backend-owned and gated off pending staged browsing verification. Synthetic UI fixtures optionally offer 18 India/7 foreign roles without database/email/payment calls. Production inspection was read-only; repository changes are not a deployment claim.
+
+Verification: all 47 frontend regressions, lint and TypeScript pass. Isolated browser checks cover directory/detail/job scope counts, remaining previews, reload/Back and native radio arrow-key navigation. At 390×844, job/detail controls fit without horizontal overflow. The final Webpack production diagnostic passes; the standard Turbopack build remains environment-blocked by CSS-worker port-binding permissions, including an escalated retry. These checks are not certification of deployed staging or production; backend-first staging parity gates promotion and later compaction activation. Temporary fixture services/tabs and viewport overrides were stopped/reset.
+
 ## Explicit company listing previews — 2026-10-12
 
 Company pages reuse the existing complete company count without additional API requests. Anonymous lists distinguish “Showing 10 of 18 roles” from the preview length and place one clearly labelled sign-in card after actual jobs with the remaining count. Unknown-total discovery lists say Preview without inventing a hidden count; small/empty lists offer saving rather than claiming more jobs. Login preserves pathname/query, member listings retain existing fetch/pagination behavior, and authentication loading/errors do not show the unlock card. No blurred/fake openings, backend changes, access-rule changes or production mutations.

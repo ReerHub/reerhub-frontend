@@ -1,7 +1,12 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import LocationScopeControl from "@/components/LocationScopeControl";
+import {
+  locationScopeFromParams,
+  type LocationScope,
+} from "@/lib/location-scope";
 import CompanyLogo from "@/components/CompanyLogo";
 import Icon from "@/components/ui/Icon";
 import { listCompanyPage, type CompanyPage } from "@/lib/reerhub";
@@ -13,21 +18,35 @@ export default function CompanyDirectory({
   initialKey: string;
 }) {
   const params = useSearchParams();
+  const router = useRouter();
+  const locationScope = locationScopeFromParams(params);
   const query = params.get("q") || "",
     hiring = params.get("hiring") === "true";
   const page = Math.max(1, Number.parseInt(params.get("page") || "1", 10) || 1);
-  const key = JSON.stringify([query, hiring, page]);
+  const key = JSON.stringify([query, hiring, page, locationScope]);
   const [result, setResult] = useState(initialData);
   const [loadedKey, setLoadedKey] = useState(initialKey);
   const [error, setError] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const loading = loadedKey !== key;
-  const filtered = result.data;
-  const update = (q: string, hiringOnly: boolean, targetPage = 1) => {
+  const filtered = loading || error ? [] : result.data;
+  const update = (
+    q: string,
+    hiringOnly: boolean,
+    targetPage = 1,
+    scope: LocationScope = locationScope,
+  ) => {
     const next = new URLSearchParams();
     if (q) next.set("q", q);
     if (hiringOnly) next.set("hiring", "true");
     if (targetPage > 1) next.set("page", String(targetPage));
+    if (scope !== "india") next.set("locationScope", scope);
+    if (scope !== locationScope) {
+      router.push(`/companies${next.size ? `?${next}` : ""}`, {
+        scroll: false,
+      });
+      return;
+    }
     window.history.replaceState(
       null,
       "",
@@ -42,7 +61,13 @@ export default function CompanyDirectory({
           key === initialKey && !attempt
             ? Promise.resolve(initialData)
             : listCompanyPage(
-                { page, limit: 50, q: query, hiring: String(hiring) },
+                {
+                  page,
+                  limit: 50,
+                  q: query,
+                  hiring: String(hiring),
+                  locationScope,
+                },
                 controller.signal,
               );
         read
@@ -66,7 +91,16 @@ export default function CompanyDirectory({
       clearTimeout(timer);
       controller.abort();
     };
-  }, [key, initialKey, initialData, page, query, hiring, attempt]);
+  }, [
+    key,
+    initialKey,
+    initialData,
+    page,
+    query,
+    hiring,
+    locationScope,
+    attempt,
+  ]);
   return (
     <>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -90,10 +124,18 @@ export default function CompanyDirectory({
           With open roles
         </label>
       </div>
+      <div className="mb-6">
+        <LocationScopeControl
+          value={locationScope}
+          onChange={(scope) => update(query, hiring, 1, scope)}
+        />
+      </div>
       <p className="mb-5 text-xs font-medium text-slate-600" role="status">
         {loading
           ? "Loading companies…"
-          : `${result.pagination.total} companies`}
+          : error
+            ? "Company counts unavailable"
+            : `${result.pagination.total} companies`}
       </p>
       {error && (
         <div role="alert" className="surface-panel p-6">
@@ -114,7 +156,7 @@ export default function CompanyDirectory({
           <Link
             prefetch={false}
             key={c._id}
-            href={`/companies/${c.slug}`}
+            href={`/companies/${c.slug}${locationScope === "india" ? "" : `?locationScope=${locationScope}`}`}
             className="company-card job-card group block p-6"
           >
             <div className="flex items-center gap-4">
@@ -163,7 +205,7 @@ export default function CompanyDirectory({
           </button>
         </div>
       )}
-      {result.pagination.totalPages > 1 && (
+      {!loading && !error && result.pagination.totalPages > 1 && (
         <nav
           className="mt-8 flex items-center justify-center gap-4"
           aria-label="Company pages"
