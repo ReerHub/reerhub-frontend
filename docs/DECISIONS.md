@@ -1,5 +1,9 @@
 # Frontend decisions
 
+## Pending trademark confirmation and follow-up — 2026-10-12
+
+The owner clarifies that REERHUB's government trademark submission/certificate process is not completed yet and expects completion tomorrow, 13 October. Do not describe the brand as officially registered based on that expectation. Follow up on 15 October to ask separately whether submission is completed and whether an official registration certificate was issued; record the confirmed status only after the owner's response. Keep REERHUB displayed without ™ or ® as requested. Completed sole-proprietorship registration is unchanged. A one-time chat follow-up is scheduled; it must ask, not automatically change legal claims or branding. Documentation only; the public website and legal pages remain unchanged pending confirmation.
+
 ## India-first positioning with international extras — 2026-10-12
 
 The owner reiterates that REERHUB is built for India and foreign openings are an additional service. Jobs-page introduction and metadata now describe India-first engineering/AI discovery with optional international openings, so the static introduction stays accurate when client-side scope controls change. Keep the India-focused SEO title and existing defaults, counts, filters, membership, matching and alerts. Record this positioning in the design guidance for future copy; no backend or production settings change.
