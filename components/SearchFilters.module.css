@@ -54,6 +54,7 @@
 }
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -220,25 +221,12 @@
 }
 .panelFooter {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 16px;
   align-items: center;
   margin-top: 20px;
   padding-top: 16px;
   border-top: 1px solid #f1f5f9;
-}
-.india {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  font-size: 13px;
-  color: #475569;
-}
-.india input {
-  width: 16px;
-  height: 16px;
-  accent-color: #2563eb;
 }
 .actions {
   display: flex;
@@ -253,8 +241,7 @@
   cursor: pointer;
 }
 .shell button:focus-visible,
-.grid :is(input, select):focus-visible,
-.india input:focus-visible {
+.grid :is(input, select):focus-visible {
   outline: 3px solid #2563eb;
   outline-offset: 3px;
 }
@@ -270,6 +257,10 @@
   }
 }
 @media (max-width: 540px) {
+  .toolbar fieldset {
+    flex-basis: 100%;
+    order: 2;
+  }
   .shell {
     padding: 16px;
   }

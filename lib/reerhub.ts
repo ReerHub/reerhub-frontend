@@ -113,7 +113,12 @@ async function get<T>(path: string, init?: RequestInit): Promise<T> {
 export const listJobsWithMeta = async (
   params: Record<string, string | number> = {},
   signal?: AbortSignal,
-): Promise<{ jobs: Job[]; total: number; totalPages: number }> => {
+): Promise<{
+  jobs: Job[];
+  total: number;
+  totalAvailable?: number;
+  totalPages: number;
+}> => {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value !== "" && value !== undefined) search.set(key, String(value));
@@ -128,6 +133,7 @@ export const listJobsWithMeta = async (
   return {
     jobs: json.data as Job[],
     total: json.pagination?.total ?? 0,
+    totalAvailable: json.pagination?.totalAvailable,
     totalPages: json.pagination?.totalPages ?? 0,
   };
 };
@@ -169,7 +175,10 @@ export const listCompanyPage = async (
   return res.json();
 };
 
-export const getCompany = (slug: string) => get<Company>(`/companies/${slug}`);
+export const getCompany = (slug: string, locationScope = "india") =>
+  get<Company>(
+    `/companies/${slug}?locationScope=${encodeURIComponent(locationScope)}`,
+  );
 
 export const listCompanyJobs = (companyId: string, limit = 50) =>
   listJobsWithMeta({ companyId, limit });

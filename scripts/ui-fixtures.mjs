@@ -74,6 +74,27 @@ const job = {
     ],
   },
 };
+const scopeJobs = (url) => {
+  const scope =
+    url.searchParams.get("locationScope") ||
+    (url.searchParams.get("indiaOnly") === "false" ? "all" : "india");
+  const india = Array.from({ length: 18 }, (_, i) => ({
+    ...job,
+    _id: String(i + 1000).padStart(24, "0"),
+    title: `Backend Engineer ${i + 1}`,
+  }));
+  const international = Array.from({ length: 7 }, (_, i) => ({
+    ...job,
+    _id: String(i + 2000).padStart(24, "0"),
+    title: `International Engineer ${i + 1}`,
+    locations: [{ city: "London", country: "United Kingdom" }],
+  }));
+  return scope === "international"
+    ? international
+    : scope === "all"
+      ? [...india, ...international]
+      : india;
+};
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://127.0.0.1:8801");
   const path = url.pathname.replace("/api/v1", "");
@@ -713,7 +734,14 @@ const server = http.createServer(async (req, res) => {
             slug: `fixture-company-${i + 1}`,
             activeJobs: i % 2 ? 0 : 3,
           }))
-        : [company];
+        : [
+            {
+              ...company,
+              ...(process.env.FIXTURE_LOCATION_SCOPES === "1"
+                ? { activeJobs: scopeJobs(url).length }
+                : {}),
+            },
+          ];
     if (!url.searchParams.has("page")) return json(catalog);
     const q = (url.searchParams.get("q") || "").toLowerCase();
     const filtered = catalog.filter(
@@ -730,13 +758,45 @@ const server = http.createServer(async (req, res) => {
       totalPages: Math.ceil(filtered.length / limit),
     });
   }
-  if (path === "/companies/fixture-labs") return json(company);
+  if (path === "/companies/fixture-labs")
+    return json({
+      ...company,
+      ...(process.env.FIXTURE_LOCATION_SCOPES === "1"
+        ? { activeJobs: scopeJobs(url).length }
+        : {}),
+    });
   if (path === "/jobs/sitemap") return json([job]);
   if (path === `/jobs/${job._id}`) return json(job);
   if (path === "/jobs/333333333333333333333333")
     return json({ ...job, _id: "333333333333333333333333", status: "closed" });
-  if (path === "/jobs")
-    return json([job], 200, { total: 1, totalPages: 1, page: 1 });
+  if (path === "/jobs") {
+    if (process.env.FIXTURE_LOCATION_SCOPES === "1") {
+      const jobs = scopeJobs(url);
+      const member = state !== "anonymous";
+      const limit = Math.min(
+        Number(url.searchParams.get("limit")) || 21,
+        member ? 100 : 10,
+      );
+      const page = Number(url.searchParams.get("page")) || 1;
+      return json(
+        !member && page > 1 ? [] : jobs.slice((page - 1) * limit, page * limit),
+        200,
+        {
+          total: member ? jobs.length : Math.min(jobs.length, 10),
+          totalAvailable: jobs.length,
+          totalPages: member ? Math.ceil(jobs.length / limit) : 1,
+          page,
+          limit,
+        },
+      );
+    }
+    return json([job], 200, {
+      total: 1,
+      totalAvailable: 1,
+      totalPages: 1,
+      page: 1,
+    });
+  }
   return json(null, 404);
 });
 server.listen(Number(apiPort), "127.0.0.1", () => {
