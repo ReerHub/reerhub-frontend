@@ -1,5 +1,11 @@
 # Frontend decisions
 
+## Explicit company listing previews — 2026-10-12
+
+Company pages reuse the existing complete company count without additional API requests. Anonymous lists distinguish “Showing 10 of 18 roles” from the preview length and place one clearly labelled sign-in card after actual jobs with the remaining count. Unknown-total discovery lists say Preview without inventing a hidden count; small/empty lists offer saving rather than claiming more jobs. Login preserves pathname/query, member listings retain existing fetch/pagination behavior, and authentication loading/errors do not show the unlock card. No blurred/fake openings, backend changes, access-rule changes or production mutations.
+
+Verification: all 46 frontend regressions, lint and TypeScript pass. Rendered company-listing tests cover exact preview/remaining counts, login return URL, one unlock card, member pagination and small/empty/unknown-total wording. The Webpack production diagnostic passes; standard Turbopack remains environment-blocked by its CSS worker's port-binding permission, including the permission-enabled retry. This is not a standard deployment-build success or production/mobile-browser certification.
+
 ## Completed sole proprietorship registration — 2026-10-11
 
 The owner confirms registration is completed and requests removal of the pending notice. Footer no longer shows "registration in progress"; legal pages retain REERHUB TECHNOLOGIES as the sole-proprietorship business identity, and llms.txt/current guides no longer describe registration as pending. This supersedes earlier dated status entries without rewriting history. No registration number, GST status or registered trademark is inferred; ® remains prohibited without separate confirmation.

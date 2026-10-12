@@ -40,6 +40,7 @@ REERHUB is a calm, trustworthy career-discovery product. The interface should ma
 ## Product states
 
 - Anonymous: show a truthful listing preview and a clear free sign-in unlock for full browsing and saved jobs. Full job descriptions and official Apply links are public; saved-role actions require an account.
+  Company listings label the visible preview separately from the complete company count (for example, “Showing 10 of 18 roles”). When more roles are known, use one clearly labelled sign-in card after the real jobs, showing the remaining count and “Sign in to view all roles.” Preserve the current page after login. Never blur or fabricate job cards, promise additional jobs for small/empty lists, or imply payment is needed for full browsing.
 - Free: show manual discovery, saved roles, profile completion, and contextual Pro panels. Never show blurred or fake recommendations.
 - Pro: show membership status, ranked relevance cards, reasons, official Apply links, save actions, feedback controls, and alert pause/resume.
 - Admin: show persisted operations/progress and honest timestamps. “Scheduler enabled” reflects configuration, not a live heartbeat; SMTP accepted does not mean inbox delivered. Current schedules stay labelled current even beside historical IST-date reports.
