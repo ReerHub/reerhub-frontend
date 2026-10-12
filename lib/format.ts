@@ -43,3 +43,18 @@ export function locationLabel(job: Pick<Job, "locations">): string {
 export function companyTile(): string {
   return "bg-primary text-white";
 }
+
+/** Exact official-feed observation time; independent of posting/link-check dates. */
+export function formatFeedCheckedAt(iso?: string): string | undefined {
+  if (!iso || !Number.isFinite(Date.parse(iso))) return undefined;
+  return (
+    new Date(iso).toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }) + " IST"
+  );
+}

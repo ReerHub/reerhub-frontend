@@ -18,7 +18,7 @@ import {
   type Job,
 } from "@/lib/reerhub";
 import { readJob as getJob } from "@/lib/server-reads";
-import { locationLabel, timeAgo } from "@/lib/format";
+import { formatFeedCheckedAt, locationLabel, timeAgo } from "@/lib/format";
 
 async function fetchJob(jobId: string): Promise<Job> {
   try {
@@ -157,11 +157,7 @@ export default async function JobDetailPage({
     },
     {
       label: "Last checked in official feed",
-      value: job.lastSeenAt
-        ? new Date(job.lastSeenAt).toLocaleString("en-IN", {
-            timeZone: "Asia/Kolkata",
-          }) + " IST"
-        : "Date unavailable",
+      value: formatFeedCheckedAt(job.lastSeenAt) || "Date unavailable",
     },
     ...(job.status === "closed" && job.closedAt
       ? [

@@ -762,6 +762,39 @@ const server = http.createServer(async (req, res) => {
   }
   if (path === "/home")
     return json({
+      matchingExamples: [
+        {
+          id: "software",
+          label: "Software engineer",
+          profile: {
+            techTrack: "software",
+            rolePreference: "any",
+            skills: ["React", "Node.js", "MongoDB"],
+            experienceYears: 5,
+            locationPreference: "all-india",
+            remoteType: "unknown",
+          },
+          job,
+          fit: {
+            relevanceScore: 93,
+            reasons: ["Matches Node.js, MongoDB", "Matches your tech track"],
+          },
+        },
+        {
+          id: "data",
+          label: "Data engineer",
+          profile: {
+            techTrack: "data",
+            rolePreference: "any",
+            skills: ["Python", "SQL", "PostgreSQL"],
+            experienceYears: 3,
+            locationPreference: "all-india",
+            remoteType: "unknown",
+          },
+          job: null,
+          fit: null,
+        },
+      ],
       jobs: [job],
       companies: [company],
       totalCompanies: 1,
