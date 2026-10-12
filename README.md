@@ -16,6 +16,8 @@ Production: https://reerhub.com. Staging: https://staging.reerhub.com. Reviewed 
 | Free         | Complete manual discovery, profile editing, saved roles, account export/deletion subject to billing safeguards            |
 | Entitled Pro | Free features plus ranked matches, backend-provided reasons, relevance feedback and eligible daily match alerts           |
 
+Company job lists distinguish the preview from the complete company count: “Showing 10 of 18 roles,” followed by a clearly labelled “8 more roles available” sign-in card. Free sign-in returns to the same page and enables full browsing; no blurred/fake jobs or paid unlock. Smaller lists do not claim additional openings.
+
 Public routes include `/`, `/companies`, `/companies/[slug]`, `/jobs`, slug-based job details, `/engineering-jobs`, `/ai-jobs`, `/remote-jobs` and Bengaluru/Mumbai/Delhi/Pune/Hyderabad/Chennai landing pages. Passwordless Google/magic-link sign-in uses `/login`; member surfaces are `/profile`, `/dashboard`, `/billing` and `/billing/success`. Legal/privacy pages and public SEO metadata are included.
 
 There is no resume upload, AI profile autofill, automatic application submission or hiring prediction. The homepage animation is illustrative, not a live scan or an actual member recommendation.

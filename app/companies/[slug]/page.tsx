@@ -45,8 +45,7 @@ export default async function CompanyDetailPage({
     if (err instanceof NotFoundError) notFound();
     throw err;
   }
-  // Backend counts and job lists both default to indiaOnly=true, so these
-  // always agree. Use the server count as the source of truth.
+  // The company count is complete; anonymous job lists are capped previews.
   const openCount = company.activeJobs ?? initialData?.total ?? 0;
 
   return (
@@ -148,6 +147,7 @@ export default async function CompanyDetailPage({
           <JobBrowser
             key={company._id}
             companyId={company._id}
+            companyTotal={company.activeJobs}
             heading="Open roles"
             showFilters={false}
             initialData={initialData}

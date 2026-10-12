@@ -51,6 +51,41 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     },
   };
   const require = createRequire(import.meta.url);
+  const promptSource = (
+    await readFile(
+      new URL("../components/DiscoveryPrompt.tsx", import.meta.url),
+      "utf8",
+    )
+  )
+    .replace(
+      /import Link from "next\/link";/,
+      "const Link = ({children,...props}) => <a {...props}>{children}</a>;",
+    )
+    .replace(
+      /import \{ useAuth \} from .*?;/,
+      "const useAuth = globalThis.__companyFixture.auth;",
+    )
+    .replace(
+      /import \{ usePathname, useSearchParams \} from "next\/navigation";/,
+      "const {pathname:usePathname,params:useSearchParams} = globalThis.__companyFixture;",
+    )
+    .replace(/import Icon from .*?;/, "const Icon = () => null;");
+  let promptCompiled = ts.transpileModule(promptSource, {
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ES2022,
+      jsx: ts.JsxEmit.ReactJSX,
+    },
+  }).outputText;
+  promptCompiled = promptCompiled.replaceAll(
+    'from "react/jsx-runtime"',
+    `from "${pathToFileURL(require.resolve("react/jsx-runtime")).href}"`,
+  );
+  globalThis.__companyFixture.Prompt = (
+    await import(
+      `data:text/javascript;base64,${Buffer.from(promptCompiled).toString("base64")}`
+    )
+  ).default;
   let source = await readFile(
     new URL("../components/JobBrowser.tsx", import.meta.url),
     "utf8",
@@ -70,7 +105,7 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     )
     .replace(
       /import DiscoveryPrompt from .*?;/,
-      "const DiscoveryPrompt = () => null;",
+      "const DiscoveryPrompt = globalThis.__companyFixture.Prompt;",
     )
     .replace(
       /import \{ useAuth \} from .*?;/,
@@ -111,6 +146,7 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
       createElement(Component, {
         key,
         companyId: "correct",
+        companyTotal: 22,
         showFilters: false,
         initialData: {
           jobs: Array.from({ length: 10 }, (_, n) => job(n)),
@@ -127,12 +163,25 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     });
     assert.equal(document.querySelectorAll("article").length, 10);
     assert.equal(calls.length, 0, "anonymous hydration reuses preview");
+    assert.match(document.body.textContent, /Showing 10 of 22 roles/);
+    assert.match(document.body.textContent, /12 more roles available/);
+    const login = document.querySelector('a[href^="/login?"]');
+    assert.equal(login.textContent, "Sign in to view all roles");
+    assert.equal(
+      new URL(login.href).searchParams.get("next"),
+      "/companies/example?companyId=wrong",
+    );
+    assert.equal(document.querySelectorAll('a[href^="/login?"]').length, 1);
     user = { id: "member" };
     await act(async () => {
       render("first");
       await settle();
     });
     assert.equal(document.querySelectorAll("article").length, 21);
+    assert.doesNotMatch(
+      document.body.textContent,
+      /more roles available|Sign in to view all/,
+    );
     assert.equal(
       calls[0].companyId,
       "correct",
@@ -163,6 +212,26 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
       await settle();
     });
     assert.equal(document.querySelectorAll("article").length, 21);
+    user = null;
+    for (const [count, total, expected, forbidden] of [
+      [3, 3, /Save your shortlist/, /more roles|first 10/],
+      [0, 0, /Save your shortlist/, /more roles|first 10/],
+      [10, 10, /Save your shortlist/, /more roles|first 10/],
+      [10, undefined, /limited preview/, /\d+ more roles/],
+      [10, 11, /1 more role available/, /1 more roles/],
+    ]) {
+      await act(async () =>
+        root.render(
+          createElement(globalThis.__companyFixture.Prompt, {
+            count,
+            total,
+            card: true,
+          }),
+        ),
+      );
+      assert.match(document.body.textContent, expected);
+      assert.doesNotMatch(document.body.textContent, forbidden);
+    }
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
