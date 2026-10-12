@@ -27,6 +27,7 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       writable: true,
     });
   }
+  const events = [];
   const calls = [],
     routes = [],
     errors = [];
@@ -38,6 +39,7 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
     membership: { isPro: false, subscription: null },
   };
   globalThis.billingJourney = {
+    track: (name, input) => events.push({name,input}),
     PLANS,
     user,
     router: { push: (route) => routes.push(route) },
@@ -80,6 +82,10 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
     "utf8",
   );
   source = source
+    .replace(
+      'import { track } from "@/lib/analytics";',
+      "const {track} = globalThis.billingJourney;",
+    )
     .replace(
       'import { PLANS, type PlanId } from "@/lib/billing-plans";',
       "const {PLANS} = globalThis.billingJourney;",
@@ -160,6 +166,8 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       }),
     );
     assert.ok(routes.includes("/billing/success"));
+    assert.deepEqual(events.map((event) => event.name), ["begin_checkout", "trial_activation"]);
+    assert.ok(!JSON.stringify(events).includes("candidate@example.com"));
     assert.match(document.body.textContent, /Cancel renewal/);
     assert.ok(calls.some((call) => call.razorpayPaymentId === "pay_synthetic"));
   } finally {

@@ -93,6 +93,7 @@ test("saved state merges in-flight reads, deduplicates mutations and isolates ac
       /import .*from ["']react["'];/,
       "const {effect:useEffect,snapshot:useSyncExternalStore} = globalThis.__savedFixture;",
     )
+    .replace('import { track } from "./analytics";', "const track = () => {};")
     .replace(
       /import .*from ["']\.\/auth["'];/,
       "const {read:savedIds,save:saveJob,unsave:unsaveJob} = globalThis.__savedFixture;",

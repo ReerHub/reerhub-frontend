@@ -301,6 +301,7 @@ export type BillingState = {
   subscription: null | {
     plan: string;
     status: string;
+    firstVerifiedPaymentAt?: string;
     trialEndsAt?: string;
     currentPeriodEndsAt?: string;
     cancelledAt?: string;

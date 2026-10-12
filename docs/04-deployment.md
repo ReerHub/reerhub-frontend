@@ -86,3 +86,9 @@ The admin import panel consumes the backend-owned format, persisted progress and
 ## Freshness and quality rollout
 
 Test shared duplicate/count policies, feed/closure dates and admin quality filters on isolated local fixtures; frontend optional fields must tolerate the previously deployed backend. Run relevant regressions, lint, TypeScript, the standard production build and desktop/mobile checks. Open feature PRs directly into `main`, wait for passing CI and explicit owner approval before each merge, release backend support first, verify its production contract, then approve/release the frontend. After deployment verify affected production behavior. Do not rewrite historical dates, expire jobs from link-check failures or resume staging for this rollout.
+
+## Optional measurement activation
+
+Leave `GA4_MEASUREMENT_ID` empty until the owner creates a GA4 web data stream and approves activation. It is a public G- identifier, never an account credential. Configure it on Vercel and redeploy; verify rejection causes no Google requests, explicit opt-in loads measurement, withdrawal removes it, and event payloads contain only approved enums. The sandbox deliberately sends a fixed public page identity, not private URLs or member contents. Trial activation and first verified payment are separate events. Lab fixtures do not prove GA collection; use GA DebugView after approved activation.
+
+For Search Console, the owner creates a domain property for reerhub.com, verifies its supplied DNS TXT value through the existing DNS account, then submits https://reerhub.com/sitemap.xml. Do not put account credentials in this repository. Until ownership is verified, indexing reports and real-user field metrics cannot be claimed.

@@ -16,8 +16,8 @@
     "test:profile": "node --test scripts/profile-editor.test.mjs",
     "test:dashboard": "node --test scripts/dashboard.test.mjs scripts/search-filters.test.mjs scripts/company-listing.test.mjs scripts/catalog-availability.test.mjs scripts/matching-example.test.mjs scripts/recommendation-groups.test.mjs scripts/billing-journey.test.mjs",
     "test:operations": "node --test scripts/admin-operations.test.mjs",
-    "test:performance": "node --test scripts/performance.test.mjs scripts/session-performance.test.mjs",
-    "test:security": "node --test scripts/lint-security.test.mjs",
+    "test:performance": "node --test scripts/performance.test.mjs scripts/session-performance.test.mjs scripts/motion.test.mjs",
+    "test:security": "node --test scripts/lint-security.test.mjs scripts/analytics-consent.test.mjs",
     "test:network:fixtures": "node scripts/network-fixtures.mjs",
     "prepare": "husky"
   },
@@ -41,7 +41,8 @@
     "eslint-config-next": "16.4.0",
     "prettier": "^3.9.9",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "web-vitals": "^6.2.3"
   },
   "overrides": {
     "@next/eslint-plugin-next": {

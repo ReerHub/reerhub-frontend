@@ -169,6 +169,18 @@ export default async function JobDetailPage({
         : undefined,
     },
     {
+      label: "Last employer publication",
+      value: job.employerPublishedAt
+        ? formatFeedCheckedAt(job.employerPublishedAt)
+        : undefined,
+    },
+    {
+      label: "Employer record created",
+      value: job.employerCreatedAt
+        ? formatFeedCheckedAt(job.employerCreatedAt)
+        : undefined,
+    },
+    {
       label: "Application deadline",
       value: job.applicationDeadline
         ? formatFeedCheckedAt(job.applicationDeadline)

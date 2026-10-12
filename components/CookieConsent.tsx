@@ -1,77 +1,109 @@
 "use client";
-
 import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-
-const KEY = "reerhub-cookie-consent";
-
-function subscribe() {
-  return () => {};
-}
-
-function getSnapshot(): string | null {
-  try {
-    return window.localStorage.getItem(KEY);
-  } catch {
-    return "unavailable";
-  }
-}
-
-function getServerSnapshot(): string | null {
-  return null;
-}
-
+import {
+  consentSnapshot,
+  parseConsent,
+  saveConsent,
+  subscribeConsent,
+} from "@/lib/consent";
 export default function CookieConsent() {
-  const [dismissed, setDismissed] = useState(false);
   const stored = useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot,
+    subscribeConsent,
+    consentSnapshot,
+    () => null,
   );
-
-  if (dismissed || stored !== null) return null;
-
-  const choose = (value: string) => {
-    try {
-      localStorage.setItem(KEY, value);
-    } catch {
-      // storage unavailable — banner simply reappears next visit
-    }
-    setDismissed(true);
+  const [preferences, setPreferences] = useState(false);
+  const [analytics, setAnalytics] = useState(false);
+  const consent = parseConsent(stored);
+  const choose = (value: boolean) => {
+    saveConsent(value);
+    setPreferences(false);
   };
-
+  if (stored && !preferences)
+    return (
+      <button
+        type="button"
+        className="fixed bottom-3 right-3 z-40 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 shadow-sm"
+        onClick={() => {
+          setAnalytics(consent.analytics);
+          setPreferences(true);
+        }}
+      >
+        Privacy preferences
+      </button>
+    );
   return (
-    <div
+    <section
+      aria-label="Privacy preferences"
       role="region"
-      aria-live="polite"
-      aria-label="Cookie consent"
-      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-sm z-50 bg-white border border-slate-200 text-ink rounded-2xl p-5 shadow-pop"
+      className="fixed bottom-4 left-4 right-4 z-50 rounded-2xl border border-slate-200 bg-white p-5 text-ink shadow-pop sm:left-auto sm:right-6 sm:max-w-md"
     >
-      <p className="text-sm leading-relaxed text-slate-600">
-        We use strictly-necessary cookies to keep you logged in and secure. See
-        our{" "}
-        <Link
-          href="/privacy"
-          className="underline underline-offset-2 font-semibold"
-        >
-          Privacy Policy
+      <h2 className="text-base font-semibold">Your privacy choices</h2>
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        Necessary cookies secure sign-in. Optional analytics is off unless you
+        allow it.{" "}
+        <Link href="/privacy" className="underline">
+          Privacy policy
         </Link>
         .
       </p>
-      <div className="flex gap-2 mt-4">
+      {preferences && (
+        <div className="mt-4 space-y-3 text-sm">
+          <p className="leading-6 text-slate-600">
+            When configured, analytics measures product actions. It receives no
+            profile contents, email addresses, payment details or private URLs.
+            You can withdraw here at any time.
+          </p>
+          <p>Necessary cookies · always active</p>
+          <label className="flex min-h-11 items-center gap-3">
+            <input
+              type="checkbox"
+              checked={analytics}
+              onChange={(e) => setAnalytics(e.target.checked)}
+            />
+            Allow optional product analytics
+          </label>
+        </div>
+      )}
+      <div className="consent-actions mt-4 grid grid-cols-3 gap-2">
         <button
-          onClick={() => choose("accepted")}
-          className="btn-primary flex-1"
+          type="button"
+          className="btn-secondary"
+          onClick={() => choose(false)}
         >
-          Accept
+          Reject analytics
         </button>
-        <button
-          onClick={() => choose("declined")}
-          className="btn-secondary flex-1"
-        >
-          Decline
-        </button>
+        {preferences ? (
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => choose(analytics)}
+          >
+            Save preferences
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => choose(true)}
+            >
+              Allow analytics
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => {
+                setAnalytics(false);
+                setPreferences(true);
+              }}
+            >
+              Preferences
+            </button>
+          </>
+        )}
       </div>
-    </div>
+    </section>
   );
 }

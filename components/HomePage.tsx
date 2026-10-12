@@ -105,7 +105,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
         </div>
       </section>
       <section
-        className="page-container py-10 sm:py-14"
+        className="deferred-section page-container py-10 sm:py-14"
         aria-labelledby="current-openings"
       >
         <CatalogNotice data={data} />
@@ -159,7 +159,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
             Internships
           </Link>
           <Link href="/jobs" className="btn-secondary">
-            Experienced engineering roles
+            Browse all experience levels
           </Link>
         </nav>
         <HomeGuestNote>
@@ -184,7 +184,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
             ))}
         </nav>
       </section>
-      <section className="border-y border-slate-200 bg-slate-50 py-10 sm:py-14">
+      <section className="deferred-section border-y border-slate-200 bg-slate-50 py-10 sm:py-14">
         <div className="page-container">
           <h2 className="text-3xl font-bold text-ink">
             Start with employer evidence
@@ -229,7 +229,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
       </section>
       <section
         id="how-pro-works"
-        className="page-container scroll-mt-24 py-10 sm:py-14"
+        className="deferred-section page-container scroll-mt-24 py-10 sm:py-14"
       >
         <h2 className="text-3xl font-bold text-ink">
           See how Pro matches a profile
@@ -280,7 +280,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
           <MatchJourney companies={companies} />
         </details>
       </section>
-      <section className="border-y border-slate-200 bg-slate-50 py-10 sm:py-14">
+      <section className="deferred-section border-y border-slate-200 bg-slate-50 py-10 sm:py-14">
         <div className="page-container">
           <h2 className="text-3xl font-bold text-ink">
             Free discovery. Optional Pro direction.
@@ -313,7 +313,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
           </div>
         </div>
       </section>
-      <section className="page-container py-10 sm:py-14">
+      <section className="deferred-section page-container py-10 sm:py-14">
         <h2 className="text-3xl font-bold text-ink">
           Choose a Pro billing cycle
         </h2>
@@ -343,7 +343,10 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
           Pricing and trial terms
         </Link>
       </section>
-      <section className="page-container pb-14" aria-labelledby="home-answers">
+      <section
+        className="deferred-section page-container pb-14"
+        aria-labelledby="home-answers"
+      >
         <h2 id="home-answers" className="text-3xl font-bold text-ink">
           Answers before you start
         </h2>

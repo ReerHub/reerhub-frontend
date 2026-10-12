@@ -1,6 +1,7 @@
 "use client";
 import { PLANS, type PlanId } from "@/lib/billing-plans";
 
+import { track } from "@/lib/analytics";
 import { loadCheckout } from "@/lib/checkout-script";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -52,7 +53,15 @@ export default function BillingControls() {
   useEffect(() => {
     if (user)
       getBilling()
-        .then(setBilling)
+        .then((state) => {
+          setBilling(state);
+          if (state.subscription?.firstVerifiedPaymentAt)
+            track(
+              "first_verified_payment",
+              { plan: state.subscription.plan, page_family: "pricing" },
+              `${user.id}:${state.subscription.firstVerifiedPaymentAt}`,
+            );
+        })
         .catch(() => toast.error("Could not load billing"));
   }, [user]);
   const start = async () => {
@@ -64,6 +73,8 @@ export default function BillingControls() {
     try {
       await loadCheckout();
       const data = await beginCheckout(planId);
+      if (data.checkout)
+        track("begin_checkout", { plan: planId, page_family: "pricing" });
       if (!data.checkout) {
         setBilling({ subscription: data.subscription });
         await refresh();
@@ -92,6 +103,12 @@ export default function BillingControls() {
               razorpaySignature: response.razorpay_signature,
             });
             setBilling(verified);
+            if (verified.subscription?.status === "trialing")
+              track(
+                "trial_activation",
+                { plan: verified.subscription.plan, page_family: "pricing" },
+                `${user?.id}:${verified.subscription.trialEndsAt || "trial"}`,
+              );
             await refresh();
             router.push("/billing/success");
           } catch (error) {

@@ -83,6 +83,8 @@ export type Job = CatalogMetadata & {
   postedAt?: string;
   postedAtProvenance?: "employer" | "admin";
   employerUpdatedAt?: string;
+  employerPublishedAt?: string;
+  employerCreatedAt?: string;
   applicationDeadline?: string;
   experience?: { min?: number; max?: number };
   requirementStatus?: "verified" | "unknown" | "ambiguous";

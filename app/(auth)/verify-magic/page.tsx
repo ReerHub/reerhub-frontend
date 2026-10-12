@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/AuthProvider";
+import { track } from "@/lib/analytics";
 import { safeNext, verifyMagicLink } from "@/lib/auth";
 
 function VerifyMagic() {
@@ -24,6 +25,7 @@ function VerifyMagic() {
     startedRef.current = true;
     verifyMagicLink(token)
       .then(async (me) => {
+        track("login", { page_family: "account" });
         await refresh();
         toast.success(`Welcome${me.name ? `, ${me.name.split(" ")[0]}` : ""}`);
         window.location.replace(next);

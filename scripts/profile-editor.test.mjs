@@ -222,6 +222,10 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
   );
   source = source
     .replace(
+      'import { track as trackEvent } from "@/lib/analytics";',
+      "const trackEvent = () => {};",
+    )
+    .replace(
       /import \{ useRouter \} from "next\/navigation";/,
       "const useRouter = () => ({push() {}});",
     )

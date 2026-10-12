@@ -1,4 +1,5 @@
 "use client";
+import { track } from "./analytics";
 import { useEffect, useSyncExternalStore } from "react";
 import { savedIds, saveJob, unsaveJob } from "./auth";
 const EMPTY: string[] = [];
@@ -85,6 +86,7 @@ export function toggleSaved(jobId: string, next: boolean) {
   const promise = (next ? saveJob(jobId) : unsaveJob(jobId))
     .then(() => {
       if (epoch !== generation) return;
+      if (next) track("save_role", {}, `${member}:${jobId}`);
       if (pending) changedDuringRead.set(jobId, next);
       ids = next
         ? [...new Set([...ids, jobId])]
