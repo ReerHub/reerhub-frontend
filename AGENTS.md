@@ -29,7 +29,7 @@ Self-contained repo: product, deployment, design, and decisions live in README a
 - Anonymous listings show up to 10 previews; full job details and official Apply links are public. Crawlers see identical content. Only eligible active roles emit JobPosting; private/admin pages and staging use noindex and stay out of the split sitemap.
 - Secrets: server-only env (`API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, `TURNSTILE_SITE_KEY`) — no `NEXT_PUBLIC_*`. Browser calls same-origin `/api/v1` (rewrite proxies to `API_URL`); `GET /api/config` serves public widget keys at runtime.
 - Commits `feat:/fix:/chore:/ci:/docs:`, only when asked. Never commit `.env*`/secrets.
-- **Branching: feature branches → PR into `develop` (auto-deploys staging) → tested → PR `develop` → `main` (auto-deploys prod). Never touch `main` directly. Ask the owner for explicit approval before every merge, including into `develop` and into `main`.**
+- **Branching: create feature branches from current `origin/main` → test locally → PR directly into `main` → passing CI → explicit owner approval → merge → verify production. Never commit/push directly to `main`. `develop` and staging are retained but paused: no PRs, merges, synchronization pushes or routine releases into `develop` until the owner explicitly resumes them. Approval for a previous release does not authorize a later PR merge.**
 
 ## Gotchas
 
@@ -41,6 +41,10 @@ Self-contained repo: product, deployment, design, and decisions live in README a
 - Profile uses backend catalog choices: one track, any/up to three roles, ten skills, All India/up to three cities, nonnegative fractional experience. Keep compact searchable checkbox popovers, explicit save/discard and unsaved protection; no custom free-text matching entries. Any work mode maps to `unknown`.
 - Shared saved IDs/session reads must stay member-scoped, clear on logout/account switch and serialize refresh. Homepage uses one server content read; directory uses 50-item combined reads. Repeated card links disable detail prefetch. Backend owns mutable-content TTL; do not add another independent five-minute SSR cache.
 - Weekly JSON import lives in admin Companies: bounded async preview, evidence approval, recent history/recheck/download and Awaiting first sync. Feed availability is not employer ownership. Research is manual on request, checks database identities and previous backend batches, and never uses a seed command. Deploy backend support first.
+
+## Release verification
+
+Use meaningful unit/integration tests for changed behavior, with explicit isolated fixtures and mocked or approved Test-mode providers. Run required checks and review the diff before opening a PR into `main`; CI must pass before asking the owner to approve that merge. For UI changes, verify desktop/mobile and the standard production build. Local tests are not proof of production configuration or delivery: verify the affected production behavior after deployment. Document extra validation and recovery for migrations, auth and billing. Documentation-only changes need proportionate local review; the existing CI gates remain enabled.
 
 ## Docs discipline (minimal by design)
 
