@@ -1,5 +1,18 @@
 # Frontend decisions
 
+
+## Consistent browser icons — 2026-10-12
+
+Inspection found an obsolete default icon in the App Router file-based metadata, which can add icon links alongside the configured REERHUB icon. Replace `app/icon.png` with the existing approved REERHUB PNG; `app/favicon.ico` already matches the approved ICO. No new logo or image transformation is introduced. This removes a real website branding inconsistency; it does not establish or fix the origin of the Amanox icon shown in Codex's activity display. Verify the generated icon URLs and served bytes after deployment.
+
+## Production journey audit and legacy profile saves — 2026-10-12
+
+Observed the normal 20:00–20:14 IST production source window without triggering a manual sync. The 20:16 IST snapshot recorded 47 successful source runs, 744 retained jobs and zero foreign/unclear classifications; 18 jobs were added and 19 closed. All 19 closure records preserve an earlier last-seen timestamp. There were 536 bounded application checks (maximum 25 per source); four transient failures remained active. Published listings, homepage and company-directory counts agreed at 311, with no exact cross-source duplicates. These are dated observations, not guaranteed future counts.
+
+Twenty published jobs across twenty companies passed current India evidence checks and their official application URLs returned HTTP 200; three JavaScript-rendered employer pages were also verified in the browser. This sample does not prove every retained job or future link is valid. Search, public details and reversible save/unsave passed on the owner's testing account. Profile completion exposed an actual blocker: a saved legacy skill outside the current catalog was resubmitted by the editor and rejected. The failed save left stored preferences unchanged; the draft was discarded and the shortlist restored.
+
+The editor now PATCHes only fields changed since its saved baseline. Unchanged legacy catalog values are preserved; explicit clears still send empty arrays/null. New invalid catalog selections remain rejected by the existing backend. Regression coverage includes the rendered editor's failed-save retry, partial field payloads, normalized ordering and explicit clearing, plus a real authenticated HTTP/MongoDB test for legacy preservation and invalid-change rejection. Local verification: 153 backend and 53 frontend tests, both lints, TypeScript, standard production build and dependency audits pass. Desktop/mobile use synthetic fixtures only. The live profile-to-recommendations step remains pending owner-approved merge/deployment and production verification; no matching success is claimed yet. Rollback is a frontend revert; no migration or backend validation change is required.
+
 ## Direct-to-main releases; staging paused — 2026-10-12
 
 The owner chooses a temporary direct-to-main workflow while the product is maintained by the owner and Codex. Create each feature/documentation branch from current `origin/main`, run appropriate local checks, and open its PR directly against `main`. Wait for passing CI and explicit owner approval before **every merge**. A reply explicitly approving multiple named PRs can cover those merges; approval for an earlier release is not standing approval for a new PR. No direct commits or pushes to `main`.

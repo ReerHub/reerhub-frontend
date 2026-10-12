@@ -49,6 +49,8 @@ Three calm sections: Your next role, Your skills, Your work preferences. Name re
 
 Five readiness essentials: track, role preference, at least three skills, experience and location preference. Any role and All India count as completed choices; name/work mode are not readiness essentials. Completion means the required inputs are present, not that relevant jobs or hiring outcomes are guaranteed. Single-role/single-city free-text fields are not used for matching; no automatic migration or account wipe occurs.
 
+Profile edits submit only changed fields. Existing legacy skills remain saved when unrelated preferences change; newly selected skills still require the current profile catalog.
+
 ## Dashboard, discovery and saved jobs
 
 A compact guidance card precedes the tabs, including on mobile. Incomplete members get their next missing essential and a profile link; browsing/saves remain available. Complete Free members see saved preferences and discovery guidance with Pro described separately. Complete Pro members get ranked-match guidance.

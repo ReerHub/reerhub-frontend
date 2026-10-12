@@ -24,6 +24,7 @@ const {
   draftFromUser,
   profileErrors,
   profilePayload,
+  changedProfilePayload,
 } = await load("../lib/profile-editor.ts");
 const { profileSignals } = await load("../lib/profile-readiness.ts");
 const options = [
@@ -125,7 +126,7 @@ test("legacy profiles do not invent saved broad preferences", () => {
     ...user,
     profile: {
       techTrack: "software",
-      skills: ["React", "Node.js", "Python"],
+      skills: ["React", "Node.js", "Deployment"],
       experienceYears: 5,
     },
   };
@@ -178,7 +179,7 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
     ...user,
     profile: {
       techTrack: "software",
-      skills: ["React", "Node.js", "Python"],
+      skills: ["React", "Node.js", "Deployment"],
       experienceYears: 5,
     },
     membership: { isPro: true },
@@ -190,6 +191,7 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
     draftFromUser,
     profileErrors,
     profilePayload,
+    changedProfilePayload,
     profileSignals,
     readProfileOptions: async () => ({
       tracks: [
@@ -206,7 +208,11 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
     updateMe: async (payload) => {
       calls++;
       if (fail) throw new Error("Fixture save failed");
-      savedUser = { ...legacy, profile: payload };
+      assert.deepEqual(payload, {
+        rolePreference: "any",
+        locationPreference: "all-india",
+      });
+      savedUser = { ...legacy, profile: { ...legacy.profile, ...payload } };
       return savedUser;
     },
   };
@@ -253,7 +259,7 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
     )
     .replace(
       /import \{\s*draftFromUser,[\s\S]*?\} from "@\/lib\/profile-editor";/,
-      "const {draftFromUser, profileErrors, profilePayload} = globalThis.__profileTest;",
+      "const {draftFromUser, profileErrors, profilePayload, changedProfilePayload} = globalThis.__profileTest;",
     )
     .replace(
       /import ProfileSettings from "@\/components\/ProfileSettings";/,
@@ -341,6 +347,7 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
     });
     assert.equal(calls, 2);
     assert.ok(button("Save changes").disabled);
+    assert.deepEqual(savedUser.profile.skills, legacy.profile.skills);
     assert.equal(savedUser.profile.rolePreference, "any");
     assert.equal(savedUser.profile.locationPreference, "all-india");
     await act(async () => {
@@ -363,4 +370,35 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
     }
     dom.window.close();
   }
+});
+
+test("partial profile updates preserve unchanged fields and explicit clears", () => {
+  const draft = draftFromUser(user);
+  draft.skills = ["Node.js", "React", "Deployment"];
+  const baseline = profilePayload(draft);
+  draft.skills.reverse();
+  assert.deepEqual(changedProfilePayload(draft, baseline), {});
+  draft.name = "  Updated name  ";
+  assert.deepEqual(changedProfilePayload(draft, baseline), {
+    name: "Updated name",
+  });
+  draft.name = user.name;
+  draft.skills = [];
+  draft.techTrack = "";
+  draft.techRoles = [];
+  draft.experienceYears = "";
+  draft.targetLocations = [];
+  assert.deepEqual(changedProfilePayload(draft, baseline), {
+    techTrack: null,
+    techRoles: [],
+    skills: [],
+    experienceYears: null,
+    targetLocations: [],
+  });
+  draft.experienceYears = "0.5";
+  assert.equal(changedProfilePayload(draft, baseline).experienceYears, 0.5);
+  draft.experienceYears = "0";
+  assert.ok(
+    !Object.hasOwn(changedProfilePayload(draft, baseline), "experienceYears"),
+  );
 });

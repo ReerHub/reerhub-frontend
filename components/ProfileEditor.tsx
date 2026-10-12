@@ -12,6 +12,7 @@ import ProfileOptionPicker from "@/components/ProfileOptionPicker";
 import { profileSignals } from "@/lib/profile-readiness";
 import {
   draftFromUser,
+  changedProfilePayload,
   profileErrors,
   profilePayload,
   type ProfileOptions,
@@ -193,7 +194,7 @@ function Editor({
     setBusy(true);
     setSaveError("");
     try {
-      const updated = await updateMe(profilePayload(current));
+      const updated = await updateMe(changedProfilePayload(current, baseline));
       const clean = draftFromUser(updated);
       setDraft(clean);
       setBaseline(profilePayload(clean));

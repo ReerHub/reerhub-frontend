@@ -29,7 +29,7 @@ Self-contained repo: product, deployment, design, and decisions live in README a
 - Anonymous listings show up to 10 previews; full job details and official Apply links are public. Crawlers see identical content. Only eligible active roles emit JobPosting; private/admin pages and staging use noindex and stay out of the split sitemap.
 - Secrets: server-only env (`API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, `TURNSTILE_SITE_KEY`) — no `NEXT_PUBLIC_*`. Browser calls same-origin `/api/v1` (rewrite proxies to `API_URL`); `GET /api/config` serves public widget keys at runtime.
 - Commits `feat:/fix:/chore:/ci:/docs:`, only when asked. Never commit `.env*`/secrets.
-- **Branching: create feature branches from current `origin/main` → test locally → PR directly into `main` → passing CI → explicit owner approval → merge → verify production. Never commit/push directly to `main`. `develop` and staging are retained but paused: no PRs, merges, synchronization pushes or routine releases into `develop` until the owner explicitly resumes them. Approval for a previous release does not authorize a later PR merge.**
+- **Branching: create feature branches from current `origin/main` → test locally → PR directly into `main` → passing CI → explicit owner approval → merge → verify production. Never commit/push directly to `main`. `develop` and staging are retained but paused: no PRs, merges, synchronization pushes or routine releases into `develop` until the owner explicitly resumes them. Approval for a previous release does not authorize a later PR merge. Delete the merged feature branch locally and remotely after production verification.**
 
 ## Gotchas
 

@@ -188,6 +188,13 @@ const server = http.createServer(async (req, res) => {
     notificationPreferences: { digest: paused ? "paused" : "daily" },
     membership: { isPro: pro, subscription },
   };
+  if (profileMode === "legacy")
+    user.profile = {
+      techTrack: "software",
+      skills: ["React", "Node.js", "Deployment"],
+      experienceYears: 5,
+      remoteType: "unknown",
+    };
   if (profileMode === "empty") user.profile = {};
   if (profileMode === "complete") user.profile.skills.push("TypeScript");
   user.profile = { ...user.profile, ...profilePatch };
@@ -644,6 +651,13 @@ const server = http.createServer(async (req, res) => {
     if (state === "anonymous") return json(null, 401);
     if (req.method === "PATCH") {
       if (profileMode === "error") return json(null, 503);
+      if (
+        data.skills?.some(
+          (skill) =>
+            !PROFILE_OPTIONS.skills.some((item) => item.value === skill),
+        )
+      )
+        return json(null, 400);
       if (data.notificationPreferences)
         paused = data.notificationPreferences.digest === "paused";
       if (data.name !== undefined) profileName = data.name;
