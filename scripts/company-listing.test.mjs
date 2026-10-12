@@ -5,6 +5,39 @@ import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 import ts from "typescript";
 import { JSDOM } from "jsdom";
+import {
+  scopeUrl,
+  scopeControlUrl,
+  compileFixture,
+} from "./location-fixtures.mjs";
+
+test("location URLs default to India and country labels never invent India", async () => {
+  const { locationScopeFromParams } = await import(scopeUrl);
+  for (const [query, expected] of [
+    ["", "india"],
+    ["indiaOnly=false", "all"],
+    ["locationScope=international&indiaOnly=true", "international"],
+    ["locationScope=india&indiaOnly=false", "india"],
+    ["locationScope=all", "all"],
+  ])
+    assert.equal(locationScopeFromParams(new URLSearchParams(query)), expected);
+  const { locationLabel } = await import(
+    compileFixture(
+      await readFile(new URL("../lib/format.ts", import.meta.url), "utf8"),
+    )
+  );
+  assert.equal(
+    locationLabel({ locations: [{ country: "United Kingdom" }] }),
+    "United Kingdom",
+  );
+  assert.equal(
+    locationLabel({
+      locations: [{ city: "London", country: "United Kingdom" }],
+    }),
+    "London, United Kingdom",
+  );
+  assert.equal(locationLabel({ locations: [] }), "Location not specified");
+});
 
 test("company listings upgrade previews, paginate, stay scoped and retry failures", async () => {
   const dom = new JSDOM('<div id="root"></div>', {
@@ -25,6 +58,14 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     });
   }
   const calls = [];
+  let queryParams = "companyId=wrong";
+  const navigations = [];
+  const router = {
+    push: (url) => {
+      navigations.push(url);
+      queryParams = url.split("?")[1] || "";
+    },
+  };
   let user = null,
     fail = false;
   const job = (n) => ({ _id: String(n), title: `Role ${n}` });
@@ -33,7 +74,8 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     saved: () => [],
     toggle: async () => {},
     pathname: () => "/companies/example",
-    params: () => new URLSearchParams("companyId=wrong"),
+    params: () => new URLSearchParams(queryParams),
+    router: () => router,
     companies: async () => {
       throw Error("Unnecessary directory read");
     },
@@ -46,6 +88,7 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
             ? Array.from({ length: 21 }, (_, n) => job(n))
             : [job(21)],
         total: 22,
+        totalAvailable: query.locationScope === "international" ? 12 : 22,
         totalPages: 2,
       };
     },
@@ -92,8 +135,13 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
   );
   source = source
     .replace(
-      /import \{ usePathname, useSearchParams \} from "next\/navigation";/,
-      "const {pathname:usePathname,params:useSearchParams} = globalThis.__companyFixture;",
+      '"@/components/LocationScopeControl"',
+      JSON.stringify(scopeControlUrl),
+    )
+    .replace('"@/lib/location-scope"', JSON.stringify(scopeUrl))
+    .replace(
+      /import \{ usePathname, useSearchParams, useRouter \} from "next\/navigation";/,
+      "const {pathname:usePathname,params:useSearchParams,router:useRouter} = globalThis.__companyFixture;",
     )
     .replace(
       /import toast from "react-hot-toast";/,
@@ -197,6 +245,17 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     assert.equal(document.querySelectorAll("article").length, 22);
     assert.equal(calls.at(-1).page, 2);
     assert.equal(calls.at(-1).companyId, "correct");
+    await act(async () => {
+      document.querySelector('input[value="international"]').click();
+      await settle();
+      render("first");
+      await settle();
+    });
+    assert.match(navigations.at(-1), /locationScope=international/);
+    assert.equal(calls.at(-1).locationScope, "international");
+    assert.equal(calls.at(-1).page, 1);
+    assert.equal(calls.at(-1).companyId, "correct");
+    queryParams = "companyId=wrong";
     fail = true;
     await act(async () => {
       render("failure");

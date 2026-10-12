@@ -3,6 +3,10 @@ import CompanyDirectory from "@/components/CompanyDirectory";
 import { listCompanyPage } from "@/lib/reerhub";
 import { Suspense } from "react";
 import { pageMetadata } from "@/lib/seo";
+import {
+  locationScopeFromParams,
+  locationScopeLabel,
+} from "@/lib/location-scope";
 export const metadata = pageMetadata(
   "Product Companies Hiring in India",
   "Explore companies hiring engineering, AI and data talent in India. Browse their official openings and find the team behind your next tech role.",
@@ -15,6 +19,13 @@ export default async function CompaniesPage({
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const params = await searchParams;
+  const locationScope = locationScopeFromParams(
+    new URLSearchParams(
+      Object.entries(params).filter(
+        (entry): entry is [string, string] => entry[1] !== undefined,
+      ),
+    ),
+  );
   const query = params.q || "",
     hiring = params.hiring === "true",
     page = Math.max(1, Number.parseInt(params.page || "1", 10) || 1);
@@ -23,6 +34,7 @@ export default async function CompaniesPage({
     limit: 50,
     q: query,
     hiring: String(hiring),
+    locationScope,
   });
   const companies = initialData.data;
   const roles = companies.reduce((sum, c) => sum + (c.activeJobs || 0), 0);
@@ -44,7 +56,9 @@ export default async function CompaniesPage({
             <p className="font-display text-3xl font-bold text-primary">
               {initialData.summary?.totalJobs ?? roles}
             </p>
-            <p className="mt-1 text-xs text-slate-600">Open tech roles</p>
+            <p className="mt-1 text-xs text-slate-600">
+              Open tech roles · {locationScopeLabel(locationScope)}
+            </p>
           </div>
         </div>
       </PageHeader>
@@ -52,7 +66,7 @@ export default async function CompaniesPage({
         <Suspense fallback={<p>Loading companies…</p>}>
           <CompanyDirectory
             initialData={initialData}
-            initialKey={JSON.stringify([query, hiring, page])}
+            initialKey={JSON.stringify([query, hiring, page, locationScope])}
           />
         </Suspense>
       </section>

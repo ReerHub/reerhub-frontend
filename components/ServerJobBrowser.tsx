@@ -6,11 +6,13 @@ export default async function ServerJobBrowser({
   track,
   city,
   remoteOnly,
+  locationScope = "india",
 }: {
   heading: string;
   track?: TechTrack;
   city?: string;
   remoteOnly?: boolean;
+  locationScope?: import("@/lib/location-scope").LocationScope;
 }) {
   const initialFilters = {
     ...(city ? { city } : {}),
@@ -20,6 +22,7 @@ export default async function ServerJobBrowser({
   try {
     initialData = await listJobsWithMeta({
       limit: 10,
+      locationScope,
       ...(track ? { techTrack: track } : {}),
       ...initialFilters,
     });
@@ -32,6 +35,7 @@ export default async function ServerJobBrowser({
       initialCategory={track}
       initialFilters={initialFilters}
       initialData={initialData}
+      initialLocationScope={locationScope}
     />
   );
 }

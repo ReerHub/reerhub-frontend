@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import JobCard from "@/components/JobCard";
@@ -8,6 +8,8 @@ import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 import { useAuth } from "@/components/AuthProvider";
 import { useSavedJobs, toggleSaved } from "@/lib/saved-store";
 import SearchFilters, { Filters } from "@/components/SearchFilters";
+import LocationScopeControl from "@/components/LocationScopeControl";
+import { locationScopeFromParams } from "@/lib/location-scope";
 import {
   listCompanies,
   listJobsWithMeta,
@@ -29,7 +31,7 @@ const FILTER_KEYS: (keyof Filters)[] = [
   "seniority",
   "employmentType",
   "sort",
-  "indiaOnly",
+  "locationScope",
 ];
 
 function SkeletonCard() {
@@ -74,7 +76,7 @@ function EmptyState({
       </div>
       <h2 className="font-bold text-slate-900 text-lg mb-1.5">
         {companyOnly
-          ? "No open India tech roles right now"
+          ? "No open tech roles in this location scope right now"
           : "No tech roles match those filters"}
       </h2>
       <p className="text-slate-500 text-[15px] mb-6">
@@ -109,7 +111,7 @@ function filtersFromSearchParams(
     seniority: sp.get("seniority") ?? "",
     employmentType: sp.get("employmentType") ?? "",
     sort: sp.get("sort") === "az" ? "az" : "",
-    indiaOnly: sp.get("indiaOnly") !== "false",
+    locationScope: locationScopeFromParams(sp),
   };
 }
 
@@ -117,8 +119,8 @@ function filtersToSearchParams(filters: Filters): URLSearchParams {
   const sp = new URLSearchParams();
   for (const key of FILTER_KEYS) {
     const v = filters[key];
-    if (key === "indiaOnly") {
-      if (!v) sp.set("indiaOnly", "false");
+    if (key === "locationScope") {
+      if (v !== "india") sp.set("locationScope", String(v));
     } else if (v && v !== "") {
       sp.set(key, String(v));
     }
@@ -141,7 +143,7 @@ function buildJobQuery(
     seniority: activeFilters.seniority,
     employmentType: activeFilters.employmentType,
     sort: activeFilters.sort,
-    ...(activeFilters.indiaOnly ? {} : { indiaOnly: "false" }),
+    locationScope: activeFilters.locationScope,
     page: pageToLoad,
     limit: PAGE_SIZE,
   };
@@ -160,6 +162,7 @@ export default function JobBrowser({
   initialData,
   companyId,
   companyTotal,
+  initialLocationScope = "india",
 }: {
   initialCategory?: "" | TechTrack;
   heading?: string;
@@ -173,24 +176,33 @@ export default function JobBrowser({
   initialData?: Awaited<ReturnType<typeof listJobsWithMeta>>;
   companyId?: string;
   companyTotal?: number;
+  initialLocationScope?: import("@/lib/location-scope").LocationScope;
 }) {
   const { user, loading: authLoading } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const searchParamsKey = searchParams.toString();
 
   const INITIAL: Filters = useMemo(() => {
     const fromUrl = filtersFromSearchParams(
-      new URLSearchParams(companyId ? "" : searchParamsKey),
+      new URLSearchParams(searchParamsKey),
       initialCategory,
     );
-    if (companyId) fromUrl.companyId = companyId;
+    if (companyId) {
+      const scope = fromUrl.locationScope;
+      Object.assign(
+        fromUrl,
+        filtersFromSearchParams(new URLSearchParams(), initialCategory),
+        { companyId, locationScope: scope },
+      );
+    }
     if (!initialFilters) return fromUrl;
     // Prefill empty slots from profile; explicit URL params always win.
     const merged: Filters = { ...fromUrl };
     for (const key of FILTER_KEYS) {
-      if (key === "indiaOnly") continue;
+      if (key === "locationScope") continue;
       const preset = initialFilters[key];
       if (!merged[key] && preset) merged[key] = preset as never;
     }
@@ -206,11 +218,28 @@ export default function JobBrowser({
     setFilters(INITIAL);
   }
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [jobs, setJobs] = useState<Job[]>(initialData?.jobs || []);
+  const serverFilters = filtersFromSearchParams(
+    new URLSearchParams(),
+    initialCategory,
+  );
+  Object.assign(
+    serverFilters,
+    initialFilters,
+    { locationScope: initialLocationScope },
+    companyId ? { companyId } : {},
+  );
+  const initialMatchesScope =
+    JSON.stringify(INITIAL) === JSON.stringify(serverFilters);
+  const [jobs, setJobs] = useState<Job[]>(
+    initialMatchesScope ? initialData?.jobs || [] : [],
+  );
   const [total, setTotal] = useState(initialData?.total || 0);
+  const [totalAvailable, setTotalAvailable] = useState(
+    initialData?.totalAvailable ?? companyTotal,
+  );
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(initialData?.totalPages || 0);
-  const [loading, setLoading] = useState(!initialData);
+  const [loading, setLoading] = useState(!initialData || !initialMatchesScope);
   const [loadingMore, setLoadingMore] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState(false);
@@ -253,9 +282,11 @@ export default function JobBrowser({
       const sp = filtersToSearchParams(next);
       if (pathname === "/dashboard") sp.set("view", "discover");
       const qs = sp.toString();
-      window.history.replaceState(null, "", `${pathname}${qs ? `?${qs}` : ""}`);
+      const url = `${pathname}${qs ? `?${qs}` : ""}`;
+      if (companyId) router.push(url, { scroll: false });
+      else window.history.pushState(null, "", url);
     },
-    [pathname],
+    [pathname, companyId, router],
   );
 
   const fetchJobs = useCallback(
@@ -288,6 +319,7 @@ export default function JobBrowser({
             : result.jobs,
         );
         setTotal(result.total);
+        setTotalAvailable(result.totalAvailable);
         setTotalPages(result.totalPages);
         setPage(pageToLoad);
         setError(false);
@@ -325,13 +357,22 @@ export default function JobBrowser({
   const originalInitial = useRef(INITIAL);
   useEffect(() => {
     if (authLoading) return;
-    if (initialData && !user && INITIAL === originalInitial.current) return;
+    if (
+      initialData &&
+      !user &&
+      initialMatchesScope &&
+      INITIAL === originalInitial.current
+    )
+      return;
     const ac = new AbortController();
     void Promise.resolve().then(() => {
-      if (!ac.signal.aborted) return fetchJobs(1, INITIAL, false, ac.signal);
+      if (!ac.signal.aborted) {
+        setLoading(true);
+        return fetchJobs(1, INITIAL, false, ac.signal);
+      }
     });
     return () => ac.abort();
-  }, [INITIAL, user, authLoading, initialData, fetchJobs]);
+  }, [INITIAL, user, authLoading, initialData, initialMatchesScope, fetchJobs]);
 
   const clearAll = () => {
     const next = filtersFromSearchParams(
@@ -375,6 +416,12 @@ export default function JobBrowser({
 
   return (
     <div>
+      {!showFilters && !savedOnly && (
+        <LocationScopeControl
+          value={filters.locationScope}
+          onChange={(locationScope) => submit({ locationScope })}
+        />
+      )}
       {showFilters && (
         <SearchFilters
           filters={filters}
@@ -399,15 +446,16 @@ export default function JobBrowser({
         </h2>
         {!loading && jobs.length > 0 && (
           <p className="text-sm text-slate-500 text-right">
-            {!user && !authLoading
-              ? companyTotal !== undefined
-                ? `Showing ${jobs.length} of ${Math.max(companyTotal, jobs.length)} roles`
+            {!user
+              ? totalAvailable !== undefined
+                ? `Showing ${jobs.length} of ${Math.max(totalAvailable, jobs.length)} roles`
                 : `${jobs.length} ${jobs.length === 1 ? "role" : "roles"} · Preview`
               : `${total} ${total === 1 ? "role" : "roles"}`}
             {!user &&
               !authLoading &&
               jobs.length >= 10 &&
-              (companyTotal === undefined || companyTotal > jobs.length) && (
+              (totalAvailable === undefined ||
+                totalAvailable > jobs.length) && (
                 <span className="mt-1 block text-xs text-blue-700">
                   Sign in for the full list
                 </span>
@@ -458,16 +506,16 @@ export default function JobBrowser({
           !user &&
           !authLoading &&
           jobs.length >= 10 &&
-          (companyTotal === undefined || companyTotal > jobs.length) && (
-            <DiscoveryPrompt count={jobs.length} total={companyTotal} card />
+          (totalAvailable === undefined || totalAvailable > jobs.length) && (
+            <DiscoveryPrompt count={jobs.length} total={totalAvailable} card />
           )}
       </div>
       {!loading &&
         !error &&
         !(
           jobs.length >= 10 &&
-          (companyTotal === undefined || companyTotal > jobs.length)
-        ) && <DiscoveryPrompt count={jobs.length} total={companyTotal} />}
+          (totalAvailable === undefined || totalAvailable > jobs.length)
+        ) && <DiscoveryPrompt count={jobs.length} total={totalAvailable} />}
       {!loading && !error && user && page < totalPages && (
         <div className="text-center mt-9">
           <button

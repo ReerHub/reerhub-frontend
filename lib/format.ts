@@ -26,12 +26,14 @@ export function timeAgo(iso?: string): string {
 /** "Bengaluru, Karnataka +2" from the locations array. */
 export function locationLabel(job: Pick<Job, "locations">): string {
   const first = job.locations?.[0];
-  const base = [first?.city, first?.state].filter(Boolean).join(", ");
+  const base = [
+    ...new Set([first?.city, first?.state, first?.country].filter(Boolean)),
+  ].join(", ");
   const extra =
     job.locations && job.locations.length > 1
       ? ` +${job.locations.length - 1}`
       : "";
-  return `${base || "India"}${extra}`;
+  return `${base || "Location not specified"}${extra}`;
 }
 
 /**

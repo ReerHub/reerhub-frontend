@@ -5,6 +5,8 @@ import type { Company, TechTrack } from "@/lib/reerhub";
 import { TECH_TRACKS } from "@/lib/reerhub";
 import Icon from "@/components/ui/Icon";
 import styles from "./SearchFilters.module.css";
+import type { LocationScope } from "@/lib/location-scope";
+import LocationScopeControl from "@/components/LocationScopeControl";
 
 export type Filters = {
   q: string;
@@ -17,7 +19,7 @@ export type Filters = {
   seniority: string;
   employmentType: string;
   sort: string;
-  indiaOnly: boolean;
+  locationScope: LocationScope;
 };
 
 const secondaryKeys = [
@@ -29,7 +31,6 @@ const secondaryKeys = [
   "seniority",
   "employmentType",
   "sort",
-  "indiaOnly",
 ] as const;
 function secondaryFilters(filters: Filters) {
   return Object.fromEntries(
@@ -86,12 +87,6 @@ export default function SearchFilters({
   add("seniority", `Level: ${filters.seniority}`);
   add("employmentType", `Employment: ${filters.employmentType}`);
   add("sort", "Sort: Title A–Z");
-  if (!filters.indiaOnly)
-    chips.push({
-      key: "indiaOnly",
-      label: "Including international roles",
-      reset: { indiaOnly: true },
-    });
   const count = chips.filter((chip) =>
     secondaryKeys.some((key) => key === chip.key),
   ).length;
@@ -161,9 +156,11 @@ export default function SearchFilters({
             className={open ? styles.chevronOpen : styles.chevron}
           />
         </button>
+        <LocationScopeControl
+          value={filters.locationScope}
+          onChange={(locationScope) => onSubmit({ locationScope })}
+        />
         <p className={styles.scope}>
-          {filters.indiaOnly ? "India roles" : "India & international roles"}
-          <span aria-hidden="true"> · </span>
           {filters.sort === "az" ? "Title A–Z" : "Newest first"}
         </p>
       </div>
@@ -181,7 +178,7 @@ export default function SearchFilters({
                     if (secondaryKeys.some((key) => key === chip.key)) {
                       setDraft((previous) => ({
                         ...previous,
-                        [chip.key]: chip.key === "indiaOnly" ? true : "",
+                        [chip.key]: "",
                       }));
                     }
                   }}
@@ -355,14 +352,6 @@ export default function SearchFilters({
             </label>
           </div>
           <div className={styles.panelFooter}>
-            <label className={styles.india}>
-              <input
-                type="checkbox"
-                checked={draft.indiaOnly}
-                onChange={(event) => change("indiaOnly", event.target.checked)}
-              />
-              India roles only
-            </label>
             <div className={styles.actions}>
               <button type="button" className={styles.cancel} onClick={close}>
                 Cancel

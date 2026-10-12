@@ -4,12 +4,25 @@ import { Suspense } from "react";
 import ServerJobBrowser from "@/components/ServerJobBrowser";
 import PageHeader from "@/components/PageHeader";
 import Icon from "@/components/ui/Icon";
+import { locationScopeFromParams } from "@/lib/location-scope";
 export const metadata = pageMetadata(
   "Tech Jobs in India",
   "Official openings from companies hiring in India. Search by what you build, where you want to work, and what comes next.",
   "/jobs",
 );
-export default function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const locationScope = locationScopeFromParams(
+    new URLSearchParams(
+      Object.entries(params).filter(
+        (entry): entry is [string, string] => entry[1] !== undefined,
+      ),
+    ),
+  );
   return (
     <div>
       <PageHeader
@@ -35,7 +48,10 @@ export default function Page() {
           ))}
         </nav>
         <Suspense fallback={<div className="skeleton h-56 rounded-2xl" />}>
-          <ServerJobBrowser heading="All open roles" />
+          <ServerJobBrowser
+            heading="All open roles"
+            locationScope={locationScope}
+          />
         </Suspense>
       </section>
     </div>
