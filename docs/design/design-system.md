@@ -6,6 +6,8 @@ Reviewed against the current profile, dashboard and admin import components on 2
 
 REERHUB is a calm, trustworthy career-discovery product. The interface should make official roles easy to scan, make the free path clearly valuable, and reserve personalized intelligence for Pro without fabricating scores or obscuring useful information.
 
+Keep the platform explicitly India-first. International openings are an optional extra, not a shift to a worldwide-first product. Discovery introductions should describe this positioning accurately in every selected scope, rather than claim that every currently visible opening is in India. India remains the default; recommendations, daily alerts and homepage positioning remain India-focused.
+
 ## Foundations
 
 - Final approved public palette: Cobalt Blue `#2563eb`; hover `#1d4ed8`; deep/on-tint text `#1e40af`; ice blue highlight `#eff6ff`.
