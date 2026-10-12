@@ -56,6 +56,8 @@ const job = {
     "<p>Build reliable APIs and distributed backend services. Collaborate with engineering teams using Node.js, MongoDB and TypeScript.</p>",
   applicationUrl: "https://example.com/apply",
   postedAt: "2025-01-01T00:00:00.000Z",
+  postedAtProvenance: "employer",
+  requirementStatus: "verified",
   lastSeenAt: new Date().toISOString(),
   updatedAt: "2025-01-02T00:00:00.000Z",
   skills: ["Node.js", "MongoDB", "TypeScript"],

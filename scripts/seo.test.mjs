@@ -105,6 +105,7 @@ test("only eligible active jobs emit complete structured data", () => {
     status: "active",
     description: "",
     postedAt: "2025-01-01",
+    postedAtProvenance: "employer",
     employmentType: "full-time",
     applicationUrl: "https://example.com/apply",
     companyId: { name: "Example" },
@@ -195,7 +196,10 @@ test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors",
 
 test("deleted job URLs return real 404s before streaming, without hiding outages", async () => {
   const hostUrl = url(await source("../lib/admin-host.ts"));
+  const reerhubSource = await source("../lib/reerhub.ts");
+  const reerhubUrl = url(reerhubSource.slice(reerhubSource.indexOf("export const slugify")));
   const proxySource = (await source("../proxy.ts"))
+    .replace('"@/lib/reerhub"', JSON.stringify(reerhubUrl))
     .replace('"@/lib/admin-host"', JSON.stringify(hostUrl))
     .replace(
       '"next/server"',
@@ -237,6 +241,26 @@ test("deleted job URLs return real 404s before streaming, without hiding outages
       globalThis.fetch = async () => new Response("{}", { status });
       assert.equal((await route(id)).headers.get("x-middleware-next"), "1");
     }
+    globalThis.fetch = async () =>
+      Response.json({
+        data: {
+          _id: id,
+          title: "Backend Engineer",
+          companyId: { name: "Fixture Labs" },
+        },
+      });
+    const moved = await route(id);
+    assert.equal(moved.status, 308);
+    assert.match(
+      moved.headers.get("location"),
+      /backend-engineer-fixture-labs-/,
+    );
+    assert.equal(
+      (await route(`backend-engineer-fixture-labs-${id}`)).headers.get(
+        "x-middleware-next",
+      ),
+      "1",
+    );
     globalThis.fetch = async () => {
       throw new Error("unavailable");
     };
@@ -244,4 +268,42 @@ test("deleted job URLs return real 404s before streaming, without hiding outages
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test("original date provenance, deadlines and employer identity remain truthful", () => {
+  const job = {
+    title: "Engineer",
+    status: "active",
+    postedAt: "2025-01-01",
+    postedAtProvenance: "employer",
+    applicationUrl: "https://example.com/apply",
+    companyId: { name: "Example" },
+    locations: [{ city: "Pune", country: "India" }],
+  };
+  assert.equal(
+    jobs.jobPosting({ ...job, postedAtProvenance: undefined }, "Description"),
+    null,
+  );
+  assert.equal(
+    jobs.jobPosting(
+      { ...job, applicationDeadline: "2020-01-01" },
+      "Description",
+    ),
+    null,
+  );
+  assert.equal(
+    jobs.jobPosting(
+      { ...job, applicationDeadline: "2099-01-01" },
+      "Description",
+    ).validThrough,
+    "2099-01-01T00:00:00.000Z",
+  );
+  const metadata = seo.jobMetadata(
+    "Very long role ".repeat(15),
+    "Distinct Employer Identity",
+    "Description",
+    "/jobs/role",
+  );
+  assert.match(metadata.title, /at Distinct Employer Identity/);
+  assert.equal(metadata.openGraph.title, metadata.title);
 });

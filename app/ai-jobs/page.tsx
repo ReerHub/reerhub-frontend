@@ -13,7 +13,7 @@ export default function Page() {
   return (
     <div>
       <PageHeader
-        title="Work at the edge of what’s next."
+        title="AI and machine learning jobs in India"
         description="Explore AI and machine learning roles from official hiring pages, from applied ML to LLM engineering."
       >
         <span className="inline-flex items-center gap-2 text-xs font-semibold text-teal-800">

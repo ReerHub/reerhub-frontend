@@ -51,7 +51,7 @@ export function sitemapChunks(entries: Entry[]) {
 }
 async function api(path: string) {
   const res = await fetch(`${API}${path}`, {
-    next: { revalidate: 3600 },
+    cache: "no-store",
     signal: AbortSignal.timeout(15000),
   });
   if (!res.ok) throw new Error("Sitemap source unavailable");
@@ -102,5 +102,5 @@ export function sitemapXml(entries: Entry[]) {
 }
 export const XML_HEADERS = {
   "Content-Type": "application/xml; charset=utf-8",
-  "Cache-Control": "public, max-age=0, s-maxage=3600",
+  "Cache-Control": "no-store",
 };

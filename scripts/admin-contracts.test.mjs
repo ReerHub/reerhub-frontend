@@ -349,9 +349,12 @@ test("admin host routes stay isolated and required public config remains accessi
   const hosts = compile(
     await readFile(new URL("../lib/admin-host.ts", import.meta.url), "utf8"),
   );
+  const jobUrlSource = await readFile(new URL("../lib/reerhub.ts", import.meta.url), "utf8");
+  const jobUrls = moduleUrl(compile(jobUrlSource.slice(jobUrlSource.indexOf("export const slugify"))));
   const proxySource = compile(
     await readFile(new URL("../proxy.ts", import.meta.url), "utf8"),
   )
+    .replaceAll('"@/lib/reerhub"', JSON.stringify(jobUrls))
     .replaceAll('"@/lib/admin-host"', JSON.stringify(moduleUrl(hosts)))
     .replaceAll(
       '"next/server"',

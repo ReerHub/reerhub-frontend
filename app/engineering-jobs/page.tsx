@@ -13,7 +13,7 @@ export default function Page() {
   return (
     <div>
       <PageHeader
-        title="Build your next chapter."
+        title="Software engineering jobs in India"
         description="Software engineering openings from official company sources. Explore roles across backend, frontend, and full-stack engineering."
       >
         <span className="inline-flex items-center gap-2 text-xs font-semibold text-teal-800">

@@ -11,25 +11,28 @@ export default async function ServerJobBrowser({
   city,
   remoteOnly,
   locationScope = "india",
+  initialData: suppliedData,
 }: {
   heading: string;
   track?: TechTrack;
   city?: string;
   remoteOnly?: boolean;
+  initialData?: Awaited<ReturnType<typeof listJobsWithMeta>>;
   locationScope?: import("@/lib/location-scope").LocationScope;
 }) {
   const initialFilters = {
     ...(city ? { city } : {}),
     ...(remoteOnly ? { remoteType: "remote" } : {}),
   };
-  let initialData;
+  let initialData = suppliedData;
   try {
-    initialData = await listJobsWithMeta({
-      limit: 10,
-      locationScope,
-      ...(track ? { techTrack: track } : {}),
-      ...initialFilters,
-    });
+    if (!initialData)
+      initialData = await listJobsWithMeta({
+        limit: 10,
+        locationScope,
+        ...(track ? { techTrack: track } : {}),
+        ...initialFilters,
+      });
   } catch (error) {
     if (!(error instanceof DataUnavailableError)) throw error;
     /* The client retry remains available during source outages. */

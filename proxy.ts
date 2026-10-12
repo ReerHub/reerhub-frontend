@@ -1,3 +1,4 @@
+import { jobUrl } from "@/lib/reerhub";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isDedicatedAdminHost, isSharedAdminTestHost } from "@/lib/admin-host";
@@ -44,6 +45,18 @@ async function jobDetailResponse(req: NextRequest, response: NextResponse) {
         cache: "no-store",
         signal: AbortSignal.timeout(5000),
       });
+      if (result.ok) {
+        const { data } = await result.json();
+        if (data?._id === jobId && data.title && data.companyId?.name) {
+          const canonical = jobUrl(data);
+          if (req.nextUrl.pathname !== canonical) {
+            const target = req.nextUrl.clone();
+            target.pathname = canonical;
+            return NextResponse.redirect(target, 308);
+          }
+        }
+        return response;
+      }
       await result.body?.cancel();
       if (result.status !== 404) return response;
     } catch {

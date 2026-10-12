@@ -4,9 +4,15 @@ import { timeAgo, formatFeedCheckedAt } from "@/lib/format";
 export default function JobFreshness({
   job,
 }: {
-  job: Pick<Job, "postedAt" | "firstSeenAt" | "lastSeenAt">;
+  job: Pick<
+    Job,
+    "postedAt" | "postedAtProvenance" | "firstSeenAt" | "lastSeenAt"
+  >;
 }) {
-  const listed = [job.postedAt, job.firstSeenAt].find(
+  const original = ["employer", "admin"].includes(job.postedAtProvenance || "")
+    ? job.postedAt
+    : undefined;
+  const listed = [original, job.firstSeenAt].find(
     (value) => value && Number.isFinite(Date.parse(value)),
   );
   const checked = formatFeedCheckedAt(job.lastSeenAt);
@@ -14,7 +20,7 @@ export default function JobFreshness({
     <span className="flex flex-col gap-1">
       {listed && (
         <span>
-          {listed === job.postedAt ? "Posted" : "First seen"}{" "}
+          {listed === original ? "Posted" : "First seen"}{" "}
           <time dateTime={listed}>{timeAgo(listed)}</time>
         </span>
       )}

@@ -69,3 +69,21 @@ export function breadcrumb(items: { name: string; path: string }[]) {
     })),
   };
 }
+
+// Employer identity must survive long role titles. There is no search-engine
+// requirement to truncate every title to sixty characters.
+export function jobMetadata(
+  title: string,
+  employer: string,
+  description: string,
+  path: string,
+): Metadata {
+  const metadata = pageMetadata(title, description, path);
+  const fullTitle = `${concise(title, 80)} at ${employer} | REERHUB`;
+  return {
+    ...metadata,
+    title: fullTitle,
+    openGraph: { ...metadata.openGraph, title: fullTitle },
+    twitter: { ...metadata.twitter, title: fullTitle },
+  };
+}

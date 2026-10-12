@@ -12,7 +12,7 @@
     "lint": "eslint",
     "test:ui:fixtures": "node scripts/ui-fixtures.mjs",
     "test:admin": "node --test scripts/admin-contracts.test.mjs scripts/company-import.test.mjs scripts/admin-delete.test.mjs scripts/company-logo.test.mjs scripts/data-quality.test.mjs",
-    "test:seo": "node --test scripts/seo.test.mjs scripts/social-links.test.mjs",
+    "test:seo": "node --test scripts/seo.test.mjs scripts/social-links.test.mjs scripts/city-states.test.mjs",
     "test:profile": "node --test scripts/profile-editor.test.mjs",
     "test:dashboard": "node --test scripts/dashboard.test.mjs scripts/search-filters.test.mjs scripts/company-listing.test.mjs scripts/catalog-availability.test.mjs scripts/matching-example.test.mjs scripts/recommendation-groups.test.mjs",
     "test:operations": "node --test scripts/admin-operations.test.mjs",

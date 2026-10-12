@@ -65,6 +65,9 @@ export default async function RootLayout({
           </AuthProvider>
         )}
         {!isAdminHost && <CookieConsent />}
+        <noscript>
+          <style>{`.reveal { opacity: 1 !important; transform: none !important; }`}</style>
+        </noscript>
         <Toaster position="top-right" reverseOrder={false} />
         {process.env.REERHUB_UI_FIXTURES === "1" && <PerformanceProbe />}
       </body>

@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { sanitizeHtml } from "@/lib/sanitize";
 import CompanyLogo from "@/components/CompanyLogo";
-import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
-import { jobPosting } from "@/lib/job-schema";
+import { jobMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
+import { jobPosting, deadlineExpired } from "@/lib/job-schema";
 import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
 import JobFreshness from "@/components/JobFreshness";
@@ -46,12 +46,16 @@ export async function generateMetadata({
     if (!jobId) return { title: "Job | REERHUB" };
     const job = await fetchJob(jobId);
     const companyName = job.companyId?.name || "Company";
-    const title = `${job.status === "closed" ? "Closed: " : ""}${job.title} at ${companyName} | REERHUB`;
     const description =
       `${job.title} (${job.techRole || "tech role"}) at ${companyName}` +
       `${job.locations?.[0]?.city ? ` in ${job.locations[0].city}` : ""}. ` +
       `${job.status === "closed" ? "This opening is closed. Explore related active jobs on REERHUB." : "Read full role requirements and apply on the company's official website."}`;
-    return pageMetadata(title, description, `/jobs/${jobSlug(job)}`);
+    return jobMetadata(
+      `${job.status === "closed" ? "Closed: " : ""}${job.title}`,
+      companyName,
+      description,
+      `/jobs/${jobSlug(job)}`,
+    );
   } catch {
     return { title: "Job | REERHUB" };
   }
@@ -106,6 +110,8 @@ export default async function JobDetailPage({
   const jobId = resolveJobId(slug);
   if (!jobId) notFound();
   const job = await fetchJob(jobId);
+  if (!["employer", "admin"].includes(job.postedAtProvenance || ""))
+    job.postedAt = undefined;
   const canonical = `/jobs/${jobSlug(job)}`;
   if (slug !== canonical.split("/")[2]) permanentRedirect(canonical);
   const company = job.companyId || {};
@@ -122,6 +128,9 @@ export default async function JobDetailPage({
   const relatedJobs = company._id
     ? await fetchRelatedJobs(company._id, job._id)
     : [];
+  const expired = deadlineExpired(job.applicationDeadline);
+  const canApply =
+    job.status === "active" && job.publicEligible !== false && !expired;
   const hasApplication = !!job.applicationUrl;
   const sanitizedDescription = job.description
     ? sanitizeHtml(job.description)
@@ -145,6 +154,26 @@ export default async function JobDetailPage({
     { label: "Employment", value: job.employmentType },
     { label: "Department", value: job.department },
     { label: "Seniority", value: job.seniority },
+    {
+      label: "Experience",
+      value:
+        job.requirementStatus === "verified" &&
+        job.experience?.min !== undefined
+          ? `Minimum ${job.experience.min} years${job.experienceMaximumRequired && job.experience.max !== undefined ? `; maximum ${job.experience.max} years` : ""}`
+          : "Requirement not verified — review the official description",
+    },
+    {
+      label: "Employer update",
+      value: job.employerUpdatedAt
+        ? formatFeedCheckedAt(job.employerUpdatedAt)
+        : undefined,
+    },
+    {
+      label: "Application deadline",
+      value: job.applicationDeadline
+        ? formatFeedCheckedAt(job.applicationDeadline)
+        : undefined,
+    },
     {
       label: job.postedAt ? "Posted" : "First seen",
       value: job.postedAt
@@ -267,7 +296,7 @@ export default async function JobDetailPage({
                     className={`w-1.5 h-1.5 rounded-full ${job.status === "closed" ? "bg-slate-400" : "bg-green-500"}`}
                     aria-hidden
                   />
-                  {job.status === "closed" ? "Closed" : "Open role"}
+                  {!canApply ? "Not accepting applications" : "Open role"}
                 </span>
                 <SaveJobButton jobId={job._id} variant="icon" />
               </span>
@@ -307,7 +336,7 @@ export default async function JobDetailPage({
             </div>
           </div>
 
-          {job.status === "closed" && (
+          {!canApply && (
             <div className="surface-panel mb-4 border-amber-200 bg-amber-50 p-5">
               <h2 className="font-semibold text-ink">
                 This opening is no longer active.
@@ -330,7 +359,7 @@ export default async function JobDetailPage({
                   rel="noopener noreferrer"
                   className="btn-primary w-full"
                 >
-                  {job.status === "closed"
+                  {!canApply
                     ? "Check official listing"
                     : "Apply on company website"}
                 </a>
@@ -446,7 +475,7 @@ export default async function JobDetailPage({
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-electric text-white rounded-xl font-semibold text-[15px] hover:bg-electric-dark active:bg-electric-deep transition-all shadow-sm"
               >
-                {job.status === "closed"
+                {!canApply
                   ? "Check official listing"
                   : "Apply on company website"}
                 <svg

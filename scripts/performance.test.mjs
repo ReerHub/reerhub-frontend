@@ -53,7 +53,7 @@ test("member cards share saved state and cancellable reads; checkout is on deman
   const panel = await read("../components/RecommendationPanel.tsx");
   assert.match(panel, /controller.signal/);
   assert.match(panel, /controller.abort\(\)/);
-  const billing = await read("../app/billing/page.tsx");
+  const billing = await read("../components/BillingControls.tsx");
   assert.match(billing, /await loadCheckout\(\)/);
   assert.doesNotMatch(billing, /<Script/);
   assert.match(await read("../lib/auth.ts"), /refreshing \|\|=/);

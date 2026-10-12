@@ -29,6 +29,10 @@ export function jobPosting(job: Job, description: string) {
     /(?:fully remote|100% remote)/i.test(description);
   if (
     job.status !== "active" ||
+    !["employer", "admin"].includes(job.postedAtProvenance || "") ||
+    (!!job.applicationDeadline &&
+      (!Number.isFinite(Date.parse(job.applicationDeadline)) ||
+        Date.parse(job.applicationDeadline) <= Date.now())) ||
     !job.title ||
     !job.companyId?.name ||
     !description.replace(/<[^>]*>/g, "").trim() ||
@@ -49,6 +53,9 @@ export function jobPosting(job: Job, description: string) {
     title: job.title,
     description,
     datePosted: posted.toISOString(),
+    ...(job.applicationDeadline
+      ? { validThrough: new Date(job.applicationDeadline).toISOString() }
+      : {}),
     hiringOrganization: {
       "@type": "Organization",
       name: job.companyId.name,
@@ -77,4 +84,10 @@ export function jobPosting(job: Job, description: string) {
         }
       : {}),
   };
+}
+
+export function deadlineExpired(value?: string, now = Date.now()) {
+  return (
+    !!value && Number.isFinite(Date.parse(value)) && Date.parse(value) <= now
+  );
 }
