@@ -1,3 +1,11 @@
+## SEO, matching and conversion: Phase 6 — 2026-10-13
+
+Final public HTML review covers homepage, discovery, six exact-filter role pages, fresher/internship, city/remote, companies, pricing, About, methodology, contact and legal pages: successful initial responses contain one H1 and canonical metadata without JavaScript. Early-career fixtures are noindex and outside the sitemap below the editorial threshold. Anonymous/Free/Pro desktop/mobile discovery/save/login-return/profile/group journeys and mocked Test-mode checkout retain existing entitlements; no real payment/account/email action was used. Redirect/404/outage/cache/private noindex and schema regressions are covered by the combined suite. Existing admin operations remain separate from customer flows.
+
+All 67 frontend regressions, lint, TypeScript and the standard production build pass. Both repository dependency audits report zero vulnerabilities. The documented mobile LCP target gap and owner account/field-data prerequisites remain explicit; lab results do not claim live GA/Search Console activation. Source research in the backend proposes only two currently evidenced, nonduplicate internship sources and does not import them.
+
+Owner granted overnight merge/deploy/fix authorization for this requested release, after final PR/CI. The normal per-release approval requirement still applies afterward. Backend contracts deploy first, public availability/repair/groups/sitemap are verified, then frontend deploys and its production journeys/privacy/HTML are checked. Develop/staging remain paused. Final CI and deployment evidence follows after actual verification.
+
 ## SEO, matching and conversion: Phase 5 — 2026-10-13
 
 Owner chose analytics disabled and has not established Search Console. Optional runtime GA4 support requires a valid measurement ID plus explicit version-2 consent. Legacy necessary-cookie acceptance is not analytics consent. Reject, preferences and withdrawal controls remain available; an opaque-origin sandbox receives only allowlisted enum events with fixed public page identity and no member/profile/payment/private-URL payload. Session-local conversion deduplication keeps trial activation separate from the first server-verified captured payment. Account/property activation is pending owner setup, not a code-test result.
