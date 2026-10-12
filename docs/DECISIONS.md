@@ -1,9 +1,18 @@
 # Frontend decisions
 
+## Direct-to-main releases; staging paused — 2026-10-12
+
+The owner chooses a temporary direct-to-main workflow while the product is maintained by the owner and Codex. Create each feature/documentation branch from current `origin/main`, run appropriate local checks, and open its PR directly against `main`. Wait for passing CI and explicit owner approval before **every merge**. A reply explicitly approving multiple named PRs can cover those merges; approval for an earlier release is not standing approval for a new PR. No direct commits or pushes to `main`.
+
+Retain `develop`, staging services, databases and configuration as they are. Do not open/merge PRs into `develop`, synchronize it from `main`, delete staging, or change hosting/worker settings as part of this decision. There is no automatic restart date. When the owner resumes staging, agree how to realign or recreate `develop` from then-current `main`; do not automatically rebase, reset or force-push it. This entry supersedes older mandatory staging/develop promotion instructions below, which remain dated history.
+
+Use unit tests for business rules and integration/contract tests against an explicitly isolated database for persistence, authorization, failure paths, transactions and external-provider handling. Use mocks or approved Test-mode providers; no real payments, unsolicited emails or production test fixtures. Run affected frontend regressions, lint, type checking and the standard production build; inspect desktop/mobile for UI changes. Add meaningful tests for changed behavior rather than tests mirroring implementation, and scale local checks to the change (documentation edits need diff/format/link/policy review; CI still runs). For migrations, auth or billing changes, document additional checks and recovery steps/limitations before approval.
+
+Local checks and CI cannot fully reproduce production configuration, cookies, provider delivery or scheduled work. After an approved merge/deployment, verify production health, the deployed contract and affected functionality with low-volume reads by default. Preserve backend-before-frontend compatibility and rollback planning. Data/configuration writes, manual source syncs and real provider actions require their own authorized scope; merging code does not authorize them.
+
 ## Visible feed freshness and quality review — 2026-10-12
 
 Owner requested job-quality improvements and explicitly requires approval before each merge. Cards/detail pages distinguish employer posting dates (or first observation) from last observed presence in official feeds; legacy missing dates are not fabricated. Admin overview summarizes stale active published jobs, link-check outcomes and hidden cross-source copies, with Jobs quality filters for review. Optional admin summary fields preserve compatibility during backend-first rollout. Link checks are operational evidence, never automatic closures. No deployment or configured-database writes accompany this implementation. Dashboard (11), SEO (9), admin (14), operations (3) and performance (6) regressions pass, along with lint, TypeScript and the standard production build. Desktop and 390px mobile synthetic previews distinguish posting/check dates without document overflow.
-
 
 ## Strict India-only retention — 2026-10-12
 
