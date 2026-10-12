@@ -192,3 +192,56 @@ test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors",
     globalThis.fetch = original;
   }
 });
+
+test("deleted job URLs return real 404s before streaming, without hiding outages", async () => {
+  const hostUrl = url(await source("../lib/admin-host.ts"));
+  const proxySource = (await source("../proxy.ts"))
+    .replace('"@/lib/admin-host"', JSON.stringify(hostUrl))
+    .replace(
+      '"next/server"',
+      JSON.stringify(
+        new URL("../node_modules/next/server.js", import.meta.url).href,
+      ),
+    );
+  const { proxy } = await import(url(proxySource));
+  const { NextRequest } = await import("next/server.js");
+  const originalFetch = globalThis.fetch;
+  const route = (slug) =>
+    proxy(
+      new NextRequest(`https://reerhub.com/jobs/${slug}`, {
+        headers: { host: "reerhub.com" },
+      }),
+    );
+  const id = "6ac744ab12024421f03b25d2";
+  try {
+    let calls = 0;
+    globalThis.fetch = async (input, options) => {
+      calls++;
+      assert.ok(String(input).endsWith(`/jobs/${id}`));
+      assert.equal(options.cache, "no-store");
+      assert.ok(options.signal);
+      return new Response("{}", { status: 404 });
+    };
+    for (const slug of [id, `foreign-role-employer-${id}`]) {
+      const result = await route(slug);
+      assert.equal(result.status, 404);
+      assert.match(
+        result.headers.get("x-middleware-rewrite"),
+        /__reerhub_not_found/,
+      );
+      assert.equal(result.headers.get("x-robots-tag"), "noindex, nofollow");
+    }
+    assert.equal((await route("invalid-id")).status, 404);
+    assert.equal(calls, 2);
+    for (const status of [200, 429, 503]) {
+      globalThis.fetch = async () => new Response("{}", { status });
+      assert.equal((await route(id)).headers.get("x-middleware-next"), "1");
+    }
+    globalThis.fetch = async () => {
+      throw new Error("unavailable");
+    };
+    assert.equal((await route(id)).headers.get("x-middleware-next"), "1");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
