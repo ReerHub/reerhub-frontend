@@ -34,6 +34,8 @@ Admin Overview separates Public India openings, Stored active India jobs and Loc
 
 Company-import results and source rows show pending/syncing/success-with-openings/success-with-zero/needs-attention outcomes with grouped backend counts, next scheduled time and last success. Import success does not imply ingestion or employer ownership. Existing JSON files remain valid. Release compatible backend support before frontend consumers; verify local repair/availability scenarios before approval, then production repair status and count consistency after deployment. Staging/develop remain paused.
 
+The homepage matching example uses clearly fictional software/data profiles and actual published India jobs, with scores/reasons from the same engine as Pro. Switching examples never edits your profile or sends email. Empty examples remain explicit; no score or employer opening is invented. Cards and details distinguish posting/first-seen dates from exact official-feed observation times in IST; these timestamps do not certify application-link availability.
+
 ## Profile setup
 
 Three calm sections: Your next role, Your skills, Your work preferences. Name remains editable; account settings sit separately below.

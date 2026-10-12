@@ -182,12 +182,27 @@ export const listCompanies = () =>
   typeof window === "undefined"
     ? get<Company[]>("/companies")
     : sharedRead("companies", () => get<Company[]>("/companies"));
+export type MatchingExample = {
+  id: string;
+  label: string;
+  profile: {
+    techTrack: string;
+    rolePreference: "any";
+    skills: string[];
+    experienceYears: number;
+    locationPreference: "all-india";
+    remoteType: "unknown";
+  };
+  job: Job | null;
+  fit: { relevanceScore: number; reasons: string[] } | null;
+};
 export type HomeSnapshot = CatalogMetadata & {
   jobs: Job[];
   companies: Company[];
   totalCompanies: number;
   totalJobs: number;
   snapshotAt: string;
+  matchingExamples?: MatchingExample[];
 };
 export const getHome = () => get<HomeSnapshot>("/home");
 export type CompanyPage = CatalogMetadata & {

@@ -1,6 +1,17 @@
 # Frontend decisions
 
 
+
+## Exact freshness dates and live matching examples — 2026-10-12
+
+The owner requested implementation, testing and merging this release. Job/discovery/recommendation cards show exact last-observed official-feed timestamps in IST, separate from posting/first-seen dates and application-link checks. Missing/invalid timestamps have an explicit unavailable state; a first observation is never labeled an employer posting date. Detail facts use the same formatter.
+
+The homepage replaces its fixed match card with selectable, clearly fictional software/data profiles matched to current published India jobs using the production scoring engine and 75% evidence threshold. The original journey animation remains labeled illustrative. Scores/reasons are recalculated against the hydrated published record; no qualifying result yields an honest empty state, and older backends yield an unavailable-example message. Public responses expose only the fixed sample preferences, projected job metadata and match evidence, never member data/raw payloads or persisted recommendations. Examples reuse the existing bounded public cache and catalog invalidation, with no source fetch or email. Backend support deploys before frontend consumption.
+
+Read-only rechecks of all four previously unavailable Lever URLs returned HTTP 200; no forced sync or stored-health change was made. The existing bounded conservative checker remains unchanged. Also completed the preceding profile fix's live acceptance after production deployed commit b7886fe: save retained the legacy skill, and the testing profile loaded 16 matches at 75%+ including 5 at 90%+. This supersedes that earlier entry's pending live verification, without claiming those counts are permanent.
+
+Local release checks: 154 backend and 54 frontend regressions, both lints, TypeScript, dependency audits and standard production build. Synthetic desktop/390px mobile checks cover profile switching, truthful no-match state and exact timestamps. A read-only run against the current production catalog found a 93% live match for each sample profile; this is pre-deployment validation, not proof the new API/UI is deployed. Rollback removes the optional homepage field/UI; no migration, subscription change or member data cleanup is needed.
+
 ## Consistent browser icons — 2026-10-12
 
 Inspection found an obsolete default icon in the App Router file-based metadata, which can add icon links alongside the configured REERHUB icon. Replace `app/icon.png` with the existing approved REERHUB PNG; `app/favicon.ico` already matches the approved ICO. No new logo or image transformation is introduced. This removes a real website branding inconsistency; it does not establish or fix the origin of the Amanox icon shown in Codex's activity display. Verify the generated icon URLs and served bytes after deployment.

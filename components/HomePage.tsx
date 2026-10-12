@@ -4,6 +4,7 @@ import { HomeAccountAction, HomeGuestNote } from "./HomeAccountAction";
 import JobCard from "@/components/JobCard";
 import Icon from "@/components/ui/Icon";
 import CompanyLogo from "@/components/CompanyLogo";
+import LiveMatchingExample from "./LiveMatchingExample";
 import MatchJourney from "@/components/MatchJourney";
 import { topHiringCompanies } from "@/lib/home-companies";
 import styles from "./HomePage.module.css";
@@ -69,75 +70,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
             </div>
             <MatchJourney companies={companies} />
             <div className={styles.resultGrid}>
-              <div className="match-demo p-5 sm:p-6">
-                <div className="mb-5 flex items-center justify-between gap-4">
-                  <div>
-                    <span className="text-xs font-semibold text-primary-deep">
-                      Illustrative Pro match
-                    </span>
-                    <h2 className="mt-2 text-xl font-bold text-ink">
-                      Backend Engineer
-                    </h2>
-                    <p className="mt-1 text-sm text-slate-600">
-                      Bengaluru · Hybrid
-                    </p>
-                  </div>
-                  <div
-                    className="match-score"
-                    data-visible={true}
-                    style={{ "--score": 86 } as CSSProperties}
-                  >
-                    <svg
-                      className={styles.scoreRing}
-                      viewBox="0 0 72 72"
-                      aria-hidden="true"
-                    >
-                      <circle
-                        cx="36"
-                        cy="36"
-                        r="32"
-                        fill="none"
-                        stroke="#eff6ff"
-                        strokeWidth="5"
-                      />
-                      <circle
-                        className={styles.scoreArc}
-                        cx="36"
-                        cy="36"
-                        r="32"
-                        fill="none"
-                        stroke="#2563eb"
-                        strokeWidth="5"
-                        pathLength="100"
-                        strokeDasharray="86 100"
-                        transform="rotate(-90 36 36)"
-                      />
-                    </svg>
-                    <span>86%</span>
-                  </div>
-                </div>
-                <div className="border-t border-slate-100 pt-4">
-                  <p className="mb-3 text-xs font-semibold text-slate-600">
-                    Why it fits this example profile
-                  </p>
-                  {[
-                    "Node.js and distributed systems",
-                    "Aligned with 3 years of experience",
-                    "Matches preferred location and work mode",
-                  ].map((x) => (
-                    <p
-                      key={x}
-                      className="mb-2 flex items-center gap-2 text-sm text-slate-700"
-                    >
-                      <Icon
-                        name="check"
-                        className="h-4 w-4 shrink-0 text-primary"
-                      />
-                      {x}
-                    </p>
-                  ))}
-                </div>
-              </div>
+              <LiveMatchingExample examples={data?.matchingExamples} />
               <div className={styles.digestPreview}>
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
                   <Icon name="mail" className="h-5 w-5" />

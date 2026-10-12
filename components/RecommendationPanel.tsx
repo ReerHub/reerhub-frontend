@@ -12,7 +12,7 @@ import {
 import { jobUrl } from "@/lib/reerhub";
 import CompanyLogo from "@/components/CompanyLogo";
 import Icon from "@/components/ui/Icon";
-import { timeAgo } from "@/lib/format";
+import JobFreshness from "./JobFreshness";
 
 import {
   countsAfterHide,
@@ -229,9 +229,11 @@ export default function RecommendationPanel({
                         {job.companyId.name}
                       </p>
                       <p className="mt-1 text-xs text-slate-600">
-                        Match #{index + 1} · Added{" "}
-                        {timeAgo(job.firstSeenAt) || "recently"}
+                        Match #{index + 1}
                       </p>
+                      <div className="mt-1 text-xs text-slate-600">
+                        <JobFreshness job={job} />
+                      </div>
                     </div>
                   </div>
                   <Link

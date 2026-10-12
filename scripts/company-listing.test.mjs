@@ -332,6 +332,8 @@ test("freshness distinguishes posting from feed checks without fabricating dates
   );
   assert.match(html, /Posted/);
   assert.match(html, /Last checked/);
+  assert.match(html, /12 Oct 2026/);
+  assert.match(html, /IST/);
   assert.match(html, /dateTime="2026-01-01/);
   assert.match(html, /dateTime="2026-10-12/);
   const legacy = renderToStaticMarkup(
@@ -339,4 +341,17 @@ test("freshness distinguishes posting from feed checks without fabricating dates
   );
   assert.match(legacy, /First seen/);
   assert.doesNotMatch(legacy, /Last checked|Posted/);
+  assert.match(legacy, /Feed check date unavailable/);
+  const invalid = renderToStaticMarkup(
+    React.createElement(Freshness, {
+      job: {
+        firstSeenAt: postedAt,
+        postedAt: "invalid",
+        lastSeenAt: "invalid",
+      },
+    }),
+  );
+  assert.doesNotMatch(invalid, /Invalid Date|dateTime="invalid"|Posted/);
+  assert.match(invalid, /First seen/);
+  assert.match(invalid, /Feed check date unavailable/);
 });

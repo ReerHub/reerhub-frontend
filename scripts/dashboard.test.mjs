@@ -53,5 +53,5 @@ test("cards preserve actual reasons, explicit outcomes and safe request lifetime
   assert.match(panel, /pending.current.has\(id\)/);
   assert.match(panel, /if \(active\)/);
   assert.doesNotMatch(panel, /Exceptional fit|onClick=\{load\}/);
-  assert.match(panel, /Added/);
+  assert.match(panel, /JobFreshness job=\{job\}/);
 });

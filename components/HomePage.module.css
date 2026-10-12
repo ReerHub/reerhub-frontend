@@ -133,31 +133,6 @@
   box-shadow: 0 16px 48px #1e40af09;
   animation: entrance 0.7s 0.2s ease-out both;
 }
-.home :global(.match-score) {
-  background: transparent;
-  color: #1d4ed8;
-}
-.scoreRing {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-.scoreArc {
-  stroke-dashoffset: 0;
-}
-.home :global(.match-score[data-visible="true"]) .scoreArc {
-  animation: score-reveal 1s ease-out both;
-}
-@keyframes score-reveal {
-  from {
-    stroke-dashoffset: 86;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
 .resultGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
