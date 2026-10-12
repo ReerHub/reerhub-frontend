@@ -87,6 +87,21 @@ export function profilePayload(draft: ProfileDraft): ProfileUpdate {
     remoteType: draft.remoteType,
   };
 }
+// PATCH only fields the user changed. Retained legacy catalog values must not
+// be revalidated as new selections when unrelated preferences are edited.
+export function changedProfilePayload(
+  draft: ProfileDraft,
+  baseline: ProfileUpdate,
+): ProfileUpdate {
+  return Object.fromEntries(
+    Object.entries(profilePayload(draft)).filter(
+      ([field, value]) =>
+        JSON.stringify(value) !==
+        JSON.stringify(baseline[field as keyof ProfileUpdate]),
+    ),
+  );
+}
+
 export function profileErrors(draft: ProfileDraft): Record<string, string> {
   const errors: Record<string, string> = {};
   if (!draft.name.trim()) errors.name = "Enter your name.";
