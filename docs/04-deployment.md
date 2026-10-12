@@ -71,3 +71,7 @@ and `/dashboard` like production. Production public hosts remain blocked.
 The Next admin proxy injects the backend admin marker only on allowed admin/test hosts; dedicated admin cookies and live database role checks remain required. Client-side route visibility alone is not authorization. Admin mutations use CSRF; no API key is exposed to the browser.
 
 The admin import panel consumes the backend-owned format, persisted progress and download results. Research remains manual on request; check database inventory plus previous backend JSON batches before creating the next batch. The panel checks feed availability, not independent employer ownership. No seed command, automatic crawler or spreadsheet integration is required.
+
+## Freshness and quality rollout
+
+Ask the owner before every merge. Backend support must reach approved staging first: shared duplicate policy, feed-observation/closure dates, private admin quality summaries and filters, and bounded ATS link checks. Frontend fields tolerate the older API while waiting for that deployment. After a separate frontend merge approval, verify Posted/First seen versus Last checked labels and admin quality review on desktop/mobile. Production requires new `develop` → `main` PRs and explicit approval for each merge after staging verification. No historical timestamps are rewritten; link checks do not expire roles.

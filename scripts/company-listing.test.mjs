@@ -298,3 +298,45 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     }
   }
 });
+
+test("freshness distinguishes posting from feed checks without fabricating dates", async () => {
+  const { default: Freshness } = await import(
+    compileFixture(
+      (
+        await readFile(
+          new URL("../components/JobFreshness.tsx", import.meta.url),
+          "utf8",
+        )
+      ).replace(
+        '"@/lib/format"',
+        JSON.stringify(
+          compileFixture(
+            await readFile(
+              new URL("../lib/format.ts", import.meta.url),
+              "utf8",
+            ),
+          ),
+        ),
+      ),
+    )
+  );
+  const require = createRequire(import.meta.url);
+  const React = require("react");
+  const { renderToStaticMarkup } = require("react-dom/server");
+  const postedAt = "2026-01-01T00:00:00Z";
+  const lastSeenAt = "2026-10-12T00:00:00Z";
+  const html = renderToStaticMarkup(
+    React.createElement(Freshness, {
+      job: { postedAt, firstSeenAt: postedAt, lastSeenAt },
+    }),
+  );
+  assert.match(html, /Posted/);
+  assert.match(html, /Last checked/);
+  assert.match(html, /dateTime="2026-01-01/);
+  assert.match(html, /dateTime="2026-10-12/);
+  const legacy = renderToStaticMarkup(
+    React.createElement(Freshness, { job: { firstSeenAt: postedAt } }),
+  );
+  assert.match(legacy, /First seen/);
+  assert.doesNotMatch(legacy, /Last checked|Posted/);
+});

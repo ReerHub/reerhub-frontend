@@ -56,6 +56,7 @@ const job = {
     "<p>Build reliable APIs and distributed backend services. Collaborate with engineering teams using Node.js, MongoDB and TypeScript.</p>",
   applicationUrl: "https://example.com/apply",
   postedAt: "2025-01-01T00:00:00.000Z",
+  lastSeenAt: new Date().toISOString(),
   updatedAt: "2025-01-02T00:00:00.000Z",
   skills: ["Node.js", "MongoDB", "TypeScript"],
   experience: { min: 2, max: 6 },
@@ -327,6 +328,13 @@ const server = http.createServer(async (req, res) => {
           users: mode === "empty" ? 0 : 128,
         },
         sourceHealth: { staleSources: sources.filter((s) => s.isStale).length },
+        jobQuality: {
+          staleJobs: 3,
+          brokenLinks: 1,
+          unavailableLinks: 2,
+          uncheckedLinks: 4,
+          duplicateJobs: 1,
+        },
         subscriptions:
           mode === "empty"
             ? {}
