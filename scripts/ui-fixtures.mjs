@@ -32,6 +32,7 @@ let profilePatch = {};
 let profileName;
 let profileMode = "partial";
 let dashboardMode = "populated";
+let catalogMode = process.env.FIXTURE_CATALOG_STATUS || "ready";
 let fixtureDelay = 0;
 let fixtureRequests = { recommendations: 0, saves: 0, feedback: 0 };
 const performanceMetrics = [];
@@ -114,6 +115,10 @@ const server = http.createServer(async (req, res) => {
       profileName = undefined;
       profileMode = url.searchParams.get("profile") || "partial";
       dashboardMode = url.searchParams.get("dashboard") || "populated";
+      catalogMode =
+        url.searchParams.get("catalog") ||
+        process.env.FIXTURE_CATALOG_STATUS ||
+        "ready";
       fixtureDelay = Math.min(Number(url.searchParams.get("delay")) || 0, 5000);
       fixtureRequests = { recommendations: 0, saves: 0, feedback: 0 };
       if (dashboardMode === "saved-pages")
@@ -192,7 +197,25 @@ const server = http.createServer(async (req, res) => {
   const json = (value, status = 200, meta) => {
     res.writeHead(status, { "Content-Type": "application/json" });
     res.end(
-      JSON.stringify({ success: status < 400, data: value, pagination: meta }),
+      JSON.stringify({
+        success: status < 400,
+        data: value,
+        pagination: meta,
+        ...([
+          "/home",
+          "/jobs",
+          "/jobs/sitemap",
+          "/companies",
+          "/companies/fixture-labs",
+          "/recommendations",
+        ].includes(path)
+          ? {
+              catalogStatus:
+                catalogMode === "initializing" ? "updating" : catalogMode,
+              catalogHasVerifiedJobs: catalogMode !== "initializing",
+            }
+          : {}),
+      }),
     );
   };
   if (path === "/fixture-metrics") {
@@ -770,6 +793,8 @@ const server = http.createServer(async (req, res) => {
   if (path === "/jobs/333333333333333333333333")
     return json({ ...job, _id: "333333333333333333333333", status: "closed" });
   if (path === "/jobs") {
+    if (catalogMode === "initializing")
+      return json([], 200, { total: 0, totalAvailable: 0, totalPages: 0 });
     if (process.env.FIXTURE_LOCATION_SCOPES === "1") {
       const jobs = scopeJobs(url);
       const member = state !== "anonymous";

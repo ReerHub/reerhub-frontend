@@ -7,6 +7,7 @@ import CompanyLogo from "@/components/CompanyLogo";
 import MatchJourney from "@/components/MatchJourney";
 import { topHiringCompanies } from "@/lib/home-companies";
 import styles from "./HomePage.module.css";
+import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import { TECH_TRACKS, type HomeSnapshot } from "@/lib/reerhub";
 export default function HomePage({ data }: { data: HomeSnapshot | null }) {
   const jobs = data?.jobs || [],
@@ -17,6 +18,9 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
   const featuredCompanies = topHiringCompanies(companies);
   return (
     <div className={styles.home}>
+      <div className="page-container">
+        <CatalogNotice data={data} />
+      </div>
       <section className={`${styles.hero} border-b border-slate-200 bg-white`}>
         <div
           className={`${styles.heroGrid} page-container grid items-center py-14 lg:py-20`}
@@ -313,7 +317,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
                 Browse jobs
               </Link>
             </div>
-          ) : loaded ? (
+          ) : catalogInitializing(data) ? null : loaded ? (
             <div
               className="surface-panel col-span-full p-8 text-center"
               role="status"

@@ -34,7 +34,32 @@ export const TECH_TRACKS: { value: TechTrack; label: string }[] = [
   { value: "eng-management", label: "Eng Mgmt" },
 ];
 
-export type Job = {
+export type CatalogMetadata = {
+  catalogStatus?: "ready" | "updating" | "attention";
+  catalogHasVerifiedJobs?: boolean;
+};
+export function catalogMetadata(json: CatalogMetadata): CatalogMetadata {
+  return {
+    ...(json.catalogStatus ? { catalogStatus: json.catalogStatus } : {}),
+    ...(typeof json.catalogHasVerifiedJobs === "boolean"
+      ? { catalogHasVerifiedJobs: json.catalogHasVerifiedJobs }
+      : {}),
+  };
+}
+export class DataUnavailableError extends Error {}
+async function discoveryFetch(input: string, init?: RequestInit) {
+  try {
+    return await fetch(input, init);
+  } catch (error) {
+    if (error instanceof TypeError)
+      throw new DataUnavailableError(
+        "Job information is temporarily unavailable.",
+      );
+    throw error;
+  }
+}
+
+export type Job = CatalogMetadata & {
   publicEligible?: boolean;
   _id: string;
   title: string;
@@ -75,7 +100,7 @@ export type CompanySource = {
   lastSuccessfulSyncAt?: string;
 };
 
-export type Company = {
+export type Company = CatalogMetadata & {
   _id: string;
   name: string;
   slug: string;
@@ -99,38 +124,48 @@ export class NotFoundError extends Error {
 }
 
 async function get<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const res = await discoveryFetch(`${API_BASE}${path}`, {
     cache: "no-store",
     ...init,
     headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
   });
   if (res.status === 404) throw new NotFoundError(404, path);
-  if (!res.ok) throw new Error(`API ${res.status}: ${path}`);
+  if (!res.ok) throw new DataUnavailableError(`API ${res.status}: ${path}`);
   const json = await res.json();
-  return json.data as T;
+  return (
+    json.data && !Array.isArray(json.data)
+      ? { ...json.data, ...catalogMetadata(json) }
+      : json.data
+  ) as T;
 }
 
 export const listJobsWithMeta = async (
   params: Record<string, string | number> = {},
   signal?: AbortSignal,
-): Promise<{
-  jobs: Job[];
-  total: number;
-  totalAvailable?: number;
-  totalPages: number;
-}> => {
+): Promise<
+  CatalogMetadata & {
+    jobs: Job[];
+    total: number;
+    totalAvailable?: number;
+    totalPages: number;
+  }
+> => {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value !== "" && value !== undefined) search.set(key, String(value));
   }
   const query = search.toString();
-  const res = await fetch(`${API_BASE}/jobs${query ? `?${query}` : ""}`, {
-    cache: "no-store",
-    signal,
-  });
-  if (!res.ok) throw new Error(`API ${res.status}: /jobs`);
+  const res = await discoveryFetch(
+    `${API_BASE}/jobs${query ? `?${query}` : ""}`,
+    {
+      cache: "no-store",
+      signal,
+    },
+  );
+  if (!res.ok) throw new DataUnavailableError(`API ${res.status}: /jobs`);
   const json = await res.json();
   return {
+    ...catalogMetadata(json),
     jobs: json.data as Job[],
     total: json.pagination?.total ?? 0,
     totalAvailable: json.pagination?.totalAvailable,
@@ -145,7 +180,7 @@ export const listCompanies = () =>
   typeof window === "undefined"
     ? get<Company[]>("/companies")
     : sharedRead("companies", () => get<Company[]>("/companies"));
-export type HomeSnapshot = {
+export type HomeSnapshot = CatalogMetadata & {
   jobs: Job[];
   companies: Company[];
   totalCompanies: number;
@@ -153,7 +188,7 @@ export type HomeSnapshot = {
   snapshotAt: string;
 };
 export const getHome = () => get<HomeSnapshot>("/home");
-export type CompanyPage = {
+export type CompanyPage = CatalogMetadata & {
   summary?: { totalCompanies: number; totalJobs: number };
   data: Company[];
   pagination: {
@@ -167,11 +202,11 @@ export const listCompanyPage = async (
   params: Record<string, string | number>,
   signal?: AbortSignal,
 ): Promise<CompanyPage> => {
-  const res = await fetch(
+  const res = await discoveryFetch(
     `${API_BASE}/companies?${new URLSearchParams(Object.entries(params).map(([key, value]) => [key, String(value)]))}`,
     { cache: "no-store", signal },
   );
-  if (!res.ok) throw new Error("Could not load companies");
+  if (!res.ok) throw new DataUnavailableError("Could not load companies");
   return res.json();
 };
 

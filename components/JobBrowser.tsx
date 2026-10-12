@@ -3,6 +3,7 @@
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import JobCard from "@/components/JobCard";
 import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 import { useAuth } from "@/components/AuthProvider";
@@ -233,6 +234,7 @@ export default function JobBrowser({
   const [jobs, setJobs] = useState<Job[]>(
     initialMatchesScope ? initialData?.jobs || [] : [],
   );
+  const [catalog, setCatalog] = useState(initialData);
   const [total, setTotal] = useState(initialData?.total || 0);
   const [totalAvailable, setTotalAvailable] = useState(
     initialData?.totalAvailable ?? companyTotal,
@@ -318,6 +320,7 @@ export default function JobBrowser({
               ]
             : result.jobs,
         );
+        setCatalog(result);
         setTotal(result.total);
         setTotalAvailable(result.totalAvailable);
         setTotalPages(result.totalPages);
@@ -422,6 +425,7 @@ export default function JobBrowser({
           onChange={(locationScope) => submit({ locationScope })}
         />
       )}
+      {!loading && !error && <CatalogNotice data={catalog} />}
       {showFilters && (
         <SearchFilters
           filters={filters}
@@ -498,7 +502,7 @@ export default function JobBrowser({
               onToggleSave={toggleSave}
             />
           ))
-        ) : (
+        ) : catalogInitializing(catalog) ? null : (
           <EmptyState onClear={clearAll} companyOnly={!!companyId} />
         )}
         {!loading &&

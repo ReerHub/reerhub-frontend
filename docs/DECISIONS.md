@@ -1,5 +1,13 @@
 # Frontend decisions
 
+## Keep verified browsing available during rule upgrades — 2026-10-12
+
+Public job/company discovery, counts, detail eligibility, sitemap feeds and interactive matches now share the stable evidence-verified baseline (data version 40002+). Running, interrupted or failed verification does not block this catalog; corrections appear progressively. Daily digests still defer until the latest pass completes. Public responses expose only `catalogStatus` and `catalogHasVerifiedJobs`; initialization, delayed updates and genuine data outages have distinct UI states. Detailed progress/errors stay admin-only.
+
+Repair retains 100-job scans and commits groups of up to 25 jobs using transactional bulk writes, owner/expiry checks, optimistic concurrency and idempotent classification events. Job writes/events/progress roll back together; conflicts reread current rows and interrupted work resumes. IDs, lifecycle, raw evidence, official links, manual edits and saved references are preserved. This supersedes earlier guidance that all public reads must return 503 until repair completion.
+
+Verification: all 141 backend regressions pass on an isolated localhost replica set, including mixed versions, failed updates, anonymous limits, initialization, deferred digests, transaction rollback, concurrent edits, lease takeover/resumption and duplicate-event prevention. A synthetic 60-job repair commits groups of 25/25/10; local timing is not a production throughput claim. Frontend discovery (10), SEO (8) and admin-operation (3) regressions, lint, TypeScript and the standard Turbopack production build pass. Desktop/390px mobile fixture checks cover updating, delayed, initialization and outage states. No production data writes, source syncs, emails, payments or deployments occurred. Backend-first staging deployment and live verification remain release gates.
+
 ## Pending trademark confirmation and follow-up — 2026-10-12
 
 The owner clarifies that REERHUB's government trademark submission/certificate process is not completed yet and expects completion tomorrow, 13 October. Do not describe the brand as officially registered based on that expectation. Follow up on 15 October to ask separately whether submission is completed and whether an official registration certificate was issued; record the confirmed status only after the owner's response. Keep REERHUB displayed without ™ or ® as requested. Completed sole-proprietorship registration is unchanged. A one-time chat follow-up is scheduled; it must ask, not automatically change legal claims or branding. Documentation only; the public website and legal pages remain unchanged pending confirmation.
