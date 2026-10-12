@@ -1,6 +1,7 @@
+import DiscoveryUnavailable from "@/components/DiscoveryUnavailable";
 import PageHeader from "@/components/PageHeader";
 import CompanyDirectory from "@/components/CompanyDirectory";
-import { listCompanyPage } from "@/lib/reerhub";
+import { listCompanyPage, DataUnavailableError } from "@/lib/reerhub";
 import { Suspense } from "react";
 import { pageMetadata } from "@/lib/seo";
 import {
@@ -29,13 +30,20 @@ export default async function CompaniesPage({
   const query = params.q || "",
     hiring = params.hiring === "true",
     page = Math.max(1, Number.parseInt(params.page || "1", 10) || 1);
-  const initialData = await listCompanyPage({
-    page,
-    limit: 50,
-    q: query,
-    hiring: String(hiring),
-    locationScope,
-  });
+  let initialData;
+  try {
+    initialData = await listCompanyPage({
+      page,
+      limit: 50,
+      q: query,
+      hiring: String(hiring),
+      locationScope,
+    });
+  } catch (error) {
+    if (error instanceof DataUnavailableError)
+      return <DiscoveryUnavailable href="/companies" />;
+    throw error;
+  }
   const companies = initialData.data;
   const roles = companies.reduce((sum, c) => sum + (c.activeJobs || 0), 0);
   return (

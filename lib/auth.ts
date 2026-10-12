@@ -1,4 +1,9 @@
-import { API_BASE, type Job } from "@/lib/reerhub";
+import {
+  API_BASE,
+  type Job,
+  type CatalogMetadata,
+  catalogMetadata,
+} from "@/lib/reerhub";
 import { sharedRead } from "./read-sharing";
 
 export type AuthUser = {
@@ -122,7 +127,11 @@ async function readBody<T>(res: Response): Promise<T> {
     err.data = json.data;
     throw err;
   }
-  return json.data as T;
+  return (
+    json.data && !Array.isArray(json.data)
+      ? { ...json.data, ...catalogMetadata(json) }
+      : json.data
+  ) as T;
 }
 
 /** Keep post-login redirects inside the app (blocks open-redirect abuse). */
@@ -257,15 +266,17 @@ export type Recommendation = {
 };
 
 export const getRecommendations = (minScore = 75, signal?: AbortSignal) =>
-  request<{
-    profileCompletion: number;
-    profileReady: boolean;
-    missingProfileFields: string[];
-    minimumRelevanceScore: number;
-    highMatchScore: number;
-    matchCounts: Record<"90" | "75" | "50" | "25" | "all", number>;
-    jobs: Recommendation[];
-  }>(`/recommendations?minScore=${minScore}&limit=50`, { signal });
+  request<
+    CatalogMetadata & {
+      profileCompletion: number;
+      profileReady: boolean;
+      missingProfileFields: string[];
+      minimumRelevanceScore: number;
+      highMatchScore: number;
+      matchCounts: Record<"90" | "75" | "50" | "25" | "all", number>;
+      jobs: Recommendation[];
+    }
+  >(`/recommendations?minScore=${minScore}&limit=50`, { signal });
 
 export const setRecommendationFeedback = (jobId: string, feedback: string) =>
   request<{ feedback: string }>(`/recommendations/${jobId}/feedback`, {

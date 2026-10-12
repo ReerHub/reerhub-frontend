@@ -60,8 +60,8 @@ export default function AdminDataQuality() {
         </p>
         {data && data.status !== "complete" && (
           <p>
-            India listings and match alerts remain paused until the initial
-            verification finishes.
+            Previously verified listings stay available as corrections are
+            applied. Daily match emails wait until verification finishes.
           </p>
         )}
         {(error || data?.error) && <p role="alert">{error || data?.error}</p>}

@@ -94,6 +94,12 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     },
   };
   const require = createRequire(import.meta.url);
+  const catalogNoticeUrl = compileFixture(
+    await readFile(
+      new URL("../components/CatalogNotice.tsx", import.meta.url),
+      "utf8",
+    ),
+  );
   const promptSource = (
     await readFile(
       new URL("../components/DiscoveryPrompt.tsx", import.meta.url),
@@ -134,6 +140,7 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     "utf8",
   );
   source = source
+    .replace('"./CatalogNotice"', JSON.stringify(catalogNoticeUrl))
     .replace(
       '"@/components/LocationScopeControl"',
       JSON.stringify(scopeControlUrl),

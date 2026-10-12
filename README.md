@@ -145,3 +145,9 @@ Set `FIXTURE_PORT` / `FIXTURE_API_PORT` for free ports. `FIXTURE_API_ONLY=1` sta
 Feature PR → `develop` → verify staging → `main`. Vercel uses Node 24 and server/build-time `API_URL`, `SITE_URL`, `GOOGLE_CLIENT_ID`, `TURNSTILE_SITE_KEY`; redeploy after changing them. Deploy compatible backend contracts first.
 
 [Deployment](docs/04-deployment.md) covers environment/host setup and release checks. [DECISIONS](docs/DECISIONS.md) retains dated decisions/results; newer notes supersede earlier blockers. [Design system](docs/design/design-system.md) defines current visual/interaction rules. Read [AGENTS](AGENTS.md) before changes.
+
+## Availability during job verification
+
+Public discovery, company counts, official job details, sitemap feeds and interactive Pro matches keep using previously verified jobs during a backend rule upgrade. Corrections appear progressively; counts may change until the latest pass completes. The backend's optional `catalogStatus` (`ready`, `updating`, `attention`) and `catalogHasVerifiedJobs` drive a small update/delay notice and a distinct first-verification state. Older backends without these fields retain normal behavior. Daily match emails wait for backend verification completion; private progress/errors remain in Admin Overview. Expected discovery data outages render explicit retry states; unexpected errors still use the existing error boundary.
+
+Deploy compatible backend availability support before these notices. Check running/failed/resumed verification and real endpoint outages on staging, including mobile, and verify sitemap availability before production promotion. Local synthetic fixture coverage is not evidence of a staging or production deployment.

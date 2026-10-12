@@ -1,5 +1,5 @@
 import HomePage from "@/components/HomePage";
-import { getHome } from "@/lib/reerhub";
+import { getHome, DataUnavailableError } from "@/lib/reerhub";
 import { pageMetadata, safeJsonLd, SITE } from "@/lib/seo";
 export const metadata = pageMetadata(
   "Engineering, AI & Tech Jobs in India",
@@ -7,7 +7,10 @@ export const metadata = pageMetadata(
   "/",
 );
 export default async function Home() {
-  const data = await getHome().catch(() => null);
+  const data = await getHome().catch((error) => {
+    if (error instanceof DataUnavailableError) return null;
+    throw error;
+  });
   return (
     <>
       <script

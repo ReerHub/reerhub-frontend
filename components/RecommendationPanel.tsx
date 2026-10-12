@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
+import type { CatalogMetadata } from "@/lib/reerhub";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import toast from "react-hot-toast";
 import {
@@ -37,6 +39,7 @@ export default function RecommendationPanel({
   savingIds?: string[];
   onToggleSave?: (id: string, saved: boolean) => void;
 }) {
+  const [catalog, setCatalog] = useState<CatalogMetadata>();
   const [jobs, setJobs] = useState<Recommendation[]>([]);
   const [profileReady, setProfileReady] = useState<boolean | null>(null);
   const [missingProfileFields, setMissingProfileFields] = useState<string[]>(
@@ -66,6 +69,7 @@ export default function RecommendationPanel({
     getRecommendations(minimumScore, controller.signal)
       .then((data) => {
         if (active) {
+          setCatalog(data);
           setJobs(data.jobs);
           setProfileReady(data.profileReady);
           setMissingProfileFields(data.missingProfileFields);
@@ -145,6 +149,7 @@ export default function RecommendationPanel({
           Pro intelligence
         </span>
       </div>
+      {!loading && !error && <CatalogNotice data={catalog} />}
       {profileReady === true && !error && (
         <div
           className="mb-7 flex flex-wrap gap-2"
@@ -389,7 +394,7 @@ export default function RecommendationPanel({
             </article>
           ))}
         </div>
-      ) : (
+      ) : catalogInitializing(catalog) && profileReady !== false ? null : (
         <div className="surface-panel flex flex-col items-center p-8 text-center sm:p-12">
           <Icon name="spark" className="mb-4 h-8 w-8 text-primary" />
           <h3 className="text-xl font-bold text-ink">
