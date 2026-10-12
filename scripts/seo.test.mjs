@@ -17,11 +17,14 @@ const sitemapSource = (await source("../lib/sitemap.ts"))
   );
 const sitemap = await import(url(sitemapSource));
 
-test("discovery keeps India-first positioning while accurately offering international extras", async () => {
+test("discovery explicitly offers only jobs with confirmed India eligibility", async () => {
   const page = await source("../app/jobs/page.tsx");
   assert.match(page, /"Tech Jobs in India"/);
-  assert.match(page, /description="India-first engineering and AI jobs from official employer sources\. You can also explore international openings as an optional extra\."/);
-  assert.doesNotMatch(page, /description="Official openings from companies hiring in India/);
+  assert.match(
+    page,
+    /description="Engineering and AI jobs with confirmed India eligibility, from official employer sources\."/,
+  );
+  assert.doesNotMatch(page, /international openings|International openings/);
   assert.match(page, /locationScope=\{locationScope\}/);
 });
 

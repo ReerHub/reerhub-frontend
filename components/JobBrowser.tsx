@@ -9,7 +9,6 @@ import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 import { useAuth } from "@/components/AuthProvider";
 import { useSavedJobs, toggleSaved } from "@/lib/saved-store";
 import SearchFilters, { Filters } from "@/components/SearchFilters";
-import LocationScopeControl from "@/components/LocationScopeControl";
 import { locationScopeFromParams } from "@/lib/location-scope";
 import {
   listCompanies,
@@ -419,12 +418,6 @@ export default function JobBrowser({
 
   return (
     <div>
-      {!showFilters && !savedOnly && (
-        <LocationScopeControl
-          value={filters.locationScope}
-          onChange={(locationScope) => submit({ locationScope })}
-        />
-      )}
       {!loading && !error && <CatalogNotice data={catalog} />}
       {showFilters && (
         <SearchFilters

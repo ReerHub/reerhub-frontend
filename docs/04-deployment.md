@@ -4,7 +4,7 @@
 
 Reviewed against current code on 2026-10-10. Deploy backend contracts before frontend consumers. A successful frontend build/healthy old API is not proof that the same release is deployed end to end.
 
-Location-scope release: stage backend `locationScope=india|international|all` and `pagination.totalAvailable` support before deploying frontend controls. Verify company headers/directory counts against job results in each scope, ten-role anonymous previews, free-member pagination, reload/Back/login return, unknown exclusion and unchanged India-first home/matching/alerts/sitemap. Keep backend `COMPACT_ATS_RAW_ENABLED` absent/false until these checks pass; it is a Render/backend setting, never a Vercel/browser setting. Then separately stage compaction during the next ordinary scheduled sync before production activation. No production cleanup or manual sync is part of rollout.
+India-only release: deploy the backend guard through develop first, verify its India-only health marker, then run the reviewed staging cleanup and strict validator installation. Deploy frontend after backend support; verify legacy URL normalization, India-only counts, ten-role anonymous previews, free-member pagination, city/work-mode filters and desktop/mobile layout. Promote backend through develop-to-main and perform approved production cleanup before frontend promotion. Keep raw compaction independently gated; do not use seeds, manual source syncs or broad collection wipes for this rollout.
 
 ## Environment variables
 

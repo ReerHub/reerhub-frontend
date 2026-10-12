@@ -7,7 +7,7 @@ import Icon from "@/components/ui/Icon";
 import { locationScopeFromParams } from "@/lib/location-scope";
 export const metadata = pageMetadata(
   "Tech Jobs in India",
-  "India-first engineering and AI jobs from official employer sources. International openings are an optional extra.",
+  "Engineering and AI jobs with confirmed India eligibility, from official employer sources.",
   "/jobs",
 );
 export default async function Page({
@@ -27,7 +27,7 @@ export default async function Page({
     <div>
       <PageHeader
         title="Find your next tech role."
-        description="India-first engineering and AI jobs from official employer sources. You can also explore international openings as an optional extra."
+        description="Engineering and AI jobs with confirmed India eligibility, from official employer sources."
       >
         <span className="inline-flex items-center gap-2 text-xs font-semibold text-teal-800">
           <Icon name="shield" className="h-4 w-4" />
