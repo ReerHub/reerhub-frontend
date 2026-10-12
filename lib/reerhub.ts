@@ -82,6 +82,8 @@ export type Job = CatalogMetadata & {
   sourceUrl: string;
   postedAt?: string;
   firstSeenAt: string;
+  lastSeenAt?: string;
+  closedAt?: string;
   status: string;
   companyId: {
     _id: string;

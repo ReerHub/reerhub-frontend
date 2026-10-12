@@ -3,7 +3,8 @@ import CompanyLogo from "@/components/CompanyLogo";
 import Icon from "@/components/ui/Icon";
 import type { Job } from "@/lib/reerhub";
 import { jobUrl, TECH_TRACKS } from "@/lib/reerhub";
-import { locationLabel, timeAgo } from "@/lib/format";
+import JobFreshness from "@/components/JobFreshness";
+import { locationLabel } from "@/lib/format";
 export default function JobCard({
   job,
   saved,
@@ -80,9 +81,7 @@ export default function JobCard({
           className="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-4 text-xs text-slate-600"
           style={{ marginTop: 24 }}
         >
-          <span>
-            {timeAgo(job.postedAt || job.firstSeenAt) || "Recently listed"}
-          </span>
+          <JobFreshness job={job} />
           <span className="inline-flex items-center gap-2 font-semibold text-primary">
             View role
             <Icon name="arrow" className="h-4 w-4" />
