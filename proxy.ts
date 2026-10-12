@@ -31,6 +31,19 @@ const adminRewrite = (req: NextRequest, pathname: string) => {
 };
 
 export function proxy(req: NextRequest) {
+  if (
+    !req.nextUrl.pathname.startsWith("/api/") &&
+    !req.nextUrl.pathname.startsWith("/admin") &&
+    (req.nextUrl.searchParams.has("locationScope") ||
+      req.nextUrl.searchParams.has("indiaOnly"))
+  ) {
+    const normalized = req.nextUrl.clone();
+    normalized.searchParams.delete("locationScope");
+    normalized.searchParams.delete("indiaOnly");
+    normalized.searchParams.delete("page");
+    return NextResponse.redirect(normalized);
+  }
+
   const { pathname } = req.nextUrl;
   const host = req.headers.get("host") || "";
   const admin = isDedicatedAdminHost(host);

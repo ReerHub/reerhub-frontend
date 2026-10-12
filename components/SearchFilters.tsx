@@ -6,7 +6,6 @@ import { TECH_TRACKS } from "@/lib/reerhub";
 import Icon from "@/components/ui/Icon";
 import styles from "./SearchFilters.module.css";
 import type { LocationScope } from "@/lib/location-scope";
-import LocationScopeControl from "@/components/LocationScopeControl";
 
 export type Filters = {
   q: string;
@@ -156,10 +155,6 @@ export default function SearchFilters({
             className={open ? styles.chevronOpen : styles.chevron}
           />
         </button>
-        <LocationScopeControl
-          value={filters.locationScope}
-          onChange={(locationScope) => onSubmit({ locationScope })}
-        />
         <p className={styles.scope}>
           {filters.sort === "az" ? "Title A–Z" : "Newest first"}
         </p>

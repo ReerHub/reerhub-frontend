@@ -1050,7 +1050,7 @@ function OverviewView({
       "briefcase",
     ],
     [
-      "Worldwide stored-active",
+      "Stored active India jobs",
       data.counts.activeJobs,
       "Includes unpublished and foreign records",
       "jobs",

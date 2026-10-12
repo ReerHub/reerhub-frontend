@@ -5,7 +5,6 @@ import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 import ts from "typescript";
 import { JSDOM } from "jsdom";
-import { scopeControlUrl } from "./location-fixtures.mjs";
 
 test("search filters stay compact, apply once, cancel safely and expose removable selections", async () => {
   const dom = new JSDOM('<div id="root"></div>', {
@@ -32,10 +31,6 @@ test("search filters stay compact, apply once, cancel safely and expose removabl
     "utf8",
   );
   source = source
-    .replace(
-      '"@/components/LocationScopeControl"',
-      JSON.stringify(scopeControlUrl),
-    )
     .replace(
       'import { TECH_TRACKS } from "@/lib/reerhub";',
       'const TECH_TRACKS = [{value: "software", label: "Software"}, {value: "data", label: "Data"}];',
@@ -179,12 +174,9 @@ test("search filters stay compact, apply once, cancel safely and expose removabl
     await act(async () => button("Clear all").click());
     assert.ok(!document.querySelector('[aria-label="Active search filters"]'));
     assert.equal(filters.locationScope, "india");
-    filters = { ...defaults, locationScope: "all", sort: "az" };
+    filters = { ...defaults, locationScope: "india", sort: "az" };
     await act(async () => render());
-    await act(async () =>
-      document.querySelector('input[type="radio"][value="india"]').click(),
-    );
-    assert.equal(filters.locationScope, "india");
+    assert.equal(document.querySelector('input[type="radio"][value="india"]'), null);
     assert.equal(filters.sort, "az");
     await act(async () => button("Search jobs").click());
     assert.equal(calls.at(-1), undefined);

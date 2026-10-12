@@ -5,20 +5,16 @@ import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 import ts from "typescript";
 import { JSDOM } from "jsdom";
-import {
-  scopeUrl,
-  scopeControlUrl,
-  compileFixture,
-} from "./location-fixtures.mjs";
+import { scopeUrl, compileFixture } from "./location-fixtures.mjs";
 
 test("location URLs default to India and country labels never invent India", async () => {
   const { locationScopeFromParams } = await import(scopeUrl);
   for (const [query, expected] of [
     ["", "india"],
-    ["indiaOnly=false", "all"],
-    ["locationScope=international&indiaOnly=true", "international"],
+    ["indiaOnly=false", "india"],
+    ["locationScope=international&indiaOnly=true", "india"],
     ["locationScope=india&indiaOnly=false", "india"],
-    ["locationScope=all", "all"],
+    ["locationScope=all", "india"],
   ])
     assert.equal(locationScopeFromParams(new URLSearchParams(query)), expected);
   const { locationLabel } = await import(
@@ -141,10 +137,6 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
   );
   source = source
     .replace('"./CatalogNotice"', JSON.stringify(catalogNoticeUrl))
-    .replace(
-      '"@/components/LocationScopeControl"',
-      JSON.stringify(scopeControlUrl),
-    )
     .replace('"@/lib/location-scope"', JSON.stringify(scopeUrl))
     .replace(
       /import \{ usePathname, useSearchParams, useRouter \} from "next\/navigation";/,
@@ -252,16 +244,14 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     assert.equal(document.querySelectorAll("article").length, 22);
     assert.equal(calls.at(-1).page, 2);
     assert.equal(calls.at(-1).companyId, "correct");
+    queryParams = "companyId=wrong&locationScope=international";
     await act(async () => {
-      document.querySelector('input[value="international"]').click();
-      await settle();
-      render("first");
+      render("legacy-scope");
       await settle();
     });
-    assert.match(navigations.at(-1), /locationScope=international/);
-    assert.equal(calls.at(-1).locationScope, "international");
+    assert.equal(document.querySelector('input[value="international"]'), null);
+    assert.equal(calls.at(-1).locationScope, "india");
     assert.equal(calls.at(-1).page, 1);
-    assert.equal(calls.at(-1).companyId, "correct");
     queryParams = "companyId=wrong";
     fail = true;
     await act(async () => {
