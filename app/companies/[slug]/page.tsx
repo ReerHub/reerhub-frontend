@@ -1,9 +1,14 @@
+import DiscoveryUnavailable from "@/components/DiscoveryUnavailable";
 import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import CompanyLogo from "@/components/CompanyLogo";
 import JobBrowser from "@/components/JobBrowser";
-import { listJobsWithMeta, NotFoundError } from "@/lib/reerhub";
+import {
+  listJobsWithMeta,
+  NotFoundError,
+  DataUnavailableError,
+} from "@/lib/reerhub";
 import { readCompany as getCompany } from "@/lib/server-reads";
 import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
 import {
@@ -26,6 +31,12 @@ export async function generateMetadata({
     );
   } catch (error) {
     if (error instanceof NotFoundError) notFound();
+    if (error instanceof DataUnavailableError)
+      return pageMetadata(
+        "Company openings",
+        "Explore official company openings.",
+        `/companies/${slug}`,
+      );
     throw error;
   }
 }
@@ -59,6 +70,8 @@ export default async function CompanyDetailPage({
     initialData = roles;
   } catch (err) {
     if (err instanceof NotFoundError) notFound();
+    if (err instanceof DataUnavailableError)
+      return <DiscoveryUnavailable href={`/companies/${slug}`} />;
     throw err;
   }
   // The company count is complete; anonymous job lists are capped previews.

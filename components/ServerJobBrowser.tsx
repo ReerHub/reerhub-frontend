@@ -1,5 +1,9 @@
 import JobBrowser from "./JobBrowser";
-import { listJobsWithMeta, type TechTrack } from "@/lib/reerhub";
+import {
+  listJobsWithMeta,
+  DataUnavailableError,
+  type TechTrack,
+} from "@/lib/reerhub";
 
 export default async function ServerJobBrowser({
   heading,
@@ -26,7 +30,8 @@ export default async function ServerJobBrowser({
       ...(track ? { techTrack: track } : {}),
       ...initialFilters,
     });
-  } catch {
+  } catch (error) {
+    if (!(error instanceof DataUnavailableError)) throw error;
     /* The client retry remains available during source outages. */
   }
   return (

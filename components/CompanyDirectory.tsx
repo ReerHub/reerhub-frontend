@@ -1,4 +1,5 @@
 "use client";
+import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -103,6 +104,7 @@ export default function CompanyDirectory({
   ]);
   return (
     <>
+      {!loading && !error && <CatalogNotice data={result} />}
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <label className="flex w-full max-w-md items-center gap-3 rounded-xl border border-slate-300 bg-white px-4">
           <Icon name="search" className="h-5 w-5 text-slate-600" />
@@ -189,22 +191,25 @@ export default function CompanyDirectory({
           </Link>
         ))}
       </div>
-      {!loading && !error && !filtered.length && (
-        <div className="surface-panel p-10 text-center">
-          <h2 className="text-xl font-bold text-ink">No companies found.</h2>
-          <p className="mt-3 text-sm text-slate-600">
-            Try another name or show all companies.
-          </p>
-          <button
-            className="btn-secondary mt-5"
-            onClick={() => {
-              update("", false);
-            }}
-          >
-            Clear search
-          </button>
-        </div>
-      )}
+      {!loading &&
+        !error &&
+        !catalogInitializing(result) &&
+        !filtered.length && (
+          <div className="surface-panel p-10 text-center">
+            <h2 className="text-xl font-bold text-ink">No companies found.</h2>
+            <p className="mt-3 text-sm text-slate-600">
+              Try another name or show all companies.
+            </p>
+            <button
+              className="btn-secondary mt-5"
+              onClick={() => {
+                update("", false);
+              }}
+            >
+              Clear search
+            </button>
+          </div>
+        )}
       {!loading && !error && result.pagination.totalPages > 1 && (
         <nav
           className="mt-8 flex items-center justify-center gap-4"
