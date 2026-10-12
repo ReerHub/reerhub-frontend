@@ -21,11 +21,3 @@ export const compileFixture = (source) => {
 export const scopeUrl = compileFixture(
   await readFile(new URL("../lib/location-scope.ts", import.meta.url), "utf8"),
 );
-export const scopeControlUrl = compileFixture(
-  (
-    await readFile(
-      new URL("../components/LocationScopeControl.tsx", import.meta.url),
-      "utf8",
-    )
-  ).replace('"@/lib/location-scope"', JSON.stringify(scopeUrl)),
-);

@@ -13,7 +13,7 @@ const sharing = `data:text/javascript;base64,${Buffer.from(await compile("../lib
 const code = (await compile("../lib/auth.ts"))
   .replace(
     /import .*from ["']@\/lib\/reerhub["'];/,
-    "const API_BASE = '/api/v1';",
+    "const API_BASE = '/api/v1'; const catalogMetadata = () => ({});",
   )
   .replace(/from ["']\.\/read-sharing["']/g, `from '${sharing}'`);
 const auth = await import(

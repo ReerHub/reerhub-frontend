@@ -31,7 +31,8 @@ export default function AdminLocationReview({
       <h3>Location review: {job.locationScope || "awaiting verification"}</h3>
       <p>
         {job.locationReason}. Decide only from official employer evidence; the
-        link is recorded, not fetched.
+        link is recorded, not fetched. A non-India decision removes the job and
+        its saved references.
       </p>
       {!job.locationSignature ? (
         <p>Wait for data verification before reviewing this record.</p>
@@ -41,7 +42,9 @@ export default function AdminLocationReview({
             Decision
             <select value={scope} onChange={(e) => setScope(e.target.value)}>
               <option value="india">Confirmed India eligibility</option>
-              <option value="foreign">Foreign only</option>
+              <option value="foreign">
+                Not eligible for India — remove job
+              </option>
             </select>
           </label>
           <label className="field">

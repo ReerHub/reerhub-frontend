@@ -3,7 +3,6 @@ import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import LocationScopeControl from "@/components/LocationScopeControl";
 import {
   locationScopeFromParams,
   type LocationScope,
@@ -125,12 +124,6 @@ export default function CompanyDirectory({
           />
           With open roles
         </label>
-      </div>
-      <div className="mb-6">
-        <LocationScopeControl
-          value={locationScope}
-          onChange={(scope) => update(query, hiring, 1, scope)}
-        />
       </div>
       <p className="mb-5 text-xs font-medium text-slate-600" role="status">
         {loading

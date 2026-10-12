@@ -1,5 +1,13 @@
 # Frontend decisions
 
+## Strict India-only retention — 2026-10-12
+
+The owner explicitly requests confirmed India jobs only, no stored foreign/unclear jobs, and cleanup of configured local, staging and production data. Only testing users exist; a brief maintenance window is acceptable. This overrides earlier retention of unpublished foreign/unknown records and optional international discovery. Keep closed India jobs, companies/sources, accounts/subscriptions and email-delivery deduplication.
+
+Sync evaluates current source evidence and valid manual decisions before writes, counts genuinely skipped postings, and removes existing jobs that lose eligibility. Complete foreign-only feeds can close missing India roles; failures/incomplete evidence preserve verified jobs. Repair and admin changes share transactional reference removal. Source edits retain last verified India classification until re-evaluation. Cleanup defaults to explicit-target dry-run, reclassifies retained evidence, drains writers under renewable maintenance ownership, commits 25-job groups, scrubs deleted-job audit payloads, and installs a strict collection validator. Durable revisions invalidate running API caches after external cleanup. Legacy scope parameters normalize to India and unsafe detail URLs return 404.
+
+Local acceptance: 144 backend regressions pass on an isolated localhost replica set, including dry-run/apply/idempotence, strict storage validation, rollback, stale-row protection, dependent references, delivery deduplication and cross-process cache invalidation. Frontend discovery, SEO, admin, profile, operations, performance and security checks, lint, TypeScript and the standard production build pass. Live dry-runs identified 974 staging and 1,746 production removal candidates, plus 29 in the configured Atlas-backed local database; these are dated previews, not proof of completed cleanup. Backend-first deployment and live cleanup results will be recorded after execution.
+
 ## Keep verified browsing available during rule upgrades — 2026-10-12
 
 Public job/company discovery, counts, detail eligibility, sitemap feeds and interactive matches now share the stable evidence-verified baseline (data version 40002+). Running, interrupted or failed verification does not block this catalog; corrections appear progressively. Daily digests still defer until the latest pass completes. Public responses expose only `catalogStatus` and `catalogHasVerifiedJobs`; initialization, delayed updates and genuine data outages have distinct UI states. Detailed progress/errors stay admin-only.
