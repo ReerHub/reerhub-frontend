@@ -30,6 +30,7 @@ const FILTER_KEYS: (keyof Filters)[] = [
   "skills",
   "seniority",
   "employmentType",
+  "earlyCareer",
   "sort",
   "locationScope",
 ];
@@ -110,6 +111,7 @@ function filtersFromSearchParams(
     skills: sp.get("skills") ?? "",
     seniority: sp.get("seniority") ?? "",
     employmentType: sp.get("employmentType") ?? "",
+    earlyCareer: sp.get("earlyCareer") ?? "",
     sort: sp.get("sort") === "az" ? "az" : "",
     locationScope: locationScopeFromParams(sp),
   };
@@ -142,6 +144,7 @@ function buildJobQuery(
     skills: activeFilters.skills,
     seniority: activeFilters.seniority,
     employmentType: activeFilters.employmentType,
+    earlyCareer: activeFilters.earlyCareer || "",
     sort: activeFilters.sort,
     locationScope: activeFilters.locationScope,
     page: pageToLoad,

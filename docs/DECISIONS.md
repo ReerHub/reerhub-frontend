@@ -1,3 +1,9 @@
+## SEO, matching and conversion: Phase 2 — 2026-10-13
+
+The requested sequential six-phase release remains on feature branches until all gates pass; no phase PR or main/develop merge. Pro recommendations expose Profile matches, Stretch roles and Needs review with independent group/tier counts, experience gaps and uncertainty explanations. Scores represent relevance, not hiring probability or full qualification verification. Empty qualified results disclose roles in other groups; those groups never enter strong daily emails. Discovery includes explicit fresher eligibility and internship evidence filters. Runtime fields are additive for backend-first rollout; old responses retain the qualified default.
+
+Phase 2 local checks: all 55 frontend regressions, including rendered group switching and honest gap explanations, lint and TypeScript passed. Backend isolated gates passed with 164 regressions. No live release or provider action is claimed. Palette, prices, trial duration and member entitlements remain unchanged.
+
 # Frontend decisions
 
 

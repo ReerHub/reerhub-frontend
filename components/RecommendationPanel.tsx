@@ -8,6 +8,7 @@ import {
   getRecommendations,
   setRecommendationFeedback,
   type Recommendation,
+  type RecommendationGroup,
 } from "@/lib/auth";
 import { jobUrl } from "@/lib/reerhub";
 import CompanyLogo from "@/components/CompanyLogo";
@@ -39,6 +40,16 @@ export default function RecommendationPanel({
   savingIds?: string[];
   onToggleSave?: (id: string, saved: boolean) => void;
 }) {
+  const [group, setGroup] = useState<RecommendationGroup>("qualified");
+  const [groupCounts, setGroupCounts] = useState<
+    Partial<Record<RecommendationGroup, number>>
+  >({});
+  const groupLabel =
+    group === "qualified"
+      ? "Profile matches"
+      : group === "stretch"
+        ? "Stretch roles"
+        : "Needs review";
   const [catalog, setCatalog] = useState<CatalogMetadata>();
   const [jobs, setJobs] = useState<Recommendation[]>([]);
   const [profileReady, setProfileReady] = useState<boolean | null>(null);
@@ -66,7 +77,7 @@ export default function RecommendationPanel({
     let active = true;
     const controller = new AbortController();
     mounted.current = true;
-    getRecommendations(minimumScore, controller.signal)
+    getRecommendations(minimumScore, controller.signal, group)
       .then((data) => {
         if (active) {
           setCatalog(data);
@@ -74,6 +85,7 @@ export default function RecommendationPanel({
           setProfileReady(data.profileReady);
           setMissingProfileFields(data.missingProfileFields);
           setMatchCounts(data.matchCounts);
+          setGroupCounts(data.groupCounts || {});
         }
       })
       .catch(() => {
@@ -87,7 +99,7 @@ export default function RecommendationPanel({
       controller.abort();
       mounted.current = false;
     };
-  }, [minimumScore, attempt]);
+  }, [minimumScore, attempt, group]);
   const feedback = async (id: string, value: string) => {
     if (pending.current.has(id)) return;
     pending.current.add(id);
@@ -135,9 +147,7 @@ export default function RecommendationPanel({
             id="matches-title"
             className="scroll-mt-24 text-2xl font-bold tracking-tight text-ink"
           >
-            {minimumScore === 0
-              ? "All profile-ranked roles"
-              : `${minimumScore}%+ profile matches`}
+            {groupLabel}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             {minimumScore === 0
@@ -149,6 +159,42 @@ export default function RecommendationPanel({
           Pro intelligence
         </span>
       </div>
+      <p className="mb-4 text-sm text-slate-600">
+        Profile matches meet the verified experience requirement. Stretch roles
+        have an explicit experience gap. Needs review means the employer’s
+        mandatory experience could not be verified.
+      </p>
+      {profileReady === true && (
+        <div
+          role="group"
+          aria-label="Choose recommendation group"
+          className="mb-5 flex flex-wrap gap-2"
+        >
+          {(["qualified", "stretch", "needs-review"] as const).map((value) => (
+            <button
+              type="button"
+              key={value}
+              aria-pressed={group === value}
+              className={group === value ? "btn-primary" : "btn-secondary"}
+              onClick={() => {
+                if (group !== value) {
+                  setLoading(true);
+                  setError(false);
+                  setMinimumScore(value === "qualified" ? 75 : 0);
+                  setGroup(value);
+                }
+              }}
+            >
+              {value === "qualified"
+                ? "Profile matches"
+                : value === "stretch"
+                  ? "Stretch roles"
+                  : "Needs review"}{" "}
+              ({groupCounts[value] ?? 0})
+            </button>
+          ))}
+        </div>
+      )}
       {!loading && !error && <CatalogNotice data={catalog} />}
       {profileReady === true && !error && (
         <div
@@ -173,7 +219,9 @@ export default function RecommendationPanel({
                     : "border-slate-200 bg-white text-slate-700 hover:border-primary/40 hover:text-primary"
                 }`}
               >
-                {tier.label}{" "}
+                {tier.value === 75 && group !== "qualified"
+                  ? "75%+"
+                  : tier.label}{" "}
                 <span className="match-tier-count ml-1">
                   {loading ? "—" : count}
                 </span>
@@ -183,9 +231,10 @@ export default function RecommendationPanel({
         </div>
       )}
       <p className="mb-6 text-xs leading-6 text-slate-600">
-        Daily emails stay at 75%+ regardless of this dashboard filter. You’ll
-        receive one digest with up to five qualifying roles, only when matches
-        are available.
+        Scores describe profile relevance, not hiring probability or complete
+        qualification verification. Daily emails include only verified Profile
+        matches at 75%+. You’ll receive one digest with up to five qualifying
+        roles, only when matches are available.
       </p>
       {loading ? (
         <div className="space-y-4">
@@ -272,13 +321,13 @@ export default function RecommendationPanel({
                     <span>{job.fit.relevanceScore}%</span>
                   </div>
                   <p className="mt-2 text-[11px] font-medium text-slate-600">
-                    Profile match
+                    Profile relevance
                   </p>
                 </div>
               </div>
               <div className="my-5 rounded-xl bg-surface p-4">
                 <h3 className="mb-2 text-xs font-semibold text-slate-700">
-                  Why this matches
+                  Matching evidence
                 </h3>
                 <ul className="space-y-2">
                   {job.fit.reasons.slice(0, 3).map((reason) => (
@@ -294,6 +343,17 @@ export default function RecommendationPanel({
                     </li>
                   ))}
                 </ul>
+                {[
+                  ...(job.fit.fitGaps || []),
+                  ...(job.fit.uncertainties || []),
+                ].map((message) => (
+                  <p
+                    key={message}
+                    className="mt-3 text-sm font-medium text-slate-700"
+                  >
+                    {message}
+                  </p>
+                ))}
                 {job.fit.reasons.length > 3 && (
                   <details className="mt-2">
                     <summary className="flex min-h-11 cursor-pointer items-center text-xs font-semibold text-primary">
@@ -413,6 +473,17 @@ export default function RecommendationPanel({
                 ? "No profile-ranked roles are available right now. We’ll keep checking fresh official openings."
                 : `No current roles meet the ${minimumScore}% relevance threshold. You can broaden your shortlist without leaving your Pro workspace.`}
           </p>
+          {profileReady &&
+            group === "qualified" &&
+            ((groupCounts.stretch || 0) > 0 ||
+              (groupCounts["needs-review"] || 0) > 0) && (
+              <p className="mt-3 text-sm text-slate-600">
+                Other roles are available: {groupCounts.stretch || 0} Stretch
+                roles and {groupCounts["needs-review"] || 0} Needs review.
+                Choose a group above to review their experience gaps or
+                uncertainties.
+              </p>
+            )}
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             {profileReady === false ? (
               <Link href="/profile" className="btn-primary">
