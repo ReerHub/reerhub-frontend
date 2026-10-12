@@ -159,6 +159,7 @@ export default function JobBrowser({
   onToggleSave,
   initialData,
   companyId,
+  companyTotal,
 }: {
   initialCategory?: "" | TechTrack;
   heading?: string;
@@ -171,6 +172,7 @@ export default function JobBrowser({
   onToggleSave?: (jobId: string, saved: boolean) => void;
   initialData?: Awaited<ReturnType<typeof listJobsWithMeta>>;
   companyId?: string;
+  companyTotal?: number;
 }) {
   const { user, loading: authLoading } = useAuth();
   const pathname = usePathname();
@@ -391,13 +393,25 @@ export default function JobBrowser({
           onClear={clearAll}
         />
       )}
-      <div className="flex items-end justify-between mb-5 mt-10">
+      <div className="flex flex-wrap items-end justify-between gap-3 mb-5 mt-10">
         <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
           {searched ? "Results" : heading}
         </h2>
         {!loading && jobs.length > 0 && (
-          <p className="text-sm text-slate-500">
-            {total} {total === 1 ? "role" : "roles"}
+          <p className="text-sm text-slate-500 text-right">
+            {!user && !authLoading
+              ? companyTotal !== undefined
+                ? `Showing ${jobs.length} of ${Math.max(companyTotal, jobs.length)} roles`
+                : `${jobs.length} ${jobs.length === 1 ? "role" : "roles"} · Preview`
+              : `${total} ${total === 1 ? "role" : "roles"}`}
+            {!user &&
+              !authLoading &&
+              jobs.length >= 10 &&
+              (companyTotal === undefined || companyTotal > jobs.length) && (
+                <span className="mt-1 block text-xs text-blue-700">
+                  Sign in for the full list
+                </span>
+              )}
           </p>
         )}
       </div>
@@ -439,8 +453,21 @@ export default function JobBrowser({
         ) : (
           <EmptyState onClear={clearAll} companyOnly={!!companyId} />
         )}
+        {!loading &&
+          !error &&
+          !user &&
+          !authLoading &&
+          jobs.length >= 10 &&
+          (companyTotal === undefined || companyTotal > jobs.length) && (
+            <DiscoveryPrompt count={jobs.length} total={companyTotal} card />
+          )}
       </div>
-      {!loading && !error && <DiscoveryPrompt count={jobs.length} />}
+      {!loading &&
+        !error &&
+        !(
+          jobs.length >= 10 &&
+          (companyTotal === undefined || companyTotal > jobs.length)
+        ) && <DiscoveryPrompt count={jobs.length} total={companyTotal} />}
       {!loading && !error && user && page < totalPages && (
         <div className="text-center mt-9">
           <button
