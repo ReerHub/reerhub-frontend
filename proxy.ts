@@ -30,6 +30,32 @@ const adminRewrite = (req: NextRequest, pathname: string) => {
   );
 };
 
+// Resolve missing jobs before the loading boundary streams HTTP 200. Only an
+// authoritative API 404 hides the page; outages still reach its error boundary.
+async function jobDetailResponse(req: NextRequest, response: NextResponse) {
+  const slug = req.nextUrl.pathname.slice("/jobs/".length);
+  const jobId = /(?:^|-)([a-f0-9]{24})$/.exec(slug)?.[1];
+  if (jobId) {
+    try {
+      const backend = (
+        process.env.API_URL || "http://localhost:8000/api/v1"
+      ).replace(/\/+$/, "");
+      const result = await fetch(`${backend}/jobs/${jobId}`, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(5000),
+      });
+      await result.body?.cancel();
+      if (result.status !== 404) return response;
+    } catch {
+      return response;
+    }
+  }
+  const url = req.nextUrl.clone();
+  url.pathname = "/__reerhub_not_found";
+  url.search = "";
+  return unindexed(NextResponse.rewrite(url, { status: 404 }));
+}
+
 export function proxy(req: NextRequest) {
   if (
     !req.nextUrl.pathname.startsWith("/api/") &&
@@ -106,11 +132,15 @@ export function proxy(req: NextRequest) {
 
   if (!PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
     const response = NextResponse.next();
-    return sharedTestHost ||
+    const publicResponse =
+      sharedTestHost ||
       (process.env.SITE_URL || "").includes("staging") ||
       /^\/(?:login|verify-magic|verify-email)(?:\/|$)/.test(pathname)
-      ? unindexed(response)
-      : response;
+        ? unindexed(response)
+        : response;
+    return /^\/jobs\/[^/]+$/.test(pathname)
+      ? jobDetailResponse(req, publicResponse)
+      : publicResponse;
   }
   const session =
     req.cookies.get("accessToken")?.value ||
