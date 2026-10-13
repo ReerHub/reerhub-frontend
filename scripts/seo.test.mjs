@@ -146,7 +146,7 @@ test("only eligible active jobs emit complete structured data", () => {
   );
 });
 
-test("sitemap partitions URLs, escapes XML and preserves actual dates", () => {
+test("sitemap partitions URLs, escapes XML and omits generic persistence dates", () => {
   const entries = Array.from({ length: 20001 }, (_, i) => ({
     url: `https://reerhub.com/jobs/${i}`,
   }));
@@ -159,7 +159,7 @@ test("sitemap partitions URLs, escapes XML and preserves actual dates", () => {
     { url: "https://example.com/other", updatedAt: "invalid" },
   ]);
   assert.ok(xml.includes("&amp;"));
-  assert.equal((xml.match(/<lastmod>/g) || []).length, 1);
+  assert.equal((xml.match(/<lastmod>/g) || []).length, 0);
 });
 
 test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors", async () => {
@@ -180,7 +180,7 @@ test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors",
       calls++;
       return Response.json({
         data: Array.from({ length: 100 }, (_, i) => ({
-          _id: `${calls}-${i}`,
+          _id: String((calls - 1) * 100 + i).padStart(24, "0"),
           title: "Engineer",
           companyId: { name: "Example" },
           updatedAt: "2025-01-01",

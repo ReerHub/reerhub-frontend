@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
+import { SITE } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.SITE_URL || "http://localhost:3000";
+  const base = SITE;
   // Let crawlers read staging's noindex headers instead of blocking them.
   if (base.includes("staging")) {
     return { rules: [{ userAgent: "*", allow: "/" }] };
