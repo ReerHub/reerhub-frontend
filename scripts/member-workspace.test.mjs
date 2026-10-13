@@ -80,7 +80,7 @@ test("workspace waits for verified sessions, replaces public/legacy links and is
       "const Link=({children,href,...rest})=><a href={href} {...rest}>{children}</a>;",
     )
     .replace(
-      'import { usePathname, useSearchParams, useRouter } from "next/navigation";',
+      'import { usePathname, useRouter } from "next/navigation";',
       "const usePathname=()=>globalThis.workspaceFixture.pathname; const useSearchParams=()=>new URLSearchParams(globalThis.workspaceFixture.params); const useRouter=()=>globalThis.workspaceFixture.router;",
     )
     .replace(

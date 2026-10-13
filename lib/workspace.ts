@@ -58,9 +58,14 @@ export function memberHref(href: string): string {
   )
     url.pathname = `/dashboard${path}`;
   else if (
-    ["about", "privacy", "terms", "matching-methodology", "contact"].includes(
-      path.slice(1),
-    )
+    [
+      "about",
+      "privacy",
+      "terms",
+      "matching-methodology",
+      "contact",
+      "faq",
+    ].includes(path.slice(1))
   )
     url.pathname =
       path === "/contact" ? "/dashboard/help" : `/dashboard${path}`;

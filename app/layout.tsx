@@ -1,9 +1,10 @@
+import { analyticsConfig } from "@/lib/analytics-config";
 import "./globals.css";
 import "./admin.css";
 import "./public.css";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
-import { ReactNode, Suspense } from "react";
+import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import MemberWorkspace from "@/components/MemberWorkspace";
@@ -65,24 +66,18 @@ export default async function RootLayout({
               className="min-h-dvh relative pt-[72px]"
               tabIndex={-1}
             >
-              <Suspense fallback={children}>
-                <MemberWorkspace sessionHint={sessionHint}>
-                  {children}
-                </MemberWorkspace>
-              </Suspense>
+              <MemberWorkspace sessionHint={sessionHint}>
+                {children}
+              </MemberWorkspace>
             </main>
             <Footer />
           </AuthProvider>
         )}
         {!isAdminHost && (
-          <CookieConsent
-            analyticsAvailable={/^G-[A-Z0-9]{6,15}$/.test(
-              process.env.GA4_MEASUREMENT_ID || "",
-            )}
-          />
+          <CookieConsent analyticsAvailable={analyticsConfig().available} />
         )}
         <noscript>
-          <style>{`.reveal { opacity: 1 !important; transform: none !important; }`}</style>
+          <style>{`.reveal { opacity: 1 !important; transform: none !important; } .faq-controls, .privacy-panel { display: none !important; }`}</style>
         </noscript>
         <Toaster position="top-right" reverseOrder={false} />
         {process.env.REERHUB_UI_FIXTURES === "1" && <PerformanceProbe />}

@@ -13,28 +13,6 @@ import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import { type Company, type HomeSnapshot } from "@/lib/reerhub";
 import { JOB_LANDINGS } from "@/lib/seo-landings";
 import { PLANS, billingPlanHref } from "@/lib/billing-plans";
-const ANSWERS = [
-  [
-    "Can I browse and apply for free?",
-    "Yes. Job details and official Apply links are public. A free account unlocks complete browsing, saved jobs and your profile.",
-  ],
-  [
-    "Are there jobs for freshers?",
-    "Our fresher page includes only explicit employer evidence allowing freshers or no required experience. Internships have their own page. A missing experience requirement is never treated as zero.",
-  ],
-  [
-    "What does a match score mean?",
-    "It measures relevance to a profile, using skill, role and preference evidence. Profile matches meet verified experience requirements; Stretch roles have a gap; Needs review means requirements are uncertain. Scores do not predict hiring.",
-  ],
-  [
-    "How often are sources checked?",
-    "Scheduled source checks run twice daily, starting at 06:00 and 20:00 IST with staggered starts. Failures preserve previously verified jobs. Each listing shows its last observed feed check; this is not a guarantee the employer still accepts applications.",
-  ],
-  [
-    "When does a Pro trial become paid?",
-    "The trial lasts seven days. Recurring charges start afterward; Razorpay may show a separate authorization amount. Cancel renewal before the trial ends to prevent the first recurring charge. Subscription payments are non-refundable.",
-  ],
-];
 export default function HomePage({
   data,
   logoCompanies,
@@ -433,29 +411,11 @@ export default function HomePage({
           Pricing and trial terms
         </Link>
       </section>
-      <section
-        className={`${styles.faq} page-container pb-14`}
-        aria-labelledby="home-answers"
-      >
-        <h2 id="home-answers" className="text-3xl font-bold text-ink">
-          Answers before you start
-        </h2>
-        <div className="mt-6 space-y-3">
-          {ANSWERS.map(([question, answer]) => (
-            <details key={question} className="surface-panel p-5">
-              <summary className="min-h-11 cursor-pointer font-semibold">
-                {question}
-              </summary>
-              <p className="mt-3 max-w-4xl leading-8 text-slate-600">
-                {answer}
-              </p>
-            </details>
-          ))}
-        </div>
-        <Link href="/contact" className="btn-secondary mt-6">
-          Contact support
+      <div className="page-container pb-14">
+        <Link href="/faq" className="btn-secondary">
+          Questions before your next step? Read our FAQs ↗
         </Link>
-      </section>
+      </div>
       <section className={styles.closing}>
         <div className="page-container">
           <p className={styles.eyebrow}>THERE’S MORE AHEAD OF YOU</p>

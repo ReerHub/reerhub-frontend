@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { sanitizeHtml } from "@/lib/sanitize";
 import CompanyLogo from "@/components/CompanyLogo";
-import { jobMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
+import { jobMetadata, safeJsonLd, breadcrumb, concise } from "@/lib/seo";
 import { jobPosting, deadlineExpired } from "@/lib/job-schema";
 import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
@@ -43,13 +43,17 @@ export async function generateMetadata({
   try {
     const { jobSlug: slug } = await params;
     const jobId = resolveJobId(slug);
-    if (!jobId) return { title: "Job | REERHUB" };
+    if (!jobId)
+      return {
+        title: "Job unavailable | REERHUB",
+        description:
+          "This job link is unavailable. Explore current official tech openings on REERHUB.",
+        robots: { index: false, follow: false },
+      };
     const job = await fetchJob(jobId);
     const companyName = job.companyId?.name || "Company";
-    const description =
-      `${job.title} (${job.techRole || "tech role"}) at ${companyName}` +
-      `${job.locations?.[0]?.city ? ` in ${job.locations[0].city}` : ""}. ` +
-      `${job.status === "closed" ? "This opening is closed. Explore related active jobs on REERHUB." : "Read full role requirements and apply on the company's official website."}`;
+    const city = job.locations?.[0]?.city;
+    const description = `${concise(job.title, 45)} at ${concise(companyName, 35)}${city ? ` in ${concise(city, 20)}` : ""}. ${job.status === "closed" ? "This opening is closed. Browse active roles." : "Read requirements and apply directly."}`;
     return jobMetadata(
       `${job.status === "closed" ? "Closed: " : ""}${job.title}`,
       companyName,
@@ -57,7 +61,12 @@ export async function generateMetadata({
       `/jobs/${jobSlug(job)}`,
     );
   } catch {
-    return { title: "Job | REERHUB" };
+    return {
+      title: "Job unavailable | REERHUB",
+      description:
+        "Job information is temporarily unavailable. Try again or explore current openings on REERHUB.",
+      robots: { index: false, follow: false },
+    };
   }
 }
 
@@ -238,20 +247,6 @@ export default async function JobDetailContent({
               dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
             />
           )}
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: safeJsonLd({
-                "@context": "https://schema.org",
-                "@type": "FAQPage",
-                mainEntity: faqs.map((faq) => ({
-                  "@type": "Question",
-                  name: faq.q,
-                  acceptedAnswer: { "@type": "Answer", text: faq.a },
-                })),
-              }),
-            }}
-          />
         </>
       )}
       <nav

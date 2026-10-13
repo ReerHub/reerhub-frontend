@@ -9,11 +9,11 @@ export const FAQS = [
   ],
   [
     "How do I pay — is UPI supported?",
-    "Yes. Checkout runs on Razorpay and accepts UPI, credit/debit cards, and netbanking. REERHUB never sees or stores your payment details.",
+    "Checkout runs on Razorpay. Use the payment methods available for your subscription in checkout and review the authorization amount before confirming. REERHUB does not store your payment-card details.",
   ],
   [
     "How do I cancel?",
-    "One tap: open this page while your plan is active and hit “Cancel renewal”. No calls, no retention maze. Your access continues until the end of the paid period and never renews.",
+    "Open Membership in your workspace while your plan is active and choose “Cancel renewal”. Your access continues until the end of the current paid period; cancellation stops future renewal.",
   ],
   [
     "Can I switch plans later?",

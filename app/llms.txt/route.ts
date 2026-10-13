@@ -45,6 +45,8 @@ REERHUB TECHNOLOGIES operates REERHUB as a sole proprietorship. Personal profile
 - [Pro plans and pricing](${SITE}/billing): Current prices, trial disclosures and subscription terms.
 - [Contact and help](${SITE}/contact): Listing corrections, account questions and support.
 
+- [Frequently asked questions](${SITE}/faq): Accounts, official listings, matching, alerts, billing and privacy answers.
+
 ## Optional
 
 - [Privacy policy](${SITE}/privacy): Personal data, optional analytics and privacy choices.

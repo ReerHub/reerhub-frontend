@@ -37,7 +37,8 @@ export function stopAnalytics() {
   delivered.clear();
 }
 export function startAnalytics(id: string) {
-  if (!analyticsConsent() || !/^G-[A-Z0-9]{6,15}$/.test(id) || frame) return;
+  if (!analyticsConsent() || !/^G(?:TM)?-[A-Z0-9]{6,15}$/.test(id) || frame)
+    return;
   const target = document.createElement("iframe");
   target.src = "/analytics-frame";
   target.hidden = true;
