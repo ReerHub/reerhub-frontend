@@ -183,7 +183,7 @@ test("privacy UI supports rejection, explicit opt-in and withdrawal without lega
     { createRoot } = await import("react-dom/client");
   const root = createRoot(document.getElementById("root"));
   try {
-    await act(async () => root.render(createElement(Component)));
+    await act(async () => root.render(createElement(Component, {analyticsAvailable:true})));
     assert.equal(consent.analyticsConsent(), false);
     const button = (text) =>
       [...document.querySelectorAll("button")].find(
@@ -192,7 +192,14 @@ test("privacy UI supports rejection, explicit opt-in and withdrawal without lega
     await act(async () => button("Reject analytics").click());
     assert.equal(consent.analyticsConsent(), false);
     await act(async () => button("Privacy preferences").click());
-    const checkbox = document.querySelector('input[type="checkbox"]');
+    assert.equal(document.activeElement.tagName, "H2");
+    let checkbox = document.querySelector('input[type="checkbox"]');
+    assert.equal(checkbox.checked, false);
+    await act(async () => checkbox.click());
+    await act(async () => button("Close").click());
+    assert.equal(consent.analyticsConsent(), false);
+    await act(async () => button("Privacy preferences").click());
+    checkbox = document.querySelector('input[type="checkbox"]');
     assert.equal(checkbox.checked, false);
     await act(async () => checkbox.click());
     await act(async () => button("Save preferences").click());
@@ -201,7 +208,34 @@ test("privacy UI supports rejection, explicit opt-in and withdrawal without lega
     await act(async () => button("Reject analytics").click());
     assert.equal(consent.analyticsConsent(), false);
     assert.equal(document.querySelectorAll("iframe").length, 0);
+    assert.equal(document.activeElement.textContent, "Privacy preferences");
   } finally {
     await act(async () => root.unmount());
   }
+});
+
+test("unconfigured analytics keeps first-visit discovery unobstructed and cannot be enabled", async () => {
+  window.localStorage.removeItem(consent.CONSENT_KEY);
+  let code = await source("../components/CookieConsent.tsx");
+  code = code.replace('"@/lib/consent"', JSON.stringify(consentUrl)).replace('import Link from "next/link";', 'const Link=({children,href})=><a href={href}>{children}</a>;');
+  const {default: Component} = await import(compileFixture(code));
+  const {createElement,act} = await import('react'), {createRoot} = await import('react-dom/client');
+  const root=createRoot(document.getElementById('root'));
+  const button=text=>[...document.querySelectorAll('button')].find(b=>b.textContent===text);
+  try {
+    await act(async()=>root.render(createElement(Component)));
+    assert.equal(document.querySelector('[aria-label="Privacy preferences"]'),null);
+    assert.equal(document.querySelector('[aria-label="Privacy choices"]'),null);
+    assert.ok(button('Privacy preferences'));
+    assert.equal(consent.analyticsConsent(),false);
+    await act(async()=>button('Privacy preferences').click());
+    const checkbox=document.querySelector('input[type="checkbox"]');
+    assert.equal(checkbox.disabled,true);assert.equal(checkbox.checked,false);
+    assert.equal(document.activeElement.tagName,'H2');
+    await act(async()=>checkbox.click());
+    await act(async()=>button('Save preferences').click());
+    assert.equal(consent.analyticsConsent(),false);
+    assert.equal(document.activeElement.textContent,'Privacy preferences');
+    assert.equal(document.querySelectorAll('iframe').length,0);
+  } finally {await act(async()=>root.unmount());}
 });
