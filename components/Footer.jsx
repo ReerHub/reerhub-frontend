@@ -35,6 +35,7 @@ const columns = [
       ["/about", "About REERHUB"],
       ["/matching-methodology", "Matching methodology"],
       ["/contact", "Contact and help"],
+      ["/faq", "Frequently asked questions"],
       ["mailto:support@reerhub.com", "Email support"],
       ["/privacy", "Privacy policy"],
       ["/terms", "Terms of use"],

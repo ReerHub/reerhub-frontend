@@ -30,7 +30,7 @@ export async function generateMetadata({
   const data = landing.earlyCareer ? await readInventory(slug) : undefined;
   const launched = editorialReady(landing, data?.editorialInventory);
   return {
-    ...pageMetadata(landing.title, landing.intro, `/${slug}`),
+    ...pageMetadata(landing.title, landing.description, `/${slug}`),
     ...(!launched ? { robots: { index: false, follow: true } } : {}),
   };
 }

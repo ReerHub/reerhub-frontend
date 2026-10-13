@@ -10,7 +10,13 @@ import {
   DataUnavailableError,
 } from "@/lib/reerhub";
 import { readCompany as getCompany } from "@/lib/server-reads";
-import { pageMetadata, safeJsonLd, breadcrumb } from "@/lib/seo";
+import {
+  pageMetadata,
+  safeJsonLd,
+  breadcrumb,
+  concise,
+  NOINDEX,
+} from "@/lib/seo";
 import {
   locationScopeFromParams,
   locationScopeLabel,
@@ -26,17 +32,20 @@ export async function generateMetadata({
     const company = await getCompany(slug);
     return pageMetadata(
       `${company.name} Careers & Tech Jobs`,
-      `Explore engineering, AI and data openings at ${company.name} in India. Read job details and apply on the official company site with REERHUB.`,
+      `Explore tech openings at ${concise(company.name, 40)} in India. Read role requirements and apply on the official employer site.`,
       `/companies/${company.slug}`,
     );
   } catch (error) {
     if (error instanceof NotFoundError) notFound();
     if (error instanceof DataUnavailableError)
-      return pageMetadata(
-        "Company openings",
-        "Explore official company openings.",
-        `/companies/${slug}`,
-      );
+      return {
+        ...pageMetadata(
+          "Company openings",
+          "Explore official company openings.",
+          `/companies/${slug}`,
+        ),
+        ...NOINDEX,
+      };
     throw error;
   }
 }

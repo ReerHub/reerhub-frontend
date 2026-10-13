@@ -22,7 +22,9 @@ export default function AnalyticsProvider() {
         const response = await fetch("/api/config", { cache: "no-store" });
         const config = await response.json();
         if (active && analyticsConsent()) {
-          startAnalytics(config.ga4MeasurementId || "");
+          startAnalytics(
+            config.gtmContainerId || config.ga4MeasurementId || "",
+          );
           const family = pageFamily(pathname);
           if (family === "discovery" || family === "home")
             track("discovery", { page_family: family }, pathname);

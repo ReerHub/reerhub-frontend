@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import {
@@ -18,26 +18,24 @@ export default function MemberWorkspace({
   children: ReactNode;
   sessionHint?: boolean;
 }) {
-  const pathname = usePathname(),
-    params = useSearchParams(),
-    router = useRouter();
+  const pathname = usePathname();
+  const router = useRouter();
   const { user, loading, logout } = useAuth();
-  const here = `${pathname}${params.size ? `?${params}` : ""}`;
-  const destination = memberHref(here);
   const workspace =
     pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+  const destination = memberHref(pathname);
   useEffect(() => {
     if (loading) return;
-    if (user && destination !== here)
-      router.replace(memberHref(here + window.location.hash));
+    const here = pathname + window.location.search + window.location.hash;
+    if (user && memberHref(pathname) !== pathname)
+      router.replace(memberHref(here));
     else if (!user && workspace)
-      router.replace(
-        `/login?next=${encodeURIComponent(here + window.location.hash)}`,
-      );
-  }, [user, loading, destination, here, workspace, router]);
+      router.replace(`/login?next=${encodeURIComponent(here)}`);
+  }, [user, loading, pathname, workspace, router]);
+
   if (
     (loading && (workspace || sessionHint)) ||
-    (user && destination !== here) ||
+    (user && destination !== pathname) ||
     (!user && workspace)
   )
     return (

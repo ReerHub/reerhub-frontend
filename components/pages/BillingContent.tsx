@@ -2,7 +2,6 @@ import Link from "@/components/AppLink";
 import BillingControls from "@/components/BillingControls";
 import { PLANS, resolvePlanId } from "@/lib/billing-plans";
 import { FAQS } from "@/lib/billing-content";
-import { safeJsonLd } from "@/lib/seo";
 
 export default async function BillingContent({
   searchParams,
@@ -117,22 +116,6 @@ export default async function BillingContent({
         </Link>
         .
       </p>
-      {!memberView && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: safeJsonLd({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              mainEntity: FAQS.map(([question, answer]) => ({
-                "@type": "Question",
-                name: question,
-                acceptedAnswer: { "@type": "Answer", text: answer },
-              })),
-            }),
-          }}
-        />
-      )}
     </div>
   );
 }

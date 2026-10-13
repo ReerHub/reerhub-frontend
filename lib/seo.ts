@@ -86,3 +86,22 @@ export function jobMetadata(
     twitter: { ...metadata.twitter, title: fullTitle },
   };
 }
+
+/** Private route identity only: never emit member/profile data or public canonicals. */
+export function workspaceMetadata(
+  title: string,
+  description: string,
+): Metadata {
+  return {
+    title: { absolute: `${title} | REERHUB workspace` },
+    description: concise(description, 155),
+    ...NOINDEX,
+    alternates: { canonical: null },
+  };
+}
+export function accountMetadata(title: string, description: string): Metadata {
+  return {
+    ...workspaceMetadata(title, description),
+    title: `${title} | REERHUB`,
+  };
+}

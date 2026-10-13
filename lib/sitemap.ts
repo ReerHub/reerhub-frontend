@@ -29,6 +29,7 @@ const STATIC = [
   "about",
   "matching-methodology",
   "contact",
+  "faq",
   "privacy",
   "terms",
 ];

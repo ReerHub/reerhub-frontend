@@ -1,3 +1,8 @@
+import { accountMetadata } from "@/lib/seo";
+export const metadata = accountMetadata(
+  "Page not found",
+  "This ReerHub page is unavailable. Explore current official tech openings or return to the homepage.",
+);
 import Link from "@/components/AppLink";
 export default function NotFound() {
   return (

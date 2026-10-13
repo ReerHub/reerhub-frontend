@@ -5,11 +5,14 @@ export type Landing = {
   role?: string;
   earlyCareer?: "fresher" | "internship";
   intro: string;
+  description: string;
   guidance: string[];
   editorialComplete: boolean;
 };
 export const JOB_LANDINGS: Record<string, Landing> = {
   "backend-jobs": {
+    description:
+      "Find backend engineering jobs in India from official employers. Explore API, services and systems roles, read requirements and apply directly.",
     title: "Backend engineer jobs in India",
     track: "software",
     role: "Backend Engineer",
@@ -23,6 +26,8 @@ export const JOB_LANDINGS: Record<string, Landing> = {
     editorialComplete: true,
   },
   "frontend-jobs": {
+    description:
+      "Explore frontend engineering jobs in India. Review official web-development openings, framework requirements and employer application links.",
     title: "Frontend engineer jobs in India",
     track: "software",
     role: "Frontend Engineer",
@@ -36,6 +41,8 @@ export const JOB_LANDINGS: Record<string, Landing> = {
     editorialComplete: true,
   },
   "full-stack-jobs": {
+    description:
+      "Browse full-stack engineering jobs in India, spanning frontend and backend development. Read official requirements and apply to employers.",
     title: "Full-stack engineer jobs in India",
     track: "software",
     role: "Full Stack Engineer",
@@ -49,6 +56,8 @@ export const JOB_LANDINGS: Record<string, Landing> = {
     editorialComplete: true,
   },
   "data-engineering-jobs": {
+    description:
+      "Find data engineering jobs in India covering pipelines, platforms and reliable datasets. Review official requirements and employer Apply links.",
     title: "Data engineering jobs in India",
     track: "data",
     role: "Data Engineer",
@@ -62,6 +71,8 @@ export const JOB_LANDINGS: Record<string, Landing> = {
     editorialComplete: true,
   },
   "devops-jobs": {
+    description:
+      "Explore DevOps jobs in India focused on cloud infrastructure and delivery automation. Read employer requirements and apply on official hiring sites.",
     title: "DevOps engineer jobs in India",
     track: "cloud-infra",
     role: "DevOps Engineer",
@@ -75,6 +86,8 @@ export const JOB_LANDINGS: Record<string, Landing> = {
     editorialComplete: true,
   },
   "qa-jobs": {
+    description:
+      "Browse quality engineering, software testing and SDET jobs in India. Read official requirements and apply directly to the hiring employer.",
     title: "QA and software testing jobs in India",
     track: "qa",
     intro:
@@ -87,6 +100,8 @@ export const JOB_LANDINGS: Record<string, Landing> = {
     editorialComplete: true,
   },
   "fresher-jobs": {
+    description:
+      "Explore tech jobs in India with explicit employer evidence allowing freshers or no required experience. Review qualifications and apply directly.",
     title: "Tech jobs for freshers in India",
     earlyCareer: "fresher",
     intro:
@@ -99,6 +114,8 @@ export const JOB_LANDINGS: Record<string, Landing> = {
     editorialComplete: true,
   },
   "internship-jobs": {
+    description:
+      "Find tech internships in India with explicit employer internship evidence. Review eligibility, duration and location requirements before applying.",
     title: "Engineering and tech internships in India",
     earlyCareer: "internship",
     intro:

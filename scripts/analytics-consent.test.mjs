@@ -5,6 +5,7 @@ import { JSDOM } from "jsdom";
 import { compileFixture } from "./location-fixtures.mjs";
 const source = (path) => readFile(new URL(path, import.meta.url), "utf8");
 const consentUrl = compileFixture(await source("../lib/consent.ts"));
+const configUrl = compileFixture(await source("../lib/analytics-config.ts"));
 const eventsUrl = compileFixture(await source("../lib/analytics-events.ts"));
 const consent = await import(consentUrl),
   events = await import(eventsUrl);
@@ -135,10 +136,9 @@ test("event allowlist discards private payloads and never forwards URLs", () => 
 test("direct analytics-frame navigation cannot activate the tag", async () => {
   const route = await import(
     compileFixture(
-      (await source("../app/analytics-frame/route.ts")).replace(
-        '"@/lib/analytics-events"',
-        JSON.stringify(eventsUrl),
-      ),
+      (await source("../app/analytics-frame/route.ts"))
+        .replace('"@/lib/analytics-config"', JSON.stringify(configUrl))
+        .replace('"@/lib/analytics-events"', JSON.stringify(eventsUrl)),
     )
   );
   const prior = process.env.GA4_MEASUREMENT_ID;

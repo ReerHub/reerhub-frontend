@@ -26,6 +26,9 @@ export default function ContactPage() {
       </p>
       <h2 className="mt-9 text-2xl font-bold">Useful next steps</h2>
       <div className="mt-5 flex flex-wrap gap-3">
+        <Link href="/faq" className="btn-secondary">
+          Frequently asked questions
+        </Link>
         <Link href="/billing" className="btn-primary">
           Manage subscription
         </Link>
