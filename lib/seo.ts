@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 
 // Used for server metadata and structured data; client imports only call safeJsonLd.
-export const SITE = (process.env.SITE_URL || "http://localhost:3000").replace(
-  /\/$/,
-  "",
-);
+export const SITE = (process.env.SITE_URL || "http://localhost:3000")
+  .trim()
+  .replace(/\/+$/, "");
 export const NOINDEX: Metadata = { robots: { index: false, follow: false } };
 
 export function concise(text: string, max: number): string {
