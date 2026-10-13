@@ -134,7 +134,7 @@ Set `FIXTURE_PORT` / `FIXTURE_API_PORT` for free ports. `FIXTURE_API_ONLY=1` sta
 ## Architecture and request budgets
 
 - Company images share one 48×48px rounded-square `CompanyLogo` frame across public pages, dashboard/saved jobs, detail headers and the admin Companies list. Artwork is contained without cropping/stretching; missing or failed images retain the same frame with initials. Admin uses the list's existing `logoUrl`, without per-company API reads. Account avatars and REERHUB branding remain separate.
-- Server-rendered homepage uses one `/home` business read; public content does not await authentication or refetch after hydration.
+- Server-rendered homepage concurrently reads `/home` and `/companies` for the complete company-logo strip; public content does not await authentication or refetch after hydration.
 - Company directory requests 50 summaries/open-role counts/pagination together; API search is debounced 300ms with URL state. No per-card detail requests; repeated company/job links disable automatic detail prefetch. Primary navigation retains prefetch.
 - Company/job metadata and page rendering share request-scoped reads in `lib/server-reads.ts`. Mutable public data freshness belongs to backend caching, not stacked frontend TTLs.
 - `lib/reerhub.ts` handles public reads. `lib/auth.ts` handles credentialed reads, serialized refresh/one permitted retry, CSRF and safe returns. `AuthProvider` is the only session authority; no per-page `getMe()` waterfalls.
@@ -155,6 +155,10 @@ Feature branch from current `origin/main` → local checks → PR directly into 
 Public discovery, company counts, official job details, sitemap feeds and interactive Pro matches keep using previously verified jobs during a backend rule upgrade. Corrections appear progressively; counts may change until the latest pass completes. The backend's optional `catalogStatus` (`ready`, `updating`, `attention`) and `catalogHasVerifiedJobs` drive a small update/delay notice and a distinct first-verification state. Older backends without these fields retain normal behavior. Daily match emails wait for backend verification completion; private progress/errors remain in Admin Overview. Expected discovery data outages render explicit retry states; unexpected errors still use the existing error boundary.
 
 Deploy compatible backend availability support before these notices. Test running/failed/resumed verification and endpoint outages on isolated local fixtures, including mobile, before requesting merge approval. After approved deployment, verify production availability and sitemaps. Local synthetic coverage is not evidence of production configuration or delivery.
+
+## Approved visual direction
+
+The owner approved an expressive, professional and colorful UI: warm white, lavender, violet, peach, mint and lime, spacious typography and purposeful animation. The homepage and its seamless-to-frosted navigation/charcoal footer implement this direction, including a nearly full-width REERHUB footer wordmark. Preserve the animated source/profile/shortlist scene and matching journey; removing animation or reverting the palette requires an explicit user request. Reduced motion, pause controls and offscreen/hidden-tab suspension retain accessibility without changing the default experience. Other pages remain on their current styling until separately redesigned. Local implementation and fixture previews do not establish production deployment.
 
 ## India-only discovery
 

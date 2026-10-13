@@ -44,7 +44,7 @@ export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="page-container">
-        <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="footer-link-grid grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Link
               href="/"
@@ -98,6 +98,9 @@ export default function Footer() {
               reserved.
             </p>
           </div>
+        </div>
+        <div className="footer-wordmark" aria-hidden="true">
+          <BrandWordmark />
         </div>
       </div>
     </footer>

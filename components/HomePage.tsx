@@ -4,10 +4,12 @@ import JobCard from "@/components/JobCard";
 import CompanyLogo from "@/components/CompanyLogo";
 import LiveMatchingExample from "./LiveMatchingExample";
 import MatchJourney from "@/components/MatchJourney";
+import HomeHeroScene from "./HomeHeroScene";
+import CompanyMarquee from "./CompanyMarquee";
 import { topHiringCompanies } from "@/lib/home-companies";
 import styles from "./HomePage.module.css";
 import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
-import { type HomeSnapshot } from "@/lib/reerhub";
+import { type Company, type HomeSnapshot } from "@/lib/reerhub";
 import { JOB_LANDINGS } from "@/lib/seo-landings";
 import { PLANS } from "@/lib/billing-plans";
 const ANSWERS = [
@@ -32,35 +34,40 @@ const ANSWERS = [
     "The trial lasts seven days. Recurring charges start afterward; Razorpay may show a separate authorization amount. Cancel renewal before the trial ends to prevent the first recurring charge. Subscription payments are non-refundable.",
   ],
 ];
-export default function HomePage({ data }: { data: HomeSnapshot | null }) {
+export default function HomePage({
+  data,
+  logoCompanies,
+}: {
+  data: HomeSnapshot | null;
+  logoCompanies: Pick<Company, "_id" | "name" | "slug" | "logoUrl">[];
+}) {
   const jobs = data?.jobs || [],
     companies = data?.companies || [];
   const featured = topHiringCompanies(companies).slice(0, 8);
   return (
-    <div className={styles.home}>
+    <div className={`${styles.home} homepage-redesign`}>
       <section className={`${styles.hero} border-b border-slate-200`}>
         <div className={`${styles.heroGrid} page-container py-12 sm:py-16`}>
           <div className={styles.heroCopy}>
-            <p className="mb-5 text-sm font-semibold text-primary">
-              Official sources. Direct applications.
+            <p className={styles.heroEyebrow}>
+              <span className={styles.statusDot} /> Your next chapter starts
+              here
             </p>
             <h1 className="font-display font-bold text-ink">
-              Find tech jobs in India.{" "}
-              <span className={styles.highlight}>
-                Apply directly to companies.
-              </span>
+              Big ambitions.{" "}
+              <span className={styles.highlight}>Better possibilities.</span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-              Explore roles for freshers and experienced engineers. Browse for
-              free, read the employer’s requirements and apply on the official
-              company site.
+              Find your next tech role in India. Explore real company openings,
+              discover where your skills belong, and take a step toward work
+              that moves you.
             </p>
             <form
               action="/jobs"
               method="get"
               role="search"
               aria-label="Search tech jobs in India"
-              className="mx-auto mt-7 grid max-w-3xl gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-card sm:grid-cols-[1.4fr_1fr_auto]"
+              className={styles.searchBar}
             >
               <label className="text-sm font-medium text-slate-700">
                 Keyword or role
@@ -96,26 +103,38 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
               </button>
             </form>
             <Link href="#how-pro-works" className="btn-secondary mt-4">
-              See how Pro works
+              See how Pro works <span aria-hidden="true">↗</span>
             </Link>
             <p className="mt-4 text-sm text-slate-600">
-              No payment needed to browse or apply.
+              Free to explore. Direct to the source. Yours to discover.
             </p>
           </div>
+          <HomeHeroScene companies={featured} />
+        </div>
+        <div className={styles.heroRibbon} aria-hidden="true">
+          <span>ENGINEERING</span>
+          <b>✳</b>
+          <span>DATA & AI</span>
+          <b>✳</b>
+          <span>YOUR NEXT CHAPTER</span>
+          <b>✳</b>
+          <span>BUILT FOR POSSIBILITY</span>
         </div>
       </section>
+      <CompanyMarquee companies={logoCompanies} />
       <section
-        className="deferred-section page-container py-10 sm:py-14"
+        className={`${styles.contentSection} page-container py-10 sm:py-14`}
         aria-labelledby="current-openings"
       >
         <CatalogNotice data={data} />
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
+            <p className={styles.eyebrow}>THE OPPORTUNITY BOARD</p>
             <h2
               id="current-openings"
               className="text-3xl font-bold tracking-tight text-ink"
             >
-              Current tech openings in India
+              Good work is out there.
             </h2>
             <p className="mt-3 text-slate-600">
               {data
@@ -184,10 +203,10 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
             ))}
         </nav>
       </section>
-      <section className="deferred-section border-y border-slate-200 bg-slate-50 py-10 sm:py-14">
+      <section className={`${styles.companySection} py-10 sm:py-14`}>
         <div className="page-container">
           <h2 className="text-3xl font-bold text-ink">
-            Start with employer evidence
+            Real companies. Real possibilities.
           </h2>
           <p className="mt-4 max-w-3xl leading-8 text-slate-600">
             Confirmed India locations, source links and visible feed-check dates
@@ -200,7 +219,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
                 key={company._id}
                 href={`/companies/${company.slug}`}
                 prefetch={false}
-                className="surface-panel flex min-w-0 flex-col items-center gap-3 p-4 text-center"
+                className={`${styles.companyTile} surface-panel flex min-w-0 flex-col items-center gap-3 p-4 text-center`}
               >
                 <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
                 <span className="text-sm font-semibold">{company.name}</span>
@@ -229,10 +248,11 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
       </section>
       <section
         id="how-pro-works"
-        className="deferred-section page-container scroll-mt-24 py-10 sm:py-14"
+        className={`${styles.matchingSection} page-container scroll-mt-24 py-10 sm:py-14`}
       >
+        <p className={styles.eyebrow}>A LITTLE CLARITY GOES A LONG WAY</p>
         <h2 className="text-3xl font-bold text-ink">
-          See how Pro matches a profile
+          Less searching. More direction.
         </h2>
         <p className="mt-4 max-w-3xl leading-8 text-slate-600">
           This fictional profile uses real openings and the same scoring engine
@@ -269,7 +289,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
             </Link>
           </div>
         </div>
-        <details className="mt-7 surface-panel p-5">
+        <details open className="mt-7 surface-panel p-5">
           <summary className="min-h-11 cursor-pointer text-lg font-semibold">
             How it works: illustrative matching journey
           </summary>
@@ -280,7 +300,64 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
           <MatchJourney companies={companies} />
         </details>
       </section>
-      <section className="deferred-section border-y border-slate-200 bg-slate-50 py-10 sm:py-14">
+      <section className={`${styles.benefits} page-container`}>
+        <div className={styles.benefitHeading}>
+          <p className={styles.eyebrow}>MADE FOR YOUR MOMENT</p>
+          <h2>
+            A career is personal.
+            <br />
+            Your search should be, too.
+          </h2>
+        </div>
+        <div className={styles.benefitGrid}>
+          <article className={styles.benefit}>
+            <span aria-hidden="true">↗</span>
+            <small>EXPLORE WITH CONFIDENCE</small>
+            <h3>
+              Straight to
+              <br />
+              the opportunity.
+            </h3>
+            <p>
+              Real openings from official company career sources. Read the
+              details and apply directly.
+            </p>
+            <Link href="/jobs">Find your next role ↗</Link>
+          </article>
+          <article className={styles.benefit}>
+            <span aria-hidden="true">✳</span>
+            <small>MAKE IT YOURS</small>
+            <h3>
+              Your skills.
+              <br />
+              Your direction.
+            </h3>
+            <p>
+              Build a profile around your skills, experience and preferences.
+              Give your next move a clearer starting point.
+            </p>
+            <Link href="/profile">Build your profile ↗</Link>
+          </article>
+          <article className={styles.benefit}>
+            <span aria-hidden="true">♡</span>
+            <small>KEEP THE POSSIBILITIES</small>
+            <h3>
+              Found something
+              <br />
+              that feels right?
+            </h3>
+            <p>
+              A free account lets you save roles worth coming back to. Take your
+              next step at your own pace.
+            </p>
+            <HomeAccountAction
+              className="btn-secondary"
+              guest="Start your shortlist ↗"
+            />
+          </article>
+        </div>
+      </section>
+      <section className={`${styles.freePro} py-10 sm:py-14`}>
         <div className="page-container">
           <h2 className="text-3xl font-bold text-ink">
             Free discovery. Optional Pro direction.
@@ -313,7 +390,10 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
           </div>
         </div>
       </section>
-      <section className="deferred-section page-container py-10 sm:py-14">
+      <section
+        id="home-pricing"
+        className={`${styles.pricing} page-container py-10 sm:py-14`}
+      >
         <h2 className="text-3xl font-bold text-ink">
           Choose a Pro billing cycle
         </h2>
@@ -344,7 +424,7 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
         </Link>
       </section>
       <section
-        className="deferred-section page-container pb-14"
+        className={`${styles.faq} page-container pb-14`}
         aria-labelledby="home-answers"
       >
         <h2 id="home-answers" className="text-3xl font-bold text-ink">
@@ -365,6 +445,21 @@ export default function HomePage({ data }: { data: HomeSnapshot | null }) {
         <Link href="/contact" className="btn-secondary mt-6">
           Contact support
         </Link>
+      </section>
+      <section className={styles.closing}>
+        <div className="page-container">
+          <p className={styles.eyebrow}>THERE’S MORE AHEAD OF YOU</p>
+          <h2>
+            Your next chapter.
+            <br />
+            <span>Make it a good one.</span>
+          </h2>
+          <p>You bring the ambition. We’ll help you find the possibilities.</p>
+          <Link href="/jobs" className="btn-primary">
+            Explore tech jobs <span aria-hidden="true">↗</span>
+          </Link>
+          <small>India-first discovery. Free to browse and apply.</small>
+        </div>
       </section>
     </div>
   );
