@@ -66,7 +66,13 @@ export default async function RootLayout({
             <Footer />
           </AuthProvider>
         )}
-        {!isAdminHost && <CookieConsent />}
+        {!isAdminHost && (
+          <CookieConsent
+            analyticsAvailable={/^G-[A-Z0-9]{6,15}$/.test(
+              process.env.GA4_MEASUREMENT_ID || "",
+            )}
+          />
+        )}
         <noscript>
           <style>{`.reveal { opacity: 1 !important; transform: none !important; }`}</style>
         </noscript>
