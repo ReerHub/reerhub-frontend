@@ -60,6 +60,11 @@ export default function Footer() {
               />
               <BrandWordmark className="text-2xl text-white" />
             </Link>
+            <p className="footer-note">
+              For the work you want.
+              <br />
+              And the life you’re building.
+            </p>
             <p className="mt-4 max-w-xs text-sm leading-7 text-slate-600">
               Real Effective Engineering Roles Hub
             </p>

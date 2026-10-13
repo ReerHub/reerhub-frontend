@@ -231,6 +231,9 @@ test("public Cobalt Blue styling is scoped and meets core contrast", async () =>
   };
   for (const [foreground, background] of [
     ["ffffff", "2563eb"],
+    ["ffffff", "6d4aff"],
+    ["241e30", "fffefa"],
+    ["5034b5", "ffffff"],
     ["475569", "f8fafc"],
     ["64748b", "ffffff"],
     ["dbeafe", "1e40af"],
@@ -262,7 +265,7 @@ test("public branding preserves existing chrome and scopes expressive homepage s
   assert.doesNotMatch(footer, /registration in progress/);
   const home = await read("../components/HomePage.module.css");
   assert.match(home, /--violet: #6d4aff/);
-  assert.match(home, /--ink: #372580/);
+  assert.match(home, /--ink: #241e30/);
   assert.match(
     css,
     /:has\(\.homepage-redesign\) \.site-nav\[data-scrolled="true"\]/,

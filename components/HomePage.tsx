@@ -5,6 +5,7 @@ import CompanyLogo from "@/components/CompanyLogo";
 import LiveMatchingExample from "./LiveMatchingExample";
 import MatchJourney from "@/components/MatchJourney";
 import HomeHeroScene from "./HomeHeroScene";
+import HomeFeaturePreview from "./HomeFeaturePreview";
 import CompanyMarquee from "./CompanyMarquee";
 import { topHiringCompanies } from "@/lib/home-companies";
 import styles from "./HomePage.module.css";
@@ -255,30 +256,28 @@ export default function HomePage({
           Less searching. More direction.
         </h2>
         <p className="mt-4 max-w-3xl leading-8 text-slate-600">
-          This fictional profile uses real openings and the same scoring engine
-          as Pro. Public examples include only verified Profile matches at 75%
-          or above. A score measures relevance; it does not verify every
-          qualification.
+          A fictional profile. Real openings. Clear reasons from the same
+          matching engine used by Pro—so you can see what fits, and why.
         </p>
         <div className="mt-7 grid gap-6 lg:grid-cols-2">
           <LiveMatchingExample examples={data?.matchingExamples} />
           <div className="surface-panel p-6">
+            <p className={styles.eyebrow}>THREE STEPS. YOUR OWN DIRECTION.</p>
             <h3 className="text-xl font-semibold">
-              Build your profile before evaluating Pro
+              A little clarity for your next move.
             </h3>
             <ol className="mt-4 space-y-4 leading-7 text-slate-600">
               <li>
-                1. Choose your track, skills, experience and location
-                preferences.
+                <strong>01 · Make it yours</strong>
+                Choose your track, skills, experience and location preferences.
               </li>
               <li>
-                2. Pro separates verified Profile matches, Stretch roles and
-                Needs review.
+                <strong>02 · Understand your fit</strong>
+                Pro separates Profile matches, Stretch roles and Needs review.
               </li>
               <li>
-                3. Read the employer’s description and apply directly. Daily
-                emails include up to five verified strong matches when
-                available.
+                <strong>03 · Take the next step</strong>
+                Read the employer’s description and apply directly.
               </li>
             </ol>
             <Link href="/profile" className="btn-primary mt-6">
@@ -294,8 +293,10 @@ export default function HomePage({
             How it works: illustrative matching journey
           </summary>
           <p className="my-4 text-sm leading-7 text-slate-600">
-            The animation below explains the workflow. Its scores are
-            illustrative; the live example above uses actual current evidence.
+            This animation illustrates the workflow. The live example above uses
+            verified Profile matches at 75% relevance or above. Scores describe
+            relevance, not hiring probability or every qualification. Daily Pro
+            emails include up to five verified strong matches when available.
           </p>
           <MatchJourney companies={companies} />
         </details>
@@ -311,7 +312,7 @@ export default function HomePage({
         </div>
         <div className={styles.benefitGrid}>
           <article className={styles.benefit}>
-            <span aria-hidden="true">↗</span>
+            <HomeFeaturePreview kind="discover" />
             <small>EXPLORE WITH CONFIDENCE</small>
             <h3>
               Straight to
@@ -325,7 +326,7 @@ export default function HomePage({
             <Link href="/jobs">Find your next role ↗</Link>
           </article>
           <article className={styles.benefit}>
-            <span aria-hidden="true">✳</span>
+            <HomeFeaturePreview kind="profile" />
             <small>MAKE IT YOURS</small>
             <h3>
               Your skills.
@@ -339,7 +340,7 @@ export default function HomePage({
             <Link href="/profile">Build your profile ↗</Link>
           </article>
           <article className={styles.benefit}>
-            <span aria-hidden="true">♡</span>
+            <HomeFeaturePreview kind="save" />
             <small>KEEP THE POSSIBILITIES</small>
             <h3>
               Found something

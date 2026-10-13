@@ -10,7 +10,7 @@ Keep the platform strictly India-only. Store and display only jobs with confirme
 
 ## Foundations
 
-Redesigned surfaces use warm white `#fffefa`, lavender `#f6f0ff`, violet `#6d4aff` and deep-purple headings `#372580`, charcoal `#21192e`, peach `#ffe6da`, mint `#e8f0d9` and lime `#e5ffb0`. Treat the following cobalt foundations as compatibility guidance for routes awaiting redesign, not a reason to revert redesigned surfaces.
+Redesigned surfaces use warm white `#fffefa`, lavender `#f6f0ff`, violet `#6d4aff` and charcoal headings `#241e30` (deep purple retained for accents), charcoal `#21192e`, peach `#ffe6da`, mint `#e8f0d9` and lime `#e5ffb0`. Treat the following cobalt foundations as compatibility guidance for routes awaiting redesign, not a reason to revert redesigned surfaces.
 
 - Existing routes awaiting redesign retain their public palette: Cobalt Blue `#2563eb`; hover `#1d4ed8`; deep/on-tint text `#1e40af`; ice blue highlight `#eff6ff`.
 - Charcoal headings `#0f172a`; body text `#475569`; muted text `#64748B`.
@@ -88,3 +88,8 @@ Homepage completion includes bounded mobile/account menus, responsive oversized 
 Use https://proton.me/ as a reference for violet actions (#6d4aff), deep-purple headings (#372580), clean white space and soft lavender/peach glows. Retain existing typography, emotional copy, mint/coral/lime accents, looping matching scenes and oversized footer branding. At the top, the header is transparent with no enclosing border/shadow and the hero paints behind it. After 32px scroll, use a translucent warm-white surface, 18px blur, subtle lavender border and shadow; keep dimensions constant. Light menu panels remain readable in both states. Unsupported blur uses opaque light surfaces; reduced motion removes transitions.
 
 Below the lime ribbon, show all companies returned by the public directory in a slow horizontal logo strip, linking to their directory pages. Never claim partnership or current openings for zero-opening companies. Preserve official logo assets/initials fallbacks. Hide the strip if no records are available; three or fewer records form a static row. Pause moving strips on request, hover/focus, offscreen and in hidden tabs; reduced motion uses a manually scrollable single row. Duplicate visual groups are inaccessible/noninteractive. No client public-content refetch or API contract change.
+
+
+### Premium refinement using Cadence — 2026-10-13
+
+Use https://cadence-55bab1.webflow.io/ as a reference for restraint and visual explanation. Retain ReerHub’s violet #6d4aff identity, all continuous scenes and their pause/reduced-motion behavior, seamless/frosted navigation, company directory strip and oversized footer wordmark. Make the hero predominantly warm white with soft peach/lavender glows and a quieter grid. Use charcoal #241e30 for ordinary headings; violet for emphasis/actions. Benefit cards use peach/lavender/mint tonal illustration canvases above editorial copy, with clearly illustrative search/profile/saved-role previews; do not fabricate a job, score or member data. Pro copy is concise but retains evidence qualifications, match groups and daily-email limits. Footer uses calm charcoal, muted lavender links and warm brand copy without another CTA row. Other routes remain unchanged.
