@@ -601,16 +601,6 @@
 .public-site:has(.homepage-redesign) .site-nav :where(a, button):focus-visible {
   outline-color: #6d4aff;
 }
-.public-site:has(.homepage-redesign) .site-footer {
-  background: #21192e;
-  color: #c8bed5;
-}
-.public-site:has(.homepage-redesign) .site-footer .text-slate-600,
-.public-site:has(.homepage-redesign) .site-footer .text-teal-800,
-.public-site:has(.homepage-redesign) .footer-bottom {
-  color: #c8bed5;
-}
-
 .footer-wordmark {
   display: none;
 }
@@ -649,10 +639,6 @@
 }
 .public-site:has(.homepage-redesign) .site-footer > .page-container {
   max-width: 1440px;
-}
-.public-site:has(.homepage-redesign) .site-footer {
-  background:
-    radial-gradient(ellipse at 85% 100%, #65419430, transparent 50%), #21192e;
 }
 .public-site:has(.homepage-redesign) .site-footer nav h2 {
   color: #f0e5ff;
@@ -845,10 +831,6 @@
   color: #5034b5;
   background: #f0e9fa9c;
 }
-.public-site:has(.homepage-redesign) .site-footer {
-  background:
-    radial-gradient(ellipse at 75% 100%, #5e3b8930, transparent 55%), #201a2b;
-}
 .footer-note {
   display: none;
 }
@@ -873,4 +855,72 @@
 }
 .public-site:has(.homepage-redesign) .footer-wordmark .brand-wordmark {
   color: #eee2ff;
+}
+
+/* The homepage closing message flows into one light, pastel footer canvas. */
+.public-site:has(.homepage-redesign) .site-footer {
+  background:
+    radial-gradient(ellipse at 70% 100%, #eee7ff70, transparent 60%), #faf9fc;
+  color: #675d75;
+  border: 0;
+}
+.public-site:has(.homepage-redesign) .footer-link-grid {
+  border-top: 1px solid #37258018;
+  padding-top: 48px;
+}
+.public-site:has(.homepage-redesign)
+  .site-footer
+  :is(.text-white, .text-ink, .footer-note),
+.public-site:has(.homepage-redesign) .site-footer nav h2 {
+  color: #241e30;
+}
+.public-site:has(.homepage-redesign)
+  .site-footer
+  :is(
+    .text-slate-600,
+    .text-teal-800,
+    .text-blue-100,
+    .text-blue-200,
+    .footer-bottom
+  ) {
+  color: #675d75;
+}
+.public-site:has(.homepage-redesign) .site-footer nav a:hover,
+.public-site:has(.homepage-redesign) .site-footer .footer-bottom a:hover {
+  color: #5034b5;
+}
+.public-site:has(.homepage-redesign)
+  .site-footer
+  nav[aria-label="REERHUB social media"]
+  a {
+  border-color: #37258020;
+  background: #ffffff80;
+}
+.public-site:has(.homepage-redesign)
+  .site-footer
+  nav[aria-label="REERHUB social media"]
+  a:hover {
+  background: #eee7ff;
+}
+.public-site:has(.homepage-redesign)
+  .site-footer
+  :where(a, button):focus-visible {
+  outline-color: #5034b5;
+}
+.public-site:has(.homepage-redesign)
+  .site-footer
+  :is(.footer-bottom, .footer-wordmark) {
+  border-color: #37258018;
+}
+.public-site:has(.homepage-redesign) .footer-wordmark .brand-wordmark {
+  color: #a894d2;
+  background: linear-gradient(110deg, #c29a85, #b094d1 52%, #9a84ce);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@media (forced-colors: active) {
+  .public-site:has(.homepage-redesign) .footer-wordmark .brand-wordmark {
+    background: none;
+    -webkit-text-fill-color: CanvasText;
+  }
 }
