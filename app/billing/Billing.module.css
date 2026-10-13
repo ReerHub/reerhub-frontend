@@ -3,29 +3,29 @@
   width: 100%;
   max-width: 1200px;
   min-width: 0;
-  --cobalt: #2563eb;
-  color: #0f172a;
+  --cobalt: #6d4aff;
+  color: #241e30;
 }
 .billing :global(.text-electric),
 .billing :global(.text-primary-deep) {
-  color: #1d4ed8;
+  color: #5736da;
 }
 .billing :global(.bg-electric-soft) {
-  background: #eff6ff;
+  background: #f1ebff;
 }
 .billing :global(.text-slate-900),
 .billing :global(.text-ink) {
-  color: #0f172a;
+  color: #241e30;
 }
 .billing a:focus-visible,
 .billing button:focus-visible,
 .billing summary:focus-visible {
-  outline: 3px solid #2563eb;
+  outline: 3px solid #6d4aff;
   outline-offset: 4px;
 }
 .planCard {
   background: #fff;
-  border-color: #e2e8f0;
+  border-color: #e6dfed;
   min-height: 265px;
   padding-top: 32px;
   transition:
@@ -35,21 +35,21 @@
 }
 .planCard:not(:disabled):hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px #0f172a09;
+  box-shadow: 0 8px 24px #241e3009;
 }
 .planCard.selected {
-  border-color: #2563eb;
-  outline: 2px solid #2563eb;
+  border-color: #6d4aff;
+  outline: 2px solid #6d4aff;
   outline-offset: 3px;
 }
 .planCard.featured,
 .checkoutPanel {
   background: var(--public-gradient);
-  border-color: #1e40af;
+  border-color: #5034b5;
   color: #fff;
 }
 .planCard.featured.selected {
-  outline-color: #2563eb;
+  outline-color: #6d4aff;
 }
 .billing .featured :global(.text-slate-900),
 .billing .featured :global(.text-electric) {
@@ -57,25 +57,25 @@
 }
 .billing .featured :global(.text-slate-600),
 .billing .featured :global(.text-slate-500) {
-  color: #dbeafe;
+  color: #e9ddff;
 }
 .planBadge {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: #f1ebff;
+  color: #5736da;
+  border: 1px solid #d8caf4;
 }
 .featured .planBadge {
-  background: #2563eb;
+  background: #6d4aff;
   color: #fff;
-  border-color: #2563eb;
+  border-color: #6d4aff;
 }
 .selectionMark {
-  background: #2563eb;
+  background: #6d4aff;
   color: #fff;
 }
 .featured .selectionMark {
   background: #fff;
-  color: #1d4ed8;
+  color: #5736da;
 }
 .checkoutPanel {
   border-radius: 18px;
@@ -83,24 +83,24 @@
 .billing .checkoutPanel :global(.text-white\/50),
 .billing .checkoutPanel :global(.text-white\/60),
 .billing .checkoutPanel :global(.text-white\/70) {
-  color: #dbeafe;
+  color: #e9ddff;
 }
 .billing .checkoutPanel :global(.text-teal-300) {
-  color: #bfdbfe;
+  color: #d8caf4;
 }
 .billing .checkoutPanel :global(.text-slate-900) {
-  color: #0f172a;
+  color: #241e30;
 }
 .checkoutPanel button {
   min-height: 44px;
 }
 .billing .checkoutPanel button:focus-visible,
 .billing .checkoutPanel a:focus-visible {
-  outline-color: #bfdbfe;
+  outline-color: #d8caf4;
 }
 .billing .checkoutPanel :global(.btn-secondary) {
   background: #fff;
-  color: #0f172a;
+  color: #241e30;
 }
 @media (prefers-reduced-motion: reduce) {
   .billing *,

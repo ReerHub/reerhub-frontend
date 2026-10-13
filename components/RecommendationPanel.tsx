@@ -234,12 +234,15 @@ export default function RecommendationPanel({
           })}
         </div>
       )}
-      <p className="mb-6 text-xs leading-6 text-slate-600">
-        Scores describe profile relevance, not hiring probability or complete
-        qualification verification. Daily emails include only verified Profile
-        matches at 75%+. You’ll receive one digest with up to five qualifying
-        roles, only when matches are available.
-      </p>
+      <details className="match-explanation mb-5">
+        <summary>About scores and daily emails</summary>
+        <p className="mt-2 text-xs leading-6 text-slate-600">
+          Scores describe profile relevance, not hiring probability or complete
+          qualification verification. Daily emails include only verified Profile
+          matches at 75%+. You’ll receive one digest with up to five qualifying
+          roles, only when matches are available.
+        </p>
+      </details>
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (

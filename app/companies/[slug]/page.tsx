@@ -91,7 +91,7 @@ export default async function CompanyDetailPage({
           ),
         }}
       />
-      <section className="border-b border-slate-200 bg-white">
+      <section className="company-detail-hero">
         <div className="page-container py-10 sm:py-12">
           <nav
             className="text-[13px] text-slate-500 mb-6 flex items-center gap-2"

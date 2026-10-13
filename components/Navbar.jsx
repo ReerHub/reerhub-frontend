@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { workspaceLinks } from "@/lib/workspace";
 import ProBadge from "@/components/ProBadge";
 import Icon from "@/components/ui/Icon";
 import UserAvatar from "@/components/UserAvatar";
@@ -14,7 +15,6 @@ export default function Navbar() {
   const { user, loading, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    if (pathname !== "/") return;
     const update = () => setScrolled(window.scrollY > 32);
     const frame = requestAnimationFrame(update);
     window.addEventListener("scroll", update, { passive: true });
@@ -74,7 +74,7 @@ export default function Navbar() {
         )
       : pathname.startsWith(href);
   return (
-    <header className="site-nav" data-scrolled={pathname === "/" && scrolled}>
+    <header className="site-nav" data-scrolled={pathname !== "/" || scrolled}>
       <div className="nav-inner page-container flex h-[72px] items-center justify-between gap-4">
         <Link
           href="/"
@@ -217,7 +217,24 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
-          <div className="mt-3 flex gap-3 border-t border-slate-100 pt-3">
+          {user && (
+            <div className="mobile-workspace-links mt-3 border-t border-slate-100 pt-3">
+              <p className="workspace-label">YOUR WORKSPACE</p>
+              {workspaceLinks(!!user.membership?.isPro).map(
+                ({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={close}
+                    className="nav-link block"
+                  >
+                    {label}
+                  </Link>
+                ),
+              )}
+            </div>
+          )}
+          <div className="mt-3 flex flex-wrap gap-3 border-t border-slate-100 pt-3">
             <Link href="/engineering-jobs" onClick={close} className="nav-link">
               Engineering
             </Link>

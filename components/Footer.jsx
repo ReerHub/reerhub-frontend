@@ -93,9 +93,10 @@ export default function Footer() {
           ))}
         </div>
         <div className="footer-bottom flex flex-col justify-between gap-3 py-6 text-xs sm:flex-row">
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-6">
             <Link href="/terms">Terms of use</Link>
             <Link href="/privacy">Privacy policy</Link>
+            <Link href="/contact">Help & support</Link>
           </div>
           <div className="space-y-1 sm:text-right">
             <p>

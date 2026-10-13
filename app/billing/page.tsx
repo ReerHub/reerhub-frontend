@@ -11,7 +11,7 @@ export default async function BillingPage({
 }) {
   const initialPlan = resolvePlanId((await searchParams).plan);
   return (
-    <div className="mx-auto max-w-5xl px-5 py-10 sm:py-16">
+    <div className="billing-page mx-auto max-w-5xl px-5 py-10 sm:py-16">
       <p className="mb-3 text-sm font-semibold text-primary">REERHUB Pro</p>
       <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-ink sm:text-5xl">
         Tech job matching plans and pricing

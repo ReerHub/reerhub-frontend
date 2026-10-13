@@ -12,11 +12,11 @@
   gap: 10px;
   min-width: 0;
   min-height: 48px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 12px;
   padding: 0 14px;
-  background: #f8fafc;
-  color: #64748b;
+  background: #fffefa;
+  color: #776b85;
 }
 .searchField svg {
   flex-shrink: 0;
@@ -29,11 +29,11 @@
   outline: none;
   background: transparent;
   font-size: 16px;
-  color: #0f172a;
+  color: #241e30;
 }
 .searchField:focus-within {
-  border-color: #2563eb;
-  outline: 3px solid #dbeafe;
+  border-color: #6d4aff;
+  outline: 3px solid #e9ddff;
 }
 .primary {
   display: inline-flex;
@@ -43,14 +43,14 @@
   min-height: 48px;
   padding: 10px 20px;
   border-radius: 10px;
-  background: #2563eb;
+  background: #6d4aff;
   color: white;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
 .primary:hover {
-  background: #1d4ed8;
+  background: #5736da;
 }
 .toolbar {
   display: flex;
@@ -66,10 +66,10 @@
   gap: 8px;
   min-height: 44px;
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 10px;
   background: white;
-  color: #334155;
+  color: #332b40;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -77,7 +77,7 @@
 .filterButton:hover,
 .cancel:hover,
 .dismiss:hover {
-  background: #f8fafc;
+  background: #fffefa;
 }
 .count {
   display: grid;
@@ -85,8 +85,8 @@
   min-width: 20px;
   height: 20px;
   border-radius: 6px;
-  background: #eff6ff;
-  color: #1e40af;
+  background: #f1ebff;
+  color: #5034b5;
   font-size: 12px;
 }
 .chevron,
@@ -99,7 +99,7 @@
 }
 .scope {
   font-size: 12px;
-  color: #64748b;
+  color: #776b85;
   text-align: right;
 }
 .active {
@@ -129,10 +129,10 @@
   max-width: 100%;
   min-height: 44px;
   padding: 7px 10px;
-  border: 1px solid #dbeafe;
+  border: 1px solid #e9ddff;
   border-radius: 8px;
-  background: #eff6ff;
-  color: #1e40af;
+  background: #f1ebff;
+  color: #5034b5;
   font-size: 12px;
   text-align: left;
   cursor: pointer;
@@ -141,7 +141,7 @@
   overflow-wrap: anywhere;
 }
 .chip:hover {
-  background: #dbeafe;
+  background: #e9ddff;
 }
 .closeIcon {
   width: 14px;
@@ -151,7 +151,7 @@
 .clear {
   min-height: 44px;
   padding: 7px 8px;
-  color: #475569;
+  color: #675d75;
   font-size: 13px;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -160,7 +160,7 @@
 .panel {
   margin-top: 16px;
   padding-top: 20px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #e6dfed;
 }
 .panel[hidden] {
   display: none;
@@ -176,12 +176,12 @@
   margin: 0;
   font-size: 16px;
   font-weight: 650;
-  color: #0f172a;
+  color: #241e30;
 }
 .panelHeading p {
   margin: 4px 0 0;
   font-size: 13px;
-  color: #64748b;
+  color: #776b85;
 }
 .dismiss {
   display: grid;
@@ -189,7 +189,7 @@
   width: 44px;
   height: 44px;
   border-radius: 8px;
-  color: #64748b;
+  color: #776b85;
   cursor: pointer;
 }
 .grid {
@@ -204,20 +204,20 @@
   min-width: 0;
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: #675d75;
 }
 .grid input,
 .grid select {
   min-width: 0;
   width: 100%;
   min-height: 44px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 10px;
   padding: 9px 12px;
   background: white;
   font-size: 14px;
   font-weight: 400;
-  color: #0f172a;
+  color: #241e30;
 }
 .panelFooter {
   display: flex;
@@ -226,7 +226,7 @@
   align-items: center;
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #f6f2fa;
 }
 .actions {
   display: flex;
@@ -236,13 +236,13 @@
   min-height: 44px;
   padding: 10px 16px;
   border-radius: 10px;
-  color: #475569;
+  color: #675d75;
   font-size: 14px;
   cursor: pointer;
 }
 .shell button:focus-visible,
 .grid :is(input, select):focus-visible {
-  outline: 3px solid #2563eb;
+  outline: 3px solid #6d4aff;
   outline-offset: 3px;
 }
 @media (max-width: 900px) {

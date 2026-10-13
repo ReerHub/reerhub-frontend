@@ -9,7 +9,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <div className="page-container py-16 text-center" role="alert">
+    <div className="error-state page-container py-16 text-center" role="alert">
       <div className="mx-auto w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-5">
         <svg
           className="w-7 h-7 text-slate-400"

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/AuthProvider";
 import JobBrowser from "@/components/JobBrowser";
@@ -165,7 +165,6 @@ function SavedRoles({
 function Dashboard() {
   const { user, loading } = useAuth();
   const params = useSearchParams();
-  const router = useRouter();
   const pro = isPro(user);
   const ids = useSavedJobs(user?.id);
   const pendingSaves = useRef(new Set<string>());
@@ -214,16 +213,8 @@ function Dashboard() {
     );
   const requested = params.get("view");
   const view = dashboardView(requested, pro);
-  const tabs = [
-    ...(pro ? [{ id: "matches", label: "Your matches" }] : []),
-    { id: "discover", label: "Discover jobs" },
-    {
-      id: "saved",
-      label: `Saved roles${ids.length ? ` (${ids.length})` : ""}`,
-    },
-  ];
   return (
-    <div className="page-container py-9 sm:py-12">
+    <div className="dashboard-page page-container py-9 sm:py-12">
       <div className="mb-8 flex flex-wrap items-start justify-between gap-5">
         <div>
           <p className="mb-2 text-sm font-semibold text-primary-deep">
@@ -243,79 +234,53 @@ function Dashboard() {
           Edit my profile
         </Link>
       </div>
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="dashboard-layout grid gap-6">
         <div className="min-w-0">
-          <DashboardGuidance profile={user.profile} pro={pro} />
-          {pro ? (
-            <MembershipStatus user={user} />
-          ) : (
-            <div className="surface-panel flex items-center gap-4 p-5">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
-                <Icon name="briefcase" />
-              </span>
-              <div>
-                <h2 className="font-semibold text-ink">
-                  Free to explore. Ready when you are.
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-slate-600">
-                  Full job details, direct Apply links, and saved roles are
-                  included in your free account.
-                </p>
-              </div>
+          <details className="dashboard-context">
+            <summary>
+              Profile & membership{" "}
+              <span>{pro ? "Pro workspace" : "Free discovery"}</span>
+            </summary>
+            <div className="dashboard-status-row">
+              <DashboardGuidance profile={user.profile} pro={pro} />
+              {pro ? (
+                <MembershipStatus user={user} />
+              ) : (
+                <div className="surface-panel flex items-center gap-4 p-5">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary">
+                    <Icon name="briefcase" />
+                  </span>
+                  <div>
+                    <h2 className="font-semibold text-ink">
+                      Free to explore. Ready when you are.
+                    </h2>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      Full job details, direct Apply links, and saved roles are
+                      included in your free account.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-          <div
-            className="workspace-tabs my-7"
-            role="tablist"
-            aria-label="Dashboard views"
-          >
-            {tabs.map((tab, index) => (
-              <button
-                role="tab"
-                key={tab.id}
-                id={`tab-${tab.id}`}
-                aria-selected={view === tab.id}
-                aria-controls="dashboard-content"
-                tabIndex={view === tab.id ? 0 : -1}
-                onKeyDown={(event) => {
-                  if (
-                    !["ArrowRight", "ArrowLeft", "Home", "End"].includes(
-                      event.key,
-                    )
-                  )
-                    return;
-                  event.preventDefault();
-                  const next =
-                    event.key === "Home"
-                      ? 0
-                      : event.key === "End"
-                        ? tabs.length - 1
-                        : (index +
-                            (event.key === "ArrowRight"
-                              ? 1
-                              : tabs.length - 1)) %
-                          tabs.length;
-                  (
-                    event.currentTarget.parentElement?.children[
-                      next
-                    ] as HTMLElement
-                  )?.focus();
-                  router.push(`/dashboard?view=${tabs[next].id}`, {
-                    scroll: false,
-                  });
-                }}
-                onClick={() =>
-                  router.push(`/dashboard?view=${tab.id}`, { scroll: false })
-                }
-              >
-                {tab.label}
-              </button>
-            ))}
+          </details>
+          <div className="dashboard-section-heading">
+            <div>
+              <p className="workspace-label">YOUR NEXT MOVE</p>
+              <h2 id="dashboard-view-title">
+                {view === "matches"
+                  ? "Your matches"
+                  : view === "saved"
+                    ? "Your saved roles"
+                    : "Discover opportunities"}
+              </h2>
+            </div>
+            {view === "saved" && (
+              <span className="workspace-count">{ids.length} saved</span>
+            )}
           </div>
           <section
             id="dashboard-content"
-            role="tabpanel"
-            aria-labelledby={`tab-${view}`}
+            aria-labelledby="dashboard-view-title"
           >
             {view === "matches" ? (
               <RecommendationPanel
