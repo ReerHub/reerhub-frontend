@@ -9,6 +9,7 @@ let member: string | undefined,
   attemptedAt = 0,
   generation = 0;
 let pending: Promise<void> | undefined;
+let status: "idle" | "loading" | "ready" | "error" = "idle";
 const listeners = new Set<() => void>();
 const mutations = new Map<string, Promise<void>>();
 const changedDuringRead = new Map<string, boolean>();
@@ -19,18 +20,21 @@ export function resetSaved(memberId?: string) {
   ids = EMPTY;
   updatedAt = 0;
   attemptedAt = 0;
+  status = "idle";
   generation += 1;
   pending = undefined;
   mutations.clear();
   changedDuringRead.clear();
   notify();
 }
-async function loadSaved() {
+export async function loadSaved(force = false) {
   if (!member) return;
   if (pending) return pending;
-  if (Date.now() - attemptedAt < 60000) return;
+  if (!force && Date.now() - attemptedAt < 60000) return;
   const epoch = generation;
   attemptedAt = Date.now();
+  status = "loading";
+  notify();
   pending = savedIds()
     .then((value) => {
       if (generation === epoch) {
@@ -41,11 +45,16 @@ async function loadSaved() {
         }
         ids = [...merged];
         updatedAt = Date.now();
+        status = "ready";
         notify();
       }
     })
     .catch(() => {
-      /* Keep the last successful state on failure. */
+      if (generation === epoch) {
+        status = "error";
+        notify();
+      }
+      /* Keep the last successful IDs, never invent a successful zero. */
     })
     .finally(() => {
       if (generation === epoch) {
@@ -99,4 +108,17 @@ export function toggleSaved(jobId: string, next: boolean) {
     });
   mutations.set(jobId, promise);
   return promise;
+}
+
+export function useSavedJobsStatus(memberId?: string) {
+  return useSyncExternalStore(
+    (fn) => {
+      listeners.add(fn);
+      return () => {
+        listeners.delete(fn);
+      };
+    },
+    () => (member === memberId ? status : "idle"),
+    () => "idle" as const,
+  );
 }

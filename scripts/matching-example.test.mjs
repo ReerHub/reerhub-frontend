@@ -26,7 +26,7 @@ test("live examples switch sample profiles, show real evidence and never invent 
   );
   source = source
     .replace(
-      'import Link from "next/link";',
+      /import Link from "(?:next\/link|@\/components\/AppLink)";/,
       "const Link = ({children, href}) => <a href={href}>{children}</a>;",
     )
     .replace(

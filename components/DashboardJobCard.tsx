@@ -1,7 +1,7 @@
 "use client";
 
 import CompanyLogo from "@/components/CompanyLogo";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import type { Job } from "@/lib/reerhub";
 import { jobUrl } from "@/lib/reerhub";
 import { locationLabel, timeAgo } from "@/lib/format";

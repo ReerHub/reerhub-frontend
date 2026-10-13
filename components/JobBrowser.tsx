@@ -187,6 +187,9 @@ export default function JobBrowser({
   const searchParams = useSearchParams();
 
   const searchParamsKey = searchParams.toString();
+  const requestedPage = user
+    ? Math.max(1, Number.parseInt(searchParams.get("page") || "1", 10) || 1)
+    : 1;
 
   const INITIAL: Filters = useMemo(() => {
     const fromUrl = filtersFromSearchParams(
@@ -373,11 +376,19 @@ export default function JobBrowser({
     void Promise.resolve().then(() => {
       if (!ac.signal.aborted) {
         setLoading(true);
-        return fetchJobs(1, INITIAL, false, ac.signal);
+        return fetchJobs(requestedPage, INITIAL, false, ac.signal);
       }
     });
     return () => ac.abort();
-  }, [INITIAL, user, authLoading, initialData, initialMatchesScope, fetchJobs]);
+  }, [
+    INITIAL,
+    user,
+    authLoading,
+    initialData,
+    initialMatchesScope,
+    fetchJobs,
+    requestedPage,
+  ]);
 
   const clearAll = () => {
     const next = filtersFromSearchParams(

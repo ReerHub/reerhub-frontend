@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import type { MatchingExample } from "@/lib/reerhub";
 import { jobUrl } from "@/lib/reerhub";
 import { locationLabel } from "@/lib/format";

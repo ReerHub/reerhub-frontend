@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import CompanyLogo from "./CompanyLogo";
 import type { Company } from "@/lib/reerhub";

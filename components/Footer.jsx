@@ -1,7 +1,8 @@
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import Image from "next/image";
 import Icon from "@/components/ui/Icon";
 import BrandWordmark from "@/components/BrandWordmark";
+import PrivacyPreferencesButton from "@/components/PrivacyPreferencesButton";
 import SocialLinks from "@/components/SocialLinks";
 const columns = [
   [
@@ -96,7 +97,10 @@ export default function Footer() {
           <div className="flex flex-wrap gap-6">
             <Link href="/terms">Terms of use</Link>
             <Link href="/privacy">Privacy policy</Link>
+            <PrivacyPreferencesButton />
             <Link href="/contact">Help & support</Link>
+            <Link href="/about">About ReerHub</Link>
+            <Link href="/matching-methodology">How matching works</Link>
           </div>
           <div className="space-y-1 sm:text-right">
             <p>

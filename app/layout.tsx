@@ -43,6 +43,9 @@ export default async function RootLayout({
   const isAdminHost =
     isDedicatedAdminHost(requestHeaders.get("host") || "") ||
     requestHeaders.get("x-reerhub-admin-surface") === "1";
+  const sessionHint = /(?:^|;\s*)(?:accessToken|refreshToken)=([^;]+)/.test(
+    requestHeaders.get("cookie") || "",
+  );
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body
@@ -56,14 +59,16 @@ export default async function RootLayout({
               Skip to content
             </a>
             <AnalyticsProvider />
-            <Navbar />
+            <Navbar sessionHint={sessionHint} />
             <main
               id="main-content"
               className="min-h-dvh relative pt-[72px]"
               tabIndex={-1}
             >
               <Suspense fallback={children}>
-                <MemberWorkspace>{children}</MemberWorkspace>
+                <MemberWorkspace sessionHint={sessionHint}>
+                  {children}
+                </MemberWorkspace>
               </Suspense>
             </main>
             <Footer />

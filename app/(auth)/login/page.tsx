@@ -7,7 +7,8 @@ import GoogleButton from "@/components/GoogleButton";
 import Turnstile, { type TurnstileHandle } from "@/components/Turnstile";
 import { useAuth } from "@/components/AuthProvider";
 import { requestMagicLink, safeNext } from "@/lib/auth";
-import Link from "next/link";
+import { memberHref } from "@/lib/workspace";
+import Link from "@/components/AppLink";
 import Icon from "@/components/ui/Icon";
 
 const inputCls =
@@ -26,7 +27,7 @@ function LoginForm() {
   useEffect(() => {
     // A full navigation drops anonymous router-cache entries and makes the
     // protected-route guard read the newly issued session cookies.
-    if (!loading && user) window.location.replace(next);
+    if (!loading && user) window.location.replace(memberHref(next));
   }, [loading, user, next]);
 
   const send = async () => {

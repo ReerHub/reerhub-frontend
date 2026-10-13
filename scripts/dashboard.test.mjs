@@ -12,18 +12,9 @@ const compiled = ts.transpileModule(source, {
     target: ts.ScriptTarget.ES2022,
   },
 }).outputText;
-const { dashboardView, nextMatchTier, countsAfterHide, experienceLabel } =
-  await import(
-    `data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`
-  );
-test("both memberships can discover and save; only Pro defaults to matches", () => {
-  for (const pro of [true, false]) {
-    assert.equal(dashboardView("discover", pro), "discover");
-    assert.equal(dashboardView("saved", pro), "saved");
-  }
-  assert.equal(dashboardView(null, true), "matches");
-  assert.equal(dashboardView("matches", false), "discover");
-});
+const { nextMatchTier, countsAfterHide, experienceLabel } = await import(
+  `data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`
+);
 test("empty results skip unavailable lower tiers", () => {
   assert.equal(nextMatchTier(90, { 75: 0, 50: 2, 25: 2, all: 2 }), 50);
   assert.equal(nextMatchTier(75, { 50: 0, 25: 0, all: 1 }), 0);
@@ -38,7 +29,10 @@ test("hiding a role decrements only its eligible tiers without negatives", () =>
   assert.equal(countsAfterHide({ all: 0 }, 90).all, 0);
 });
 test("experience renders available requirements including zero and fractions", () => {
-  assert.equal(experienceLabel({ min: 0, max: 2 }), "No minimum experience required");
+  assert.equal(
+    experienceLabel({ min: 0, max: 2 }),
+    "No minimum experience required",
+  );
   assert.equal(experienceLabel({ min: 2.5 }), "Minimum 2.5 years");
   assert.equal(experienceLabel({ max: 3 }, true), "Maximum 3 years");
   assert.equal(experienceLabel(), "");

@@ -49,7 +49,7 @@ test("member cards share saved state and cancellable reads; checkout is on deman
     "../components/SaveJobButton.tsx",
     "../components/RelatedJobs.tsx",
     "../components/JobBrowser.tsx",
-    "../app/dashboard/page.tsx",
+    "../components/MemberOverview.tsx",
   ])
     assert.match(await read(path), /useSavedJobs/);
   const panel = await read("../components/RecommendationPanel.tsx");

@@ -66,7 +66,19 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
         subscription: { plan: "pro-weekly", status: "trialing", isPro: true },
       };
     },
-    cancelSubscription: async () => ({ subscription: null }),
+    cancelSubscription: async () => {
+      calls.push("cancel");
+      return {
+        subscription: {
+          plan: "pro-weekly",
+          status: "cancelled",
+          isPro: true,
+          cancelAtPeriodEnd: true,
+          cancelledAt: new Date().toISOString(),
+          accessEndsAt: new Date(Date.now() + 86400000).toISOString(),
+        },
+      };
+    },
     toast: { success() {}, error: (message) => errors.push(message) },
   };
   window.Razorpay = class {
@@ -96,12 +108,12 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       "const {loadCheckout} = globalThis.billingJourney;",
     )
     .replace(
-      'import Link from "next/link";',
+      /import Link from "(?:next\/link|@\/components\/AppLink)";/,
       "const Link = ({children,href}) => <a href={href}>{children}</a>;",
     )
     .replace(
-      'import { useRouter } from "next/navigation";',
-      "const useRouter = () => globalThis.billingJourney.router;",
+      'import { usePathname, useRouter } from "next/navigation";',
+      "const useRouter = () => globalThis.billingJourney.router; const usePathname=()=>globalThis.billingJourney.pathname || '/billing';",
     )
     .replace(
       'import toast from "react-hot-toast";',
@@ -177,6 +189,7 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       0,
       "Guest continuation must not create a subscription",
     );
+    globalThis.billingJourney.pathname = "/dashboard/billing";
     globalThis.billingJourney.user = user;
     await act(async () =>
       root.render(createElement(Component, { key: "member" })),
@@ -206,7 +219,7 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
         razorpay_signature: "synthetic-provider-proof",
       }),
     );
-    assert.ok(routes.includes("/billing/success"));
+    assert.ok(routes.includes("/dashboard/billing/success"));
     assert.deepEqual(
       events.map((event) => event.name),
       ["begin_checkout", "trial_activation"],
@@ -214,6 +227,18 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
     assert.ok(!JSON.stringify(events).includes("candidate@example.com"));
     assert.match(document.body.textContent, /Cancel renewal/);
     assert.ok(calls.some((call) => call.razorpayPaymentId === "pay_synthetic"));
+    const action = (label) =>
+      [...document.querySelectorAll("button")].find(
+        (b) => b.textContent === label,
+      );
+    await act(async () => action("Cancel renewal").click());
+    assert.equal(calls.includes("cancel"), false);
+    await act(async () => action("Keep renewal").click());
+    assert.equal(calls.includes("cancel"), false);
+    await act(async () => action("Cancel renewal").click());
+    await act(async () => action("Confirm cancellation").click());
+    assert.equal(calls.filter((c) => c === "cancel").length, 1);
+    assert.ok(action("Renewal cancelled").disabled);
   } finally {
     await act(async () => root.unmount());
     delete globalThis.billingJourney;

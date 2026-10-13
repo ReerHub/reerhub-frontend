@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import Icon from "@/components/ui/Icon";
 export default function UpgradePanel({
   compact = false,

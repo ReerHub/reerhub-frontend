@@ -1,50 +1,80 @@
 "use client";
-
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import type { ReactNode } from "react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/components/AuthProvider";
-import { dashboardView } from "@/lib/dashboard";
-import { workspaceLinks } from "@/lib/workspace";
+import {
+  memberHref,
+  workspaceLinks,
+  requestWorkspaceNavigation,
+} from "@/lib/workspace";
+import { isPro } from "@/lib/membership";
 import Icon from "@/components/ui/Icon";
 
-export default function MemberWorkspace({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const params = useSearchParams();
-  const { user, loading } = useAuth();
-  const protectedWorkspace =
-    pathname === "/dashboard" || pathname === "/profile";
-  const memberBilling =
-    pathname === "/billing" || pathname === "/billing/success";
-  if (!protectedWorkspace && !(memberBilling && user)) return children;
-  const pro = !!user?.membership?.isPro;
-  const view = dashboardView(params.get("view"), pro);
+export default function MemberWorkspace({
+  children,
+  sessionHint = false,
+}: {
+  children: ReactNode;
+  sessionHint?: boolean;
+}) {
+  const pathname = usePathname(),
+    params = useSearchParams(),
+    router = useRouter();
+  const { user, loading, logout } = useAuth();
+  const here = `${pathname}${params.size ? `?${params}` : ""}`;
+  const destination = memberHref(here);
+  const workspace =
+    pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+  useEffect(() => {
+    if (loading) return;
+    if (user && destination !== here)
+      router.replace(memberHref(here + window.location.hash));
+    else if (!user && workspace)
+      router.replace(
+        `/login?next=${encodeURIComponent(here + window.location.hash)}`,
+      );
+  }, [user, loading, destination, here, workspace, router]);
+  if (
+    (loading && (workspace || sessionHint)) ||
+    (user && destination !== here) ||
+    (!user && workspace)
+  )
+    return (
+      <div
+        className="member-workspace-pending workspace-loading page-container py-12"
+        role="status"
+      >
+        <div className="skeleton h-10 max-w-sm rounded-xl" />
+        <div className="skeleton mt-6 h-64 rounded-3xl" />
+        <span className="sr-only">Opening your workspace…</span>
+      </div>
+    );
+  if (!workspace || !user) return children;
+  const pro = isPro(user);
   return (
     <div className="member-workspace">
       <aside className="workspace-sidebar" aria-label="Your workspace">
         <div className="workspace-identity">
           <span className="workspace-monogram" aria-hidden="true">
-            {user?.name?.slice(0, 1) || "R"}
+            {user.name?.slice(0, 1) || "R"}
           </span>
           <div>
-            <strong>
-              {loading ? "Your workspace" : user?.name || "Your workspace"}
-            </strong>
+            <strong>{user.name}</strong>
             <span>{pro ? "Your Pro membership" : "Your next chapter"}</span>
           </div>
         </div>
         <p className="workspace-label">YOUR WORKSPACE</p>
         <nav aria-label="Member workspace">
           {workspaceLinks(pro).map(({ href, label, icon }) => {
-            const active = href.startsWith("/dashboard?")
-              ? pathname === "/dashboard" && href.endsWith(`=${view}`)
-              : pathname === href ||
-                (href === "/billing" && pathname === "/billing/success");
+            const active =
+              href === "/dashboard"
+                ? pathname === href
+                : pathname === href || pathname.startsWith(`${href}/`);
             return (
               <Link
                 key={href}
                 href={href}
-                scroll={!href.startsWith("/dashboard?")}
                 aria-current={active ? "page" : undefined}
                 className={`workspace-link ${active ? "is-active" : ""}`}
               >
@@ -55,22 +85,31 @@ export default function MemberWorkspace({ children }: { children: ReactNode }) {
           })}
         </nav>
         <div className="workspace-sidebar-bottom">
-          <p>
-            A little clarity.
-            <br />
-            <strong>A lot of possibility.</strong>
-          </p>
-          <Link href="/contact" className="workspace-link">
+          <Link href="/dashboard/help" className="workspace-link">
             <Icon name="shield" className="h-5 w-5" />
             Help & support
           </Link>
-          <Link href="/" className="workspace-link">
-            <Icon name="arrow" className="h-5 w-5" />
-            Back to ReerHub
-          </Link>
+          <button
+            className="workspace-link w-full"
+            onClick={() =>
+              requestWorkspaceNavigation("/", () => {
+                void logout().then(() =>
+                  window.location.assign(window.location.origin),
+                );
+              })
+            }
+          >
+            <Icon name="logout" className="h-5 w-5" />
+            Sign out
+          </button>
         </div>
       </aside>
-      <div className="workspace-main">{children}</div>
+      <div
+        className="workspace-main"
+        key={`${user.id}:${pro ? "pro" : "free"}`}
+      >
+        {children}
+      </div>
     </div>
   );
 }

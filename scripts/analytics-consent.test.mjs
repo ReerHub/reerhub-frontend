@@ -20,6 +20,8 @@ for (const [key, value] of Object.entries({
   document: dom.window.document,
   sessionStorage: dom.window.sessionStorage,
   Event: dom.window.Event,
+  CustomEvent: dom.window.CustomEvent,
+  HTMLElement: dom.window.HTMLElement,
   IS_REACT_ACT_ENVIRONMENT: true,
 })) {
   previous.set(key, Object.getOwnPropertyDescriptor(globalThis, key));
@@ -121,6 +123,13 @@ test("event allowlist discards private payloads and never forwards URLs", () => 
     group: "qualified",
   });
   assert.equal(events.pageFamily("/verify-magic"), "account");
+  assert.equal(events.pageFamily("/dashboard/jobs/private-role"), "job-detail");
+  assert.equal(
+    events.pageFamily("/dashboard/companies/private-company"),
+    "companies",
+  );
+  assert.equal(events.pageFamily("/dashboard/billing"), "pricing");
+  assert.equal(events.pageFamily("/dashboard/profile"), "account");
   assert.equal(events.pageFamily("/jobs/role-abcdef"), "job-detail");
 });
 test("direct analytics-frame navigation cannot activate the tag", async () => {
@@ -175,16 +184,31 @@ test("privacy UI supports rejection, explicit opt-in and withdrawal without lega
   code = code
     .replace('"@/lib/consent"', JSON.stringify(consentUrl))
     .replace(
-      'import Link from "next/link";',
+      /import Link from "(?:next\/link|@\/components\/AppLink)";/,
       "const Link=({children,href})=><a href={href}>{children}</a>;",
     );
   const { default: Component } = await import(compileFixture(code));
+  const { default: PreferencesButton } = await import(
+    compileFixture(
+      (await source("../components/PrivacyPreferencesButton.tsx")).replace(
+        '"@/lib/consent"',
+        JSON.stringify(consentUrl),
+      ),
+    )
+  );
   const { createElement, act } = await import("react"),
     { createRoot } = await import("react-dom/client");
   const root = createRoot(document.getElementById("root"));
   try {
     await act(async () =>
-      root.render(createElement(Component, { analyticsAvailable: true })),
+      root.render(
+        createElement(
+          "main",
+          { id: "main-content", tabIndex: -1 },
+          createElement(Component, { analyticsAvailable: true }),
+          createElement(PreferencesButton),
+        ),
+      ),
     );
     assert.equal(consent.analyticsConsent(), false);
     const button = (text) =>
@@ -193,14 +217,36 @@ test("privacy UI supports rejection, explicit opt-in and withdrawal without lega
       );
     await act(async () => button("Reject").click());
     assert.equal(consent.analyticsConsent(), false);
+    assert.equal(document.querySelector(".privacy-panel"), null);
+    assert.equal(document.querySelector(".privacy-opener"), null);
     await act(async () => button("Privacy preferences").click());
     assert.equal(document.activeElement.tagName, "H2");
     assert.equal(document.querySelector('input[type="checkbox"]'), null);
-    await act(async () => button("Close").click());
+    await act(async () =>
+      window.dispatchEvent(
+        new window.KeyboardEvent("keydown", { key: "Escape" }),
+      ),
+    );
     assert.equal(consent.analyticsConsent(), false);
     await act(async () => button("Privacy preferences").click());
     await act(async () => button("Accept").click());
     assert.equal(consent.analyticsConsent(), true);
+    assert.equal(document.querySelector(".privacy-panel"), null);
+    await act(async () =>
+      root.render(
+        createElement(
+          "main",
+          { id: "main-content", tabIndex: -1 },
+          createElement(Component, { key: "reload", analyticsAvailable: true }),
+          createElement(PreferencesButton),
+        ),
+      ),
+    );
+    assert.equal(
+      document.querySelector(".privacy-panel"),
+      null,
+      "Returning visitors must not get another prompt",
+    );
     await act(async () => button("Privacy preferences").click());
     await act(async () => button("Reject").click());
     assert.equal(consent.analyticsConsent(), false);
@@ -217,10 +263,18 @@ test("unavailable analytics hides the first-visit prompt while storing a choice 
   code = code
     .replace('"@/lib/consent"', JSON.stringify(consentUrl))
     .replace(
-      'import Link from "next/link";',
+      /import Link from "(?:next\/link|@\/components\/AppLink)";/,
       "const Link=({children,href})=><a href={href}>{children}</a>;",
     );
   const { default: Component } = await import(compileFixture(code));
+  const { default: PreferencesButton } = await import(
+    compileFixture(
+      (await source("../components/PrivacyPreferencesButton.tsx")).replace(
+        '"@/lib/consent"',
+        JSON.stringify(consentUrl),
+      ),
+    )
+  );
   const { createElement, act } = await import("react"),
     { createRoot } = await import("react-dom/client");
   const root = createRoot(document.getElementById("root"));
@@ -229,7 +283,16 @@ test("unavailable analytics hides the first-visit prompt while storing a choice 
       (b) => b.textContent === text,
     );
   try {
-    await act(async () => root.render(createElement(Component)));
+    await act(async () =>
+      root.render(
+        createElement(
+          "main",
+          { id: "main-content", tabIndex: -1 },
+          createElement(Component),
+          createElement(PreferencesButton),
+        ),
+      ),
+    );
     assert.equal(
       document.querySelector('[aria-label="Privacy preferences"]'),
       null,

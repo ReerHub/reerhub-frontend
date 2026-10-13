@@ -20,6 +20,10 @@ export const PAGE_FAMILIES = [
 ] as const;
 export type PageFamily = (typeof PAGE_FAMILIES)[number];
 export function pageFamily(pathname: string): PageFamily {
+  if (pathname === "/dashboard/billing") return "pricing";
+  if (/^\/dashboard\/jobs\/[^/]+$/.test(pathname)) return "job-detail";
+  if (pathname === "/dashboard/jobs") return "discovery";
+  if (/^\/dashboard\/companies(?:\/|$)/.test(pathname)) return "companies";
   if (pathname === "/") return "home";
   if (pathname === "/billing") return "pricing";
   if (/^\/jobs\/[^/]+$/.test(pathname)) return "job-detail";

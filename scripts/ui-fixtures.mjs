@@ -647,6 +647,15 @@ const server = http.createServer(async (req, res) => {
     if (path === "/admin/audit-logs") return page(audits);
   }
   if (path === "/auth/csrf") return json({ csrfToken: "fixture-csrf" });
+  if (path === "/auth/logout" && req.method === "POST") {
+    res.setHeader("Set-Cookie", [
+      "fixtureState=anonymous; Path=/; SameSite=Lax",
+      "accessToken=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
+      "refreshToken=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0",
+    ]);
+    return json({ loggedOut: true });
+  }
+
   if (path === "/profile-options") return json(PROFILE_OPTIONS);
   if (path === "/users/me" || path === "/users/session") {
     if (path === "/users/session" && state === "anonymous") return json(null);
@@ -894,6 +903,26 @@ const server = http.createServer(async (req, res) => {
     });
   if (path === "/jobs/sitemap") return json([job]);
   if (path === `/jobs/${job._id}`) return json(job);
+  if (
+    process.env.FIXTURE_LOCATION_SCOPES === "1" &&
+    /^\/jobs\/[a-f0-9]{24}$/.test(path)
+  ) {
+    const detailUrl = new URL(url);
+    detailUrl.searchParams.set("locationScope", "all");
+    const detail = scopeJobs(detailUrl).find(
+      (role) => role._id === path.split("/").at(-1),
+    );
+    if (detail) return json(detail);
+    const id = path.split("/").at(-1);
+    const seededSavedId = Number(id);
+    if (
+      seededSavedId >= 200 &&
+      seededSavedId <= 221 &&
+      id === String(seededSavedId).padStart(24, "0")
+    )
+      return json({ ...job, _id: id });
+  }
+
   if (path === "/jobs/333333333333333333333333")
     return json({ ...job, _id: "333333333333333333333333", status: "closed" });
   if (path === "/jobs") {

@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
-import { workspaceLinks } from "@/lib/workspace";
+import { workspaceLinks, requestWorkspaceNavigation } from "@/lib/workspace";
 import ProBadge from "@/components/ProBadge";
 import Icon from "@/components/ui/Icon";
 import UserAvatar from "@/components/UserAvatar";
 import BrandWordmark from "@/components/BrandWordmark";
-export default function Navbar() {
+export default function Navbar({ sessionHint = false }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading, logout } = useAuth();
@@ -62,6 +62,12 @@ export default function Navbar() {
     },
     ...(user ? [{ href: "/dashboard", label: "My dashboard" }] : []),
   ];
+  const neutral = loading && sessionHint;
+  const mobileLinks = user || neutral ? [] : links;
+  const signOut = () =>
+    requestWorkspaceNavigation("/", () => {
+      void logout().then(() => window.location.assign(window.location.origin));
+    });
   const close = () => {
     setOpen(false);
     setAccount(false);
@@ -77,7 +83,7 @@ export default function Navbar() {
     <header className="site-nav" data-scrolled={pathname !== "/" || scrolled}>
       <div className="nav-inner page-container flex h-[72px] items-center justify-between gap-4">
         <Link
-          href="/"
+          href={user ? "/dashboard" : "/"}
           onClick={close}
           className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2.5"
           aria-label="REERHUB home"
@@ -92,18 +98,52 @@ export default function Navbar() {
           />
           <BrandWordmark className="nav-wordmark hidden text-xl text-white sm:inline" />
         </Link>
-        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
-          {links.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`nav-link ${isActive(href) ? "is-active" : ""}`}
-              aria-current={isActive(href) ? "page" : undefined}
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
+        {!user && !neutral && (
+          <nav
+            aria-label="Primary"
+            className="hidden items-center gap-1 lg:flex"
+          >
+            {links.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`nav-link ${isActive(href) ? "is-active" : ""}`}
+                aria-current={isActive(href) ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+        )}
+        {user && (
+          <form
+            className="workspace-top-search"
+            role="search"
+            aria-label="Search workspace jobs"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const q = String(
+                new FormData(event.currentTarget).get("q") || "",
+              ).trim();
+              const href = `/dashboard/jobs${q ? `?q=${encodeURIComponent(q)}` : ""}`;
+              requestWorkspaceNavigation(href, () => {
+                close();
+                router.push(href);
+              });
+            }}
+          >
+            <Icon name="search" className="h-4 w-4" />
+            <input
+              name="q"
+              type="search"
+              aria-label="Search jobs or skills"
+              placeholder="Search jobs or skills…"
+            />
+            <button type="submit" aria-label="Search workspace">
+              <Icon name="arrow" className="h-4 w-4" />
+            </button>
+          </form>
+        )}
         <div className="flex items-center gap-2">
           {loading ? (
             <div className="skeleton h-10 w-20 rounded-xl" />
@@ -140,9 +180,9 @@ export default function Navbar() {
                   </div>
                   {[
                     ["/dashboard", "My dashboard", "grid"],
-                    ["/profile", "Profile & preferences", "user"],
+                    ["/dashboard/profile", "Profile & preferences", "user"],
                     [
-                      "/billing",
+                      "/dashboard/billing",
                       user.membership?.isPro ? "Manage Pro" : "Explore Pro",
                       "spark",
                     ],
@@ -157,15 +197,7 @@ export default function Navbar() {
                       {label}
                     </Link>
                   ))}
-                  <button
-                    className="account-link w-full"
-                    onClick={async () => {
-                      await logout();
-                      close();
-                      router.push("/");
-                      router.refresh();
-                    }}
-                  >
+                  <button className="account-link w-full" onClick={signOut}>
                     <Icon name="logout" className="h-4 w-4" />
                     Sign out
                   </button>
@@ -206,7 +238,7 @@ export default function Navbar() {
           aria-label="Mobile primary"
           className="mobile-nav-panel border-t p-4 lg:hidden"
         >
-          {links.map(({ href, label }) => (
+          {mobileLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
@@ -234,14 +266,36 @@ export default function Navbar() {
               )}
             </div>
           )}
-          <div className="mt-3 flex flex-wrap gap-3 border-t border-slate-100 pt-3">
-            <Link href="/engineering-jobs" onClick={close} className="nav-link">
-              Engineering
-            </Link>
-            <Link href="/ai-jobs" onClick={close} className="nav-link">
-              AI / ML
-            </Link>
-          </div>
+          {user ? (
+            <div className="border-t pt-3">
+              <Link
+                href="/dashboard/help"
+                onClick={close}
+                className="nav-link block"
+              >
+                Help & support
+              </Link>
+              <button
+                onClick={signOut}
+                className="nav-link block w-full text-left"
+              >
+                Sign out
+              </button>
+            </div>
+          ) : !neutral ? (
+            <div className="mt-3 flex flex-wrap gap-3 border-t border-slate-100 pt-3">
+              <Link
+                href="/engineering-jobs"
+                onClick={close}
+                className="nav-link"
+              >
+                Engineering
+              </Link>
+              <Link href="/ai-jobs" onClick={close} className="nav-link">
+                AI / ML
+              </Link>
+            </div>
+          ) : null}
         </nav>
       )}
     </header>

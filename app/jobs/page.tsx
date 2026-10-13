@@ -1,5 +1,5 @@
 import { pageMetadata } from "@/lib/seo";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { Suspense } from "react";
 import ServerJobBrowser from "@/components/ServerJobBrowser";
 import PageHeader from "@/components/PageHeader";
