@@ -542,3 +542,11 @@
     transform: none;
   }
 }
+
+/* Keep all public HTML present; skip expensive offscreen layout until needed. */
+.public-site .deferred-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
+}
+
+.public-site .consent-actions button { padding-inline: .5rem; font-size: .75rem; }

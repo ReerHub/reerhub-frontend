@@ -1,3 +1,39 @@
+## SEO, matching and conversion: Phase 6 — 2026-10-13
+
+Final public HTML review covers homepage, discovery, six exact-filter role pages, fresher/internship, city/remote, companies, pricing, About, methodology, contact and legal pages: successful initial responses contain one H1 and canonical metadata without JavaScript. Early-career fixtures are noindex and outside the sitemap below the editorial threshold. Anonymous/Free/Pro desktop/mobile discovery/save/login-return/profile/group journeys and mocked Test-mode checkout retain existing entitlements; no real payment/account/email action was used. Redirect/404/outage/cache/private noindex and schema regressions are covered by the combined suite. Existing admin operations remain separate from customer flows.
+
+All 67 frontend regressions, lint, TypeScript and the standard production build pass. Both repository dependency audits report zero vulnerabilities. The documented mobile LCP target gap and owner account/field-data prerequisites remain explicit; lab results do not claim live GA/Search Console activation. Source research in the backend proposes only two currently evidenced, nonduplicate internship sources and does not import them.
+
+Owner granted overnight merge/deploy/fix authorization for this requested release, after final PR/CI. The normal per-release approval requirement still applies afterward. Backend contracts deploy first, public availability/repair/groups/sitemap are verified, then frontend deploys and its production journeys/privacy/HTML are checked. Develop/staging remain paused. Final CI and deployment evidence follows after actual verification.
+
+## SEO, matching and conversion: Phase 5 — 2026-10-13
+
+Owner chose analytics disabled and has not established Search Console. Optional runtime GA4 support requires a valid measurement ID plus explicit version-2 consent. Legacy necessary-cookie acceptance is not analytics consent. Reject, preferences and withdrawal controls remain available; an opaque-origin sandbox receives only allowlisted enum events with fixed public page identity and no member/profile/payment/private-URL payload. Session-local conversion deduplication keeps trial activation separate from the first server-verified captured payment. Account/property activation is pending owner setup, not a code-test result.
+
+The unchanged brand icon now uses the existing compact favicon instead of a 909-KiB original PNG in the favicon request. Offscreen homepage sections retain their HTML while deferring layout. Mobile privacy controls fit the viewport, anonymous save labels match visible wording, and offscreen/tab-hidden/pause/reduced-motion behavior is tested. Font-loading experiments did not improve repeatable results; original Inter/Space Grotesk families and swap behavior are retained.
+
+Gate: all 67 frontend regressions, lint and TypeScript pass. Production-mode fixtures verify mobile rejection/opt-in/withdrawal, no tag/frame with configuration absent, keyboard focus and no horizontal overflow. Three Lighthouse runs per route/device (home, discovery, detail, pricing) show desktop LCP 0.58–0.75 s; mobile 2.77–3.46 s, CLS <=0.037, accessibility 100 with no failed audits. Mobile LCP remains above the 2.5-second target after investigation; this is a documented performance limitation, not a claimed pass against that target. Mobile TBT 5–11 ms is not INP. One local browser interaction measured INP 64 ms; real-user field data is unavailable. Localhost fixtures do not certify deployed network latency, analytics delivery or field Core Web Vitals.
+
+Provider date review now displays last employer publication and record creation separately; these are not original posting evidence.
+
+## SEO, matching and conversion: Phase 4 — 2026-10-13
+
+Homepage proposition is “Find tech jobs in India. Apply directly to companies.” Native keyword/city search and Browse jobs lead into real openings, employer evidence, live fictional-profile matching, Free/Pro comparison, prices and answers. The illustrative animation is inside How it works; profile completion is encouraged without removing direct checkout. Existing cobalt palette, icon and typography are preserved. Six original role pages use exact supported taxonomy filters; QA includes the full QA track. About, methodology and contact use confirmed business facts and verified social identity. Fresher and internship pages use backend full-inventory counts, remain noindex/outside sitemap below five active evidence-qualified roles across two employers, and require completed original content. This is an editorial threshold, not a Google requirement.
+
+Gate: 165 backend and 60 frontend regressions pass, including filter/inventory/privacy thresholds and mocked Test-mode checkout plan selection, error recovery and verified trial activation; lint/types/standard build pass. Synthetic desktop/mobile journeys verified native search filters, public detail/official Apply target, save-to-login return URL, Free saving and Pro group explanations. Mobile homepage Browse jobs fits in the first 844px viewport with no horizontal overflow. Visual review corrected a misleading “Strong matches” tooltip outside the qualified group and made experience badges describe mandatory minima rather than informational maxima. No real account creation, payment, email or production source sync occurred. Final integrated checks will rerun after remaining phases.
+
+## SEO, matching and conversion: Phase 3 — 2026-10-13
+
+Public billing pricing, Free/Pro comparison, seven-day trial terms and FAQs are server components; account/subscription controls hydrate separately with checkout loaded only on demand. Unknown employer-date provenance displays first observation and cannot emit JobPosting datePosted. Known deadlines remove application eligibility and supply validThrough; inactive/expired details offer an official status check rather than Apply. Job titles retain employer identity even when role titles are long. The proxy resolves canonical job redirects as HTTP 308 before streaming while preserving authoritative 404s and outage errors. City boundaries distinguish unavailable data, first initialization and actual emptiness. Intent headings are explicit; public source reads/sitemap no longer add independent freshness windows. Public content stays visible without JavaScript through the noscript reveal fallback.
+
+Gate: all 57 frontend regressions, lint, types and standard production build passed. Raw local fixture HTML includes all three prices and FAQ, canonical job redirects return 308 and missing jobs return 404. Synthetic mobile pricing has no horizontal overflow; production deployment and real payments have not occurred. The owner authorizes the final passing PR merges and production verification overnight for this release only. Analytics must remain disabled; Search Console is not yet configured.
+
+## SEO, matching and conversion: Phase 2 — 2026-10-13
+
+The requested sequential six-phase release remains on feature branches until all gates pass; no phase PR or main/develop merge. Pro recommendations expose Profile matches, Stretch roles and Needs review with independent group/tier counts, experience gaps and uncertainty explanations. Scores represent relevance, not hiring probability or full qualification verification. Empty qualified results disclose roles in other groups; those groups never enter strong daily emails. Discovery includes explicit fresher eligibility and internship evidence filters. Runtime fields are additive for backend-first rollout; old responses retain the qualified default.
+
+Phase 2 local checks: all 55 frontend regressions, including rendered group switching and honest gap explanations, lint and TypeScript passed. Backend isolated gates passed with 164 regressions. No live release or provider action is claimed. Palette, prices, trial duration and member entitlements remain unchanged.
+
 # Frontend decisions
 
 

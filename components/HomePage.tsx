@@ -1,431 +1,370 @@
 import Link from "next/link";
-import { type CSSProperties } from "react";
 import { HomeAccountAction, HomeGuestNote } from "./HomeAccountAction";
 import JobCard from "@/components/JobCard";
-import Icon from "@/components/ui/Icon";
 import CompanyLogo from "@/components/CompanyLogo";
 import LiveMatchingExample from "./LiveMatchingExample";
 import MatchJourney from "@/components/MatchJourney";
 import { topHiringCompanies } from "@/lib/home-companies";
 import styles from "./HomePage.module.css";
 import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
-import { TECH_TRACKS, type HomeSnapshot } from "@/lib/reerhub";
+import { type HomeSnapshot } from "@/lib/reerhub";
+import { JOB_LANDINGS } from "@/lib/seo-landings";
+import { PLANS } from "@/lib/billing-plans";
+const ANSWERS = [
+  [
+    "Can I browse and apply for free?",
+    "Yes. Job details and official Apply links are public. A free account unlocks complete browsing, saved jobs and your profile.",
+  ],
+  [
+    "Are there jobs for freshers?",
+    "Our fresher page includes only explicit employer evidence allowing freshers or no required experience. Internships have their own page. A missing experience requirement is never treated as zero.",
+  ],
+  [
+    "What does a match score mean?",
+    "It measures relevance to a profile, using skill, role and preference evidence. Profile matches meet verified experience requirements; Stretch roles have a gap; Needs review means requirements are uncertain. Scores do not predict hiring.",
+  ],
+  [
+    "How often are sources checked?",
+    "Scheduled source checks run twice daily, starting at 06:00 and 20:00 IST with staggered starts. Failures preserve previously verified jobs. Each listing shows its last observed feed check; this is not a guarantee the employer still accepts applications.",
+  ],
+  [
+    "When does a Pro trial become paid?",
+    "The trial lasts seven days. Recurring charges start afterward; Razorpay may show a separate authorization amount. Cancel renewal before the trial ends to prevent the first recurring charge. Subscription payments are non-refundable.",
+  ],
+];
 export default function HomePage({ data }: { data: HomeSnapshot | null }) {
   const jobs = data?.jobs || [],
     companies = data?.companies || [];
-  const error = !data,
-    loaded = !!data;
-  const total = data?.totalJobs || 0;
-  const featuredCompanies = topHiringCompanies(companies);
+  const featured = topHiringCompanies(companies).slice(0, 8);
   return (
     <div className={styles.home}>
-      <div className="page-container">
-        <CatalogNotice data={data} />
-      </div>
-      <section className={`${styles.hero} border-b border-slate-200 bg-white`}>
-        <div
-          className={`${styles.heroGrid} page-container grid items-center py-14 lg:py-20`}
-        >
-          <div className={`${styles.heroCopy} rise-in`}>
-            <div
-              className={`${styles.heroLabel} mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold`}
-            >
-              <Icon name="shield" className="h-4 w-4" />
-              OFFICIAL OPENINGS. PERSONALIZED DIRECTION.
-            </div>
+      <section className={`${styles.hero} border-b border-slate-200`}>
+        <div className={`${styles.heroGrid} page-container py-12 sm:py-16`}>
+          <div className={styles.heroCopy}>
+            <p className="mb-5 text-sm font-semibold text-primary">
+              Official sources. Direct applications.
+            </p>
             <h1 className="font-display font-bold text-ink">
-              Your next role.
-              <br />
-              <span className={styles.highlight}>A better way to find it.</span>
+              Find tech jobs in India.{" "}
+              <span className={styles.highlight}>
+                Apply directly to companies.
+              </span>
             </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-600">
-              Less searching in circles. More moving forward. Discover India’s
-              tech openings, or let Pro build a shortlist around you.
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+              Explore roles for freshers and experienced engineers. Browse for
+              free, read the employer’s requirements and apply on the official
+              company site.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link href="/jobs" className="btn-primary">
-                Discover jobs
-                <Icon name="arrow" className="h-4 w-4" />
-              </Link>
-              <HomeAccountAction
-                className="btn-secondary"
-                guest="Start for free"
-              />
-            </div>
-            <p className="mt-4 text-xs leading-6 text-slate-600">
-              Public job details. Official Apply links. No middlemen.
-            </p>
-          </div>
-          <div
-            className="hero-canvas rise-in"
-            style={{ animationDelay: "140ms" }}
-          >
-            <div
-              className={`${styles.previewHeader} relative mb-5 flex items-center justify-between`}
+            <form
+              action="/jobs"
+              method="get"
+              role="search"
+              aria-label="Search tech jobs in India"
+              className="mx-auto mt-7 grid max-w-3xl gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-card sm:grid-cols-[1.4fr_1fr_auto]"
             >
-              <h2 className="font-display font-bold text-ink">
-                From open opportunities to your shortlist
-              </h2>
-              <span className={styles.previewBadge}>PRO</span>
-            </div>
-            <MatchJourney companies={companies} />
-            <div className={styles.resultGrid}>
-              <LiveMatchingExample examples={data?.matchingExamples} />
-              <div className={styles.digestPreview}>
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
-                  <Icon name="mail" className="h-5 w-5" />
-                </span>
-                <p className="mt-5 text-xs font-semibold text-primary-deep">
-                  LESS SEARCHING. MORE DIRECTION.
-                </p>
-                <h2 className="mt-2 font-display text-3xl font-bold text-ink">
-                  Your daily shortlist.
-                </h2>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
-                  Up to five of your strongest matches, together in one daily
-                  email—only when we find roles with 75%+ profile relevance.
-                </p>
-                <ul className="mt-4 space-y-3 text-sm text-slate-700">
-                  <li className="flex gap-2">
-                    <Icon
-                      name="check"
-                      className="h-4 w-4 shrink-0 text-primary"
-                    />
-                    Never padded with weak matches
-                  </li>
-                  <li className="flex gap-2">
-                    <Icon
-                      name="check"
-                      className="h-4 w-4 shrink-0 text-primary"
-                    />
-                    See more ranked roles and filter on your dashboard
-                  </li>
-                  <li className="flex gap-2">
-                    <Icon
-                      name="check"
-                      className="h-4 w-4 shrink-0 text-primary"
-                    />
-                    Pause emails whenever you want
-                  </li>
-                </ul>
-                <Link href="/billing" className="btn-primary mt-6">
-                  See Pro plans
-                  <Icon name="arrow" className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
+              <label className="text-sm font-medium text-slate-700">
+                Keyword or role
+                <input
+                  name="q"
+                  type="search"
+                  placeholder="Backend, React, data engineering…"
+                  className="mt-2 min-h-12 w-full rounded-xl border border-slate-200 px-3"
+                />
+              </label>
+              <label className="text-sm font-medium text-slate-700">
+                City
+                <select
+                  name="city"
+                  aria-label="City"
+                  className="mt-2 min-h-12 w-full rounded-xl border border-slate-200 px-3"
+                >
+                  <option value="">All India</option>
+                  {[
+                    "Bengaluru",
+                    "Hyderabad",
+                    "Pune",
+                    "Chennai",
+                    "Delhi",
+                    "Mumbai",
+                  ].map((city) => (
+                    <option key={city}>{city}</option>
+                  ))}
+                </select>
+              </label>
+              <button type="submit" className="btn-primary self-end">
+                Browse jobs
+              </button>
+            </form>
+            <Link href="#how-pro-works" className="btn-secondary mt-4">
+              See how Pro works
+            </Link>
+            <p className="mt-4 text-sm text-slate-600">
+              No payment needed to browse or apply.
+            </p>
           </div>
         </div>
       </section>
-      <div className={`${styles.sources} border-b border-slate-200 bg-white`}>
-        <div className="page-container flex flex-wrap items-center justify-between gap-5 py-6">
-          <p className="text-sm font-medium text-slate-600">
-            {total > 0
-              ? `${total} open tech roles across ${data?.totalCompanies || 0} companies`
-              : "Tech roles from official company hiring sources"}
-          </p>
-          <div className="flex flex-wrap gap-5 text-xs font-semibold text-slate-600">
-            <span className="flex items-center gap-2">
-              <Icon name="clock" className="h-4 w-4 text-primary" />
-              Refreshed daily
-            </span>
-            <span className="flex items-center gap-2">
-              <Icon name="external" className="h-4 w-4 text-primary" />
-              Apply directly
-            </span>
-          </div>
-        </div>
-      </div>
       <section
-        className={`${styles.companySection} page-container`}
-        aria-labelledby="hiring-companies-title"
+        className="deferred-section page-container py-10 sm:py-14"
+        aria-labelledby="current-openings"
       >
-        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+        <CatalogNotice data={data} />
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className={styles.eyebrow}>
-              THE OPENINGS ARE REAL. THE SOURCE IS OFFICIAL.
-            </p>
             <h2
-              id="hiring-companies-title"
-              className="mt-3 font-display text-3xl font-bold text-ink"
+              id="current-openings"
+              className="text-3xl font-bold tracking-tight text-ink"
             >
-              Find your next role at the source.
-            </h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              Companies with the most current openings in our directory. Not
-              partners or endorsements.
-            </p>
-          </div>
-          <Link href="/companies" className="btn-secondary">
-            Explore all companies
-            <Icon name="arrow" className="h-4 w-4" />
-          </Link>
-        </div>
-        {featuredCompanies.length ? (
-          <div
-            className={styles.companyGrid}
-            style={
-              {
-                "--company-columns": Math.min(8, featuredCompanies.length),
-              } as CSSProperties
-            }
-          >
-            {featuredCompanies.map((company) => (
-              <Link
-                key={company._id}
-                href={`/companies/${company.slug}`}
-                prefetch={false}
-                className={styles.companyTile}
-              >
-                <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
-                <strong>{company.name}</strong>
-                <span>
-                  {company.activeJobs}{" "}
-                  {company.activeJobs === 1 ? "opening" : "openings"}
-                  <Icon name="arrow" className="h-3.5 w-3.5" />
-                </span>
-              </Link>
-            ))}
-          </div>
-        ) : !loaded && !error ? (
-          <div
-            className={styles.companyGrid}
-            aria-label="Loading hiring companies"
-            aria-busy="true"
-          >
-            {Array.from({ length: 8 }, (_, index) => (
-              <div key={index} className="skeleton h-36" />
-            ))}
-          </div>
-        ) : (
-          <div className="surface-panel p-6 text-sm text-slate-600">
-            {error
-              ? "Company opening counts are temporarily unavailable. Browse the directory to try again."
-              : "No companies have current openings to highlight. Our directory is still available."}
-          </div>
-        )}
-        <div className={styles.coverageStats}>
-          <p>
-            <strong>{loaded ? total.toLocaleString("en-IN") : "—"}</strong>
-            <span>current openings</span>
-          </p>
-          <p>
-            <strong>{loaded ? data?.totalCompanies : "—"}</strong>
-            <span>companies in our directory</span>
-          </p>
-          <p>
-            <Icon name="shield" className="h-5 w-5 text-primary" />
-            <span>
-              Official sources.
-              <br />
-              Apply directly.
-            </span>
-          </p>
-        </div>
-      </section>
-      <section className={`${styles.openings} page-container py-14 sm:py-20`}>
-        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 className="font-display text-3xl font-bold tracking-tight text-ink">
-              Open roles. Real possibilities.
+              Current tech openings in India
             </h2>
             <p className="mt-3 text-slate-600">
-              A few current openings to get you moving.
+              {data
+                ? `${data.totalJobs.toLocaleString("en-IN")} active technical ${data.totalJobs === 1 ? "role" : "roles"} in the verified catalog.`
+                : "Live opening counts are temporarily unavailable."}
             </p>
           </div>
           <Link href="/jobs" className="btn-secondary">
             View all jobs
-            <Icon name="arrow" className="h-4 w-4" />
           </Link>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
           {jobs.length ? (
             jobs.map((job) => <JobCard key={job._id} job={job} />)
-          ) : error ? (
-            <div className="surface-panel col-span-full p-8 text-center">
-              <p className="text-slate-600">
-                Live openings are temporarily unavailable.
-              </p>
-              <Link href="/jobs" className="btn-secondary mt-4">
-                Browse jobs
+          ) : !data ? (
+            <p className="surface-panel col-span-full p-7">
+              Live openings are temporarily unavailable.{" "}
+              <Link href="/jobs" className="underline">
+                Try discovery again
               </Link>
-            </div>
-          ) : catalogInitializing(data) ? null : loaded ? (
-            <div
-              className="surface-panel col-span-full p-8 text-center"
-              role="status"
-            >
-              <h3 className="text-lg font-semibold text-ink">
-                New opportunities are on their way.
-              </h3>
-              <p className="mt-2 text-slate-600">
-                Explore company career sources while fresh openings arrive.
-              </p>
-              <Link href="/companies" className="btn-secondary mt-4">
-                Explore companies
+              .
+            </p>
+          ) : catalogInitializing(data) ? null : (
+            <p className="surface-panel col-span-full p-7">
+              No active verified roles right now. You can still{" "}
+              <Link href="/companies" className="underline">
+                explore company sources
               </Link>
-            </div>
-          ) : (
-            [1, 2, 3].map((i) => (
-              <div key={i} className="skeleton h-72 rounded-2xl" />
-            ))
+              .
+            </p>
           )}
         </div>
-        <div className="mt-7 flex flex-wrap gap-2">
-          {TECH_TRACKS.map((t) => (
-            <Link
-              key={t.value}
-              href={`/jobs?techTrack=${t.value}`}
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs font-semibold text-slate-600 hover:border-primary hover:text-primary"
-            >
-              {t.label}
-            </Link>
-          ))}
-        </div>
+        <nav
+          aria-label="Choose a career path"
+          className="mt-7 flex flex-wrap gap-3"
+        >
+          <Link href="/fresher-jobs" className="btn-secondary">
+            Fresher opportunities
+          </Link>
+          <Link href="/internship-jobs" className="btn-secondary">
+            Internships
+          </Link>
+          <Link href="/jobs" className="btn-secondary">
+            Browse all experience levels
+          </Link>
+        </nav>
         <HomeGuestNote>
-          <p className={styles.browseNote}>
+          <p className="mt-5 text-sm leading-7 text-slate-600">
             Preview openings freely.{" "}
-            <Link href="/login?next=/jobs">Create a free account</Link> for full
-            browsing and saved jobs.
+            <Link href="/login?next=/jobs" className="underline">
+              Create a free account
+            </Link>{" "}
+            for complete browsing and saved roles.
           </p>
         </HomeGuestNote>
-      </section>
-      <section
-        id="why"
-        className={`${styles.benefits} border-y border-slate-200 bg-white`}
-      >
-        <div
-          className={`${styles.benefitsInner} page-container py-14 sm:py-20`}
+        <nav
+          aria-label="Browse by engineering role"
+          className="mt-7 flex flex-wrap gap-3"
         >
-          <div className="max-w-xl">
-            <h2 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-              Your job search, with the noise turned down.
-            </h2>
-            <p className="mt-4 leading-relaxed text-slate-600">
-              A job search should help you make progress. Every part of REERHUB
-              has a clear job to do.
-            </p>
-          </div>
-          <div
-            className={`${styles.benefitGrid} mt-10 grid gap-8 md:grid-cols-3`}
-          >
-            {[
-              [
-                "shield",
-                "Start at the source.",
-                "Openings come from official company career pages. When you apply, you go directly to the company.",
-              ],
-              [
-                "bookmark",
-                "Make it your search.",
-                "Filter by role, location, and work mode. Save openings worth coming back to. All with a free account.",
-              ],
-              [
-                "spark",
-                "Let the right roles find you.",
-                "Pro ranks roles by your skills and preferences, explains each match, and sends a focused daily shortlist.",
-              ],
-            ].map(([icon, title, copy]) => (
-              <div key={title} className={styles.benefit}>
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-soft text-primary-deep">
-                  <Icon name={icon as "shield" | "bookmark" | "spark"} />
-                </div>
-                <h3 className="text-lg font-bold text-ink">{title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{copy}</p>
-              </div>
+          {Object.entries(JOB_LANDINGS)
+            .filter(([, page]) => !page.earlyCareer)
+            .map(([slug, page]) => (
+              <Link href={`/${slug}`} key={slug} className="btn-secondary">
+                {page.title.replace(" jobs in India", "")}
+              </Link>
+            ))}
+        </nav>
+      </section>
+      <section className="deferred-section border-y border-slate-200 bg-slate-50 py-10 sm:py-14">
+        <div className="page-container">
+          <h2 className="text-3xl font-bold text-ink">
+            Start with employer evidence
+          </h2>
+          <p className="mt-4 max-w-3xl leading-8 text-slate-600">
+            Confirmed India locations, source links and visible feed-check dates
+            help you review a role. Companies below have current openings; these
+            are directory listings, not partners or endorsements.
+          </p>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+            {featured.map((company) => (
+              <Link
+                key={company._id}
+                href={`/companies/${company.slug}`}
+                prefetch={false}
+                className="surface-panel flex min-w-0 flex-col items-center gap-3 p-4 text-center"
+              >
+                <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
+                <span className="text-sm font-semibold">{company.name}</span>
+                <span className="text-xs text-slate-600">
+                  {company.activeJobs}{" "}
+                  {company.activeJobs === 1 ? "opening" : "openings"}
+                </span>
+              </Link>
             ))}
           </div>
-        </div>
-      </section>
-      <section className={`${styles.plans} page-container py-14 sm:py-20`}>
-        <div className={`${styles.planGrid} grid gap-8 lg:grid-cols-[1fr_1fr]`}>
-          <div className="py-4">
-            <h2 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-              Discovery is free. Direction is Pro.
-            </h2>
-            <p className="mt-4 max-w-lg leading-relaxed text-slate-600">
-              Start with the essentials. Add personalized career intelligence
-              when you’re ready. You’re always in control of where you apply.
-            </p>
-            <div className="mt-7 space-y-4">
-              {[
-                "Public: full job details and official Apply links",
-                "Free account: complete browsing, filters, profile and saved jobs",
-                "Pro: personalized ranked matches, reasons, and relevance feedback",
-                "Pro: daily emails with up to 5 strong matches, easy to pause",
-              ].map((x) => (
-                <p
-                  key={x}
-                  className="flex items-start gap-3 text-sm leading-6 text-slate-600"
-                >
-                  <Icon
-                    name="check"
-                    className="mt-1 h-4 w-4 shrink-0 text-primary"
-                  />
-                  {x}
-                </p>
-              ))}
-            </div>
-            <HomeAccountAction
-              className="btn-secondary mt-8"
-              guest="Start your free search"
-            />
-          </div>
-          <div
-            className={`${styles.proPromotion} rounded-3xl border p-7 sm:p-9`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-bold text-primary-deep">
-                REERHUB Pro
-              </span>
-              <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-primary-deep">
-                7-day trial
-              </span>
-            </div>
-            <p className="my-5">
-              <span className="font-display text-5xl font-bold tracking-tight text-ink">
-                ₹149
-              </span>
-              <span className="text-slate-600"> / month</span>
-            </p>
-            <p className="text-sm leading-7 text-slate-600">
-              A private match dashboard and a daily shortlist built around your
-              profile. Your default shortlist starts at 75%+, with broader
-              profile-ranked tiers available when you want to explore.
-            </p>
-            <HomeAccountAction
-              pro
-              className="btn-primary mt-6 w-full"
-              guest="Explore Pro plans"
-            />
-            <p className="mt-4 text-center text-xs text-slate-600">
-              Also available: ₹49/week or ₹299/quarter.
-            </p>
-            <p className={styles.policy}>
-              Subscription payments are non-refundable. Cancel to stop future
-              renewals and keep Pro through your access period. Cancel during
-              the trial to prevent the first recurring charge.
-            </p>
+          <div className="mt-6 flex flex-wrap gap-4">
+            <Link href="/companies" className="underline text-primary">
+              Explore employers
+            </Link>
+            <Link href="/about" className="underline text-primary">
+              About REERHUB
+            </Link>
+            <Link
+              href="/matching-methodology"
+              className="underline text-primary"
+            >
+              How verification and matching work
+            </Link>
           </div>
         </div>
       </section>
-      <section className={styles.closing}>
+      <section
+        id="how-pro-works"
+        className="deferred-section page-container scroll-mt-24 py-10 sm:py-14"
+      >
+        <h2 className="text-3xl font-bold text-ink">
+          See how Pro matches a profile
+        </h2>
+        <p className="mt-4 max-w-3xl leading-8 text-slate-600">
+          This fictional profile uses real openings and the same scoring engine
+          as Pro. Public examples include only verified Profile matches at 75%
+          or above. A score measures relevance; it does not verify every
+          qualification.
+        </p>
+        <div className="mt-7 grid gap-6 lg:grid-cols-2">
+          <LiveMatchingExample examples={data?.matchingExamples} />
+          <div className="surface-panel p-6">
+            <h3 className="text-xl font-semibold">
+              Build your profile before evaluating Pro
+            </h3>
+            <ol className="mt-4 space-y-4 leading-7 text-slate-600">
+              <li>
+                1. Choose your track, skills, experience and location
+                preferences.
+              </li>
+              <li>
+                2. Pro separates verified Profile matches, Stretch roles and
+                Needs review.
+              </li>
+              <li>
+                3. Read the employer’s description and apply directly. Daily
+                emails include up to five verified strong matches when
+                available.
+              </li>
+            </ol>
+            <Link href="/profile" className="btn-primary mt-6">
+              Complete your profile
+            </Link>
+            <Link href="/billing" className="btn-secondary mt-3 ml-0 sm:ml-3">
+              See Pro plans
+            </Link>
+          </div>
+        </div>
+        <details className="mt-7 surface-panel p-5">
+          <summary className="min-h-11 cursor-pointer text-lg font-semibold">
+            How it works: illustrative matching journey
+          </summary>
+          <p className="my-4 text-sm leading-7 text-slate-600">
+            The animation below explains the workflow. Its scores are
+            illustrative; the live example above uses actual current evidence.
+          </p>
+          <MatchJourney companies={companies} />
+        </details>
+      </section>
+      <section className="deferred-section border-y border-slate-200 bg-slate-50 py-10 sm:py-14">
         <div className="page-container">
-          <div>
-            <p className={styles.eyebrow}>YOUR NEXT CHAPTER IS OUT THERE</p>
-            <h2>
-              Make your next move
-              <br />a more informed one.
-            </h2>
-            <p>
-              Official openings first. Personalized direction when you need it.
-            </p>
+          <h2 className="text-3xl font-bold text-ink">
+            Free discovery. Optional Pro direction.
+          </h2>
+          <div className="mt-7 grid gap-6 md:grid-cols-2">
+            <div className="surface-panel p-6">
+              <h3 className="text-xl font-semibold">Free</h3>
+              <p className="mt-3 leading-8 text-slate-600">
+                Public details and official Apply links. A free account adds
+                complete browsing, filters, saved roles and your profile.
+              </p>
+              <HomeAccountAction
+                className="btn-secondary mt-5"
+                guest="Create a free account"
+              />
+            </div>
+            <div className="surface-panel p-6">
+              <h3 className="text-xl font-semibold">Pro</h3>
+              <p className="mt-3 leading-8 text-slate-600">
+                Private ranked recommendations, match reasons, experience gaps,
+                feedback and a daily email with up to five verified strong
+                Profile matches.
+              </p>
+              <HomeAccountAction
+                pro
+                className="btn-primary mt-5"
+                guest="Explore Pro plans"
+              />
+            </div>
           </div>
-          <Link href="/jobs" className="btn-primary">
-            Find my next role
-            <Icon name="arrow" />
-          </Link>
         </div>
+      </section>
+      <section className="deferred-section page-container py-10 sm:py-14">
+        <h2 className="text-3xl font-bold text-ink">
+          Choose a Pro billing cycle
+        </h2>
+        <div className="mt-7 grid gap-4 md:grid-cols-3">
+          {PLANS.map((plan) => (
+            <div key={plan.id} className="surface-panel p-6">
+              <h3 className="font-semibold">{plan.name}</h3>
+              <p className="mt-3 text-3xl font-bold">
+                {plan.price}
+                <span className="ml-2 text-sm font-normal text-slate-600">
+                  {plan.per}
+                </span>
+              </p>
+              <p className="mt-3 text-sm text-slate-600">
+                Seven-day trial. Same Pro features.
+              </p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-600">
+          Recurring billing starts after your trial. Review any payment-method
+          authorization amount at checkout. Subscription payments are
+          non-refundable; cancel renewal to prevent future charges while keeping
+          remaining access.
+        </p>
+        <Link href="/billing" className="btn-primary mt-5">
+          Pricing and trial terms
+        </Link>
+      </section>
+      <section
+        className="deferred-section page-container pb-14"
+        aria-labelledby="home-answers"
+      >
+        <h2 id="home-answers" className="text-3xl font-bold text-ink">
+          Answers before you start
+        </h2>
+        <div className="mt-6 space-y-3">
+          {ANSWERS.map(([question, answer]) => (
+            <details key={question} className="surface-panel p-5">
+              <summary className="min-h-11 cursor-pointer font-semibold">
+                {question}
+              </summary>
+              <p className="mt-3 max-w-4xl leading-8 text-slate-600">
+                {answer}
+              </p>
+            </details>
+          ))}
+        </div>
+        <Link href="/contact" className="btn-secondary mt-6">
+          Contact support
+        </Link>
       </section>
     </div>
   );

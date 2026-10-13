@@ -327,7 +327,12 @@ test("freshness distinguishes posting from feed checks without fabricating dates
   const lastSeenAt = "2026-10-12T00:00:00Z";
   const html = renderToStaticMarkup(
     React.createElement(Freshness, {
-      job: { postedAt, firstSeenAt: postedAt, lastSeenAt },
+      job: {
+        postedAt,
+        postedAtProvenance: "employer",
+        firstSeenAt: postedAt,
+        lastSeenAt,
+      },
     }),
   );
   assert.match(html, /Posted/);

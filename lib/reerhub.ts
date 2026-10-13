@@ -81,6 +81,16 @@ export type Job = CatalogMetadata & {
   applicationUrl?: string;
   sourceUrl: string;
   postedAt?: string;
+  postedAtProvenance?: "employer" | "admin";
+  employerUpdatedAt?: string;
+  employerPublishedAt?: string;
+  employerCreatedAt?: string;
+  applicationDeadline?: string;
+  experience?: { min?: number; max?: number };
+  requirementStatus?: "verified" | "unknown" | "ambiguous";
+  experienceMaximumRequired?: boolean;
+  earlyCareer?: boolean;
+  internship?: boolean;
   firstSeenAt: string;
   lastSeenAt?: string;
   closedAt?: string;
@@ -146,6 +156,7 @@ export const listJobsWithMeta = async (
   signal?: AbortSignal,
 ): Promise<
   CatalogMetadata & {
+    editorialInventory?: { activeRoles: number; employers: number };
     jobs: Job[];
     total: number;
     totalAvailable?: number;
@@ -169,6 +180,9 @@ export const listJobsWithMeta = async (
   return {
     ...catalogMetadata(json),
     jobs: json.data as Job[],
+    ...(json.editorialInventory
+      ? { editorialInventory: json.editorialInventory }
+      : {}),
     total: json.pagination?.total ?? 0,
     totalAvailable: json.pagination?.totalAvailable,
     totalPages: json.pagination?.totalPages ?? 0,

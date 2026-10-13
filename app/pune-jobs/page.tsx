@@ -1,10 +1,6 @@
 import { pageMetadata } from "@/lib/seo";
 import CityJobs from "@/components/CityJobs";
 
-// Job counts move daily — refresh the prerender on the same cadence.
-
-export const revalidate = 86400;
-
 export const metadata = pageMetadata(
   "Tech jobs in Pune | REERHUB",
   "Find software engineering and data jobs in Pune from official company career pages. Explore requirements and apply directly on the hiring site.",

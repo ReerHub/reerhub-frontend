@@ -28,7 +28,7 @@ export default function SaveJobButton({
     return (
       <Link
         href={`/login?next=${encodeURIComponent(pathname)}`}
-        aria-label="Sign in to save this job"
+        aria-label="Save role — sign in"
         className="btn-secondary min-h-11"
       >
         Save role

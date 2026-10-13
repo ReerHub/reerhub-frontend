@@ -22,14 +22,18 @@ export function countsAfterHide(counts: Record<string, number>, score: number) {
     ]),
   );
 }
-export function experienceLabel(experience?: { min?: number; max?: number }) {
+export function experienceLabel(
+  experience?: { min?: number; max?: number },
+  maximumRequired = false,
+) {
   const min = experience?.min,
     max = experience?.max;
-  if (Number.isFinite(min) && Number.isFinite(max))
-    return min === max
-      ? `${min} years experience`
-      : `${min}–${max} years experience`;
-  if (Number.isFinite(min)) return `${min}+ years experience`;
-  if (Number.isFinite(max)) return `Up to ${max} years experience`;
+  if (Number.isFinite(min) && Number.isFinite(max) && maximumRequired)
+    return `${min}–${max} years required`;
+  if (Number.isFinite(min))
+    return min === 0
+      ? "No minimum experience required"
+      : `Minimum ${min} years`;
+  if (Number.isFinite(max) && maximumRequired) return `Maximum ${max} years`;
   return "";
 }

@@ -56,6 +56,8 @@ const job = {
     "<p>Build reliable APIs and distributed backend services. Collaborate with engineering teams using Node.js, MongoDB and TypeScript.</p>",
   applicationUrl: "https://example.com/apply",
   postedAt: "2025-01-01T00:00:00.000Z",
+  postedAtProvenance: "employer",
+  requirementStatus: "verified",
   lastSeenAt: new Date().toISOString(),
   updatedAt: "2025-01-02T00:00:00.000Z",
   skills: ["Node.js", "MongoDB", "TypeScript"],
@@ -693,10 +695,25 @@ const server = http.createServer(async (req, res) => {
       ) && "location preferences",
     ].filter(Boolean);
     const ready = missing.length === 0;
+    const group = url.searchParams.get("group") || "qualified";
+    if (!["qualified", "stretch", "needs-review"].includes(group))
+      return json(null, 400);
     const candidate = {
       ...job,
+      experience: group === "stretch" ? {min:6} : group === "needs-review" ? undefined : job.experience,
+      requirementStatus: group === "needs-review" ? "unknown" : "verified",
       fit: {
         ...job.fit,
+        group,
+        reasons: group === "qualified" ? job.fit.reasons : job.fit.reasons.filter((reason) => !reason.toLowerCase().includes("experience")),
+        fitGaps:
+          group === "stretch"
+            ? ["Employer requires 6 years; your profile has 4 years."]
+            : [],
+        uncertainties:
+          group === "needs-review"
+            ? ["Mandatory experience requirements have not been verified."]
+            : [],
         relevanceScore: dashboardMode === "threshold-empty" ? 62 : 86,
       },
     };
@@ -709,6 +726,12 @@ const server = http.createServer(async (req, res) => {
         missingProfileFields: missing,
         minimumRelevanceScore: minimumScore,
         highMatchScore: 75,
+        group,
+        groupCounts: {
+          qualified: available ? 1 : 0,
+          stretch: available ? 1 : 0,
+          "needs-review": available ? 1 : 0,
+        },
         matchCounts: {
           90: 0,
           75: available && candidate.fit.relevanceScore >= 75 ? 1 : 0,
@@ -848,6 +871,20 @@ const server = http.createServer(async (req, res) => {
   if (path === "/jobs/333333333333333333333333")
     return json({ ...job, _id: "333333333333333333333333", status: "closed" });
   if (path === "/jobs") {
+    if (url.searchParams.has("earlyCareer")) {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          success: true,
+          data: [],
+          pagination: { total: 0, totalAvailable: 0, totalPages: 0 },
+          editorialInventory: { activeRoles: 0, employers: 0 },
+          catalogStatus: "ready",
+          catalogHasVerifiedJobs: true,
+        }),
+      );
+      return;
+    }
     if (catalogMode === "initializing")
       return json([], 200, { total: 0, totalAvailable: 0, totalPages: 0 });
     if (process.env.FIXTURE_LOCATION_SCOPES === "1") {

@@ -91,8 +91,8 @@ export default function LiveMatchingExample({
               </>
             ) : (
               <p className="text-sm leading-6 text-slate-600">
-                No current role reaches 75% for this sample profile. Try another
-                profile or browse all openings.
+                No current verified Profile match reaches 75% for this sample
+                profile. Try another profile or browse all openings.
               </p>
             )}
           </div>

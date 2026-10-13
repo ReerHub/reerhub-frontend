@@ -1,3 +1,4 @@
+import { SOCIAL_LINKS } from "@/lib/social-links";
 import HomePage from "@/components/HomePage";
 import { getHome, DataUnavailableError } from "@/lib/reerhub";
 import { pageMetadata, safeJsonLd, SITE } from "@/lib/seo";
@@ -26,6 +27,7 @@ export default async function Home() {
               slogan: "Real Effective Engineering Roles Hub",
               url: SITE,
               logo: `${SITE}/reerhub-icon-logo.png`,
+              sameAs: SOCIAL_LINKS.map((link) => link.url),
             },
             {
               "@context": "https://schema.org",

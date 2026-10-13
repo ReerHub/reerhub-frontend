@@ -7,6 +7,7 @@ import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AnalyticsProvider from "@/components/AnalyticsProvider";
 import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
 import { isDedicatedAdminHost } from "@/lib/admin-host";
@@ -29,7 +30,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata = {
   metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
   title: "REERHUB",
-  icons: { icon: "/reerhub-icon-logo.png", apple: "/reerhub-icon-logo.png" },
+  icons: { icon: "/favicon.ico", apple: "/icon.png" },
 };
 
 export default async function RootLayout({
@@ -53,6 +54,7 @@ export default async function RootLayout({
             <a href="#main-content" className="skip-link">
               Skip to content
             </a>
+            <AnalyticsProvider />
             <Navbar />
             <main
               id="main-content"
@@ -65,6 +67,9 @@ export default async function RootLayout({
           </AuthProvider>
         )}
         {!isAdminHost && <CookieConsent />}
+        <noscript>
+          <style>{`.reveal { opacity: 1 !important; transform: none !important; }`}</style>
+        </noscript>
         <Toaster position="top-right" reverseOrder={false} />
         {process.env.REERHUB_UI_FIXTURES === "1" && <PerformanceProbe />}
       </body>

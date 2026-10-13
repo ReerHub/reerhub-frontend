@@ -4,6 +4,7 @@ import { publicConfig } from "@/lib/read-sharing";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useAuth } from "@/components/AuthProvider";
+import { track } from "@/lib/analytics";
 import { googleLogin, safeNext } from "@/lib/auth";
 
 declare global {
@@ -77,6 +78,7 @@ export default function GoogleButton({ next }: { next: string }) {
         }
         try {
           await googleLogin(res.credential);
+          track("login", { page_family: "account" });
           await refresh();
           toast.success("Signed in with Google");
           window.location.replace(safe);

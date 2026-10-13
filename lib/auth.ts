@@ -248,6 +248,7 @@ export const exportMyData = () =>
 export const deleteAccount = () =>
   request<{ deleted: boolean }>("/users/me", { method: "DELETE" });
 
+export type RecommendationGroup = "qualified" | "stretch" | "needs-review";
 export type Recommendation = {
   _id: string;
   title: string;
@@ -256,16 +257,24 @@ export type Recommendation = {
   firstSeenAt: string;
   remoteType?: string;
   experience?: { min?: number; max?: number };
+  experienceMaximumRequired?: boolean;
   fit: {
     relevanceScore: number;
     /** Compatibility alias while clients migrate to relevanceScore. */
     score: number;
     reasons: string[];
     evidenceCount: number;
+    group?: RecommendationGroup;
+    fitGaps?: string[];
+    uncertainties?: string[];
   };
 };
 
-export const getRecommendations = (minScore = 75, signal?: AbortSignal) =>
+export const getRecommendations = (
+  minScore = 75,
+  signal?: AbortSignal,
+  group: RecommendationGroup = "qualified",
+) =>
   request<
     CatalogMetadata & {
       profileCompletion: number;
@@ -273,10 +282,14 @@ export const getRecommendations = (minScore = 75, signal?: AbortSignal) =>
       missingProfileFields: string[];
       minimumRelevanceScore: number;
       highMatchScore: number;
+      group?: RecommendationGroup;
+      groupCounts?: Record<RecommendationGroup, number>;
       matchCounts: Record<"90" | "75" | "50" | "25" | "all", number>;
       jobs: Recommendation[];
     }
-  >(`/recommendations?minScore=${minScore}&limit=50`, { signal });
+  >(`/recommendations?minScore=${minScore}&limit=50&group=${group}`, {
+    signal,
+  });
 
 export const setRecommendationFeedback = (jobId: string, feedback: string) =>
   request<{ feedback: string }>(`/recommendations/${jobId}/feedback`, {
@@ -288,6 +301,7 @@ export type BillingState = {
   subscription: null | {
     plan: string;
     status: string;
+    firstVerifiedPaymentAt?: string;
     trialEndsAt?: string;
     currentPeriodEndsAt?: string;
     cancelledAt?: string;

@@ -62,3 +62,9 @@ Keep the platform strictly India-only. Store and display only jobs with confirme
 - Under `prefers-reduced-motion`, content appears in its usable final state.
 - Keep static sections server-rendered where possible. Isolate filters, checkout, feedback, authentication, and alert controls to client components.
 - Preserve one server homepage content read and combined directory page/count reads. Disable repeated card detail prefetch without removing route-loading feedback; keep primary navigation prefetch. Widgets load only on the surfaces that need them. Shared session/saved state must not flash fake empty states after failed requests.
+
+## India discovery and Pro journey
+
+Keep the approved cobalt/navy palette, original icon, Inter wordmark and Space Grotesk display typography. Homepage order is proposition → keyword/city search and actual openings → source evidence → real scoring proof on fictional profiles → Free/Pro → pricing → answers. Browse jobs is primary, See how Pro works secondary. The illustrative animation belongs inside How it works with pause/reduced-motion/offscreen/hidden-tab behavior.
+
+Profile matches, Stretch roles and Needs review are explicit groups. Show experience gaps and uncertainty beside positive evidence; never call a relevance score hiring probability. Freshers/internships use employer evidence and honest initialization/empty states. Public pricing/FAQ content is readable before hydration. Cookie controls provide equal rejection access, explicit analytics opt-in, preferences and persistent withdrawal access. Retain visible keyboard focus and 44px targets; compact mobile choices must not cover the search action. Offscreen layout deferral preserves public HTML.

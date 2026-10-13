@@ -31,9 +31,12 @@ const columns = [
       ["/dashboard", "Your dashboard"],
       ["/profile", "Profile & preferences"],
       ["/billing", "Explore REERHUB Pro"],
+      ["/about", "About REERHUB"],
+      ["/matching-methodology", "Matching methodology"],
+      ["/contact", "Contact and help"],
+      ["mailto:support@reerhub.com", "Email support"],
       ["/privacy", "Privacy policy"],
       ["/terms", "Terms of use"],
-      ["mailto:support@reerhub.com", "Contact support"],
     ],
   ],
 ];

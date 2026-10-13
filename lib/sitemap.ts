@@ -1,3 +1,4 @@
+import { JOB_LANDINGS, editorialReady } from "./seo-landings";
 import { SITE } from "./seo";
 import { jobSlug } from "./reerhub";
 
@@ -19,6 +20,15 @@ const STATIC = [
   "pune-jobs",
   "remote-jobs",
   "billing",
+  "backend-jobs",
+  "frontend-jobs",
+  "full-stack-jobs",
+  "data-engineering-jobs",
+  "devops-jobs",
+  "qa-jobs",
+  "about",
+  "matching-methodology",
+  "contact",
   "privacy",
   "terms",
 ];
@@ -51,7 +61,7 @@ export function sitemapChunks(entries: Entry[]) {
 }
 async function api(path: string) {
   const res = await fetch(`${API}${path}`, {
-    next: { revalidate: 3600 },
+    cache: "no-store",
     signal: AbortSignal.timeout(15000),
   });
   if (!res.ok) throw new Error("Sitemap source unavailable");
@@ -59,6 +69,15 @@ async function api(path: string) {
 }
 export async function sitemapEntries(): Promise<Entry[]> {
   const entries: Entry[] = STATIC.map((path) => ({ url: `${SITE}/${path}` }));
+  for (const [path, kind] of [
+    ["fresher-jobs", "fresher"],
+    ["internship-jobs", "internship"],
+  ]) {
+    const inventory = (await api(`/jobs?earlyCareer=${kind}&limit=1`))
+      .editorialInventory;
+    if (editorialReady(JOB_LANDINGS[path], inventory))
+      entries.push({ url: `${SITE}/${path}` });
+  }
   const companies = await api("/companies");
   if (!Array.isArray(companies.data))
     throw new Error("Invalid companies sitemap feed");
@@ -102,5 +121,5 @@ export function sitemapXml(entries: Entry[]) {
 }
 export const XML_HEADERS = {
   "Content-Type": "application/xml; charset=utf-8",
-  "Cache-Control": "public, max-age=0, s-maxage=3600",
+  "Cache-Control": "no-store",
 };

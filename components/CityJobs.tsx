@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import Link from "next/link";
 import ServerJobBrowser from "@/components/ServerJobBrowser";
 import JobCard from "@/components/JobCard";
-import { listJobsWithMeta } from "@/lib/reerhub";
+import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
+import { DataUnavailableError, listJobsWithMeta } from "@/lib/reerhub";
 import PageHeader from "@/components/PageHeader";
 import DiscoveryPrompt from "@/components/DiscoveryPrompt";
 
@@ -38,11 +39,11 @@ export default async function CityJobs({
   const filter: Record<string, string> = remoteOnly
     ? { remoteType: "remote" }
     : { city: city || "" };
-  let total = 0;
+  let data: Awaited<ReturnType<typeof listJobsWithMeta>> | undefined;
   try {
-    total = (await listJobsWithMeta({ ...filter, limit: 1 })).total;
-  } catch {
-    total = 0;
+    data = await listJobsWithMeta({ ...filter, limit: 10 });
+  } catch (error) {
+    if (!(error instanceof DataUnavailableError)) throw error;
   }
 
   return (
@@ -53,16 +54,37 @@ export default async function CityJobs({
         back={{ href: "/jobs", label: "All tech jobs" }}
       />
       <section className="page-container py-10">
-        {total > 0 ? (
+        {!data ? (
+          <div className="surface-panel p-7" role="status">
+            <h2 className="text-xl font-semibold">
+              Job information is temporarily unavailable
+            </h2>
+            <p className="mt-3 text-slate-600">
+              We couldn’t load this catalog. Please try again shortly.
+            </p>
+            <Link
+              href={city ? `/${city.toLowerCase()}-jobs` : "/remote-jobs"}
+              className="btn-secondary mt-4"
+            >
+              Try again
+            </Link>
+          </div>
+        ) : catalogInitializing(data) ? (
+          <CatalogNotice data={data} />
+        ) : data.total > 0 ? (
           <Suspense fallback={<FiltersBarSkeleton />}>
             <ServerJobBrowser
               heading={heading}
+              initialData={data}
               city={city}
               remoteOnly={remoteOnly}
             />
           </Suspense>
         ) : (
-          <ExpandingSoon location={city || "Remote"} />
+          <>
+            <CatalogNotice data={data} />
+            <ExpandingSoon location={city || "Remote"} />
+          </>
         )}
       </section>
     </div>
@@ -84,11 +106,12 @@ async function ExpandingSoon({ location }: { location: string }) {
           Expanding soon
         </p>
         <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-3">
-          We&apos;re growing coverage in {location}
+          No active {location} roles right now
         </h2>
         <p className="text-slate-500 max-w-lg mx-auto leading-relaxed mb-6">
-          Few open roles here right now. Meanwhile, these other openings from
-          top product companies are hiring across India.
+          There are no verified active roles matching this location right now.
+          Meanwhile, these other openings from top product companies are hiring
+          across India.
         </p>
         <Link
           href="/jobs"

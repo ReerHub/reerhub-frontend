@@ -1,5 +1,6 @@
 "use client";
 
+import { track as trackEvent } from "@/lib/analytics";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -195,6 +196,8 @@ function Editor({
     setSaveError("");
     try {
       const updated = await updateMe(changedProfilePayload(current, baseline));
+      if (profileSignals(updated.profile).every((signal) => signal.complete))
+        trackEvent("profile_ready", { page_family: "account" }, updated.id);
       const clean = draftFromUser(updated);
       setDraft(clean);
       setBaseline(profilePayload(clean));

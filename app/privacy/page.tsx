@@ -29,8 +29,8 @@ export default function PrivacyPage() {
           </h2>
           <p>
             <strong>Account data:</strong> when you sign up we store your name,
-            email address, password (hashed, never in plain text), and — if you
-            use Google sign-in — your Google profile name, email, and avatar.
+            email address, sign-in provider, and — if you use Google sign-in —
+            your Google profile name, email, and avatar.
             <strong> Profile data:</strong> anything you add to your profile
             (headline, current role, track, skills, city, experience).
             <strong> Usage data:</strong> roles you save, pages you visit, and
@@ -43,8 +43,8 @@ export default function PrivacyPage() {
             How we use it
           </h2>
           <p>
-            To run your account, personalize job recommendations, send
-            verification and password-reset emails, keep the service secure, and
+            To run your account, personalize job recommendations, send secure
+            sign-in and verification emails, keep the service secure, and
             improve REERHUB. We never sell your personal data and never share it
             with advertisers.
           </p>
@@ -54,8 +54,22 @@ export default function PrivacyPage() {
           <p>
             We use strictly-necessary cookies to keep you logged in
             (`accessToken`, `refreshToken`), a CSRF token to protect forms, and
-            a cookie-consent preference. There are no advertising or cross-site
-            tracking cookies.
+            a versioned privacy preference. Optional Google Analytics 4
+            measurement remains disabled until it is configured and you
+            explicitly consent. Necessary-cookie choices from older versions
+            never grant analytics consent. You can reject analytics, change
+            preferences or withdraw using Privacy preferences on every page.
+          </p>
+          <p className="mt-4 leading-7 text-slate-600">
+            When enabled and consented, product analytics records broad page
+            families and actions such as discovery, completed sign-in, saved
+            roles, profile readiness, pricing views, checkout initiation, trial
+            activation and a separately verified first subscription payment. The
+            isolated tag receives no email addresses, profile contents, payment
+            details, sign-in tokens or private URL parameters. It uses a
+            randomized measurement identifier; Google may process ordinary
+            technical request information. Advertising signals are disabled.
+            Analytics is optional and does not control product access.
           </p>
         </section>
         <section>

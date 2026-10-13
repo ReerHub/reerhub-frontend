@@ -17,6 +17,7 @@ export type Filters = {
   skills: string;
   seniority: string;
   employmentType: string;
+  earlyCareer?: string;
   sort: string;
   locationScope: LocationScope;
 };
@@ -29,6 +30,7 @@ const secondaryKeys = [
   "skills",
   "seniority",
   "employmentType",
+  "earlyCareer",
   "sort",
 ] as const;
 function secondaryFilters(filters: Filters) {
@@ -84,6 +86,7 @@ export default function SearchFilters({
   add("techRole", `Role: ${filters.techRole}`);
   add("skills", `Skills: ${filters.skills}`);
   add("seniority", `Level: ${filters.seniority}`);
+  add("earlyCareer", `Early career: ${filters.earlyCareer}`);
   add("employmentType", `Employment: ${filters.employmentType}`);
   add("sort", "Sort: Title A–Z");
   const count = chips.filter((chip) =>
@@ -317,6 +320,17 @@ export default function SearchFilters({
                 ].map((value) => (
                   <option key={value}>{value}</option>
                 ))}
+              </select>
+            </label>
+            <label>
+              Early career evidence
+              <select
+                value={draft.earlyCareer || ""}
+                onChange={(event) => change("earlyCareer", event.target.value)}
+              >
+                <option value="">All experience levels</option>
+                <option value="fresher">Explicitly open to freshers</option>
+                <option value="internship">Internships</option>
               </select>
             </label>
             <label>
