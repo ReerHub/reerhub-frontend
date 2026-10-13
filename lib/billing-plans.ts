@@ -12,7 +12,7 @@ export const PLANS: {
   {
     id: "pro-weekly",
     name: "Weekly",
-    price: "₹49",
+    price: "INR 49",
     per: "/ week",
     blurb: "Low commitment. Try Pro week by week.",
     saving: "Most flexible",
@@ -20,19 +20,19 @@ export const PLANS: {
   {
     id: "pro-monthly",
     name: "Monthly",
-    price: "₹149",
+    price: "INR 149",
     per: "/ month",
     badge: "Recommended",
     blurb: "The sensible default for an active search.",
-    saving: "Just ~₹35 / week",
+    saving: "Just ~INR 35 / week",
   },
   {
     id: "pro-quarterly",
     name: "Quarterly",
-    price: "₹299",
+    price: "INR 299",
     per: "/ 3 months",
     badge: "Best value",
     blurb: "Stay covered for a full search cycle.",
-    saving: "Save 33% vs monthly · ~₹100 / mo",
+    saving: "Save 33% vs monthly · ~INR 100 / mo",
   },
 ];

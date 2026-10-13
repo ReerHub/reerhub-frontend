@@ -24,7 +24,7 @@ export default function BillingPage() {
         </h2>
         <div className="mt-5 grid gap-5 sm:grid-cols-2">
           <div>
-            <h3 className="font-semibold">Free · ₹0</h3>
+            <h3 className="font-semibold">Free · INR 0</h3>
             <p className="mt-2 leading-7 text-slate-600">
               Official job details and Apply links are public. Create a free
               account for complete browsing, a saved shortlist and your profile.
@@ -59,6 +59,9 @@ export default function BillingPage() {
             </li>
           ))}
         </ul>
+        <p className="mt-3 text-xs text-slate-600">
+          Prices are in Indian rupees (INR).
+        </p>
         <p className="mt-5 text-sm leading-7 text-slate-600">
           Recurring plan charges start after the seven-day trial. Razorpay may
           collect a separate payment-method authorization amount. Review the

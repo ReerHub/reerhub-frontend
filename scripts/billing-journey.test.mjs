@@ -180,3 +180,9 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
     dom.window.close();
   }
 });
+
+test('INR notation retains the approved recurring price catalog', () => {
+  assert.deepEqual(PLANS.map(({id,price})=>[id,price]), [
+    ['pro-weekly','INR 49'],['pro-monthly','INR 149'],['pro-quarterly','INR 299'],
+  ]);
+});

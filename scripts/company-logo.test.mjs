@@ -8,6 +8,12 @@ import { JSDOM } from "jsdom";
 
 test("company icons keep one frame across shapes, loading, failure and URL changes", async () => {
   const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost" });
+  let intersection, disconnects = 0;
+  dom.window.IntersectionObserver = class {
+    constructor(callback) { intersection = callback; }
+    observe() {}
+    disconnect() { disconnects++; }
+  };
   const saved = new Map();
   for (const [key, value] of Object.entries({
     window: dom.window,
@@ -85,7 +91,20 @@ test("company icons keep one frame across shapes, loading, failure and URL chang
         `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`,
       );
       const frame = checkFrame();
-      const image = frame.querySelector("img");
+      if (!frame.querySelector(':scope > img')) {
+        const {renderToStaticMarkup} = await import('react-dom/server');
+        const html = renderToStaticMarkup(createElement(Component,{name:'Fixture',logoUrl:'https://assets.example.com/icon.svg'}));
+        const noScript = new JSDOM(html);
+        assert.equal(noScript.window.document.querySelector('noscript img').getAttribute('src'),'https://assets.example.com/icon.svg','no-script visitors retain the original image');
+        noScript.window.close();
+        await act(async () => intersection([{isIntersecting:false}]));
+        assert.equal(frame.querySelector(':scope > img'), null, 'offscreen assets have no active request');
+        await act(async () => intersection([{isIntersecting:true,boundingClientRect:{width:0,height:0}}]));
+        assert.equal(frame.querySelector(':scope > img'),null,'skipped content cannot start a zero-area image request');
+        await act(async () => intersection([{isIntersecting:true,boundingClientRect:{width:48,height:48}}]));
+        assert.ok(disconnects > 0, 'observer releases a visible frame');
+      }
+      const image = frame.querySelector(':scope > img');
       assert.equal(image.style.objectFit, "contain");
       assert.equal(image.style.objectPosition, "center");
       assert.equal(image.style.width, "100%");
@@ -107,6 +126,10 @@ test("company icons keep one frame across shapes, loading, failure and URL chang
     assert.equal(checkFrame().textContent, "E");
     await render(undefined, "");
     assert.equal(checkFrame().textContent, "C");
+    await act(async () => root.render(null));
+    delete dom.window.IntersectionObserver;
+    await render('https://assets.example.com/fallback.svg');
+    assert.ok(checkFrame().querySelector(':scope > img'), 'older browsers load without an observer');
   } finally {
     await act(async () => root.unmount());
     dom.window.close();

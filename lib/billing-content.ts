@@ -17,7 +17,7 @@ export const FAQS = [
   ],
   [
     "Can I switch plans later?",
-    "Cancel renewal on your current plan, then choose another once your current access ends. Weekly is ₹49, monthly is ₹149, and quarterly is ₹299. Cancelling renewal keeps your current Pro access until the end of the period.",
+    "Cancel renewal on your current plan, then choose another once your current access ends. Weekly is INR 49, monthly is INR 149, and quarterly is INR 299. Cancelling renewal keeps your current Pro access until the end of the period.",
   ],
   [
     "What does Pro unlock over a free account?",
