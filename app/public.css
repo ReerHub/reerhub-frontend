@@ -549,4 +549,284 @@
   contain-intrinsic-size: auto 700px;
 }
 
-.public-site .consent-actions button { padding-inline: .5rem; font-size: .75rem; }
+.public-site .consent-actions button {
+  padding-inline: 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Homepage-only expressive design. Other product surfaces retain their palette. */
+.public-site:has(.homepage-redesign) .site-nav {
+  top: 14px;
+  left: max(16px, calc((100vw - 1344px) / 2));
+  right: max(16px, calc((100vw - 1344px) / 2));
+  width: auto;
+  border: 1px solid transparent;
+  border-radius: 22px;
+  background: transparent;
+  backdrop-filter: none;
+  color: #372580;
+  box-shadow: none;
+  transition:
+    background-color 200ms,
+    border-color 200ms,
+    box-shadow 200ms;
+}
+.public-site:has(.homepage-redesign) .site-nav .text-white,
+.public-site:has(.homepage-redesign) .site-nav .text-ink,
+.public-site:has(.homepage-redesign) .site-nav .nav-link,
+.public-site:has(.homepage-redesign) .site-nav .account-trigger {
+  color: #372580;
+}
+.public-site:has(.homepage-redesign) .site-nav .nav-link:hover {
+  background: #f0e8fa;
+  color: #6d4aff;
+}
+.public-site:has(.homepage-redesign) .site-nav .btn-primary {
+  background: #6d4aff;
+  border-color: #6d4aff;
+  color: #fff;
+  border-radius: 999px;
+}
+.public-site:has(.homepage-redesign) .site-nav .mobile-nav-panel {
+  background: #fffdf9;
+  color: #372580;
+  border-color: #e7dced;
+}
+.public-site:has(.homepage-redesign) .site-nav .account-trigger,
+.public-site:has(.homepage-redesign)
+  .site-nav
+  button[aria-controls="mobile-navigation"] {
+  border-color: #d8cde5;
+}
+.public-site:has(.homepage-redesign) .site-nav :where(a, button):focus-visible {
+  outline-color: #6d4aff;
+}
+.public-site:has(.homepage-redesign) .site-footer {
+  background: #21192e;
+  color: #c8bed5;
+}
+.public-site:has(.homepage-redesign) .site-footer .text-slate-600,
+.public-site:has(.homepage-redesign) .site-footer .text-teal-800,
+.public-site:has(.homepage-redesign) .footer-bottom {
+  color: #c8bed5;
+}
+
+.footer-wordmark {
+  display: none;
+}
+.public-site:has(.homepage-redesign) .site-nav > .page-container {
+  padding-inline: 24px;
+}
+.public-site:has(.homepage-redesign) .site-nav .nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  transition:
+    color 0.2s,
+    background 0.2s,
+    transform 0.2s;
+}
+.public-site:has(.homepage-redesign) .site-nav .nav-link:hover {
+  transform: translateY(-1px);
+}
+.public-site:has(.homepage-redesign) .site-nav .account-popover,
+.public-site:has(.homepage-redesign) .site-nav .mobile-nav-panel {
+  max-height: calc(100dvh - 112px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: homepage-menu-enter 0.2s ease-out;
+}
+.public-site:has(.homepage-redesign) .site-nav .mobile-nav-panel {
+  border-radius: 0 0 22px 22px;
+}
+.public-site:has(.homepage-redesign) .site-nav .account-popover {
+  border-color: #e5d9f0;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px #36204420;
+}
+.public-site:has(.homepage-redesign) .site-nav .account-link:hover {
+  background: #f3edfc;
+  color: #6d4aff;
+}
+.public-site:has(.homepage-redesign) .site-footer > .page-container {
+  max-width: 1440px;
+}
+.public-site:has(.homepage-redesign) .site-footer {
+  background:
+    radial-gradient(ellipse at 85% 100%, #65419430, transparent 50%), #21192e;
+}
+.public-site:has(.homepage-redesign) .site-footer nav h2 {
+  color: #f0e5ff;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.public-site:has(.homepage-redesign) .site-footer nav li a {
+  min-height: 44px;
+}
+.public-site:has(.homepage-redesign) .site-footer nav a:hover {
+  color: #e5ffb0;
+}
+.public-site:has(.homepage-redesign) .site-footer .footer-bottom {
+  border-color: #c9b3e326;
+  align-items: center;
+  padding-block: 28px;
+}
+.public-site:has(.homepage-redesign) .site-footer .footer-bottom a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.public-site:has(.homepage-redesign) .footer-wordmark {
+  display: block;
+  container-type: inline-size;
+  padding-block: 24px 12px;
+  border-top: 1px solid #c9b3e326;
+}
+.public-site:has(.homepage-redesign) .footer-wordmark .brand-wordmark {
+  display: block;
+  width: 100%;
+  font-size: 22.5cqw;
+  line-height: 1.05;
+  letter-spacing: -0.065em;
+  font-weight: 700;
+  color: #e8d9ff;
+  text-align: center;
+  user-select: none;
+}
+@keyframes homepage-menu-enter {
+  from {
+    opacity: 0.85;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@supports (animation-timeline: view()) {
+  .public-site:has(.homepage-redesign) .footer-wordmark .brand-wordmark {
+    animation: homepage-wordmark-enter 1s ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 100%;
+  }
+}
+@keyframes homepage-wordmark-enter {
+  from {
+    opacity: 0.85;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 639px) {
+  .public-site:has(.homepage-redesign) .site-nav {
+    top: 10px;
+    left: 12px;
+    right: 12px;
+    border-radius: 18px;
+  }
+  .public-site:has(.homepage-redesign) .site-nav > .page-container {
+    padding-inline: 14px;
+    gap: 8px;
+  }
+  .public-site:has(.homepage-redesign) .site-nav .nav-wordmark {
+    display: inline;
+    font-size: 13px;
+    letter-spacing: 0;
+  }
+  .public-site:has(.homepage-redesign) .site-nav a[aria-label="REERHUB home"] {
+    gap: 6px;
+  }
+  .public-site:has(.homepage-redesign)
+    .site-nav
+    a[aria-label="REERHUB home"]
+    img {
+    width: 28px;
+    height: 28px;
+  }
+  .public-site:has(.homepage-redesign) .site-nav .btn-primary {
+    padding-inline: 10px;
+    font-size: 11px;
+  }
+  .public-site:has(.homepage-redesign) .site-footer .footer-bottom {
+    align-items: flex-start;
+  }
+  .public-site:has(.homepage-redesign) .footer-wordmark {
+    padding-block: 24px;
+  }
+}
+@media (max-width: 380px) {
+  .public-site:has(.homepage-redesign) .site-nav .pro-badge {
+    display: none;
+  }
+}
+
+.public-site:has(.homepage-redesign) .site-nav .account-popover {
+  width: min(272px, calc(100vw - 112px));
+}
+@media (max-width: 639px) {
+  .public-site:has(.homepage-redesign) .footer-link-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 20px;
+  }
+  .public-site:has(.homepage-redesign) .footer-link-grid > div:first-child,
+  .public-site:has(.homepage-redesign) .footer-link-grid > nav:last-child {
+    grid-column: 1 / -1;
+  }
+  .public-site:has(.homepage-redesign) .footer-link-grid > nav:last-child ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+  }
+  .public-site:has(.homepage-redesign) .site-footer nav li a {
+    font-size: 12px;
+  }
+  .public-site:has(.homepage-redesign) .footer-wordmark {
+    padding-bottom: 80px;
+  }
+}
+
+/* The hero paints behind the transparent header; its copy reserves header space. */
+.public-site:has(.homepage-redesign) #main-content {
+  padding-top: 0;
+}
+.public-site:has(.homepage-redesign) .site-nav[data-scrolled="true"] {
+  background: #fffdf9ed;
+  border-color: #e4dbee;
+  box-shadow: 0 8px 32px #37258010;
+}
+@supports (
+  (backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))
+) {
+  .public-site:has(.homepage-redesign) .site-nav[data-scrolled="true"] {
+    background: #fffdf9c9;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+}
+.public-site:has(.homepage-redesign) .site-nav .nav-inner > div:last-child {
+  margin-left: auto;
+}
+.public-site:has(.homepage-redesign) .site-nav .nav-inner > nav {
+  margin-left: 32px;
+}
+.public-site:has(.homepage-redesign) .site-nav .btn-primary:hover {
+  background: #5736da;
+  border-color: #5736da;
+}
+.public-site:has(.homepage-redesign) .site-nav .btn-primary:focus-visible {
+  outline-color: #5034b5;
+}
+.public-site:has(.homepage-redesign) .site-nav .nav-link:hover,
+.public-site:has(.homepage-redesign) .site-nav .account-link:hover {
+  color: #5034b5;
+}
+@media (min-width: 1024px) and (max-width: 1150px) {
+  .public-site:has(.homepage-redesign) .site-nav .nav-inner > nav {
+    margin-left: 8px;
+  }
+  .public-site:has(.homepage-redesign) .site-nav .nav-link {
+    padding-inline: 9px;
+  }
+}

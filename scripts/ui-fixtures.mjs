@@ -700,12 +700,22 @@ const server = http.createServer(async (req, res) => {
       return json(null, 400);
     const candidate = {
       ...job,
-      experience: group === "stretch" ? {min:6} : group === "needs-review" ? undefined : job.experience,
+      experience:
+        group === "stretch"
+          ? { min: 6 }
+          : group === "needs-review"
+            ? undefined
+            : job.experience,
       requirementStatus: group === "needs-review" ? "unknown" : "verified",
       fit: {
         ...job.fit,
         group,
-        reasons: group === "qualified" ? job.fit.reasons : job.fit.reasons.filter((reason) => !reason.toLowerCase().includes("experience")),
+        reasons:
+          group === "qualified"
+            ? job.fit.reasons
+            : job.fit.reasons.filter(
+                (reason) => !reason.toLowerCase().includes("experience"),
+              ),
         fitGaps:
           group === "stretch"
             ? ["Employer requires 6 years; your profile has 4 years."]
@@ -827,22 +837,38 @@ const server = http.createServer(async (req, res) => {
   if (path === "/companies") {
     if (dashboardMode === "error") return json(null, 503);
     const catalog =
-      dashboardMode === "company-pages"
-        ? Array.from({ length: 101 }, (_, i) => ({
+      dashboardMode === "homepage-logos"
+        ? [
+            "Fixture Labs",
+            "Fixture Cloud",
+            "Fixture Studio",
+            "Fixture Data",
+            "Fixture Systems",
+            "Fixture Works",
+          ].map((name, i) => ({
             ...company,
-            _id: String(i + 500).padStart(24, "0"),
-            name: `Fixture Company ${String(i + 1).padStart(3, "0")}`,
-            slug: `fixture-company-${i + 1}`,
-            activeJobs: i % 2 ? 0 : 3,
+            _id: String(i + 700).padStart(24, "0"),
+            name,
+            slug: `fixture-logo-${i}`,
+            activeJobs: i,
+            logoUrl: `data:image/svg+xml;base64,${Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><rect width="48" height="48" rx="10" fill="${["#6d4aff", "#372580", "#e67761", "#4d8a69", "#8460bd", "#b68442"][i]}"/><path d="M12 24h24M24 12v24M15 15l18 18M15 33l18-18" stroke="white" stroke-width="3"/></svg>`).toString("base64")}`,
           }))
-        : [
-            {
+        : dashboardMode === "company-pages"
+          ? Array.from({ length: 101 }, (_, i) => ({
               ...company,
-              ...(process.env.FIXTURE_LOCATION_SCOPES === "1"
-                ? { activeJobs: scopeJobs(url).length }
-                : {}),
-            },
-          ];
+              _id: String(i + 500).padStart(24, "0"),
+              name: `Fixture Company ${String(i + 1).padStart(3, "0")}`,
+              slug: `fixture-company-${i + 1}`,
+              activeJobs: i % 2 ? 0 : 3,
+            }))
+          : [
+              {
+                ...company,
+                ...(process.env.FIXTURE_LOCATION_SCOPES === "1"
+                  ? { activeJobs: scopeJobs(url).length }
+                  : {}),
+              },
+            ];
     if (!url.searchParams.has("page")) return json(catalog);
     const q = (url.searchParams.get("q") || "").toLowerCase();
     const filtered = catalog.filter(

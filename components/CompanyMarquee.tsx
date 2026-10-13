@@ -1,54 +1,118 @@
 "use client";
 
 import Link from "next/link";
-import CompanyLogo from "@/components/CompanyLogo";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import CompanyLogo from "./CompanyLogo";
 import type { Company } from "@/lib/reerhub";
+import styles from "./CompanyMarquee.module.css";
 
-// Infinite company marquee: exiting left, entering right, seamless loop.
-// The track renders the list twice and shifts -50%; edge fades mask the seam.
-// Pauses on hover/focus so cards stay clickable; static when reduced-motion.
 export default function CompanyMarquee({
   companies,
 }: {
-  companies: Company[];
+  companies: Pick<Company, "_id" | "name" | "slug" | "logoUrl">[];
 }) {
-  if (companies.length === 0) return null;
-  const loop = [...companies, ...companies];
+  const root = useRef<HTMLElement>(null);
+  const [paused, setPaused] = useState(false);
+  const [active, setActive] = useState(false);
+  const unique = [
+    ...new Map(companies.map((company) => [company._id, company])).values(),
+  ];
+  const moving = unique.length > 3;
+  useEffect(() => {
+    let visible = false;
+    const update = () => setActive(visible && !document.hidden);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        update();
+      },
+      { threshold: 0.1 },
+    );
+    if (root.current) observer.observe(root.current);
+    document.addEventListener("visibilitychange", update);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", update);
+    };
+  }, [companies.length]);
+  if (!unique.length) return null;
   return (
-    <div
-      className="marquee overflow-hidden"
-      role="list"
-      aria-label="Hiring companies"
+    <section
+      ref={root}
+      className={styles.marquee}
+      data-paused={paused || !active}
+      data-moving={moving}
+      aria-labelledby="company-strip-title"
+      style={
+        { "--duration": `${Math.max(40, unique.length * 5)}s` } as CSSProperties
+      }
     >
-      <div
-        className="marquee-track flex gap-3 w-max py-1"
-        style={{
-          ["--marquee-duration" as string]: `${Math.max(24, companies.length * 6)}s`,
-        }}
-      >
-        {loop.map((company, index) => (
-          <Link
-            key={`${company._id}-${index}`}
-            href={`/companies/${company.slug}`}
-            prefetch={false}
-            role="listitem"
-            aria-hidden={index >= companies.length}
-            tabIndex={index >= companies.length ? -1 : 0}
-            className="flex items-center gap-3 bg-white border border-slate-200 rounded-2xl px-5 py-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 hover:border-electric transition-all duration-200 w-64 shrink-0"
+      <div className={styles.heading}>
+        <div>
+          <p id="company-strip-title">
+            A world of companies. Your next possibility.
+          </p>
+          <small>
+            From our company directory · not partnerships or endorsements
+          </small>
+        </div>
+        {moving && (
+          <button
+            type="button"
+            aria-pressed={paused}
+            onClick={() => setPaused((value) => !value)}
           >
-            <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
-            <span className="min-w-0">
-              <strong className="block text-slate-900 truncate">
-                {company.name}
-              </strong>
-              <span className="text-sm text-slate-500">
-                {company.activeJobs} live{" "}
-                {company.activeJobs === 1 ? "role" : "roles"}
-              </span>
-            </span>
-          </Link>
-        ))}
+            {paused ? "Play company animation" : "Pause company animation"}
+          </button>
+        )}
       </div>
-    </div>
+      <div
+        className={styles.viewport}
+        tabIndex={moving ? 0 : undefined}
+        aria-label="Company directory logos"
+      >
+        <div className={styles.track}>
+          <ul className={styles.group}>
+            {unique.map((company) => (
+              <li key={company._id}>
+                <Link
+                  href={`/companies/${company.slug}`}
+                  prefetch={false}
+                  className={styles.company}
+                >
+                  <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
+                  <span>{company.name}</span>
+                  <span className={styles.arrow} aria-hidden="true">
+                    ↗
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {moving && (
+            <ul
+              className={`${styles.group} ${styles.clone}`}
+              aria-hidden="true"
+            >
+              {unique.map((company) => (
+                <li key={company._id}>
+                  <div className={styles.company}>
+                    <CompanyLogo
+                      name={company.name}
+                      logoUrl={company.logoUrl}
+                    />
+                    <span>{company.name}</span>
+                    <span className={styles.arrow}>↗</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+      <Link href="/companies" className={styles.directory}>
+        Explore all companies <span aria-hidden="true">↗</span>
+      </Link>
+    </section>
   );
 }

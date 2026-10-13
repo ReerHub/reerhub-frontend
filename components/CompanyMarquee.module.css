@@ -1,0 +1,163 @@
+.marquee {
+  padding: 38px 0 28px;
+  background: #fffefa;
+  border-bottom: 1px solid #eee7f6;
+}
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  padding: 0 24px 24px;
+  text-align: center;
+}
+.heading p {
+  font-size: 14px;
+  font-weight: 500;
+  color: #372580;
+}
+.heading small {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  color: #716380;
+}
+.heading button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid #e3d8ef;
+  border-radius: 24px;
+  font-size: 10px;
+  color: #5034b5;
+}
+.viewport {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d3c4ed transparent;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 4%,
+    #000 96%,
+    transparent
+  );
+}
+.track {
+  display: flex;
+  width: max-content;
+  animation: logo-travel var(--duration, 60s) linear infinite;
+}
+.group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px 0 0;
+  list-style: none;
+  margin: 0;
+}
+.company {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 88px;
+  min-width: 220px;
+  padding: 16px 22px;
+  background: #fff;
+  border: 1px solid #e8e0f1;
+  border-radius: 20px;
+  color: #372580;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.company:hover {
+  background: #f6f0ff;
+  border-color: #cbbbeb;
+}
+.arrow {
+  color: #8b70b8;
+  margin-left: 14px;
+  font-weight: 400;
+}
+.directory {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 12px;
+  color: #5034b5;
+  font-size: 11px;
+}
+.marquee[data-paused="true"] .track,
+.viewport:hover .track,
+.viewport:focus-within .track {
+  animation-play-state: paused;
+}
+.marquee[data-moving="false"] .track {
+  animation: none;
+  width: 100%;
+  justify-content: center;
+}
+.marquee[data-moving="false"] .group {
+  flex-wrap: wrap;
+  padding: 0 20px;
+  justify-content: center;
+}
+.marquee a:focus-visible,
+.marquee button:focus-visible,
+.viewport:focus-visible {
+  outline: 3px solid #5034b5;
+  outline-offset: -4px;
+}
+@keyframes logo-travel {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (max-width: 640px) {
+  .company {
+    min-width: 185px;
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+  .heading p {
+    font-size: 13px;
+  }
+  .marquee {
+    padding-top: 28px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none !important;
+    transform: none !important;
+  }
+  .clone {
+    display: none;
+  }
+  .company {
+    transition: none;
+  }
+}
+/* Hide the decorative scroll rail; the row remains scrollable by touch/keyboard. */
+.viewport {
+  scrollbar-width: none;
+}
+.viewport::-webkit-scrollbar {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .viewport {
+    scrollbar-width: thin;
+  }
+  .viewport::-webkit-scrollbar {
+    display: block;
+    height: 6px;
+  }
+}

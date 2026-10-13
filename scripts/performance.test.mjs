@@ -34,7 +34,9 @@ test("public content does not refetch after hydration and repeated cards do not 
     /useEffect|listJobsWithMeta|listCompanies|"use client"/,
   );
   const page = await read("../app/page.tsx");
-  assert.match(page, /await getHome\(\)/);
+  assert.match(page, /getHome\(\)/);
+  assert.match(page, /Promise\.all/);
+  assert.match(page, /listCompanies\(\)/);
   for (const path of [
     "../components/JobCard.tsx",
     "../components/CompanyDirectory.tsx",

@@ -89,11 +89,11 @@ test("public layout caps wide screens and grids respond to their container", asy
   assert.match(css, /@container \(min-width: 1248px\)/);
   assert.match(css, /minmax\(min\(100%, 300px\), 1fr\)/);
   assert.doesNotMatch(css, /repeat\(5, minmax/);
-  assert.match(home, /max-width: 64rem/);
-  assert.match(home, /max-width: 100%/);
+  assert.match(home, /max-width: 960px/);
+  assert.match(home, /max-width: 1440px/);
   assert.match(home, /text-align: center/);
   assert.doesNotMatch(home, /grid-template-columns: minmax\(0, 1fr\) minmax/);
-  assert.match(home, /minmax\(min\(100%, 160px\), 1fr\)/);
+  assert.match(home, /@media \(max-width: 640px\)/);
   assert.match(billing, /max-width: 1200px/);
 });
 
@@ -243,7 +243,7 @@ test("public Cobalt Blue styling is scoped and meets core contrast", async () =>
   }
 });
 
-test("public branding reserves gradients for Pro and uses quiet chrome", async () => {
+test("public branding preserves existing chrome and scopes expressive homepage surfaces", async () => {
   const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
   const css = await read("../app/public.css");
   assert.match(css, /linear-gradient\(130deg, #172554, #1e40af\)/);
@@ -261,10 +261,14 @@ test("public branding reserves gradients for Pro and uses quiet chrome", async (
   assert.match(footer, /REERHUB TECHNOLOGIES/);
   assert.doesNotMatch(footer, /registration in progress/);
   const home = await read("../components/HomePage.module.css");
+  assert.match(home, /--violet: #6d4aff/);
+  assert.match(home, /--ink: #372580/);
   assert.match(
-    home,
-    /\.proPromotion \{[\s\S]*?background: var\(--public-gradient\)/,
+    css,
+    /:has\(\.homepage-redesign\) \.site-nav\[data-scrolled="true"\]/,
   );
+  assert.match(css, /backdrop-filter: blur\(18px\)/);
+  assert.match(footer, /className="footer-wordmark" aria-hidden="true"/);
   assert.match(home, /\.closing \{[\s\S]*?#fff/);
   assert.match(
     await read("../app/billing/Billing.module.css"),
@@ -349,8 +353,13 @@ test("admin host routes stay isolated and required public config remains accessi
   const hosts = compile(
     await readFile(new URL("../lib/admin-host.ts", import.meta.url), "utf8"),
   );
-  const jobUrlSource = await readFile(new URL("../lib/reerhub.ts", import.meta.url), "utf8");
-  const jobUrls = moduleUrl(compile(jobUrlSource.slice(jobUrlSource.indexOf("export const slugify"))));
+  const jobUrlSource = await readFile(
+    new URL("../lib/reerhub.ts", import.meta.url),
+    "utf8",
+  );
+  const jobUrls = moduleUrl(
+    compile(jobUrlSource.slice(jobUrlSource.indexOf("export const slugify"))),
+  );
   const proxySource = compile(
     await readFile(new URL("../proxy.ts", import.meta.url), "utf8"),
   )

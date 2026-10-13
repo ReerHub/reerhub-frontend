@@ -12,6 +12,19 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, loading, logout } = useAuth();
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const update = () => setScrolled(window.scrollY > 32);
+    const frame = requestAnimationFrame(update);
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("pageshow", update);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("pageshow", update);
+    };
+  }, [pathname]);
   const [open, setOpen] = useState(false);
   const [account, setAccount] = useState(false);
   const accountRef = useRef(null);
@@ -61,8 +74,8 @@ export default function Navbar() {
         )
       : pathname.startsWith(href);
   return (
-    <header className="site-nav">
-      <div className="page-container flex h-[72px] items-center justify-between gap-4">
+    <header className="site-nav" data-scrolled={pathname === "/" && scrolled}>
+      <div className="nav-inner page-container flex h-[72px] items-center justify-between gap-4">
         <Link
           href="/"
           onClick={close}
@@ -77,7 +90,7 @@ export default function Navbar() {
             className="rounded-lg bg-white p-0.5"
             priority
           />
-          <BrandWordmark className="hidden text-xl text-white sm:inline" />
+          <BrandWordmark className="nav-wordmark hidden text-xl text-white sm:inline" />
         </Link>
         <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
           {links.map(({ href, label }) => (

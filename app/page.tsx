@@ -1,6 +1,6 @@
 import { SOCIAL_LINKS } from "@/lib/social-links";
 import HomePage from "@/components/HomePage";
-import { getHome, DataUnavailableError } from "@/lib/reerhub";
+import { getHome, listCompanies, DataUnavailableError } from "@/lib/reerhub";
 import { pageMetadata, safeJsonLd, SITE } from "@/lib/seo";
 export const metadata = pageMetadata(
   "Engineering, AI & Tech Jobs in India",
@@ -8,10 +8,17 @@ export const metadata = pageMetadata(
   "/",
 );
 export default async function Home() {
-  const data = await getHome().catch((error) => {
+  const unavailableAsNull = (error: unknown) => {
     if (error instanceof DataUnavailableError) return null;
     throw error;
-  });
+  };
+  const [data, directory] = await Promise.all([
+    getHome().catch(unavailableAsNull),
+    listCompanies().catch(unavailableAsNull),
+  ]);
+  const logoCompanies = (directory ?? data?.companies ?? []).map(
+    ({ _id, name, slug, logoUrl }) => ({ _id, name, slug, logoUrl }),
+  );
   return (
     <>
       <script
@@ -40,7 +47,7 @@ export default async function Home() {
           ]),
         }}
       />
-      <HomePage data={data} />
+      <HomePage data={data} logoCompanies={logoCompanies} />
     </>
   );
 }
