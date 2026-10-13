@@ -6,7 +6,9 @@ import { safeJsonLd } from "@/lib/seo";
 
 export default async function BillingPage({
   searchParams,
-}: PageProps<"/billing">) {
+}: {
+  searchParams: Promise<{ plan?: string | string[] }>;
+}) {
   const initialPlan = resolvePlanId((await searchParams).plan);
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:py-16">
