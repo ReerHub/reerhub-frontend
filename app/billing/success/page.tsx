@@ -51,7 +51,7 @@ export default function BillingSuccessPage() {
     : false;
 
   return (
-    <div className="page-container flex min-h-[70vh] items-center py-12">
+    <div className="billing-success-page page-container flex min-h-[70vh] items-center py-12">
       <section className="surface-panel mx-auto w-full max-w-3xl overflow-hidden">
         <div className="border-b border-slate-100 bg-primary-soft px-6 py-5 sm:px-10">
           <p className="text-sm font-semibold text-primary-deep">

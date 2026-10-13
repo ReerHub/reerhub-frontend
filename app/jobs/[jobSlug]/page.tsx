@@ -214,7 +214,7 @@ export default async function JobDetailPage({
   ];
 
   return (
-    <div className="page-container py-8 sm:py-12">
+    <div className="job-detail-page page-container py-8 sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

@@ -25,7 +25,11 @@ export default function PageHeader({
           </Link>
         )}
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
+            <span className="page-heading-kicker">
+              <Icon name="spark" className="h-3 w-3" />
+              YOUR NEXT POSSIBILITY
+            </span>
             <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-ink sm:text-5xl">
               {title}
             </h1>

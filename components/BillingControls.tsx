@@ -97,7 +97,7 @@ export default function BillingControls({
         name: "REERHUB",
         description: `${selectedPlan.name} career intelligence membership`,
         prefill: { name: user?.name, email: user?.email },
-        theme: { color: "#2563eb" },
+        theme: { color: "#6d4aff" },
         modal: { ondismiss: () => setBusy(false) },
         handler: async (response: RazorpayResponse) => {
           try {

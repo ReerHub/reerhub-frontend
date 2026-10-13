@@ -26,7 +26,7 @@ function VerifyInner() {
 
   return (
     <div
-      className="surface-panel mx-auto my-16 max-w-md p-8 text-center sm:p-10"
+      className="auth-state-panel surface-panel mx-auto my-16 max-w-md p-8 text-center sm:p-10"
       role="status"
     >
       {state === "busy" && (

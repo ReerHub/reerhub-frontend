@@ -202,7 +202,7 @@ test("admin API contracts, pagination, refresh and CSRF", async () => {
   }
 });
 
-test("public Cobalt Blue styling is scoped and meets core contrast", async () => {
+test("public premium styling is scoped and meets core contrast", async () => {
   const css = await readFile(
     new URL("../app/public.css", import.meta.url),
     "utf8",
@@ -216,7 +216,7 @@ test("public Cobalt Blue styling is scoped and meets core contrast", async () =>
     "utf8",
   );
   assert.match(layout, /isAdminHost \? "admin-site" : "public-site"/);
-  assert.match(css, /--color-primary: #2563eb/);
+  assert.match(css, /--color-primary: #6d4aff/);
   assert.match(base, /--color-primary: #2563eb/);
   assert.match(css, /\.public-site \.bg-primary/);
   assert.match(css, /prefers-reduced-motion: reduce/);
@@ -246,16 +246,12 @@ test("public Cobalt Blue styling is scoped and meets core contrast", async () =>
   }
 });
 
-test("public branding preserves existing chrome and scopes expressive homepage surfaces", async () => {
+test("public branding shares premium chrome without affecting the admin scope", async () => {
   const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
   const css = await read("../app/public.css");
-  assert.match(css, /linear-gradient\(130deg, #172554, #1e40af\)/);
-  for (const selector of ["site-nav", "mobile-nav-panel", "site-footer"]) {
-    assert.match(
-      css,
-      new RegExp(`\\.${selector} \\{\\s*background: var\\(--public-chrome\\)`),
-    );
-  }
+  assert.match(css, /linear-gradient\(130deg, #372580, #6d4aff\)/);
+  assert.match(css, /\.public-site \.site-nav \{[\s\S]*?top: 0/);
+  assert.match(css, /\.public-site \.workspace-sidebar/);
   const footer = await read("../components/Footer.jsx");
   assert.doesNotMatch(footer, /footer-intro|REERHUB<|REERHUB\.<\//);
   assert.match(footer, /src="\/reerhub-icon-logo\.png"/);
@@ -266,11 +262,8 @@ test("public branding preserves existing chrome and scopes expressive homepage s
   const home = await read("../components/HomePage.module.css");
   assert.match(home, /--violet: #6d4aff/);
   assert.match(home, /--ink: #241e30/);
-  assert.match(
-    css,
-    /:has\(\.homepage-redesign\) \.site-nav\[data-scrolled="true"\]/,
-  );
-  assert.match(css, /backdrop-filter: blur\(18px\)/);
+  assert.match(css, /\.public-site \.site-nav\[data-scrolled="true"\]/);
+  assert.match(css, /backdrop-filter: blur\(24px\)/);
   assert.match(footer, /className="footer-wordmark" aria-hidden="true"/);
   assert.match(home, /\.closing \{[\s\S]*?#fff/);
   assert.match(

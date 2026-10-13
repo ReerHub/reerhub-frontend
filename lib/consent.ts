@@ -1,9 +1,11 @@
 export const CONSENT_KEY = "reerhub-consent-v2";
 export const CONSENT_EVENT = "reerhub-consent-changed";
 export type Consent = { version: 2; necessary: true; analytics: boolean };
+let unavailableSnapshot: string | null = null;
 const denied: Consent = { version: 2, necessary: true, analytics: false };
 export function consentSnapshot(): string | null {
   if (typeof window === "undefined") return null;
+  if (unavailableSnapshot) return unavailableSnapshot;
   try {
     return window.localStorage.getItem(CONSENT_KEY);
   } catch {
@@ -29,8 +31,10 @@ export function saveConsent(analytics: boolean) {
   const value: Consent = { version: 2, necessary: true, analytics };
   try {
     window.localStorage.setItem(CONSENT_KEY, JSON.stringify(value));
+    unavailableSnapshot = null;
   } catch {
-    /* Privacy choices fail closed when storage is unavailable. */
+    // A failed write must also revoke any previously stored acceptance this session.
+    unavailableSnapshot = JSON.stringify(denied);
   }
   window.dispatchEvent(new Event(CONSENT_EVENT));
 }

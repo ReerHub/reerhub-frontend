@@ -3,9 +3,10 @@ import "./admin.css";
 import "./public.css";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
+import MemberWorkspace from "@/components/MemberWorkspace";
 import Footer from "@/components/Footer";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import CookieConsent from "@/components/CookieConsent";
@@ -61,7 +62,9 @@ export default async function RootLayout({
               className="min-h-dvh relative pt-[72px]"
               tabIndex={-1}
             >
-              {children}
+              <Suspense fallback={children}>
+                <MemberWorkspace>{children}</MemberWorkspace>
+              </Suspense>
             </main>
             <Footer />
           </AuthProvider>

@@ -2,7 +2,7 @@
   max-width: 1160px;
   margin: 0 auto;
   padding: 32px 24px 72px;
-  color: #0f172a;
+  color: #241e30;
 }
 .back {
   display: inline-flex;
@@ -11,10 +11,10 @@
   min-height: 44px;
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: #675d75;
 }
 .back:hover {
-  color: #2563eb;
+  color: #6d4aff;
 }
 .header {
   display: flex;
@@ -27,7 +27,7 @@
   font-size: 10px;
   letter-spacing: 0.13em;
   font-weight: 700;
-  color: #475569;
+  color: #675d75;
 }
 .header h1 {
   font-size: clamp(32px, 4vw, 44px);
@@ -38,7 +38,7 @@
 }
 .header p {
   font-size: 15px;
-  color: #64748b;
+  color: #776b85;
   line-height: 1.6;
 }
 .identity {
@@ -53,7 +53,7 @@
   font-size: 13px;
 }
 .identity div > span {
-  color: #64748b;
+  color: #776b85;
   margin-top: 3px;
   overflow-wrap: anywhere;
 }
@@ -64,24 +64,23 @@
   height: 44px;
   flex-shrink: 0;
   border-radius: 50%;
-  color: #1e40af;
-  background: #eff6ff;
+  color: #5034b5;
+  background: #f1ebff;
   font-weight: 700;
 }
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 28px;
   align-items: start;
 }
 .readiness {
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 1;
-  position: sticky;
-  top: 96px;
+  position: static;
   padding: 24px;
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 20px;
 }
 .readiness h2 {
@@ -91,7 +90,7 @@
   margin: 12px 0 8px;
 }
 .readiness > p {
-  color: #64748b;
+  color: #776b85;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -100,15 +99,15 @@
   justify-content: space-between;
   margin-top: 24px;
   font-size: 11px;
-  color: #475569;
+  color: #675d75;
 }
 .progressLabel strong {
-  color: #1e40af;
+  color: #5034b5;
 }
 .progress {
   height: 5px;
   border-radius: 5px;
-  background: #f1f5f9;
+  background: #f6f2fa;
   overflow: hidden;
   margin: 9px 0 18px;
 }
@@ -116,7 +115,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: #2563eb;
+  background: #6d4aff;
 }
 .readiness ul {
   list-style: none;
@@ -130,7 +129,7 @@
   width: 100%;
   min-height: 44px;
   font-size: 12px;
-  color: #475569;
+  color: #675d75;
   text-align: left;
 }
 .check,
@@ -142,20 +141,20 @@
   border-radius: 50%;
   flex-shrink: 0;
   font-size: 10px;
-  background: #f1f5f9;
-  color: #64748b;
+  background: #f6f2fa;
+  color: #776b85;
 }
 .checkComplete {
-  background: #eff6ff;
-  color: #1e40af;
+  background: #f1ebff;
+  color: #5034b5;
 }
 .signalState {
   margin-left: auto;
   font-size: 10px;
-  color: #64748b;
+  color: #776b85;
 }
 .next {
-  background: #f8fafc;
+  background: #fffefa;
   border-radius: 12px;
   padding: 14px;
   margin-top: 16px;
@@ -163,7 +162,7 @@
 .next > span {
   font-size: 9px;
   letter-spacing: 0.1em;
-  color: #64748b;
+  color: #776b85;
   font-weight: 700;
 }
 .next button {
@@ -173,28 +172,28 @@
   min-height: 36px;
   font-size: 12px;
   font-weight: 600;
-  color: #1e40af;
+  color: #5034b5;
   text-align: left;
 }
 .readiness .readinessNote {
   font-size: 11px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #f6f2fa;
   margin-top: 18px;
   padding-top: 16px;
 }
 .form {
   grid-column: 1;
-  grid-row: 1;
+  grid-row: 2;
   min-width: 0;
 }
 .section {
   min-width: 0;
   padding: 28px;
   margin: 0 0 18px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 20px;
   background: #fff;
-  box-shadow: 0 3px 12px #0f172a02;
+  box-shadow: 0 3px 12px #241e3002;
 }
 .sectionTitle {
   display: flex;
@@ -207,8 +206,8 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  background: #eff6ff;
-  color: #1e40af;
+  background: #f1ebff;
+  color: #5034b5;
   border-radius: 11px;
   font-size: 12px;
   font-weight: 700;
@@ -224,7 +223,7 @@
   margin-top: 5px;
   font-size: 12px;
   line-height: 1.7;
-  color: #64748b;
+  color: #776b85;
 }
 .field {
   margin-top: 18px;
@@ -252,7 +251,7 @@
 .optionList input {
   width: 18px;
   height: 18px;
-  accent-color: #2563eb;
+  accent-color: #6d4aff;
   flex-shrink: 0;
 }
 .optionPanel {
@@ -265,7 +264,7 @@
   border-radius: 10px;
   background: #fff;
   overflow: hidden;
-  box-shadow: 0 8px 24px #0f172a14;
+  box-shadow: 0 8px 24px #241e3014;
 }
 .optionPanelAbove {
   top: auto;
@@ -294,20 +293,20 @@
   min-width: 40px;
   display: grid;
   place-items: center;
-  color: #64748b;
+  color: #776b85;
 }
 .optionPanelHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 10px;
-  background: #f8fafc;
+  background: #fffefa;
   font-size: 11px;
-  color: #64748b;
+  color: #776b85;
 }
 .optionPanelHeader button {
   min-height: 32px;
-  color: #1e40af;
+  color: #5034b5;
   font-weight: 600;
   padding: 0 8px;
 }
@@ -330,8 +329,8 @@
   cursor: pointer;
 }
 .optionList label:has(input:checked) {
-  color: #1e40af;
-  background: #eff6ff;
+  color: #5034b5;
+  background: #f1ebff;
 }
 .optionList label:has(input:disabled) {
   color: #94a3b8;
@@ -355,7 +354,7 @@
 }
 .field > label > span {
   font-size: 10px;
-  color: #64748b;
+  color: #776b85;
   font-weight: 400;
   margin-left: 6px;
 }
@@ -370,28 +369,29 @@
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 14px;
-  color: #0f172a;
+  color: #241e30;
   outline: none;
 }
 .field input::placeholder,
 .skillEntry input::placeholder {
-  color: #64748b;
+  color: #776b85;
 }
 .field :where(input:not([type="checkbox"]):not([type="radio"])):focus,
 .field select:focus,
 .skillEntry input:focus,
 .settingsRow select:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px #2563eb15;
+  border-color: #6d4aff;
+  box-shadow: 0 0 0 3px #6d4aff15;
 }
-.field :where(input:not([type="checkbox"]):not([type="radio"]))[aria-invalid="true"],
+.field
+  :where(input:not([type="checkbox"]):not([type="radio"]))[aria-invalid="true"],
 .skillEntry input[aria-invalid="true"] {
   border-color: #dc2626;
 }
 .field p,
 .hint {
   margin-top: 8px;
-  color: #64748b;
+  color: #776b85;
   font-size: 11px;
   line-height: 1.6;
 }
@@ -410,7 +410,7 @@
 }
 .skillsLabel > span {
   font-size: 11px;
-  color: #64748b;
+  color: #776b85;
 }
 .chips {
   display: flex;
@@ -425,9 +425,9 @@
   align-items: center;
   gap: 4px;
   padding-left: 10px;
-  background: #eff6ff;
-  color: #1e40af;
-  border: 1px solid #dbeafe;
+  background: #f1ebff;
+  color: #5034b5;
+  border: 1px solid #e9ddff;
   border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
@@ -460,13 +460,13 @@
   margin-left: 10px;
 }
 .suggestions {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #f6f2fa;
   margin-top: 20px;
   padding-top: 18px;
 }
 .suggestions > span {
   font-size: 10px;
-  color: #64748b;
+  color: #776b85;
 }
 .suggestions > div {
   display: flex;
@@ -478,14 +478,14 @@
   padding: 8px 11px;
   min-height: 44px;
   font-size: 11px;
-  color: #475569;
+  color: #675d75;
   border: 1px dashed #cbd5e1;
   border-radius: 9px;
 }
 .suggestions button:hover:not(:disabled) {
-  color: #1e40af;
-  border-color: #2563eb;
-  background: #eff6ff;
+  color: #5034b5;
+  border-color: #6d4aff;
+  background: #f1ebff;
 }
 .twoFields {
   display: grid;
@@ -512,11 +512,11 @@
   display: grid;
   place-items: center;
   min-height: 48px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
-  color: #475569;
+  color: #675d75;
 }
 .modeGroup input {
   position: absolute;
@@ -526,13 +526,13 @@
   cursor: pointer;
 }
 .modeGroup label:has(input:focus-visible) {
-  outline: 2px solid #2563eb;
+  outline: 2px solid #6d4aff;
   outline-offset: 3px;
 }
 .modeGroup .selectedMode {
-  border-color: #2563eb;
-  background: #eff6ff;
-  color: #1e40af;
+  border-color: #6d4aff;
+  background: #f1ebff;
+  color: #5034b5;
 }
 .saveBar {
   position: sticky;
@@ -543,11 +543,11 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 16px;
   padding: 18px;
   background: #fff;
-  box-shadow: 0 8px 30px #0f172a0d;
+  box-shadow: 0 8px 30px #241e300d;
 }
 .saveStatus strong {
   display: block;
@@ -558,7 +558,7 @@
   display: block;
   font-size: 10px;
   margin-top: 4px;
-  color: #64748b;
+  color: #776b85;
 }
 .saveActions {
   display: flex;
@@ -575,20 +575,20 @@
   font-weight: 600;
 }
 .primary {
-  background: #2563eb;
+  background: #6d4aff;
   color: #fff;
-  border: 1px solid #2563eb;
+  border: 1px solid #6d4aff;
 }
 .primary:hover:not(:disabled) {
-  background: #1d4ed8;
+  background: #5736da;
 }
 .secondary {
   background: #fff;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  color: #675d75;
+  border: 1px solid #e6dfed;
 }
 .secondary:hover:not(:disabled) {
-  background: #f8fafc;
+  background: #fffefa;
 }
 .saveError {
   width: 100%;
@@ -596,19 +596,19 @@
 }
 .savedLink {
   font-size: 12px;
-  color: #1e40af;
+  color: #5034b5;
   font-weight: 600;
 }
 .settings {
   margin-top: 44px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 20px;
   background: #fff;
   overflow: hidden;
 }
 .settingsHeader {
   padding: 24px 28px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f6f2fa;
 }
 .settingsHeader h2 {
   font-size: 18px;
@@ -617,7 +617,7 @@
 }
 .settingsHeader p {
   font-size: 12px;
-  color: #64748b;
+  color: #776b85;
   margin-top: 5px;
 }
 .settingsRow {
@@ -626,7 +626,7 @@
   justify-content: space-between;
   gap: 20px;
   padding: 24px 28px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f6f2fa;
 }
 .settingsRow h3 {
   font-size: 13px;
@@ -634,7 +634,7 @@
 }
 .settingsRow p {
   font-size: 12px;
-  color: #64748b;
+  color: #776b85;
   line-height: 1.7;
   margin-top: 5px;
 }
@@ -648,7 +648,7 @@
 }
 .accountEmail {
   font-size: 11px;
-  color: #475569;
+  color: #675d75;
   display: block;
   margin-top: 8px;
   overflow-wrap: anywhere;
@@ -666,15 +666,15 @@
   background: #fef2f2;
 }
 .dialog {
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e6dfed;
   border-radius: 20px;
   padding: 28px;
   width: min(440px, calc(100% - 32px));
   margin: auto;
-  box-shadow: 0 24px 80px #0f172a20;
+  box-shadow: 0 24px 80px #241e3020;
 }
 .dialog::backdrop {
-  background: #0f172a66;
+  background: #241e3066;
 }
 .dialog h2 {
   font-size: 22px;
@@ -682,7 +682,7 @@
 }
 .dialog p {
   margin: 16px 0 24px;
-  color: #64748b;
+  color: #776b85;
   font-size: 14px;
   line-height: 1.7;
 }
@@ -690,7 +690,7 @@
   max-width: 1100px;
   margin: auto;
   padding: 80px 24px;
-  color: #64748b;
+  color: #776b85;
 }
 .page button:disabled,
 .page fieldset:disabled {
@@ -701,7 +701,7 @@
 }
 .page button:focus-visible,
 .page a:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid #6d4aff;
   outline-offset: 3px;
 }
 .page input,
@@ -846,4 +846,33 @@
   .form {
     padding-bottom: 12px;
   }
+}
+
+/* Matching setup becomes a clear full-width journey inside the member shell. */
+.readiness {
+  background: linear-gradient(120deg, #f0e7ff, #fff3eb);
+}
+.readiness ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+}
+.readiness li button {
+  width: auto;
+}
+.signalState {
+  display: none;
+}
+.header {
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e6dfed;
+}
+.section {
+  padding: clamp(20px, 3vw, 36px);
+  border-radius: 24px;
+}
+.saveBar {
+  background: #fffdf9eb;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }

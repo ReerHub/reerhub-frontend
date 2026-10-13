@@ -55,10 +55,10 @@ export default function PrivacyPage() {
             We use strictly-necessary cookies to keep you logged in
             (`accessToken`, `refreshToken`), a CSRF token to protect forms, and
             a versioned privacy preference. Optional Google Analytics 4
-            measurement remains disabled until it is configured and you
-            explicitly consent. Necessary-cookie choices from older versions
-            never grant analytics consent. You can reject analytics, change
-            preferences or withdraw using Privacy preferences on every page.
+            measurement is optional and only runs with your explicit consent.
+            Necessary-cookie choices from older versions never grant analytics
+            consent. You can reject analytics, change preferences or withdraw
+            using Privacy preferences on every page.
           </p>
           <p className="mt-4 leading-7 text-slate-600">
             When enabled and consented, product analytics records broad page

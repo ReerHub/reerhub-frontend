@@ -139,7 +139,7 @@ for (const component of ["MatchJourney", "HomeHeroScene", "CompanyMarquee"]) {
   });
 }
 
-test("homepage navigation initializes at restored scroll, tracks the glass threshold and stays isolated to home", async () => {
+test("public navigation restores scroll, tracks home glass and keeps other routes glassy", async () => {
   const dom = new JSDOM('<div id="root"></div>');
   const previous = new Map();
   let frame;
@@ -189,6 +189,10 @@ test("homepage navigation initializes at restored scroll, tracks the glass thres
       new RegExp(`import ${name} from "[^"\\n]+";`),
       `const ${name}=()=>null;`,
     );
+  source = source.replace(
+    'import { workspaceLinks } from "@/lib/workspace";',
+    "const workspaceLinks=()=>[];",
+  );
   const { default: Navbar } = await import(compileFixture(source));
   const { createElement, act } = await import("react");
   const { createRoot } = await import("react-dom/client");
@@ -213,7 +217,22 @@ test("homepage navigation initializes at restored scroll, tracks the glass thres
     await act(async () => root.render(createElement(Navbar)));
     scroll = 200;
     await act(async () => window.dispatchEvent(new dom.window.Event("scroll")));
-    assert.equal(header().dataset.scrolled, "false");
+    assert.equal(header().dataset.scrolled, "true");
+    scroll = 0;
+    await act(async () => window.dispatchEvent(new dom.window.Event("scroll")));
+    assert.equal(header().dataset.scrolled, "true");
+    const toggle = document.querySelector(
+      '[aria-controls="mobile-navigation"]',
+    );
+    await act(async () => toggle.click());
+    document.querySelector("#mobile-navigation a").focus();
+    await act(async () =>
+      document.dispatchEvent(
+        new dom.window.KeyboardEvent("keydown", { key: "Escape" }),
+      ),
+    );
+    assert.equal(document.querySelector("#mobile-navigation"), null);
+    assert.equal(document.activeElement, toggle);
   } finally {
     await act(async () => root.unmount());
     for (const [key, descriptor] of previous) {
