@@ -286,3 +286,10 @@ Validation for the refinement: lint, TypeScript, 13 SEO tests, 15 dashboard/jour
 ## 2026-10-13 — Production blur compatibility correction
 
 After PR #105 deployed, live browser verification confirmed the redesigned homepage and all 48 directory companies. It also found that optimized CSS retained only the prefixed blur declaration when it appeared last, leaving Chrome with a translucent but unblurred header. Place the WebKit-prefixed declaration before the standard one; the standard production build now retains both. Verify the computed 18px blur after deployment. No data, authentication or API changes.
+
+
+## 2026-10-13 — Premium homepage refinement
+
+The owner approved combining ReerHub’s expressive identity with Cadence’s restrained backgrounds and illustrated feature presentation, and requested push/merge into main after verification. The hero gains more white space and lighter peach/lavender glows, ordinary headings become charcoal, and benefit cards gain static illustrated product previews over tonal gradients. Existing animations, frosted navigation, real company strip and oversized footer branding remain. Condense the Pro presentation while retaining real scoring evidence, experience groups, relevance disclaimers and daily-email limits. Apply corresponding navigation/footer polish only on the homepage. No backend/API/authentication/billing changes.
+
+Local verification: all frontend regression suites, lint, TypeScript and the standard production build passed; dependency audit reports no vulnerabilities. Synthetic browser reviews covered desktop/tablet/320px/390px layouts, Pro copy, new previews, footer branding and contrast. Built CSS retains both standard and prefixed 18px backdrop blur. These checks do not establish deployed behavior.
