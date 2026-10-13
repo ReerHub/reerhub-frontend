@@ -582,8 +582,9 @@
   text-align: center;
   padding: 85px 0;
   background:
-    radial-gradient(ellipse at 15% 70%, #ffcdbd80, transparent 45%),
-    radial-gradient(ellipse at 85% 30%, #e4d8ff90, transparent 45%), #f8f4ff;
+    linear-gradient(to bottom, transparent 45%, #faf9fc 100%),
+    radial-gradient(ellipse at 22% 25%, #ffe2d180, transparent 58%),
+    radial-gradient(ellipse at 80% 15%, #e9e0ff90, transparent 58%), #faf9fc;
 }
 .closing h2 {
   font-size: clamp(40px, 5.8vw, 76px);
@@ -593,14 +594,14 @@
 }
 .closing p:not(.eyebrow) {
   margin: 24px 0;
-  color: #7c6c89;
+  color: #675d75;
   font-size: 15px;
 }
 .closing small {
   display: block;
   margin-top: 20px;
   font-size: 10px;
-  color: #8d7f98;
+  color: #675d75;
 }
 @keyframes float {
   0%,
@@ -1234,4 +1235,44 @@
 }
 .home .matchingSection :global(.surface-panel) .eyebrow {
   color: #76608f;
+}
+
+/* Whole-card links carry the billing cycle into the existing secure flow. */
+.planLink {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+.planLink:hover {
+  transform: translateY(-4px);
+  border-color: #8b70ed !important;
+  box-shadow: 0 14px 36px #5034b514 !important;
+}
+.planLink:focus-visible {
+  outline: 3px solid #5034b5;
+  outline-offset: 4px;
+}
+.planAction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid #5034b51c;
+  color: #5034b5;
+  font-size: 14px;
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .planLink {
+    transition: none;
+  }
+  .planLink:hover {
+    transform: none;
+  }
 }

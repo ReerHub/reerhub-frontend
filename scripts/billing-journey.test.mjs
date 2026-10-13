@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { JSDOM } from "jsdom";
 import { compileFixture } from "./location-fixtures.mjs";
-const { PLANS } = await import(
+const { PLANS, resolvePlanId, billingPlanHref } = await import(
   compileFixture(
     await readFile(new URL("../lib/billing-plans.ts", import.meta.url), "utf8"),
   )
@@ -39,8 +39,9 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
     membership: { isPro: false, subscription: null },
   };
   globalThis.billingJourney = {
-    track: (name, input) => events.push({name,input}),
+    track: (name, input) => events.push({ name, input }),
     PLANS,
+    billingPlanHref,
     user,
     router: { push: (route) => routes.push(route) },
     refresh: async () => {},
@@ -87,8 +88,8 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       "const {track} = globalThis.billingJourney;",
     )
     .replace(
-      'import { PLANS, type PlanId } from "@/lib/billing-plans";',
-      "const {PLANS} = globalThis.billingJourney;",
+      'import { PLANS, billingPlanHref, type PlanId } from "@/lib/billing-plans";',
+      "const {PLANS,billingPlanHref} = globalThis.billingJourney;",
     )
     .replace(
       'import { loadCheckout } from "@/lib/checkout-script";',
@@ -139,7 +140,47 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
     { createRoot } = await import("react-dom/client");
   const root = createRoot(document.getElementById("root"));
   try {
-    await act(async () => root.render(createElement(Component)));
+    for (const plan of PLANS) {
+      await act(async () =>
+        root.render(
+          createElement(Component, { key: plan.id, initialPlan: plan.id }),
+        ),
+      );
+      assert.ok(
+        document
+          .querySelector('[aria-checked="true"]')
+          .textContent.includes(plan.name),
+      );
+    }
+    globalThis.billingJourney.user = null;
+    await act(async () =>
+      root.render(
+        createElement(Component, {
+          key: "guest",
+          initialPlan: "pro-quarterly",
+        }),
+      ),
+    );
+    await act(async () =>
+      [...document.querySelectorAll("button")]
+        .find((n) => n.textContent.includes("Start 7-day"))
+        .click(),
+    );
+    const login = new URL(routes.at(-1), "https://reerhub.com");
+    assert.equal(login.pathname, "/login");
+    assert.equal(
+      login.searchParams.get("next"),
+      billingPlanHref("pro-quarterly"),
+    );
+    assert.equal(
+      calls.length,
+      0,
+      "Guest continuation must not create a subscription",
+    );
+    globalThis.billingJourney.user = user;
+    await act(async () =>
+      root.render(createElement(Component, { key: "member" })),
+    );
     const weekly = [...document.querySelectorAll('[role="radio"]')].find((n) =>
       n.textContent.startsWith("Weekly"),
     );
@@ -166,7 +207,10 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       }),
     );
     assert.ok(routes.includes("/billing/success"));
-    assert.deepEqual(events.map((event) => event.name), ["begin_checkout", "trial_activation"]);
+    assert.deepEqual(
+      events.map((event) => event.name),
+      ["begin_checkout", "trial_activation"],
+    );
     assert.ok(!JSON.stringify(events).includes("candidate@example.com"));
     assert.match(document.body.textContent, /Cancel renewal/);
     assert.ok(calls.some((call) => call.razorpayPaymentId === "pay_synthetic"));
@@ -181,8 +225,31 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
   }
 });
 
-test('INR notation retains the approved recurring price catalog', () => {
-  assert.deepEqual(PLANS.map(({id,price})=>[id,price]), [
-    ['pro-weekly','INR 49'],['pro-monthly','INR 149'],['pro-quarterly','INR 299'],
-  ]);
+test("INR notation retains the approved recurring price catalog", () => {
+  assert.deepEqual(
+    PLANS.map(({ id, price }) => [id, price]),
+    [
+      ["pro-weekly", "INR 49"],
+      ["pro-monthly", "INR 149"],
+      ["pro-quarterly", "INR 299"],
+    ],
+  );
+});
+
+test("homepage billing choices accept catalog IDs and reject unsafe or ambiguous values", () => {
+  for (const plan of PLANS) {
+    const url = new URL(billingPlanHref(plan.id), "https://reerhub.com");
+    assert.equal(url.pathname, "/billing");
+    assert.equal(resolvePlanId(url.searchParams.get("plan")), plan.id);
+    assert.equal(url.hash, "#choose-plan");
+  }
+  for (const value of [
+    undefined,
+    "",
+    "legacy",
+    "https://example.com",
+    ["pro-weekly", "pro-quarterly"],
+  ]) {
+    assert.equal(resolvePlanId(value), "pro-monthly");
+  }
 });

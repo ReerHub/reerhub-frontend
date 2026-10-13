@@ -1,10 +1,15 @@
 import Link from "next/link";
 import BillingControls from "@/components/BillingControls";
-import { PLANS } from "@/lib/billing-plans";
+import { PLANS, resolvePlanId } from "@/lib/billing-plans";
 import { FAQS } from "@/lib/billing-content";
 import { safeJsonLd } from "@/lib/seo";
 
-export default function BillingPage() {
+export default async function BillingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ plan?: string | string[] }>;
+}) {
+  const initialPlan = resolvePlanId((await searchParams).plan);
   return (
     <div className="mx-auto max-w-5xl px-5 py-10 sm:py-16">
       <p className="mb-3 text-sm font-semibold text-primary">REERHUB Pro</p>
@@ -70,7 +75,7 @@ export default function BillingPage() {
           non-refundable.
         </p>
       </section>
-      <BillingControls />
+      <BillingControls key={initialPlan} initialPlan={initialPlan} />
       <section className="mt-12" aria-labelledby="billing-faq">
         <h2 id="billing-faq" className="text-2xl font-bold">
           Billing FAQ

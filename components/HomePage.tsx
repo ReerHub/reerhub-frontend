@@ -12,7 +12,7 @@ import styles from "./HomePage.module.css";
 import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import { type Company, type HomeSnapshot } from "@/lib/reerhub";
 import { JOB_LANDINGS } from "@/lib/seo-landings";
-import { PLANS } from "@/lib/billing-plans";
+import { PLANS, billingPlanHref } from "@/lib/billing-plans";
 const ANSWERS = [
   [
     "Can I browse and apply for free?",
@@ -400,7 +400,12 @@ export default function HomePage({
         </h2>
         <div className="mt-7 grid gap-4 md:grid-cols-3">
           {PLANS.map((plan) => (
-            <div key={plan.id} className="surface-panel p-6">
+            <Link
+              key={plan.id}
+              href={billingPlanHref(plan.id)}
+              className={`surface-panel p-6 ${styles.planLink}`}
+              aria-label={`Continue with ${plan.name} Pro, ${plan.price} ${plan.per}`}
+            >
               <h3 className="font-semibold">{plan.name}</h3>
               <p className="mt-3 text-3xl font-bold">
                 {plan.price}
@@ -411,7 +416,11 @@ export default function HomePage({
               <p className="mt-3 text-sm text-slate-600">
                 Seven-day trial. Same Pro features.
               </p>
-            </div>
+              <span className={styles.planAction}>
+                Continue with {plan.name.toLowerCase()}
+                <span aria-hidden="true">↗</span>
+              </span>
+            </Link>
           ))}
         </div>
         <p className="mt-5 max-w-3xl text-sm leading-7 text-slate-600">

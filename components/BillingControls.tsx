@@ -1,5 +1,5 @@
 "use client";
-import { PLANS, type PlanId } from "@/lib/billing-plans";
+import { PLANS, billingPlanHref, type PlanId } from "@/lib/billing-plans";
 
 import { track } from "@/lib/analytics";
 import { loadCheckout } from "@/lib/checkout-script";
@@ -43,13 +43,17 @@ const planName = (id?: string) => PLANS.find((p) => p.id === id)?.name || "Pro";
 
 const stagger = (index: number) => ({ animationDelay: `${index * 90}ms` });
 
-export default function BillingControls() {
+export default function BillingControls({
+  initialPlan = "pro-monthly",
+}: {
+  initialPlan?: PlanId;
+}) {
   const { user, loading, refresh } = useAuth();
   const router = useRouter();
   const [billing, setBilling] = useState<BillingState | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
-  const [planId, setPlanId] = useState<PlanId>("pro-monthly");
+  const [planId, setPlanId] = useState<PlanId>(initialPlan);
   useEffect(() => {
     if (user)
       getBilling()
@@ -66,7 +70,7 @@ export default function BillingControls() {
   }, [user]);
   const start = async () => {
     if (!user) {
-      router.push("/login?next=/billing");
+      router.push(`/login?next=${encodeURIComponent(billingPlanHref(planId))}`);
       return;
     }
     setBusy(true);

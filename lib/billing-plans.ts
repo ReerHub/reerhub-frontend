@@ -36,3 +36,12 @@ export const PLANS: {
     saving: "Save 33% vs monthly · ~INR 100 / mo",
   },
 ];
+
+/** Accept only catalog IDs; unknown/deprecated URL choices use the standard default. */
+export function resolvePlanId(value?: string | string[]): PlanId {
+  return PLANS.find((plan) => plan.id === value)?.id || "pro-monthly";
+}
+
+export function billingPlanHref(plan: PlanId): string {
+  return `/billing?plan=${plan}#choose-plan`;
+}
