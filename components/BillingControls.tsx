@@ -414,7 +414,7 @@ export default function BillingControls() {
                 {payment.paidAt
                   ? new Date(payment.paidAt).toLocaleDateString("en-IN")
                   : "Payment"}{" "}
-                · ₹{payment.amount ? payment.amount / 100 : 0} ·{" "}
+                · INR {payment.amount ? payment.amount / 100 : 0} ·{" "}
                 {payment.status}
               </li>
             ))}
