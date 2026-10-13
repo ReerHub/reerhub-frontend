@@ -1,7 +1,12 @@
 "use client";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import Link from "next/link";
-import { consentSnapshot, saveConsent, subscribeConsent } from "@/lib/consent";
+import Link from "@/components/AppLink";
+import {
+  OPEN_PRIVACY_EVENT,
+  consentSnapshot,
+  saveConsent,
+  subscribeConsent,
+} from "@/lib/consent";
 
 export default function CookieConsent({
   analyticsAvailable = false,
@@ -15,29 +20,42 @@ export default function CookieConsent({
   );
   const [preferences, setPreferences] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
-  const opener = useRef<HTMLButtonElement>(null);
+  const opener = useRef<HTMLElement | null>(null);
   const wasOpen = useRef(false);
   useEffect(() => {
+    const open = (event: Event) => {
+      const trigger = (event as CustomEvent<{ opener?: HTMLElement }>).detail
+        ?.opener;
+      opener.current = trigger instanceof HTMLElement ? trigger : null;
+      setPreferences(true);
+    };
+    window.addEventListener(OPEN_PRIVACY_EVENT, open);
+    return () => window.removeEventListener(OPEN_PRIVACY_EVENT, open);
+  }, []);
+  useEffect(() => {
     if (preferences) heading.current?.focus();
-    else if (wasOpen.current) opener.current?.focus();
+    else if (wasOpen.current) {
+      const target = opener.current?.isConnected
+        ? opener.current
+        : document.getElementById("main-content");
+      target?.focus({ preventScroll: true });
+    }
     wasOpen.current = preferences;
   }, [preferences, stored]);
+  useEffect(() => {
+    if (!preferences) return;
+    const dismiss = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setPreferences(false);
+    };
+    window.addEventListener("keydown", dismiss);
+    return () => window.removeEventListener("keydown", dismiss);
+  }, [preferences]);
   const choose = (allow: boolean) => {
     saveConsent(allow);
     wasOpen.current = true;
     setPreferences(false);
   };
-  if (!preferences && (stored || !analyticsAvailable))
-    return (
-      <button
-        type="button"
-        ref={opener}
-        className="privacy-opener"
-        onClick={() => setPreferences(true)}
-      >
-        Privacy preferences
-      </button>
-    );
+  if (!preferences && (stored || !analyticsAvailable)) return null;
   return (
     <section
       aria-label={preferences ? "Privacy preferences" : "Privacy choices"}

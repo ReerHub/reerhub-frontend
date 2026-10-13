@@ -3,7 +3,8 @@
 import { track as trackEvent } from "@/lib/analytics";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { WORKSPACE_NAVIGATION_EVENT } from "@/lib/workspace";
+import Link from "@/components/AppLink";
 import toast from "react-hot-toast";
 import Icon from "@/components/ui/Icon";
 import { useAuth } from "@/components/AuthProvider";
@@ -76,6 +77,7 @@ function Editor({
   const [leaveTarget, setLeaveTarget] = useState<string | null>(null);
   const leaveDialog = useRef<HTMLDialogElement>(null);
   const allowNavigation = useRef(false);
+  const pendingNavigation = useRef<(() => void) | null>(null);
   const [draft, setDraft] = useState(() => draftFromUser(user));
   const [baseline, setBaseline] = useState(() =>
     profilePayload(draftFromUser(user)),
@@ -139,11 +141,27 @@ function Editor({
         return;
       event.preventDefault();
       event.stopPropagation();
-      if (!busy) setLeaveTarget(url.href);
+      if (!busy) {
+        pendingNavigation.current = null;
+        setLeaveTarget(url.href);
+      }
     };
+    const requestNavigation = (event: Event) => {
+      if (allowNavigation.current) return;
+      event.preventDefault();
+      if (!busy) {
+        const detail = (
+          event as CustomEvent<{ href: string; proceed: () => void }>
+        ).detail;
+        pendingNavigation.current = detail.proceed;
+        setLeaveTarget(new URL(detail.href, window.location.origin).href);
+      }
+    };
+    window.addEventListener(WORKSPACE_NAVIGATION_EVENT, requestNavigation);
     window.addEventListener("beforeunload", unload);
     document.addEventListener("click", navigate, true);
     return () => {
+      window.removeEventListener(WORKSPACE_NAVIGATION_EVENT, requestNavigation);
       window.removeEventListener("beforeunload", unload);
       document.removeEventListener("click", navigate, true);
     };
@@ -623,6 +641,13 @@ function Editor({
               if (!leaveTarget) return;
               const url = new URL(leaveTarget);
               allowNavigation.current = true;
+              if (pendingNavigation.current) {
+                const proceed = pendingNavigation.current;
+                pendingNavigation.current = null;
+                setLeaveTarget(null);
+                proceed();
+                return;
+              }
               setLeaveTarget(null);
               if (url.origin === window.location.origin)
                 router.push(`${url.pathname}${url.search}${url.hash}`);

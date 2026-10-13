@@ -222,6 +222,10 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
   );
   source = source
     .replace(
+      'import { WORKSPACE_NAVIGATION_EVENT } from "@/lib/workspace";',
+      'const WORKSPACE_NAVIGATION_EVENT="reerhub-workspace-navigation";',
+    )
+    .replace(
       'import { track as trackEvent } from "@/lib/analytics";',
       "const trackEvent = () => {};",
     )
@@ -230,7 +234,7 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
       "const useRouter = () => ({push() {}});",
     )
     .replace(
-      /import Link from "next\/link";/,
+      /import Link from "(?:next\/link|@\/components\/AppLink)";/,
       "const Link = ({children}) => children;",
     )
     .replace(
@@ -326,6 +330,33 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
       broad();
     });
     assert.ok(!button("Save changes").disabled);
+    let proceeded = 0;
+    const request = () =>
+      window.dispatchEvent(
+        new dom.window.CustomEvent("reerhub-workspace-navigation", {
+          cancelable: true,
+          detail: {
+            href: "/dashboard/jobs?q=Node",
+            proceed: () => {
+              proceeded++;
+            },
+          },
+        }),
+      );
+    await act(async () => assert.equal(request(), false));
+    assert.equal(proceeded, 0);
+    await act(async () => button("Keep editing").click());
+    assert.equal(proceeded, 0);
+    await act(async () => assert.equal(request(), false));
+    await act(async () => button("Discard & leave").click());
+    assert.equal(proceeded, 1);
+    await act(async () => {
+      root.render(
+        createElement(Component, { user: legacy, key: "after-guard" }),
+      );
+      await settle();
+      broad();
+    });
     await act(async () => button("Discard changes").click());
     assert.equal(
       document

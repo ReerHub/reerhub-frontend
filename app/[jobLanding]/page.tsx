@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import { JOB_LANDINGS, landingQuery, editorialReady } from "@/lib/seo-landings";

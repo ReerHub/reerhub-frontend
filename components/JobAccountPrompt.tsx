@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useAuth } from "./AuthProvider";
 
 export default function JobAccountPrompt({ path }: { path: string }) {

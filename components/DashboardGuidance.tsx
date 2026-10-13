@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import type { AuthUser } from "@/lib/auth";
 import { profileSignals } from "@/lib/profile-readiness";
 

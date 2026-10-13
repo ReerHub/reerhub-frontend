@@ -3,8 +3,8 @@ import { PLANS, billingPlanHref, type PlanId } from "@/lib/billing-plans";
 
 import { track } from "@/lib/analytics";
 import { loadCheckout } from "@/lib/checkout-script";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Link from "@/components/AppLink";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -50,6 +50,7 @@ export default function BillingControls({
 }) {
   const { user, loading, refresh } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [billing, setBilling] = useState<BillingState | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
@@ -114,7 +115,11 @@ export default function BillingControls({
                 `${user?.id}:${verified.subscription.trialEndsAt || "trial"}`,
               );
             await refresh();
-            router.push("/billing/success");
+            router.push(
+              pathname.startsWith("/dashboard")
+                ? "/dashboard/billing/success"
+                : "/billing/success",
+            );
           } catch (error) {
             toast.error(
               error instanceof Error

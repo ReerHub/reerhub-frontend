@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { Suspense, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Turnstile, { type TurnstileHandle } from "@/components/Turnstile";

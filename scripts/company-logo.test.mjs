@@ -8,11 +8,16 @@ import { JSDOM } from "jsdom";
 
 test("company icons keep one frame across shapes, loading, failure and URL changes", async () => {
   const dom = new JSDOM('<div id="root"></div>', { url: "http://localhost" });
-  let intersection, disconnects = 0;
+  let intersection,
+    disconnects = 0;
   dom.window.IntersectionObserver = class {
-    constructor(callback) { intersection = callback; }
+    constructor(callback) {
+      intersection = callback;
+    }
     observe() {}
-    disconnect() { disconnects++; }
+    disconnect() {
+      disconnects++;
+    }
   };
   const saved = new Map();
   for (const [key, value] of Object.entries({
@@ -91,20 +96,53 @@ test("company icons keep one frame across shapes, loading, failure and URL chang
         `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`,
       );
       const frame = checkFrame();
-      if (!frame.querySelector(':scope > img')) {
-        const {renderToStaticMarkup} = await import('react-dom/server');
-        const html = renderToStaticMarkup(createElement(Component,{name:'Fixture',logoUrl:'https://assets.example.com/icon.svg'}));
+      if (!frame.querySelector(":scope > img")) {
+        const { renderToStaticMarkup } = await import("react-dom/server");
+        const html = renderToStaticMarkup(
+          createElement(Component, {
+            name: "Fixture",
+            logoUrl: "https://assets.example.com/icon.svg",
+          }),
+        );
         const noScript = new JSDOM(html);
-        assert.equal(noScript.window.document.querySelector('noscript img').getAttribute('src'),'https://assets.example.com/icon.svg','no-script visitors retain the original image');
+        assert.equal(
+          noScript.window.document
+            .querySelector("noscript img")
+            .getAttribute("src"),
+          "https://assets.example.com/icon.svg",
+          "no-script visitors retain the original image",
+        );
         noScript.window.close();
-        await act(async () => intersection([{isIntersecting:false}]));
-        assert.equal(frame.querySelector(':scope > img'), null, 'offscreen assets have no active request');
-        await act(async () => intersection([{isIntersecting:true,boundingClientRect:{width:0,height:0}}]));
-        assert.equal(frame.querySelector(':scope > img'),null,'skipped content cannot start a zero-area image request');
-        await act(async () => intersection([{isIntersecting:true,boundingClientRect:{width:48,height:48}}]));
-        assert.ok(disconnects > 0, 'observer releases a visible frame');
+        await act(async () => intersection([{ isIntersecting: false }]));
+        assert.equal(
+          frame.querySelector(":scope > img"),
+          null,
+          "offscreen assets have no active request",
+        );
+        await act(async () =>
+          intersection([
+            {
+              isIntersecting: true,
+              boundingClientRect: { width: 0, height: 0 },
+            },
+          ]),
+        );
+        assert.equal(
+          frame.querySelector(":scope > img"),
+          null,
+          "skipped content cannot start a zero-area image request",
+        );
+        await act(async () =>
+          intersection([
+            {
+              isIntersecting: true,
+              boundingClientRect: { width: 48, height: 48 },
+            },
+          ]),
+        );
+        assert.ok(disconnects > 0, "observer releases a visible frame");
       }
-      const image = frame.querySelector(':scope > img');
+      const image = frame.querySelector(":scope > img");
       assert.equal(image.style.objectFit, "contain");
       assert.equal(image.style.objectPosition, "center");
       assert.equal(image.style.width, "100%");
@@ -128,8 +166,11 @@ test("company icons keep one frame across shapes, loading, failure and URL chang
     assert.equal(checkFrame().textContent, "C");
     await act(async () => root.render(null));
     delete dom.window.IntersectionObserver;
-    await render('https://assets.example.com/fallback.svg');
-    assert.ok(checkFrame().querySelector(':scope > img'), 'older browsers load without an observer');
+    await render("https://assets.example.com/fallback.svg");
+    assert.ok(
+      checkFrame().querySelector(":scope > img"),
+      "older browsers load without an observer",
+    );
   } finally {
     await act(async () => root.unmount());
     dom.window.close();
@@ -148,8 +189,8 @@ test("member surfaces and admin company rows reuse the shared icon without per-l
     "components/JobCard.tsx",
     "components/DashboardJobCard.tsx",
     "components/RecommendationPanel.tsx",
-    "app/companies/[slug]/page.tsx",
-    "app/jobs/[jobSlug]/page.tsx",
+    "components/pages/CompanyDetailContent.tsx",
+    "components/pages/JobDetailContent.tsx",
   ]) {
     const source = await readFile(
       new URL(`../${path}`, import.meta.url),

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useAuth } from "@/components/AuthProvider";
 import ProfileEditor from "@/components/ProfileEditor";
 import styles from "./Profile.module.css";

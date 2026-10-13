@@ -1,8 +1,8 @@
 "use client";
 import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import {
   locationScopeFromParams,
   type LocationScope,
@@ -19,6 +19,7 @@ export default function CompanyDirectory({
 }) {
   const params = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
   const locationScope = locationScopeFromParams(params);
   const query = params.get("q") || "",
     hiring = params.get("hiring") === "true";
@@ -42,15 +43,18 @@ export default function CompanyDirectory({
     if (targetPage > 1) next.set("page", String(targetPage));
     if (scope !== "india") next.set("locationScope", scope);
     if (scope !== locationScope) {
-      router.push(`/companies${next.size ? `?${next}` : ""}`, {
-        scroll: false,
-      });
+      router.push(
+        `${pathname.startsWith("/dashboard") ? "/dashboard/companies" : "/companies"}${next.size ? `?${next}` : ""}`,
+        {
+          scroll: false,
+        },
+      );
       return;
     }
     window.history.replaceState(
       null,
       "",
-      `/companies${next.size ? `?${next}` : ""}`,
+      `${pathname.startsWith("/dashboard") ? "/dashboard/companies" : "/companies"}${next.size ? `?${next}` : ""}`,
     );
   };
   useEffect(() => {

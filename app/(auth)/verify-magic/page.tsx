@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { memberHref } from "@/lib/workspace";
+import Link from "@/components/AppLink";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -28,7 +29,7 @@ function VerifyMagic() {
         track("login", { page_family: "account" });
         await refresh();
         toast.success(`Welcome${me.name ? `, ${me.name.split(" ")[0]}` : ""}`);
-        window.location.replace(next);
+        window.location.replace(memberHref(next));
       })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : "This link didn't work");

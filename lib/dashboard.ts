@@ -1,8 +1,4 @@
 export type ScoreTier = 90 | 75 | 50 | 25 | 0;
-export function dashboardView(requested: string | null, pro: boolean) {
-  if (requested === "saved" || requested === "discover") return requested;
-  return pro ? "matches" : "discover";
-}
 export function nextMatchTier(
   current: ScoreTier,
   counts: Record<string, number>,

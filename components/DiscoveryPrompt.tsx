@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useAuth } from "@/components/AuthProvider";
 import { usePathname, useSearchParams } from "next/navigation";
 import Icon from "@/components/ui/Icon";

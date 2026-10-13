@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import ServerJobBrowser from "@/components/ServerJobBrowser";
 import JobCard from "@/components/JobCard";
 import CatalogNotice, { catalogInitializing } from "./CatalogNotice";

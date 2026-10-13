@@ -18,7 +18,7 @@ test("group switching explains gaps and does not call review roles strong matche
   };
   let source = await readFile(new URL("../components/RecommendationPanel.tsx", import.meta.url), "utf8");
   source = source.replace(/import \{\s*getRecommendations,[\s\S]*?\} from "@\/lib\/auth";/, 'const getRecommendations = globalThis.recommendationFixture; const setRecommendationFeedback = async () => {};')
-    .replace('import Link from "next/link";', 'const Link = ({children, href}) => <a href={href}>{children}</a>;')
+    .replace(/import Link from "(?:next\/link|@\/components\/AppLink)";/, 'const Link = ({children, href}) => <a href={href}>{children}</a>;')
     .replace('import CatalogNotice, { catalogInitializing } from "./CatalogNotice";', 'const CatalogNotice = () => null; const catalogInitializing = () => false;')
     .replace('import toast from "react-hot-toast";', 'const toast = {success() {}, error() {}};')
     .replace('import { jobUrl } from "@/lib/reerhub";', 'const jobUrl = (job) => `/jobs/${job._id}`;')

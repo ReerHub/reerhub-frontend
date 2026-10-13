@@ -91,7 +91,7 @@ test("uppercase identity uses live text and distinguishes ongoing enterprise reg
 test("public contact surfaces consistently use the support mailbox", async () => {
   for (const file of [
     "../components/Footer.jsx",
-    "../app/billing/page.tsx",
+    "../components/pages/BillingContent.tsx",
     "../app/terms/page.tsx",
     "../app/privacy/page.tsx",
   ]) {

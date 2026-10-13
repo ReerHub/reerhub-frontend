@@ -1,5 +1,5 @@
 import EditorialPage from "@/components/EditorialPage";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { pageMetadata } from "@/lib/seo";
 export const metadata = pageMetadata(
   "Contact REERHUB Support",

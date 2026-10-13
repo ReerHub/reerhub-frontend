@@ -1,4 +1,5 @@
 export const CONSENT_KEY = "reerhub-consent-v2";
+export const OPEN_PRIVACY_EVENT = "reerhub-open-privacy";
 export const CONSENT_EVENT = "reerhub-consent-changed";
 export type Consent = { version: 2; necessary: true; analytics: boolean };
 let unavailableSnapshot: string | null = null;

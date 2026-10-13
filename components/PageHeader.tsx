@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import Icon from "@/components/ui/Icon";
 import type { ReactNode } from "react";
 export default function PageHeader({

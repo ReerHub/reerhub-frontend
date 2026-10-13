@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import type { CatalogMetadata } from "@/lib/reerhub";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -140,8 +140,12 @@ export default function RecommendationPanel({
   };
   const lowerTier = nextMatchTier(minimumScore, matchCounts);
   return (
-    <section aria-labelledby="matches-title" aria-busy={loading}>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <section
+      className="matching-results"
+      aria-labelledby="matches-title"
+      aria-busy={loading}
+    >
+      <div className="match-header mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2
             id="matches-title"
@@ -159,16 +163,11 @@ export default function RecommendationPanel({
           Pro intelligence
         </span>
       </div>
-      <p className="mb-4 text-sm text-slate-600">
-        Profile matches meet the verified experience requirement. Stretch roles
-        have an explicit experience gap. Needs review means the employer’s
-        mandatory experience could not be verified.
-      </p>
       {profileReady === true && (
         <div
           role="group"
           aria-label="Choose recommendation group"
-          className="mb-5 flex flex-wrap gap-2"
+          className="match-group-controls mb-3 flex flex-wrap gap-2"
         >
           {(["qualified", "stretch", "needs-review"] as const).map((value) => (
             <button
@@ -198,7 +197,7 @@ export default function RecommendationPanel({
       {!loading && !error && <CatalogNotice data={catalog} />}
       {profileReady === true && !error && (
         <div
-          className="mb-7 flex flex-wrap gap-2"
+          className="match-score-controls mb-3 flex flex-wrap gap-2"
           role="group"
           aria-label="Filter matches by relevance score"
         >
@@ -235,7 +234,12 @@ export default function RecommendationPanel({
         </div>
       )}
       <details className="match-explanation mb-5">
-        <summary>About scores and daily emails</summary>
+        <summary>How match groups, scores and emails work</summary>
+        <p className="mt-2 text-xs leading-6 text-slate-600">
+          Profile matches meet the verified experience requirement. Stretch
+          roles have an explicit experience gap. Needs review means the
+          employer’s mandatory experience could not be verified.
+        </p>
         <p className="mt-2 text-xs leading-6 text-slate-600">
           Scores describe profile relevance, not hiring probability or complete
           qualification verification. Daily emails include only verified Profile

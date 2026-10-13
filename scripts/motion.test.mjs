@@ -55,7 +55,7 @@ for (const component of ["MatchJourney", "HomeHeroScene", "CompanyMarquee"]) {
         'const styles={scene:"journey"};',
       )
       .replace(
-        'import Link from "next/link";',
+        /import Link from "(?:next\/link|@\/components\/AppLink)";/,
         'import {createElement} from "react"; const Link=({children,prefetch,...props})=>createElement("a",props,children);',
       )
       .replace(
@@ -173,7 +173,7 @@ test("public navigation restores scroll, tracks home glass and keeps other route
   source = source
     .replace('import Image from "next/image";', "const Image=()=>null;")
     .replace(
-      'import Link from "next/link";',
+      /import Link from "(?:next\/link|@\/components\/AppLink)";/,
       "const Link=({children,...props})=><a {...props}>{children}</a>;",
     )
     .replace(
@@ -182,7 +182,7 @@ test("public navigation restores scroll, tracks home glass and keeps other route
     )
     .replace(
       'import { useAuth } from "@/components/AuthProvider";',
-      "const useAuth=()=>({user:null,loading:false});",
+      "const useAuth=()=>({user:window.testUser || null,loading:false});",
     );
   for (const name of ["ProBadge", "Icon", "UserAvatar", "BrandWordmark"])
     source = source.replace(
@@ -190,8 +190,8 @@ test("public navigation restores scroll, tracks home glass and keeps other route
       `const ${name}=()=>null;`,
     );
   source = source.replace(
-    'import { workspaceLinks } from "@/lib/workspace";',
-    "const workspaceLinks=()=>[];",
+    'import { workspaceLinks, requestWorkspaceNavigation } from "@/lib/workspace";',
+    `import { workspaceLinks, requestWorkspaceNavigation } from ${JSON.stringify(compileFixture((await readFile(new URL("../lib/workspace.ts", import.meta.url), "utf8")).replace('import { JOB_LANDINGS } from "./seo-landings";', "const JOB_LANDINGS={};")))};`,
   );
   const { default: Navbar } = await import(compileFixture(source));
   const { createElement, act } = await import("react");
@@ -233,6 +233,34 @@ test("public navigation restores scroll, tracks home glass and keeps other route
     );
     assert.equal(document.querySelector("#mobile-navigation"), null);
     assert.equal(document.activeElement, toggle);
+    for (const pro of [false, true]) {
+      window.testUser = { name: "Sample member", membership: { isPro: pro } };
+      await act(async () => root.render(createElement(Navbar)));
+      assert.equal(document.querySelector('nav[aria-label="Primary"]'), null);
+      assert.ok(document.querySelector(".workspace-top-search"));
+      await act(async () => toggle.click());
+      const links = [...document.querySelectorAll("#mobile-navigation a")];
+      assert.equal(
+        links.filter((a) => a.getAttribute("href") === "/dashboard/jobs")
+          .length,
+        1,
+      );
+      assert.equal(
+        links.filter((a) => a.getAttribute("href") === "/dashboard/billing")
+          .length,
+        1,
+      );
+      assert.equal(
+        new Set(links.map((a) => a.getAttribute("href"))).size,
+        links.length,
+      );
+      assert.ok(document.querySelector('a[href="/dashboard/matches"]'));
+      assert.equal(
+        links.some((a) => a.getAttribute("href") === "/companies"),
+        false,
+      );
+      await act(async () => toggle.click());
+    }
   } finally {
     await act(async () => root.unmount());
     for (const [key, descriptor] of previous) {

@@ -103,7 +103,7 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     )
   )
     .replace(
-      /import Link from "next\/link";/,
+      /import Link from "(?:next\/link|@\/components\/AppLink)";/,
       "const Link = ({children,...props}) => <a {...props}>{children}</a>;",
     )
     .replace(
@@ -268,6 +268,13 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
       await settle();
     });
     assert.equal(document.querySelectorAll("article").length, 21);
+    queryParams = "page=2";
+    await act(async () => {
+      render("direct-page");
+      await settle();
+    });
+    assert.equal(calls.at(-1).page, 2);
+    assert.equal(document.querySelectorAll("article").length, 1);
     user = null;
     for (const [count, total, expected, forbidden] of [
       [3, 3, /Save your shortlist/, /more roles|first 10/],

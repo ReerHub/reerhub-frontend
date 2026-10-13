@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { HomeAccountAction, HomeGuestNote } from "./HomeAccountAction";
 import JobCard from "@/components/JobCard";
 import CompanyLogo from "@/components/CompanyLogo";

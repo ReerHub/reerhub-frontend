@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 test("city boundaries distinguish unavailable, initialization and existing openings", async () => {
   let source = await readFile(new URL("../components/CityJobs.tsx", import.meta.url), "utf8");
   source = source.replace(/import \{ DataUnavailableError, listJobsWithMeta \} from "@\/lib\/reerhub";/, 'const {DataUnavailableError, listJobsWithMeta} = globalThis.cityStateFixture;')
-    .replace(/import Link from "next\/link";/, 'const Link = ({children,href}) => <a href={href}>{children}</a>;')
+    .replace(/import Link from "(?:next\/link|@\/components\/AppLink)";/, 'const Link = ({children,href}) => <a href={href}>{children}</a>;')
     .replace(/import ServerJobBrowser from [^;]+;/, 'const ServerJobBrowser = () => <p>Existing verified openings</p>;')
     .replace(/import JobCard from [^;]+;/, 'const JobCard = () => null;')
     .replace(/import PageHeader from [^;]+;/, 'const PageHeader = ({title}) => <h1>{title}</h1>;')

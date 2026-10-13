@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useEffect, useState } from "react";
 import { getBilling, type BillingState } from "@/lib/auth";
 import { useAuth } from "@/components/AuthProvider";

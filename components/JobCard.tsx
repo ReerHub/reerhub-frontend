@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import CompanyLogo from "@/components/CompanyLogo";
 import Icon from "@/components/ui/Icon";
 import type { Job } from "@/lib/reerhub";

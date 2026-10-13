@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/AppLink";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { updateMe, type AuthUser } from "@/lib/auth";
