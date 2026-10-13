@@ -801,8 +801,8 @@
 ) {
   .public-site:has(.homepage-redesign) .site-nav[data-scrolled="true"] {
     background: #fffdf9c9;
-    backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
   }
 }
 .public-site:has(.homepage-redesign) .site-nav .nav-inner > div:last-child {
