@@ -100,27 +100,25 @@ export default function CookieConsent({
         </Link>
         .
       </p>
-      {preferences && (
-        <div className="mt-4 space-y-3 text-sm">
-          <p className="leading-6 text-slate-600">
-            When configured, analytics measures product actions. It receives no
-            profile contents, email addresses, payment details or private URLs.
-            You can withdraw here at any time.
-          </p>
-          <p>Necessary cookies · always active</p>
-          <label className="flex min-h-11 items-center gap-3">
-            <input
-              type="checkbox"
-              disabled={!analyticsAvailable}
-              checked={analytics}
-              onChange={(e) => setAnalytics(e.target.checked)}
-            />
-            Allow optional product analytics
-            {!analyticsAvailable && " (not configured)"}
-          </label>
-        </div>
-      )}
-      <div className="consent-actions mt-4 grid grid-cols-3 gap-2">
+      <div className="mt-4 space-y-3 text-sm">
+        <p className="leading-6 text-slate-600">
+          When configured, analytics measures product actions. It receives no
+          profile contents, email addresses, payment details or private URLs.
+          You can withdraw here at any time.
+        </p>
+        <p>Necessary cookies · always active</p>
+        <label className="flex min-h-11 items-center gap-3">
+          <input
+            type="checkbox"
+            disabled={!analyticsAvailable}
+            checked={analytics}
+            onChange={(e) => setAnalytics(e.target.checked)}
+          />
+          Allow optional product analytics
+          {!analyticsAvailable && " (not configured)"}
+        </label>
+      </div>
+      <div className="consent-actions mt-4 grid grid-cols-2 gap-2">
         <button
           type="button"
           className="btn-secondary"
@@ -128,35 +126,13 @@ export default function CookieConsent({
         >
           Reject analytics
         </button>
-        {preferences ? (
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => choose(analytics)}
-          >
-            Save preferences
-          </button>
-        ) : (
-          <>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => choose(true)}
-            >
-              Allow analytics
-            </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setAnalytics(false);
-                setPreferences(true);
-              }}
-            >
-              Preferences
-            </button>
-          </>
-        )}
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={() => choose(analytics)}
+        >
+          Save preferences
+        </button>
       </div>
     </section>
   );

@@ -193,7 +193,13 @@ test("privacy UI supports rejection, explicit opt-in and withdrawal without lega
     assert.equal(consent.analyticsConsent(), false);
     await act(async () => button("Privacy preferences").click());
     assert.equal(document.activeElement.tagName, "H2");
-    const checkbox = document.querySelector('input[type="checkbox"]');
+    let checkbox = document.querySelector('input[type="checkbox"]');
+    assert.equal(checkbox.checked, false);
+    await act(async () => checkbox.click());
+    await act(async () => button("Close").click());
+    assert.equal(consent.analyticsConsent(), false);
+    await act(async () => button("Privacy preferences").click());
+    checkbox = document.querySelector('input[type="checkbox"]');
     assert.equal(checkbox.checked, false);
     await act(async () => checkbox.click());
     await act(async () => button("Save preferences").click());
