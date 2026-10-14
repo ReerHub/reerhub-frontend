@@ -8,6 +8,7 @@ import {
   workspaceLinks,
   requestWorkspaceNavigation,
 } from "@/lib/workspace";
+import { navigateAwayFromPublicTag } from "@/lib/analytics";
 import { isPro } from "@/lib/membership";
 import Icon from "@/components/ui/Icon";
 
@@ -27,9 +28,10 @@ export default function MemberWorkspace({
   useEffect(() => {
     if (loading) return;
     const here = pathname + window.location.search + window.location.hash;
-    if (user && memberHref(pathname) !== pathname)
-      router.replace(memberHref(here));
-    else if (!user && workspace)
+    if (user && memberHref(pathname) !== pathname) {
+      if (!navigateAwayFromPublicTag(memberHref(here), true))
+        router.replace(memberHref(here));
+    } else if (!user && workspace)
       router.replace(`/login?next=${encodeURIComponent(here)}`);
   }, [user, loading, pathname, workspace, router]);
 

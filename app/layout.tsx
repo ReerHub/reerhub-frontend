@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import MemberWorkspace from "@/components/MemberWorkspace";
 import Footer from "@/components/Footer";
+import PublicAnalyticsBoundary from "@/components/PublicAnalyticsBoundary";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
@@ -60,17 +61,19 @@ export default async function RootLayout({
               Skip to content
             </a>
             <AnalyticsProvider />
-            <Navbar sessionHint={sessionHint} />
-            <main
-              id="main-content"
-              className="min-h-dvh relative pt-[72px]"
-              tabIndex={-1}
-            >
-              <MemberWorkspace sessionHint={sessionHint}>
-                {children}
-              </MemberWorkspace>
-            </main>
-            <Footer />
+            <PublicAnalyticsBoundary>
+              <Navbar sessionHint={sessionHint} />
+              <main
+                id="main-content"
+                className="min-h-dvh relative pt-[72px]"
+                tabIndex={-1}
+              >
+                <MemberWorkspace sessionHint={sessionHint}>
+                  {children}
+                </MemberWorkspace>
+              </main>
+              <Footer />
+            </PublicAnalyticsBoundary>
           </AuthProvider>
         )}
         {!isAdminHost && (

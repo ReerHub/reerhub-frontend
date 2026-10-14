@@ -11,7 +11,11 @@ const consent = await import(consentUrl),
   events = await import(eventsUrl);
 const analyticsSource = (await source("../lib/analytics.ts"))
   .replace('"./consent"', JSON.stringify(consentUrl))
-  .replace('"./analytics-events"', JSON.stringify(eventsUrl));
+  .replace('"./analytics-events"', JSON.stringify(eventsUrl))
+  .replace(
+    '"./public-analytics"',
+    JSON.stringify(compileFixture(await source("../lib/public-analytics.ts"))),
+  );
 const dom = new JSDOM('<div id="root"></div>', {
   url: "https://reerhub.com/verify-magic?token=sensitive&email=private@example.com",
 });
@@ -48,6 +52,7 @@ test("legacy necessary-cookie acceptance cannot escalate into analytics consent"
   assert.equal(document.querySelectorAll("iframe").length, 0);
 });
 test("consent gates all measurement, isolates the tag and removes it on withdrawal", () => {
+  dom.reconfigure({ url: "https://reerhub.com/jobs" });
   consent.saveConsent(true);
   analytics.startAnalytics("invalid");
   assert.equal(document.querySelectorAll("iframe").length, 0);
@@ -142,7 +147,9 @@ test("direct analytics-frame navigation cannot activate the tag", async () => {
     )
   );
   const prior = process.env.GA4_MEASUREMENT_ID;
+  const priorGtm = process.env.GTM_CONTAINER_ID;
   try {
+    process.env.GTM_CONTAINER_ID = "";
     process.env.GA4_MEASUREMENT_ID = "G-SYNTHETIC1";
     assert.equal(
       (await route.GET(new Request("https://reerhub.com/analytics-frame")))
@@ -165,6 +172,8 @@ test("direct analytics-frame navigation cannot activate the tag", async () => {
     );
     assert.match(await response.text(), /send_page_view:false/);
   } finally {
+    if (priorGtm === undefined) delete process.env.GTM_CONTAINER_ID;
+    else process.env.GTM_CONTAINER_ID = priorGtm;
     if (prior === undefined) delete process.env.GA4_MEASUREMENT_ID;
     else process.env.GA4_MEASUREMENT_ID = prior;
   }
@@ -322,7 +331,7 @@ test("unavailable analytics hides the first-visit prompt while storing a choice 
   }
 });
 
-test("failed consent storage revokes previous acceptance in the current session", () => {
+test("failed consent storage remains revoked after the withdrawal reload", async () => {
   consent.saveConsent(true);
   const original = Object.getOwnPropertyDescriptor(
     window.Storage.prototype,
@@ -334,13 +343,19 @@ test("failed consent storage revokes previous acceptance in the current session"
       throw new Error("Storage denied");
     },
   });
+  const originalRemove = Object.getOwnPropertyDescriptor(window.Storage.prototype, "removeItem");
+  Object.defineProperty(window.Storage.prototype, "removeItem", { configurable: true, value() { throw new Error("Storage denied"); } });
   try {
     consent.saveConsent(false);
     assert.equal(consent.analyticsConsent(), false);
+    assert.equal(JSON.parse(window.localStorage.getItem(consent.CONSENT_KEY)).analytics, true);
+    const reloaded = await import(compileFixture((await source("../lib/consent.ts"))+"\nexport const reloadMarker = true;"));
+    assert.equal(reloaded.analyticsConsent(), false, "A fresh document must honor withdrawal despite stale acceptance");
     analytics.startAnalytics("G-SYNTHETIC1");
     assert.equal(document.querySelectorAll("iframe").length, 0);
   } finally {
     Object.defineProperty(window.Storage.prototype, "setItem", original);
+    Object.defineProperty(window.Storage.prototype, "removeItem", originalRemove);
     consent.saveConsent(false);
   }
 });
