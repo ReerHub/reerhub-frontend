@@ -1,3 +1,4 @@
+import { BLOG_CATALOG } from "./blog-catalog";
 import { JOB_LANDINGS, editorialReady } from "./seo-landings";
 import { SITE } from "./seo";
 import { jobSlug } from "./reerhub";
@@ -27,7 +28,10 @@ const STATIC = [
   "devops-jobs",
   "qa-jobs",
   "about",
+  "blog",
+  ...BLOG_CATALOG.map((post) => `blog/${post.slug}`),
   "matching-methodology",
+  "how-it-works",
   "contact",
   "faq",
   "privacy",

@@ -12,6 +12,10 @@ const slugUrl = compileFixture(
   slugSource.slice(slugSource.indexOf("export const slugify")),
 );
 const sitemapSource = (await read("../lib/sitemap.ts"))
+  .replace(
+    '"./blog-catalog"',
+    JSON.stringify(compileFixture(await read("../lib/blog-catalog.ts"))),
+  )
   .replace('"./seo"', JSON.stringify(seoUrl))
   .replace('"./seo-landings"', JSON.stringify(landingsUrl))
   .replace('"./reerhub"', JSON.stringify(slugUrl));

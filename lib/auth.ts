@@ -338,3 +338,16 @@ export const verifyCheckout = (body: {
   });
 export const cancelSubscription = () =>
   request<BillingState>("/billing/cancel", { method: "POST" });
+
+export type ContactSubmission = {
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  website: string;
+};
+export const submitContact = (body: ContactSubmission) =>
+  request<{ received: boolean }>("/contact", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });

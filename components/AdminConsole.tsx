@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Icon from "@/components/ui/Icon";
+import AdminContactInbox from "@/components/AdminContactInbox";
 import AdminOperations from "@/components/AdminOperations";
 import AdminCompanyImport from "@/components/AdminCompanyImport";
 import AdminDataQuality from "@/components/AdminDataQuality";
@@ -37,7 +38,8 @@ type Tab =
   | "jobs"
   | "users"
   | "subscriptions"
-  | "audit";
+  | "audit"
+  | "contacts";
 type Company = {
   _id: string;
   name: string;
@@ -212,6 +214,13 @@ const NAV: {
     description:
       "Find a member and understand their profile. Read-only support view.",
     icon: "user",
+    group: "Support",
+  },
+  {
+    key: "contacts",
+    label: "Contact inbox",
+    description: "Questions and feedback submitted through ReerHub.",
+    icon: "mail",
     group: "Support",
   },
   {
@@ -398,6 +407,7 @@ export default function AdminConsole() {
   const [notice, setNotice] = useState("");
   const [overview, setOverview] = useState<Overview | null>(null);
   const [operationsVersion, setOperationsVersion] = useState(0);
+  const [inboxVersion, setInboxVersion] = useState(0);
   const [result, setResult] = useState<AdminPage<Row>>(emptyPage);
   const [sources, setSources] = useState<Source[]>([]);
   const [query, setQuery] = useState("");
@@ -453,7 +463,9 @@ export default function AdminConsole() {
           params.set("skillsReview", "true");
         else if (state && ["jobs", "subscriptions"].includes(target))
           params.set("status", state);
-        if (target === "operations") {
+        if (target === "contacts") {
+          if (id === request.current) setInboxVersion((value) => value + 1);
+        } else if (target === "operations") {
           if (id === request.current)
             setOperationsVersion((value) => value + 1);
         } else if (target === "overview") {
@@ -792,6 +804,8 @@ export default function AdminConsole() {
           {tab === "companies" && showImport && <AdminCompanyImport />}
           {tab === "operations" ? (
             <AdminOperations version={operationsVersion} />
+          ) : tab === "contacts" ? (
+            <AdminContactInbox version={inboxVersion} />
           ) : tab === "overview" ? (
             loading ? (
               <Loading />

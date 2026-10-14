@@ -40,7 +40,9 @@ REERHUB TECHNOLOGIES operates REERHUB as a sole proprietorship. Personal profile
 
 ## Product and matching
 
+- [ReerHub blog](${SITE}/blog): Practical guides for reading tech job listings and understanding job-search evidence.
 - [About REERHUB](${SITE}/about): Product purpose and business identity.
+- [How ReerHub works](${SITE}/how-it-works): Free discovery, profiles, official applications and a clearly labelled Pro matching demonstration.
 - [Matching methodology](${SITE}/matching-methodology): How profile relevance and experience groups are explained.
 - [Pro plans and pricing](${SITE}/billing): Current prices, trial disclosures and subscription terms.
 - [Contact and help](${SITE}/contact): Listing corrections, account questions and support.

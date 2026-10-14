@@ -11,6 +11,10 @@ const seo = await import(seoUrl);
 const jobs = await import(url(await source("../lib/job-schema.ts")));
 const landingsUrl = url(await source("../lib/seo-landings.ts"));
 const sitemapSource = (await source("../lib/sitemap.ts"))
+  .replace(
+    '"./blog-catalog"',
+    JSON.stringify(url(await source("../lib/blog-catalog.ts"))),
+  )
   .replace('"./seo-landings"', JSON.stringify(landingsUrl))
   .replace('"./seo"', JSON.stringify(seoUrl))
   .replace(

@@ -45,8 +45,10 @@ const stagger = (index: number) => ({ animationDelay: `${index * 90}ms` });
 
 export default function BillingControls({
   initialPlan = "pro-monthly",
+  publicPricing = false,
 }: {
   initialPlan?: PlanId;
+  publicPricing?: boolean;
 }) {
   const { user, loading, refresh } = useAuth();
   const router = useRouter();
@@ -179,7 +181,10 @@ export default function BillingControls({
   const isLive = hasProAccess(subscription);
   const selected = PLANS.find((p) => p.id === planId) || PLANS[1];
   return (
-    <div id="choose-plan" className={styles.billing}>
+    <div
+      id="choose-plan"
+      className={`${styles.billing} ${publicPricing ? styles.publicPricing : ""}`}
+    >
       {isLive && user && (
         <div className="mt-8">
           <MembershipStatus

@@ -22,9 +22,9 @@ export default function LiveMatchingExample({
       <p className="text-xs font-semibold text-primary-deep">
         Live job · Sample profile
       </p>
-      <h2 id="live-match-title" className="mt-2 text-xl font-bold text-ink">
+      <h3 id="live-match-title" className="mt-2 text-xl font-bold text-ink">
         See how Pro finds a match
-      </h2>
+      </h3>
       <p className="mt-2 text-sm leading-6 text-slate-600">
         A made-up profile, a real current opening, and the same scoring engine
         used by Pro. No member data is shown.
@@ -64,9 +64,9 @@ export default function LiveMatchingExample({
                 <p className="text-sm font-semibold text-primary-deep">
                   {example.fit.relevanceScore}% profile relevance
                 </p>
-                <h3 className="mt-2 text-lg font-bold text-ink">
+                <h4 className="mt-2 text-lg font-bold text-ink">
                   {example.job.title}
-                </h3>
+                </h4>
                 <p className="mt-1 text-sm text-slate-600">
                   {example.job.companyId.name} · {locationLabel(example.job)}
                 </p>

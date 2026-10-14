@@ -1,3 +1,4 @@
+import { BLOG_CATALOG } from "./blog-catalog";
 /** Only existing public website screens may host a third-party tag. */
 const publicPaths = new Set([
   "/",
@@ -22,9 +23,12 @@ const publicPaths = new Set([
   "/internship-jobs",
   "/billing",
   "/about",
+  "/blog",
+  ...BLOG_CATALOG.map((post) => `/blog/${post.slug}`),
   "/contact",
   "/faq",
   "/matching-methodology",
+  "/how-it-works",
   "/privacy",
   "/terms",
 ]);

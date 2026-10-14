@@ -56,9 +56,11 @@ export default function Navbar({ sessionHint = false }) {
   const links = [
     { href: "/jobs", label: "Discover jobs" },
     { href: "/companies", label: "Companies" },
+    { href: "/how-it-works", label: "How it works" },
+    { href: "/blog", label: "Blog" },
     {
       href: "/billing",
-      label: user?.membership?.isPro ? "Manage Pro" : "REERHUB Pro",
+      label: user?.membership?.isPro ? "Manage Pro" : "Pricing",
     },
     ...(user ? [{ href: "/dashboard", label: "My dashboard" }] : []),
   ];
@@ -117,7 +119,7 @@ export default function Navbar({ sessionHint = false }) {
         )}
         {user && (
           <form
-            className="workspace-top-search"
+            className="workspace-top-search focus-field"
             role="search"
             aria-label="Search workspace jobs"
             onSubmit={(event) => {
@@ -252,18 +254,19 @@ export default function Navbar({ sessionHint = false }) {
           {user && (
             <div className="mobile-workspace-links mt-3 border-t border-slate-100 pt-3">
               <p className="workspace-label">YOUR WORKSPACE</p>
-              {workspaceLinks(!!user.membership?.isPro).map(
-                ({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={close}
-                    className="nav-link block"
-                  >
-                    {label}
-                  </Link>
-                ),
-              )}
+              {[
+                ...workspaceLinks(!!user.membership?.isPro),
+                { href: "/dashboard/how-it-works", label: "How it works" },
+              ].map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={close}
+                  className="nav-link block"
+                >
+                  {label}
+                </Link>
+              ))}
             </div>
           )}
           {user ? (

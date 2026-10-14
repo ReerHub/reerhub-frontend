@@ -4,10 +4,16 @@ import { readFile } from "node:fs/promises";
 import { JSDOM } from "jsdom";
 import { compileFixture } from "./location-fixtures.mjs";
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
+const publicPagesUrl = compileFixture(
+  (await read("../lib/public-analytics.ts")).replace(
+    '"./blog-catalog"',
+    JSON.stringify(compileFixture(await read("../lib/blog-catalog.ts"))),
+  ),
+);
 const config = await import(
   compileFixture(await read("../lib/analytics-config.ts"))
 );
-const publicUrl = compileFixture(await read("../lib/public-analytics.ts"));
+const publicUrl = publicPagesUrl;
 const eligibility = await import(publicUrl);
 const eventsUrl = compileFixture(await read("../lib/analytics-events.ts"));
 test("public GTM configuration is valid, production-only by default and explicitly disableable", () => {

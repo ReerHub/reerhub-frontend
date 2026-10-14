@@ -31,8 +31,10 @@ const columns = [
     [
       ["/dashboard", "Your dashboard"],
       ["/profile", "Profile & preferences"],
-      ["/billing", "Explore REERHUB Pro"],
+      ["/billing", "Pricing"],
       ["/about", "About REERHUB"],
+      ["/blog", "Blog"],
+      ["/how-it-works", "How it works"],
       ["/matching-methodology", "Matching methodology"],
       ["/contact", "Contact and help"],
       ["/faq", "Frequently asked questions"],
@@ -110,7 +112,7 @@ export default function Footer() {
             </nav>
           ))}
         </div>
-        <div className="footer-bottom flex flex-col justify-between gap-3 py-6 text-xs sm:flex-row">
+        <div className="footer-bottom flex flex-col items-start justify-between gap-3 py-6 text-xs sm:flex-row">
           <div className="flex flex-wrap gap-6">
             <Link href="/terms">Terms of use</Link>
             <Link href="/privacy">Privacy policy</Link>
@@ -119,7 +121,7 @@ export default function Footer() {
             <Link href="/about">About ReerHub</Link>
             <Link href="/matching-methodology">How matching works</Link>
           </div>
-          <div className="space-y-1 sm:text-right">
+          <div className="footer-copyright sm:text-right">
             <p>
               © {new Date().getFullYear()} REERHUB TECHNOLOGIES. All rights
               reserved.

@@ -109,7 +109,7 @@ export default function CompanyDirectory({
     <>
       {!loading && !error && <CatalogNotice data={result} />}
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <label className="flex w-full max-w-md items-center gap-3 rounded-xl border border-slate-300 bg-white px-4">
+        <label className="focus-field flex w-full max-w-md items-center gap-3 rounded-xl border border-slate-300 bg-white px-4">
           <Icon name="search" className="h-5 w-5 text-slate-600" />
           <span className="sr-only">Search companies or industries</span>
           <input

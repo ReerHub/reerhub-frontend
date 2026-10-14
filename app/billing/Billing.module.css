@@ -114,3 +114,33 @@
     transform: none;
   }
 }
+
+/* Guest pricing uses the lighter pastel card treatment; member controls retain their shell. */
+.publicPricing .planCard {
+  border-radius: 26px;
+  background: #f9f7fc;
+  box-shadow: none;
+}
+.publicPricing .planCard.featured {
+  background:
+    radial-gradient(ellipse at 10% 0, #ffe9db, transparent 70%), #f1eaff;
+  border-color: #d6c5f2;
+  color: #241e30;
+}
+.publicPricing .featured :global(.text-slate-900),
+.publicPricing .featured :global(.text-electric) {
+  color: #241e30;
+}
+.publicPricing .featured :global(.text-slate-600),
+.publicPricing .featured :global(.text-slate-500) {
+  color: #675d75;
+}
+.publicPricing .planCard.selected {
+  outline-width: 1px;
+  outline-offset: 0;
+  border-color: #6d4aff;
+}
+.publicPricing .featured .planBadge {
+  background: #6d4aff;
+  color: white;
+}
