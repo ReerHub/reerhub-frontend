@@ -75,6 +75,16 @@ export default function Footer() {
               Official sources. Direct applications.
             </div>
             <SocialLinks />
+            <a
+              href="https://www.trustpilot.com/review/reerhub.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Review us on Trustpilot (opens in a new tab)"
+              className="mt-5 inline-flex min-h-11 max-w-full items-center gap-3 rounded-full border border-violet-200 bg-white/70 px-4 py-2 text-sm font-medium text-primary-deep transition-colors hover:border-violet-300 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            >
+              Review us on Trustpilot
+              <span aria-hidden="true">↗</span>
+            </a>
           </div>
           {columns.map(([title, links]) => (
             <nav key={title} aria-label={title}>

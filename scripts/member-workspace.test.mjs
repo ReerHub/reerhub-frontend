@@ -76,6 +76,10 @@ test("workspace waits for verified sessions, replaces public/legacy links and is
   };
   const code = (await read("../components/MemberWorkspace.tsx"))
     .replace(
+      'import Breadcrumbs from "@/components/Breadcrumbs";',
+      "const Breadcrumbs=()=>null;",
+    )
+    .replace(
       'import { navigateAwayFromPublicTag } from "@/lib/analytics";',
       "const navigateAwayFromPublicTag=()=>false;",
     )

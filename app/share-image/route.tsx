@@ -6,11 +6,12 @@ export function GET() {
       style={{
         width: "100%",
         height: "100%",
-        background: "#eff6ff",
+        background:
+          "linear-gradient(125deg, #fffdf9 5%, #ffece1 45%, #eee7ff 100%)",
         display: "flex",
         flexDirection: "column",
         padding: "80px",
-        color: "#0f172a",
+        color: "#241e30",
       }}
     >
       <div
@@ -19,7 +20,7 @@ export function GET() {
           fontSize: 42,
           fontWeight: 700,
           letterSpacing: "0.035em",
-          color: "#2563eb",
+          color: "#6d4aff",
         }}
       >
         REERHUB
