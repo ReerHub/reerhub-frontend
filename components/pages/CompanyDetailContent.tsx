@@ -1,5 +1,5 @@
+import Breadcrumbs from "@/components/Breadcrumbs";
 import DiscoveryUnavailable from "@/components/DiscoveryUnavailable";
-import Link from "@/components/AppLink";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import CompanyLogo from "@/components/CompanyLogo";
@@ -10,13 +10,7 @@ import {
   DataUnavailableError,
 } from "@/lib/reerhub";
 import { readCompany as getCompany } from "@/lib/server-reads";
-import {
-  pageMetadata,
-  safeJsonLd,
-  breadcrumb,
-  concise,
-  NOINDEX,
-} from "@/lib/seo";
+import { pageMetadata, SITE, concise, NOINDEX } from "@/lib/seo";
 import {
   locationScopeFromParams,
   locationScopeLabel,
@@ -52,7 +46,6 @@ export async function generateMetadata({
 
 export default async function CompanyDetailContent({
   params,
-  privateView = false,
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
@@ -90,39 +83,17 @@ export default async function CompanyDetailContent({
 
   return (
     <div>
-      {!privateView && (
-        <>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: safeJsonLd(
-                breadcrumb([
-                  { name: "Home", path: "/" },
-                  { name: "Companies", path: "/companies" },
-                  { name: company.name, path: `/companies/${company.slug}` },
-                ]),
-              ),
-            }}
-          />
-        </>
-      )}
       <section className="company-detail-hero">
         <div className="page-container py-10 sm:py-12">
-          <nav
-            className="text-[13px] text-slate-500 mb-6 flex items-center gap-2"
-            aria-label="Breadcrumb"
-          >
-            <Link
-              href="/companies"
-              className="hover:text-electric transition-colors font-medium"
-            >
-              Companies
-            </Link>
-            <span aria-hidden className="text-slate-300">
-              /
-            </span>
-            <span className="text-slate-900 font-semibold">{company.name}</span>
-          </nav>
+          <Breadcrumbs
+            origin={SITE}
+            contained
+            items={[
+              { name: "Home", path: "/" },
+              { name: "Companies", path: "/companies" },
+              { name: company.name, path: `/companies/${company.slug}` },
+            ]}
+          />
           <div className="flex flex-col sm:flex-row sm:items-center gap-5">
             <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
             <div className="min-w-0">

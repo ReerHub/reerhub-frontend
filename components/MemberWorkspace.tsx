@@ -11,13 +11,16 @@ import {
 import { navigateAwayFromPublicTag } from "@/lib/analytics";
 import { isPro } from "@/lib/membership";
 import Icon from "@/components/ui/Icon";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function MemberWorkspace({
   children,
   sessionHint = false,
+  canonicalOrigin,
 }: {
   children: ReactNode;
   sessionHint?: boolean;
+  canonicalOrigin?: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -50,7 +53,13 @@ export default function MemberWorkspace({
         <span className="sr-only">Opening your workspace…</span>
       </div>
     );
-  if (!workspace || !user) return children;
+  if (!workspace || !user)
+    return (
+      <>
+        <Breadcrumbs origin={canonicalOrigin} />
+        {children}
+      </>
+    );
   const pro = isPro(user);
   return (
     <div className="member-workspace">
@@ -108,6 +117,7 @@ export default function MemberWorkspace({
         className="workspace-main"
         key={`${user.id}:${pro ? "pro" : "free"}`}
       >
+        <Breadcrumbs origin={canonicalOrigin} />
         {children}
       </div>
     </div>

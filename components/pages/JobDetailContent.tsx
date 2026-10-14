@@ -1,9 +1,10 @@
+import Breadcrumbs from "@/components/Breadcrumbs";
 import Link from "@/components/AppLink";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { sanitizeHtml } from "@/lib/sanitize";
 import CompanyLogo from "@/components/CompanyLogo";
-import { jobMetadata, safeJsonLd, breadcrumb, concise } from "@/lib/seo";
+import { jobMetadata, safeJsonLd, SITE, concise } from "@/lib/seo";
 import { jobPosting, deadlineExpired } from "@/lib/job-schema";
 import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
@@ -229,18 +230,6 @@ export default async function JobDetailContent({
     <div className="job-detail-page page-container py-8 sm:py-12">
       {!privateView && (
         <>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: safeJsonLd(
-                breadcrumb([
-                  { name: "Home", path: "/" },
-                  { name: "Jobs", path: "/jobs" },
-                  { name: job.title, path: canonical },
-                ]),
-              ),
-            }}
-          />
           {schema && (
             <script
               type="application/ld+json"
@@ -249,33 +238,15 @@ export default async function JobDetailContent({
           )}
         </>
       )}
-      <nav
-        className="text-[13px] font-medium text-slate-500 mb-6 flex items-center gap-2 flex-wrap"
-        aria-label="Breadcrumb"
-      >
-        <Link href="/jobs" className="hover:text-electric transition-colors">
-          Jobs
-        </Link>
-        <span aria-hidden className="text-slate-300">
-          /
-        </span>
-        {company.slug ? (
-          <Link
-            href={`/companies/${company.slug}`}
-            className="hover:text-electric transition-colors"
-          >
-            {companyName}
-          </Link>
-        ) : (
-          <span>{companyName}</span>
-        )}
-        <span aria-hidden className="text-slate-300">
-          /
-        </span>
-        <span className="text-slate-900 font-semibold truncate max-w-52 sm:max-w-xs">
-          {job.title}
-        </span>
-      </nav>
+      <Breadcrumbs
+        origin={SITE}
+        contained
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Jobs", path: "/jobs" },
+          { name: job.title, path: canonical },
+        ]}
+      />
 
       <div className="grid lg:grid-cols-[1fr_340px] gap-5 items-start">
         <article className="min-w-0">

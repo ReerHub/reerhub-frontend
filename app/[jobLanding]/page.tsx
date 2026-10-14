@@ -2,7 +2,7 @@ import Link from "@/components/AppLink";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import { JOB_LANDINGS, landingQuery, editorialReady } from "@/lib/seo-landings";
-import { pageMetadata, breadcrumb, safeJsonLd } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 import { listJobsWithMeta, DataUnavailableError } from "@/lib/reerhub";
 import JobBrowser from "@/components/JobBrowser";
 import PageHeader from "@/components/PageHeader";
@@ -128,17 +128,6 @@ export default async function LandingPage({
           ))}
         </nav>
       </section>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: safeJsonLd(
-            breadcrumb([
-              { name: "Home", path: "/" },
-              { name: landing.title, path: `/${slug}` },
-            ]),
-          ),
-        }}
-      />
     </div>
   );
 }

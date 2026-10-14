@@ -1,3 +1,4 @@
+import { SITE } from "@/lib/seo";
 import { analyticsConfig } from "@/lib/analytics-config";
 import "./globals.css";
 import "./admin.css";
@@ -68,7 +69,10 @@ export default async function RootLayout({
                 className="min-h-dvh relative pt-[72px]"
                 tabIndex={-1}
               >
-                <MemberWorkspace sessionHint={sessionHint}>
+                <MemberWorkspace
+                  sessionHint={sessionHint}
+                  canonicalOrigin={SITE}
+                >
                   {children}
                 </MemberWorkspace>
               </main>

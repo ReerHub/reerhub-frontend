@@ -31,6 +31,7 @@ export default async function Home() {
               "@id": `${SITE}/#organization`,
               name: "REERHUB",
               alternateName: "REERHUB TECHNOLOGIES",
+              legalName: "REERHUB TECHNOLOGIES",
               slogan: "Real Effective Engineering Roles Hub",
               url: SITE,
               logo: `${SITE}/reerhub-icon-logo.png`,

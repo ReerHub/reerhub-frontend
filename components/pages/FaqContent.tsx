@@ -2,7 +2,7 @@ import Link from "@/components/AppLink";
 import PageHeader from "@/components/PageHeader";
 import FaqControls from "@/components/FaqControls";
 import { FAQ_CATEGORIES, faqSchema } from "@/lib/faq-content";
-import { breadcrumb, safeJsonLd } from "@/lib/seo";
+import { safeJsonLd } from "@/lib/seo";
 export default function FaqContent({
   memberView = false,
 }: {
@@ -104,17 +104,6 @@ export default function FaqContent({
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: safeJsonLd(faqSchema()) }}
-          />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: safeJsonLd(
-                breadcrumb([
-                  { name: "Home", path: "/" },
-                  { name: "Frequently asked questions", path: "/faq" },
-                ]),
-              ),
-            }}
           />
         </>
       )}
