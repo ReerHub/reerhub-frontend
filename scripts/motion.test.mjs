@@ -98,6 +98,31 @@ for (const component of ["MatchJourney", "HomeHeroScene", "CompanyMarquee"]) {
           4,
         );
       }
+      if (component === "HomeHeroScene") {
+        for (const count of [1, 2, 3]) {
+          await act(async () =>
+            root.render(
+              createElement(Component, {
+                companies: Array.from({ length: count }, (_, i) => ({
+                  _id: String(i),
+                  name: `Hero source ${i}`,
+                  activeJobs: i + 1,
+                })),
+              }),
+            ),
+          );
+          assert.equal(document.querySelectorAll("strong").length, count + 1);
+          assert.match(
+            document.body.textContent,
+            /Openings → Your profile → Pro shortlist/,
+          );
+          assert.match(document.body.textContent, /1 current opening/);
+          assert.equal(
+            document.querySelector("button svg").getAttribute("aria-hidden"),
+            "true",
+          );
+        }
+      }
       assert.equal(journey().dataset.paused, "true");
       await act(async () => observer([{ isIntersecting: true }]));
       assert.equal(journey().dataset.paused, "false");

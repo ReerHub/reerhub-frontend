@@ -114,7 +114,7 @@ export default function SearchFilters({
           onSubmit();
         }}
       >
-        <label className={styles.searchField}>
+        <label className={`${styles.searchField} focus-field`}>
           <span className="sr-only">Search engineering and AI roles</span>
           <Icon name="search" />
           <input
@@ -123,7 +123,7 @@ export default function SearchFilters({
             placeholder="Job title, skill or keyword"
           />
         </label>
-        <label className={styles.searchField}>
+        <label className={`${styles.searchField} focus-field`}>
           <span className="sr-only">Location</span>
           <Icon name="pin" />
           <input

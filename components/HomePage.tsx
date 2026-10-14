@@ -1,28 +1,36 @@
 import Link from "@/components/AppLink";
 import { HomeAccountAction, HomeGuestNote } from "./HomeAccountAction";
-import JobCard from "@/components/JobCard";
+import HomeJobPreview from "./HomeJobPreview";
 import CompanyLogo from "@/components/CompanyLogo";
-import LiveMatchingExample from "./LiveMatchingExample";
-import MatchJourney from "@/components/MatchJourney";
 import HomeHeroScene from "./HomeHeroScene";
 import HomeFeaturePreview from "./HomeFeaturePreview";
 import CompanyMarquee from "./CompanyMarquee";
-import { topHiringCompanies } from "@/lib/home-companies";
+import {
+  topHiringCompanies,
+  homepageCompanies,
+  knownCompanyOpenings,
+} from "@/lib/home-companies";
 import styles from "./HomePage.module.css";
 import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import { type Company, type HomeSnapshot } from "@/lib/reerhub";
-import { JOB_LANDINGS } from "@/lib/seo-landings";
 import { PLANS, billingPlanHref } from "@/lib/billing-plans";
 export default function HomePage({
   data,
   logoCompanies,
+  directory,
 }: {
   data: HomeSnapshot | null;
+  directory: Company[] | null;
   logoCompanies: Pick<Company, "_id" | "name" | "slug" | "logoUrl">[];
 }) {
-  const jobs = data?.jobs || [],
+  const jobs = (data?.jobs || []).slice(0, 3),
     companies = data?.companies || [];
   const featured = topHiringCompanies(companies).slice(0, 8);
+  const companyPreview = homepageCompanies(directory ?? companies);
+  const countLabel = (value: number | undefined) =>
+    typeof value === "number" && Number.isFinite(value) && value >= 0
+      ? value.toLocaleString("en-IN")
+      : "—";
   return (
     <div className={`${styles.home} homepage-redesign`}>
       <section className={`${styles.hero} border-b border-slate-200`}>
@@ -81,8 +89,8 @@ export default function HomePage({
                 Browse jobs
               </button>
             </form>
-            <Link href="#how-pro-works" className="btn-secondary mt-4">
-              See how Pro works <span aria-hidden="true">↗</span>
+            <Link href="/how-it-works" className="btn-secondary mt-4">
+              See how it works <span aria-hidden="true">↗</span>
             </Link>
             <p className="mt-4 text-sm text-slate-600">
               Free to explore. Direct to the source. Yours to discover.
@@ -102,32 +110,32 @@ export default function HomePage({
       </section>
       <CompanyMarquee companies={logoCompanies} />
       <section
-        className={`${styles.contentSection} page-container py-10 sm:py-14`}
+        className={`${styles.contentSection} page-container`}
         aria-labelledby="current-openings"
       >
         <CatalogNotice data={data} />
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div className={styles.sectionHeading}>
           <div>
             <p className={styles.eyebrow}>THE OPPORTUNITY BOARD</p>
-            <h2
-              id="current-openings"
-              className="text-3xl font-bold tracking-tight text-ink"
-            >
-              Good work is out there.
-            </h2>
-            <p className="mt-3 text-slate-600">
+            <h2 id="current-openings">Good work is out there.</h2>
+            <p className={styles.sectionDescription}>
               {data
-                ? `${data.totalJobs.toLocaleString("en-IN")} active technical ${data.totalJobs === 1 ? "role" : "roles"} in the verified catalog.`
+                ? `${data.totalJobs.toLocaleString("en-IN")} active technical ${data.totalJobs === 1 ? "role" : "roles"}. Your next step could be one of them.`
                 : "Live opening counts are temporarily unavailable."}
             </p>
           </div>
-          <Link href="/jobs" className="btn-secondary">
-            View all jobs
+          <Link href="/jobs" className="btn-primary">
+            View all jobs <span aria-hidden="true">↗</span>
           </Link>
         </div>
-        <div className="grid gap-5 md:grid-cols-3">
+        {jobs.length > 0 && (
+          <p className={styles.previewLabel}>
+            A few current openings <span>From official employer sources</span>
+          </p>
+        )}
+        <div className={styles.openingGrid}>
           {jobs.length ? (
-            jobs.map((job) => <JobCard key={job._id} job={job} />)
+            jobs.map((job) => <HomeJobPreview key={job._id} job={job} />)
           ) : !data ? (
             <p className="surface-panel col-span-full p-7">
               Live openings are temporarily unavailable.{" "}
@@ -146,138 +154,165 @@ export default function HomePage({
             </p>
           )}
         </div>
-        <nav
-          aria-label="Choose a career path"
-          className="mt-7 flex flex-wrap gap-3"
-        >
-          <Link href="/fresher-jobs" className="btn-secondary">
-            Fresher opportunities
-          </Link>
-          <Link href="/internship-jobs" className="btn-secondary">
-            Internships
-          </Link>
-          <Link href="/jobs" className="btn-secondary">
-            Browse all experience levels
-          </Link>
-        </nav>
-        <HomeGuestNote>
-          <p className="mt-5 text-sm leading-7 text-slate-600">
-            Preview openings freely.{" "}
-            <Link href="/login?next=/jobs" className="underline">
-              Create a free account
-            </Link>{" "}
-            for complete browsing and saved roles.
-          </p>
-        </HomeGuestNote>
-        <nav
-          aria-label="Browse by engineering role"
-          className="mt-7 flex flex-wrap gap-3"
-        >
-          {Object.entries(JOB_LANDINGS)
-            .filter(([, page]) => !page.earlyCareer)
-            .map(([slug, page]) => (
-              <Link href={`/${slug}`} key={slug} className="btn-secondary">
-                {page.title.replace(" jobs in India", "")}
+        <div className={styles.exploreRow}>
+          <nav aria-label="Explore opportunities">
+            <span>Explore opportunities</span>
+            {[
+              ["/engineering-jobs", "Engineering"],
+              ["/ai-jobs", "AI & machine learning"],
+              ["/data-engineering-jobs", "Data engineering"],
+              ["/fresher-jobs", "Freshers"],
+              ["/internship-jobs", "Internships"],
+            ].map(([href, label]) => (
+              <Link key={href} href={href}>
+                {label} <span aria-hidden="true">↗</span>
               </Link>
             ))}
-        </nav>
-      </section>
-      <section className={`${styles.companySection} py-10 sm:py-14`}>
-        <div className="page-container">
-          <h2 className="text-3xl font-bold text-ink">
-            Real companies. Real possibilities.
-          </h2>
-          <p className="mt-4 max-w-3xl leading-8 text-slate-600">
-            Confirmed India locations, source links and visible feed-check dates
-            help you review a role. Companies below have current openings; these
-            are directory listings, not partners or endorsements.
-          </p>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
-            {featured.map((company) => (
-              <Link
-                key={company._id}
-                href={`/companies/${company.slug}`}
-                prefetch={false}
-                className={`${styles.companyTile} surface-panel flex min-w-0 flex-col items-center gap-3 p-4 text-center`}
-              >
-                <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
-                <span className="text-sm font-semibold">{company.name}</span>
-                <span className="text-xs text-slate-600">
-                  {company.activeJobs}{" "}
-                  {company.activeJobs === 1 ? "opening" : "openings"}
-                </span>
+          </nav>
+          <HomeGuestNote>
+            <p>
+              Browse freely.{" "}
+              <Link href="/login?next=/jobs">
+                Sign in to save your shortlist.
               </Link>
-            ))}
-          </div>
-          <div className="mt-6 flex flex-wrap gap-4">
-            <Link href="/companies" className="underline text-primary">
-              Explore employers
-            </Link>
-            <Link href="/about" className="underline text-primary">
-              About REERHUB
-            </Link>
-            <Link
-              href="/matching-methodology"
-              className="underline text-primary"
-            >
-              How verification and matching work
-            </Link>
-          </div>
+            </p>
+          </HomeGuestNote>
         </div>
       </section>
       <section
-        id="how-pro-works"
-        className={`${styles.matchingSection} page-container scroll-mt-24 py-10 sm:py-14`}
+        id="community-feedback"
+        className={`${styles.feedbackSection} page-container`}
+        aria-label="Community feedback"
       >
-        <p className={styles.eyebrow}>A LITTLE CLARITY GOES A LONG WAY</p>
-        <h2 className="text-3xl font-bold text-ink">
-          Less searching. More direction.
-        </h2>
-        <p className="mt-4 max-w-3xl leading-8 text-slate-600">
-          A fictional profile. Real openings. Clear reasons from the same
-          matching engine used by Pro—so you can see what fits, and why.
-        </p>
-        <div className="mt-7 grid gap-6 lg:grid-cols-2">
-          <LiveMatchingExample examples={data?.matchingExamples} />
-          <div className="surface-panel p-6">
-            <p className={styles.eyebrow}>THREE STEPS. YOUR OWN DIRECTION.</p>
-            <h3 className="text-xl font-semibold">
-              A little clarity for your next move.
-            </h3>
-            <ol className="mt-4 space-y-4 leading-7 text-slate-600">
-              <li>
-                <strong>01 · Make it yours</strong>
-                Choose your track, skills, experience and location preferences.
-              </li>
-              <li>
-                <strong>02 · Understand your fit</strong>
-                Pro separates Profile matches, Stretch roles and Needs review.
-              </li>
-              <li>
-                <strong>03 · Take the next step</strong>
-                Read the employer’s description and apply directly.
-              </li>
-            </ol>
-            <Link href="/profile" className="btn-primary mt-6">
-              Complete your profile
+        <dl className={styles.catalogStats} aria-label="ReerHub at a glance">
+          {[
+            [countLabel(data?.totalCompanies), "Companies in our catalog"],
+            [countLabel(data?.totalJobs), "Active technical roles"],
+            ["Free", "Apply at the official source"],
+            ["India-first", "Built for your next tech role"],
+          ].map(([value, label]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+        {!data && (
+          <p className={styles.feedbackNote}>
+            Live catalog counts are temporarily unavailable.
+          </p>
+        )}
+        <div className={styles.feedbackGrid}>
+          <figure className={styles.feedbackCard}>
+            <figcaption>
+              <span className={styles.feedbackAvatar} aria-hidden="true">
+                MP
+              </span>
+              <span>
+                <strong>Meraj Pathan</strong>
+                <small>Feedback shared directly</small>
+              </span>
+            </figcaption>
+            <blockquote>
+              “This is the best website I’ve found. A website like this is
+              really needed nowadays.”
+            </blockquote>
+            <p className={styles.feedbackCardNote}>
+              Encouragement that keeps us building.
+            </p>
+          </figure>
+          <figure
+            className={`${styles.feedbackCard} ${styles.feedbackCardLavender}`}
+          >
+            <figcaption>
+              <span className={styles.feedbackAvatar} aria-hidden="true">
+                FS
+              </span>
+              <span>
+                <strong>Faraz Shaikh</strong>
+                <small>Feedback shared directly</small>
+              </span>
+            </figcaption>
+            <blockquote>
+              “This website really helped me find relevant job openings and
+              avoid jobs that weren’t a fit.”
+            </blockquote>
+            <p className={styles.feedbackCardNote}>
+              More relevance. A little less searching.
+            </p>
+          </figure>
+        </div>
+      </section>
+      <section
+        className={styles.companySection}
+        aria-labelledby="home-companies-title"
+      >
+        <div className="page-container">
+          <div className={styles.sectionHeading}>
+            <div>
+              <h2 id="home-companies-title">
+                Real companies. Real possibilities.
+              </h2>
+              <p className={styles.sectionDescription}>
+                Explore the companies behind the openings. Find a team you’d
+                like to get to know.
+              </p>
+            </div>
+            <Link href="/companies" className="btn-secondary">
+              View all companies <span aria-hidden="true">↗</span>
             </Link>
-            <Link href="/billing" className="btn-secondary mt-3 ml-0 sm:ml-3">
-              See Pro plans
+          </div>
+          {directory === null && (
+            <p className="mb-5 text-sm text-slate-600" role="status">
+              The full company directory is temporarily unavailable.
+              {companyPreview.length
+                ? " Showing companies from the available openings snapshot."
+                : " Please try the directory again shortly."}
+            </p>
+          )}
+          <div className={styles.companyGrid}>
+            {companyPreview.map((company) => {
+              const count = knownCompanyOpenings(company);
+              return (
+                <Link
+                  key={company._id}
+                  href={`/companies/${company.slug}`}
+                  prefetch={false}
+                  className={styles.companyTile}
+                >
+                  <span className={styles.companyArrow} aria-hidden="true">
+                    ↗
+                  </span>
+                  <CompanyLogo name={company.name} logoUrl={company.logoUrl} />
+                  <span className={styles.companyName}>{company.name}</span>
+                  <span className={styles.companyCount}>
+                    {count === null
+                      ? "Explore company"
+                      : count === 0
+                        ? "No current openings"
+                        : `${count} ${count === 1 ? "opening" : "openings"}`}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+          {directory !== null && companyPreview.length === 0 && (
+            <p className="surface-panel p-7">
+              No companies are available in the directory right now. Please
+              check back soon.
+            </p>
+          )}
+          <p className={styles.companyDisclaimer}>
+            Company listings identify employer sources. They don’t imply
+            partnerships or endorsements.
+          </p>
+          <div id="how-pro-works" className={styles.demoLink}>
+            <p>A little clarity for your next move.</p>
+            <Link href="/how-it-works">
+              See how ReerHub works <span aria-hidden="true">↗</span>
             </Link>
           </div>
         </div>
-        <details open className="mt-7 surface-panel p-5">
-          <summary className="min-h-11 cursor-pointer text-lg font-semibold">
-            How it works: illustrative matching journey
-          </summary>
-          <p className="my-4 text-sm leading-7 text-slate-600">
-            This animation illustrates the workflow. The live example above uses
-            verified Profile matches at 75% relevance or above. Scores describe
-            relevance, not hiring probability or every qualification. Daily Pro
-            emails include up to five verified strong matches when available.
-          </p>
-          <MatchJourney companies={companies} />
-        </details>
       </section>
       <section className={`${styles.benefits} page-container`}>
         <div className={styles.benefitHeading}>

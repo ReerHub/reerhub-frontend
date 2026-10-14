@@ -37,7 +37,7 @@ export default function HomeHeroScene({ companies }: { companies: Company[] }) {
         <div className={styles.orbit} />
         <div className={styles.orbitInner} />
         <div className={styles.sceneCaption}>
-          <span /> POSSIBILITY, MEET DIRECTION
+          <span /> <p>Openings → Your profile → Pro shortlist</p>
         </div>
         <div className={styles.sourceStack}>
           <small>FROM OFFICIAL SOURCES</small>
@@ -138,6 +138,19 @@ export default function HomeHeroScene({ companies }: { companies: Company[] }) {
           aria-pressed={paused}
           onClick={() => setPaused((value) => !value)}
         >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 16 16"
+            width="14"
+            height="14"
+            fill="currentColor"
+          >
+            {paused ? (
+              <path d="M4 2.5v11l9-5.5z" />
+            ) : (
+              <path d="M4 2h3v12H4zm5 0h3v12H9z" />
+            )}
+          </svg>
           {paused ? "Play animation" : "Pause animation"}
         </button>
       </div>

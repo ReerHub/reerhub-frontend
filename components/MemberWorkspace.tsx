@@ -94,6 +94,10 @@ export default function MemberWorkspace({
           })}
         </nav>
         <div className="workspace-sidebar-bottom">
+          <Link href="/dashboard/how-it-works" className="workspace-link">
+            <Icon name="spark" className="h-5 w-5" />
+            How it works
+          </Link>
           <Link href="/dashboard/help" className="workspace-link">
             <Icon name="shield" className="h-5 w-5" />
             Help & support

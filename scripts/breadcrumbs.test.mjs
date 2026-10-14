@@ -9,10 +9,12 @@ import { compileFixture } from "./location-fixtures.mjs";
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 const landings = compileFixture(await read("../lib/seo-landings.ts"));
 const breadcrumbsUrl = compileFixture(
-  (await read("../lib/breadcrumbs.ts")).replace(
-    '"./seo-landings"',
-    JSON.stringify(landings),
-  ),
+  (await read("../lib/breadcrumbs.ts"))
+    .replace(
+      '"./blog-catalog"',
+      JSON.stringify(compileFixture(await read("../lib/blog-catalog.ts"))),
+    )
+    .replace('"./seo-landings"', JSON.stringify(landings)),
 );
 const workspaceUrl = compileFixture(
   (await read("../lib/workspace.ts")).replace(

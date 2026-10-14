@@ -37,6 +37,7 @@ let fixtureDelay = 0;
 let fixtureRequests = { recommendations: 0, saves: 0, feedback: 0 };
 const performanceMetrics = [];
 const companyImports = new Map();
+const contactQueries = [];
 const company = {
   _id: "111111111111111111111111",
   name: "Fixture Labs",
@@ -232,6 +233,17 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST") performanceMetrics.push(data);
     return json(performanceMetrics);
   }
+  if (path === "/contact" && req.method === "POST") {
+    if (dashboardMode === "contact-error") return json(null, 503);
+    if (!data.website)
+      contactQueries.unshift({
+        ...data,
+        _id: String(contactQueries.length + 900).padStart(24, "0"),
+        status: "new",
+        createdAt: new Date().toISOString(),
+      });
+    return json({ received: true }, 201);
+  }
   // Explicit admin fixture entry point; never talks to a real database or Google.
   if (path === "/fixture-admin") {
     const mode = url.searchParams.get("state") || "populated";
@@ -253,6 +265,25 @@ const server = http.createServer(async (req, res) => {
       });
     if (path === "/admin/auth/logout") return json({ loggedOut: true });
     if (mode === "error") return json(null, 503);
+    if (path === "/admin/contact-queries") {
+      const status = url.searchParams.get("status");
+      const rows = contactQueries.filter((q) => !status || q.status === status);
+      const page = Number(url.searchParams.get("page") || 1),
+        limit = 20;
+      return json(rows.slice((page - 1) * limit, page * limit), 200, {
+        page,
+        limit,
+        total: rows.length,
+        totalPages: Math.ceil(rows.length / limit),
+      });
+    }
+    if (path.startsWith("/admin/contact-queries/") && req.method === "PATCH") {
+      const row = contactQueries.find((q) => q._id === path.split("/").at(-1));
+      if (!row) return json(null, 404);
+      row.status = data.status;
+      return json(row);
+    }
+
     const id = (n) => String(n).padStart(24, "0");
     const companies =
       mode === "empty"
@@ -837,30 +868,57 @@ const server = http.createServer(async (req, res) => {
           fit: null,
         },
       ],
-      jobs: [job],
-      companies: [company],
-      totalCompanies: 1,
-      totalJobs: 1,
+      jobs:
+        dashboardMode === "homepage-logos"
+          ? [
+              job,
+              {
+                ...job,
+                _id: "000000000000000000000102",
+                title: "Data Platform Engineer",
+                techRole: "Data Engineer",
+              },
+              {
+                ...job,
+                _id: "000000000000000000000103",
+                title: "Frontend Engineer",
+                techRole: "Frontend Engineer",
+              },
+            ]
+          : [job],
+      companies:
+        dashboardMode === "homepage-logos"
+          ? [
+              company,
+              {
+                ...company,
+                _id: "000000000000000000000701",
+                name: "Fixture Studio",
+                slug: "fixture-studio",
+              },
+              {
+                ...company,
+                _id: "000000000000000000000702",
+                name: "Fixture Cloud",
+                slug: "fixture-cloud",
+              },
+            ]
+          : [company],
+      totalCompanies: dashboardMode === "homepage-logos" ? 36 : 1,
+      totalJobs: dashboardMode === "homepage-logos" ? 3 : 1,
       snapshotAt: new Date().toISOString(),
     });
   if (path === "/companies") {
     if (dashboardMode === "error") return json(null, 503);
     const catalog =
       dashboardMode === "homepage-logos"
-        ? [
-            "Fixture Labs",
-            "Fixture Cloud",
-            "Fixture Studio",
-            "Fixture Data",
-            "Fixture Systems",
-            "Fixture Works",
-          ].map((name, i) => ({
+        ? Array.from({ length: 36 }, (_, i) => ({
             ...company,
             _id: String(i + 700).padStart(24, "0"),
-            name,
+            name: `Fixture ${["Cloud", "Studio", "Data", "Systems", "Works", "Labs"][i % 6]} ${String(i + 1).padStart(2, "0")}`,
             slug: `fixture-logo-${i}`,
-            activeJobs: i,
-            logoUrl: `data:image/svg+xml;base64,${Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><rect width="48" height="48" rx="10" fill="${["#6d4aff", "#372580", "#e67761", "#4d8a69", "#8460bd", "#b68442"][i]}"/><path d="M12 24h24M24 12v24M15 15l18 18M15 33l18-18" stroke="white" stroke-width="3"/></svg>`).toString("base64")}`,
+            activeJobs: i % 9,
+            logoUrl: `data:image/svg+xml;base64,${Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><rect width="48" height="48" rx="10" fill="${["#6d4aff", "#372580", "#e67761", "#4d8a69", "#8460bd", "#b68442"][i % 6]}"/><path d="M12 24h24M24 12v24M15 15l18 18M15 33l18-18" stroke="white" stroke-width="3"/></svg>`).toString("base64")}`,
           }))
         : dashboardMode === "company-pages"
           ? Array.from({ length: 101 }, (_, i) => ({

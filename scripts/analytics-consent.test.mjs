@@ -4,6 +4,12 @@ import { readFile } from "node:fs/promises";
 import { JSDOM } from "jsdom";
 import { compileFixture } from "./location-fixtures.mjs";
 const source = (path) => readFile(new URL(path, import.meta.url), "utf8");
+const publicPagesUrl = compileFixture(
+  (await source("../lib/public-analytics.ts")).replace(
+    '"./blog-catalog"',
+    JSON.stringify(compileFixture(await source("../lib/blog-catalog.ts"))),
+  ),
+);
 const consentUrl = compileFixture(await source("../lib/consent.ts"));
 const configUrl = compileFixture(await source("../lib/analytics-config.ts"));
 const eventsUrl = compileFixture(await source("../lib/analytics-events.ts"));
@@ -12,10 +18,7 @@ const consent = await import(consentUrl),
 const analyticsSource = (await source("../lib/analytics.ts"))
   .replace('"./consent"', JSON.stringify(consentUrl))
   .replace('"./analytics-events"', JSON.stringify(eventsUrl))
-  .replace(
-    '"./public-analytics"',
-    JSON.stringify(compileFixture(await source("../lib/public-analytics.ts"))),
-  );
+  .replace('"./public-analytics"', JSON.stringify(publicPagesUrl));
 const dom = new JSDOM('<div id="root"></div>', {
   url: "https://reerhub.com/verify-magic?token=sensitive&email=private@example.com",
 });
@@ -343,19 +346,43 @@ test("failed consent storage remains revoked after the withdrawal reload", async
       throw new Error("Storage denied");
     },
   });
-  const originalRemove = Object.getOwnPropertyDescriptor(window.Storage.prototype, "removeItem");
-  Object.defineProperty(window.Storage.prototype, "removeItem", { configurable: true, value() { throw new Error("Storage denied"); } });
+  const originalRemove = Object.getOwnPropertyDescriptor(
+    window.Storage.prototype,
+    "removeItem",
+  );
+  Object.defineProperty(window.Storage.prototype, "removeItem", {
+    configurable: true,
+    value() {
+      throw new Error("Storage denied");
+    },
+  });
   try {
     consent.saveConsent(false);
     assert.equal(consent.analyticsConsent(), false);
-    assert.equal(JSON.parse(window.localStorage.getItem(consent.CONSENT_KEY)).analytics, true);
-    const reloaded = await import(compileFixture((await source("../lib/consent.ts"))+"\nexport const reloadMarker = true;"));
-    assert.equal(reloaded.analyticsConsent(), false, "A fresh document must honor withdrawal despite stale acceptance");
+    assert.equal(
+      JSON.parse(window.localStorage.getItem(consent.CONSENT_KEY)).analytics,
+      true,
+    );
+    const reloaded = await import(
+      compileFixture(
+        (await source("../lib/consent.ts")) +
+          "\nexport const reloadMarker = true;",
+      )
+    );
+    assert.equal(
+      reloaded.analyticsConsent(),
+      false,
+      "A fresh document must honor withdrawal despite stale acceptance",
+    );
     analytics.startAnalytics("G-SYNTHETIC1");
     assert.equal(document.querySelectorAll("iframe").length, 0);
   } finally {
     Object.defineProperty(window.Storage.prototype, "setItem", original);
-    Object.defineProperty(window.Storage.prototype, "removeItem", originalRemove);
+    Object.defineProperty(
+      window.Storage.prototype,
+      "removeItem",
+      originalRemove,
+    );
     consent.saveConsent(false);
   }
 });

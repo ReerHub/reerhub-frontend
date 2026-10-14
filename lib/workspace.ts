@@ -49,7 +49,7 @@ export function memberHref(href: string): string {
     if (target) url.pathname = `/dashboard/${target}`;
     url.searchParams.delete("view");
   } else if (path === "/") url.pathname = "/dashboard";
-  else if (/^\/(jobs|companies)(\/|$)/.test(path))
+  else if (/^\/(jobs|companies|blog)(\/|$)/.test(path))
     url.pathname = `/dashboard${path}`;
   else if (
     path === "/profile" ||
@@ -63,6 +63,7 @@ export function memberHref(href: string): string {
       "privacy",
       "terms",
       "matching-methodology",
+      "how-it-works",
       "contact",
       "faq",
     ].includes(path.slice(1))

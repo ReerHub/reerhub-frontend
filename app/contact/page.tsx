@@ -1,54 +1,60 @@
-import EditorialPage from "@/components/EditorialPage";
 import Link from "@/components/AppLink";
+import ContactForm from "@/components/ContactForm";
 import { pageMetadata } from "@/lib/seo";
+import styles from "@/components/pages/PublicPages.module.css";
 export const metadata = pageMetadata(
   "Contact REERHUB Support",
-  "Contact REERHUB for job listing questions, account help and subscription support. Find direct links to billing controls and product policies.",
+  "Get help with ReerHub job listings, your account, Pro membership or privacy. Send a message to our support team or explore useful answers.",
   "/contact",
 );
 export default function ContactPage() {
   return (
-    <EditorialPage title="A real person. A little help." eyebrow="LET’S TALK">
-      <p className="mt-6 text-lg leading-8 text-slate-600">
-        For listing corrections, account questions or subscription support,
-        email{" "}
-        <a href="mailto:support@reerhub.com" className="font-medium underline">
-          support@reerhub.com
-        </a>
-        .
-      </p>
-      <h2 className="mt-9 text-2xl font-bold">Help us understand the issue</h2>
-      <p className="mt-4 leading-8 text-slate-600">
-        For a job issue, include the REERHUB listing link and the employer’s
-        official link. For billing, describe the issue and your selected plan.
-        Do not send passwords, sign-in links, payment-card details or
-        authentication codes.
-      </p>
-      <h2 className="mt-9 text-2xl font-bold">Useful next steps</h2>
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Link href="/faq" className="btn-secondary">
-          Frequently asked questions
-        </Link>
-        <Link href="/billing" className="btn-primary">
-          Manage subscription
-        </Link>
-        <Link href="/profile" className="btn-secondary">
-          Profile and email preferences
-        </Link>
-        <Link href="/matching-methodology" className="btn-secondary">
-          Matching methodology
-        </Link>
-        <Link href="/terms" className="btn-secondary">
-          Terms
-        </Link>
-        <Link href="/privacy" className="btn-secondary">
-          Privacy
-        </Link>
+    <article className={styles.page}>
+      <header className={styles.hero}>
+        <p>LET’S TALK</p>
+        <h1>
+          A real person.<span>A little help.</span>
+        </h1>
+        <p>
+          A question, a correction, or an idea worth sharing? Tell us what’s on
+          your mind. We’ll help you find the next step.
+        </p>
+      </header>
+      <div className={styles.contactBody}>
+        <ContactForm />
+        <aside className={styles.supportAside}>
+          <section>
+            <h2>Talk to ReerHub</h2>
+            <p>
+              For listing corrections, account help, membership questions and
+              product feedback.
+            </p>
+            <a href="mailto:support@reerhub.com">support@reerhub.com</a>
+          </section>
+          <section>
+            <h2>A little clarity, right away.</h2>
+            <p>Our FAQs cover discovery, matching, accounts and billing.</p>
+            <Link href="/faq">Read the FAQs ↗</Link>
+          </section>
+          <section>
+            <h2>Your membership</h2>
+            <p>Review your plan, checkout status or cancellation options.</p>
+            <Link href="/billing">Pricing and membership ↗</Link>
+          </section>
+          <section>
+            <h2>How matching works</h2>
+            <p>
+              Understand source verification, match reasons and what relevance
+              scores mean.
+            </p>
+            <Link href="/matching-methodology">Read our methodology ↗</Link>
+          </section>
+          <p>
+            Operated by REERHUB TECHNOLOGIES. Employers handle applications
+            directly; we cannot confirm their selection decisions.
+          </p>
+        </aside>
       </div>
-      <p className="mt-6 text-sm leading-7 text-slate-600">
-        REERHUB TECHNOLOGIES operates the product. Applications are handled by
-        each employer; REERHUB cannot confirm an employer’s application outcome.
-      </p>
-    </EditorialPage>
+    </article>
   );
 }

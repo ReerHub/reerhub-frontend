@@ -1,0 +1,232 @@
+.page {
+  color: #241e30;
+  background: #fffefa;
+}
+.hero {
+  padding-block: 72px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 15% 50%, #ffeadb88, transparent 55%),
+    radial-gradient(ellipse at 85% 15%, #eee5ff, transparent 60%);
+}
+.eyebrow {
+  margin-bottom: 18px;
+  color: #77608f;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+.hero h1 {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: clamp(44px, 6vw, 80px);
+  line-height: 1.04;
+  letter-spacing: -0.065em;
+  font-weight: 600;
+}
+.hero h1 span {
+  color: #6d4aff;
+}
+.intro {
+  max-width: 660px;
+  margin: 24px auto 0;
+  font-size: 18px;
+  line-height: 1.8;
+  color: #71647d;
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.actions a {
+  gap: 12px;
+  border-radius: 999px;
+}
+.heroNote {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #71647d;
+  line-height: 1.8;
+}
+.content {
+  max-width: 1240px !important;
+}
+.sectionHeading {
+  max-width: 780px;
+  margin-bottom: 28px;
+}
+.sectionHeading h2,
+.closing h2 {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 600;
+  font-size: clamp(30px, 4vw, 46px);
+  letter-spacing: -0.055em;
+  line-height: 1.14;
+}
+.sectionHeading > p:last-child {
+  margin-top: 18px;
+  line-height: 1.8;
+  color: #71647d;
+}
+.content > section {
+  padding-block: 64px;
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.step {
+  display: flex;
+  gap: 20px;
+  padding: 30px;
+  border: 1px solid #e6dfef;
+  border-radius: 24px;
+  background: #fff;
+}
+.step:first-child {
+  grid-column: 1 / -1;
+  background: #f8f4ff;
+}
+.stepNumber {
+  flex-shrink: 0;
+  color: #8462ca;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+.access {
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #5034b5;
+}
+.step h3,
+.demoNotes h3 {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 25px;
+  letter-spacing: -0.04em;
+  line-height: 1.25;
+  font-weight: 500;
+}
+.stepBody {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.9;
+  color: #71647d;
+}
+.step a,
+.demoNotes a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  min-height: 44px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #5034b5;
+}
+.demo {
+  scroll-margin-top: 96px;
+}
+.demoGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.demoGrid > section {
+  min-width: 0;
+  border-radius: 24px;
+}
+.demoNotes {
+  padding: 32px;
+  border-radius: 24px;
+  background: #edfaef;
+}
+.demoNotes ul {
+  margin-top: 22px;
+  display: grid;
+  gap: 18px;
+}
+.demoNotes li {
+  font-size: 14px;
+  color: #566a5b;
+  line-height: 1.9;
+}
+.demoNotes strong {
+  display: block;
+  color: #244d35;
+  font-weight: 600;
+}
+.motionSection {
+  padding-inline: 32px;
+  border-radius: 32px;
+  background:
+    radial-gradient(ellipse at 85% 0%, #664ba144, transparent 65%), #21192e;
+  color: white;
+}
+.motionSection .eyebrow {
+  color: #d8c7ff;
+}
+.motionSection .sectionHeading > p:last-child {
+  color: #d0c6dd;
+}
+.closing {
+  text-align: center;
+}
+.closing > p:not(.eyebrow) {
+  max-width: 590px;
+  margin: 22px auto 0;
+  color: #71647d;
+  font-size: 16px;
+  line-height: 1.8;
+}
+.faqLink {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 24px;
+  min-height: 44px;
+  color: #5034b5;
+  font-size: 13px;
+}
+.page a:focus-visible {
+  outline: 2px solid #6d4aff;
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+@media (max-width: 767px) {
+  .hero {
+    padding-block: 48px;
+  }
+  .intro {
+    font-size: 16px;
+  }
+  .steps,
+  .demoGrid {
+    grid-template-columns: 1fr;
+  }
+  .step {
+    padding: 22px;
+    gap: 14px;
+  }
+  .stepNumber {
+    font-size: 26px;
+  }
+  .step h3 {
+    font-size: 23px;
+  }
+  .demoNotes {
+    padding: 24px;
+  }
+  .content > section {
+    padding-block: 44px;
+  }
+  .motionSection {
+    padding-inline: 20px;
+    border-radius: 24px;
+  }
+}

@@ -48,7 +48,11 @@ export default async function Home() {
           ]),
         }}
       />
-      <HomePage data={data} logoCompanies={logoCompanies} />
+      <HomePage
+        data={data}
+        directory={directory}
+        logoCompanies={logoCompanies}
+      />
     </>
   );
 }
