@@ -80,10 +80,16 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Review us on Trustpilot (opens in a new tab)"
-              className="mt-5 inline-flex min-h-11 max-w-full items-center gap-3 rounded-full border border-violet-200 bg-white/70 px-4 py-2 text-sm font-medium text-primary-deep transition-colors hover:border-violet-300 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+              className="mt-5 inline-flex min-h-[52px] max-w-full items-center justify-center gap-2 rounded-md border-2 border-[#00b67a] bg-white px-4 py-3 text-base font-medium text-[#191919] transition-colors hover:bg-[#f0fff9] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00b67a]"
             >
-              Review us on Trustpilot
-              <span aria-hidden="true">↗</span>
+              <span>Review us on</span>
+              <Image
+                src="/trustpilot-review-logo.svg"
+                width={110}
+                height={27}
+                alt="Trustpilot"
+                className="shrink-0"
+              />
             </a>
           </div>
           {columns.map(([title, links]) => (
