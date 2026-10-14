@@ -7,14 +7,20 @@ import {
   stopAnalytics,
   analyticsReady,
   track,
+  trackPublicPage,
+  publicTagLoaded,
 } from "@/lib/analytics";
+import { useAuth } from "@/components/AuthProvider";
+import { isPublicAnalyticsPath } from "@/lib/public-analytics";
 import { pageFamily } from "@/lib/analytics-events";
 export default function AnalyticsProvider() {
   const pathname = usePathname();
+  const { user, loading } = useAuth();
   useEffect(() => {
+    if (loading) return;
     let active = true;
     const apply = async () => {
-      if (!analyticsConsent()) {
+      if (user || !isPublicAnalyticsPath(pathname) || !analyticsConsent()) {
         stopAnalytics();
         return;
       }
@@ -25,6 +31,7 @@ export default function AnalyticsProvider() {
           startAnalytics(
             config.gtmContainerId || config.ga4MeasurementId || "",
           );
+          if (publicTagLoaded()) trackPublicPage();
           const family = pageFamily(pathname);
           if (family === "discovery" || family === "home")
             track("discovery", { page_family: family }, pathname);
@@ -35,6 +42,10 @@ export default function AnalyticsProvider() {
         /* Analytics availability never blocks the product. */
       }
     };
+    const restored = (event: PageTransitionEvent) => {
+      if (event.persisted && publicTagLoaded()) window.location.reload();
+    };
+    window.addEventListener("pageshow", restored);
     window.addEventListener("message", analyticsReady);
     const unsubscribe = subscribeConsent(() => {
       void apply();
@@ -44,7 +55,8 @@ export default function AnalyticsProvider() {
       active = false;
       unsubscribe();
       window.removeEventListener("message", analyticsReady);
+      window.removeEventListener("pageshow", restored);
     };
-  }, [pathname]);
+  }, [pathname, user, loading]);
   return null;
 }

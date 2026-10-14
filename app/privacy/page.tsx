@@ -61,13 +61,14 @@ export default function PrivacyPage() {
             withdraw using Privacy preferences on every page.
           </p>
           <p className="mt-4 leading-7 text-slate-600">
-            When enabled and consented, product analytics records broad page
-            families and actions such as discovery, completed sign-in, saved
-            roles, profile readiness, pricing views, checkout initiation, trial
-            activation and a separately verified first subscription payment. The
-            isolated tag receives no email addresses, profile contents, payment
-            details, sign-in tokens or private URL parameters. It uses a
-            randomized measurement identifier; Google may process ordinary
+            With your consent, Google Tag Manager and Google Analytics measure
+            visits to public pages and broad actions such as browsing jobs and
+            viewing pricing. Analytics may use first-party cookies to recognize
+            consenting browsers. Our pageview and product-event payloads omit
+            search queries and URL fragments. Measurement stays off on member
+            workspaces, sign-in, verification, profile and checkout screens. We
+            do not send email addresses, profile contents, payment details or
+            sign-in tokens as analytics event data. Google may process ordinary
             technical request information. Advertising signals are disabled.
             Analytics is optional and does not control product access.
           </p>

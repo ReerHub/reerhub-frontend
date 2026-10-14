@@ -96,8 +96,8 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
   );
   source = source
     .replace(
-      'import { track } from "@/lib/analytics";',
-      "const {track} = globalThis.billingJourney;",
+      'import { navigateAwayFromPublicTag, track } from "@/lib/analytics";',
+      "const {track} = globalThis.billingJourney; const navigateAwayFromPublicTag=()=>false;",
     )
     .replace(
       'import { PLANS, billingPlanHref, type PlanId } from "@/lib/billing-plans";',

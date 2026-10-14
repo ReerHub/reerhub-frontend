@@ -76,6 +76,10 @@ test("workspace waits for verified sessions, replaces public/legacy links and is
   };
   const code = (await read("../components/MemberWorkspace.tsx"))
     .replace(
+      'import { navigateAwayFromPublicTag } from "@/lib/analytics";',
+      "const navigateAwayFromPublicTag=()=>false;",
+    )
+    .replace(
       'import Link from "next/link";',
       "const Link=({children,href,...rest})=><a href={href} {...rest}>{children}</a>;",
     )

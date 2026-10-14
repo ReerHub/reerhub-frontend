@@ -1,7 +1,7 @@
 "use client";
 import { PLANS, billingPlanHref, type PlanId } from "@/lib/billing-plans";
 
-import { track } from "@/lib/analytics";
+import { navigateAwayFromPublicTag, track } from "@/lib/analytics";
 import { loadCheckout } from "@/lib/checkout-script";
 import Link from "@/components/AppLink";
 import { usePathname, useRouter } from "next/navigation";
@@ -71,7 +71,8 @@ export default function BillingControls({
   }, [user]);
   const start = async () => {
     if (!user) {
-      router.push(`/login?next=${encodeURIComponent(billingPlanHref(planId))}`);
+      const href = `/login?next=${encodeURIComponent(billingPlanHref(planId))}`;
+      if (!navigateAwayFromPublicTag(href)) router.push(href);
       return;
     }
     setBusy(true);
