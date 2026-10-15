@@ -3,16 +3,22 @@ import PageHeader from "@/components/PageHeader";
 import CompanyDirectory from "@/components/CompanyDirectory";
 import { listCompanyPage, DataUnavailableError } from "@/lib/reerhub";
 import { Suspense } from "react";
-import { pageMetadata } from "@/lib/seo";
+import { companyDirectoryMetadata } from "@/lib/seo";
 import {
   locationScopeFromParams,
   locationScopeLabel,
 } from "@/lib/location-scope";
-export const metadata = pageMetadata(
-  "Product Companies Hiring in India",
-  "Explore companies hiring engineering, AI and data talent in India. Browse their official openings and find the team behind your next tech role.",
-  "/companies",
-);
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const page = Math.max(1, Number.parseInt(params.page || "1", 10) || 1);
+  const query = params.q || "",
+    hiring = params.hiring === "true";
+  return companyDirectoryMetadata(page, !!query || hiring);
+}
 export const dynamic = "force-dynamic";
 export default async function CompaniesPage({
   searchParams,

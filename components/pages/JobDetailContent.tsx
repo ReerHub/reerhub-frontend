@@ -5,7 +5,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { sanitizeHtml } from "@/lib/sanitize";
 import CompanyLogo from "@/components/CompanyLogo";
 import { jobMetadata, safeJsonLd, SITE, concise } from "@/lib/seo";
-import { jobPosting, deadlineExpired } from "@/lib/job-schema";
+import { jobPosting, jobAvailable, deadlineExpired } from "@/lib/job-schema";
 import RelatedJobs from "@/components/RelatedJobs";
 import SaveJobButton from "@/components/SaveJobButton";
 import JobFreshness from "@/components/JobFreshness";
@@ -54,9 +54,12 @@ export async function generateMetadata({
     const job = await fetchJob(jobId);
     const companyName = job.companyId?.name || "Company";
     const city = job.locations?.[0]?.city;
-    const description = `${concise(job.title, 45)} at ${concise(companyName, 35)}${city ? ` in ${concise(city, 20)}` : ""}. ${job.status === "closed" ? "This opening is closed. Browse active roles." : "Read requirements and apply directly."}`;
+    const available = jobAvailable(job);
+    const closed =
+      job.status === "closed" || deadlineExpired(job.applicationDeadline);
+    const description = `${concise(job.title, 45)} at ${concise(companyName, 35)}${city ? ` in ${concise(city, 20)}` : ""}. ${!available ? (closed ? "This opening is closed. Browse active roles." : "This listing is unavailable for applications on REERHUB. Browse active roles.") : "Read requirements and apply directly."}`;
     return jobMetadata(
-      `${job.status === "closed" ? "Closed: " : ""}${job.title}`,
+      `${!available ? (closed ? "Closed: " : "Unavailable: ") : ""}${job.title}`,
       companyName,
       description,
       `/jobs/${jobSlug(job)}`,
@@ -141,9 +144,9 @@ export default async function JobDetailContent({
   const relatedJobs = company._id
     ? await fetchRelatedJobs(company._id, job._id)
     : [];
-  const expired = deadlineExpired(job.applicationDeadline);
-  const canApply =
-    job.status === "active" && job.publicEligible !== false && !expired;
+  const canApply = jobAvailable(job);
+  const closed =
+    job.status === "closed" || deadlineExpired(job.applicationDeadline);
   const hasApplication = !!job.applicationUrl;
   const sanitizedDescription = job.description
     ? sanitizeHtml(job.description)
@@ -324,11 +327,16 @@ export default async function JobDetailContent({
           {!canApply && (
             <div className="surface-panel mb-4 border-amber-200 bg-amber-50 p-5">
               <h2 className="font-semibold text-ink">
-                This opening is no longer active.
+                {closed
+                  ? "This opening is no longer active."
+                  : "This listing is unavailable for applications on REERHUB."}
               </h2>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                The company may have closed this role. Browse fresh openings, or
-                check its official careers page for the latest status.
+                {closed
+                  ? "The company may have closed this role."
+                  : "We cannot confirm application availability for this listing."}{" "}
+                Browse fresh openings, or check its official careers page for
+                the latest status.
               </p>
               <Link href="/jobs" className="btn-secondary mt-4">
                 Explore open roles

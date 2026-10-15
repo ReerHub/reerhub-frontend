@@ -31,6 +31,13 @@ export default function CompanyDirectory({
   const [attempt, setAttempt] = useState(0);
   const loading = loadedKey !== key;
   const filtered = loading || error ? [] : result.data;
+  const pageHref = (targetPage: number) => {
+    const next = new URLSearchParams();
+    if (query) next.set("q", query);
+    if (hiring) next.set("hiring", "true");
+    if (targetPage > 1) next.set("page", String(targetPage));
+    return `${pathname.startsWith("/dashboard") ? "/dashboard/companies" : "/companies"}${next.size ? `?${next}` : ""}`;
+  };
   const update = (
     q: string,
     hiringOnly: boolean,
@@ -212,23 +219,37 @@ export default function CompanyDirectory({
           className="mt-8 flex items-center justify-center gap-4"
           aria-label="Company pages"
         >
-          <button
-            className="btn-secondary"
-            disabled={loading || page <= 1}
-            onClick={() => update(query, hiring, page - 1)}
-          >
-            Previous
-          </button>
+          {page > 1 ? (
+            <Link
+              className="btn-secondary"
+              href={pageHref(page - 1)}
+              rel="prev"
+              prefetch={false}
+            >
+              Previous
+            </Link>
+          ) : (
+            <span className="btn-secondary opacity-50" aria-disabled="true">
+              Previous
+            </span>
+          )}
           <span>
             Page {page} of {result.pagination.totalPages}
           </span>
-          <button
-            className="btn-secondary"
-            disabled={loading || page >= result.pagination.totalPages}
-            onClick={() => update(query, hiring, page + 1)}
-          >
-            Next
-          </button>
+          {page < result.pagination.totalPages ? (
+            <Link
+              className="btn-secondary"
+              href={pageHref(page + 1)}
+              rel="next"
+              prefetch={false}
+            >
+              Next
+            </Link>
+          ) : (
+            <span className="btn-secondary opacity-50" aria-disabled="true">
+              Next
+            </span>
+          )}
         </nav>
       )}
     </>

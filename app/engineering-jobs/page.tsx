@@ -34,6 +34,23 @@ export default function Page() {
             </Link>
           ))}
         </nav>
+        <nav
+          aria-label="Engineering roles"
+          className="mb-7 flex flex-wrap gap-2"
+        >
+          {[
+            ["/backend-jobs", "Backend"],
+            ["/frontend-jobs", "Frontend"],
+            ["/full-stack-jobs", "Full-stack"],
+            ["/data-engineering-jobs", "Data engineering"],
+            ["/devops-jobs", "DevOps"],
+            ["/qa-jobs", "QA and testing"],
+          ].map(([href, label]) => (
+            <Link href={href} key={href} className="btn-secondary text-xs">
+              {label}
+            </Link>
+          ))}
+        </nav>
         <Suspense fallback={<div className="skeleton h-56 rounded-2xl" />}>
           <ServerJobBrowser
             track="software"

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { renderToStaticMarkup } from "react-dom/server";
 import { compileFixture } from "./location-fixtures.mjs";
 const { JOB_LANDINGS, landingQuery, editorialReady } = await import(
   compileFixture(
@@ -50,5 +51,53 @@ test("early-career editorial gates require five roles, two employers and complet
       ),
       false,
     );
+  }
+});
+
+test("engineering hub links every dedicated engineering role through HTML anchors", async () => {
+  const page = await readFile(
+    new URL("../app/engineering-jobs/page.tsx", import.meta.url),
+    "utf8",
+  );
+  for (const slug of [
+    "backend-jobs",
+    "frontend-jobs",
+    "full-stack-jobs",
+    "data-engineering-jobs",
+    "devops-jobs",
+    "qa-jobs",
+  ]) {
+    assert.ok(page.includes(`"/${slug}"`), `missing ${slug}`);
+  }
+  assert.match(page, /aria-label="Engineering roles"/);
+  assert.match(page, /<Link href=\{href\}/);
+});
+
+test("engineering role links exist in initial rendered HTML", async () => {
+  const source = (
+    await readFile(
+      new URL("../app/engineering-jobs/page.tsx", import.meta.url),
+      "utf8",
+    )
+  ).replace(/import[\s\S]*?from "[^"]+";/g, "");
+  const { default: Page } = await import(
+    compileFixture(`
+    const pageMetadata=()=>({});
+    const Link=({href,children})=><a href={href}>{children}</a>;
+    const Suspense=({children})=><>{children}</>;
+    const ServerJobBrowser=()=>null, PageHeader=()=>null, Icon=()=>null;
+    ${source}
+  `)
+  );
+  const html = renderToStaticMarkup(Page());
+  for (const slug of [
+    "backend-jobs",
+    "frontend-jobs",
+    "full-stack-jobs",
+    "data-engineering-jobs",
+    "devops-jobs",
+    "qa-jobs",
+  ]) {
+    assert.ok(html.includes(`href="/${slug}"`), `missing rendered ${slug}`);
   }
 });
