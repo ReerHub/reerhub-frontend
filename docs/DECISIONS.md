@@ -1,3 +1,11 @@
+# Decision history
+
+Historical evidence, not a startup checklist. Use the context-loading procedure in `../AGENTS.md` to locate and read complete relevant entries, including later superseding decisions. Entries are not guaranteed to be chronological; current code and live checks establish current behavior and release state.
+
+## 2026-10-15 — Selective session context
+
+Owner requested lower recurring token use without reducing work quality, with PR review and approval before merge. AGENTS now routes documentation reads by task and requires heading/keyword searches plus complete relevant entries, supersession checks and broader reads when uncertain. Existing constraints and historical entries are preserved; no separate memory file duplicates current guides. Documentation review and history-preservation checks validate this change; application behavior and runtime tests are unchanged. Token savings depend on the task and are not measured billing savings. This entry does not authorize merge or deployment.
+
 ## Public-document GTM and basic consent — 2026-10-14
 
 Owner reported Tag Assistant could not find the iframe-installed tag and explicitly approved GTM on public pages plus a production release after validation. Supersedes the 2026-10-13 opaque-frame GTM decision, preserving its history. GTM now loads asynchronously in the main public document head after stored Accept and confirmed guest authentication. Public route allowlisting, credential/noindex exclusions, denied advertising consent, sanitized explicit pageviews and enum product events retain a narrow measurement scope. Signed-in, private, admin and authentication screens never load GTM. Withdrawal removes analytics cookies and reloads; private transitions discard the measured document before private UI mounts. No noscript tracking bypasses consent. Legacy direct GA4 remains isolated and mutually exclusive.
