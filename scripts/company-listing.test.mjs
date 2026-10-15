@@ -367,3 +367,68 @@ test("freshness distinguishes posting from feed checks without fabricating dates
   assert.match(invalid, /First seen/);
   assert.match(invalid, /Feed check date unavailable/);
 });
+
+test("company directory pagination renders crawlable URLs with filters and member scope", async () => {
+  let source = await readFile(
+    new URL("../components/CompanyDirectory.tsx", import.meta.url),
+    "utf8",
+  );
+  source = source
+    .replace(
+      /import CatalogNotice,[^;]+;/,
+      "const CatalogNotice=()=>null; const catalogInitializing=()=>false;",
+    )
+    .replace(
+      /import Link from [^;]+;/,
+      "const Link=({href,children,rel})=><a href={href} rel={rel}>{children}</a>;",
+    )
+    .replace(
+      /import \{ useSearchParams, usePathname, useRouter \} from [^;]+;/,
+      "const useSearchParams=()=>new URLSearchParams(globalThis.directoryCrawlFixture.query); const usePathname=()=>globalThis.directoryCrawlFixture.path; const useRouter=()=>({});",
+    )
+    .replace(
+      /import \{[^;]+\} from "@\/lib\/location-scope";/,
+      'const locationScopeFromParams=()=>"india";',
+    )
+    .replace(/import CompanyLogo from [^;]+;/, "const CompanyLogo=()=>null;")
+    .replace(/import Icon from [^;]+;/, "const Icon=()=>null;")
+    .replace(
+      /import \{[^;]+\} from "@\/lib\/reerhub";/,
+      "const listCompanyPage=()=>{throw Error('unexpected SSR read')};",
+    );
+  const { default: Component } = await import(compileFixture(source));
+  const { renderToStaticMarkup } = await import("react-dom/server");
+  const { createElement } = await import("react");
+  try {
+    for (const path of ["/companies", "/dashboard/companies"]) {
+      globalThis.directoryCrawlFixture = {
+        path,
+        query: "q=AI&hiring=true&page=2",
+      };
+      const html = renderToStaticMarkup(
+        createElement(Component, {
+          initialData: { data: [], pagination: { total: 120, totalPages: 3 } },
+          initialKey: JSON.stringify(["AI", true, 2, "india"]),
+        }),
+      );
+      const dom = new JSDOM(html);
+      assert.equal(
+        dom.window.document.querySelector('a[rel="prev"]').getAttribute("href"),
+        `${path}?q=AI&hiring=true`,
+      );
+      assert.equal(
+        dom.window.document.querySelector('a[rel="next"]').getAttribute("href"),
+        `${path}?q=AI&hiring=true&page=3`,
+      );
+      assert.equal(
+        dom.window.document.querySelector(
+          'nav[aria-label="Company pages"] button',
+        ),
+        null,
+      );
+      dom.window.close();
+    }
+  } finally {
+    delete globalThis.directoryCrawlFixture;
+  }
+});

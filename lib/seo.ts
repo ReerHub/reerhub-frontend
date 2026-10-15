@@ -105,3 +105,19 @@ export function accountMetadata(title: string, description: string): Metadata {
     title: `${title} | REERHUB`,
   };
 }
+
+/** Unfiltered directory pages contain different employers; filters stay non-indexable. */
+export function companyDirectoryMetadata(
+  page: number,
+  filtered: boolean,
+): Metadata {
+  const metadata = pageMetadata(
+    `Product Companies Hiring in India${page > 1 ? ` — Page ${page}` : ""}`,
+    "Explore companies hiring engineering, AI and data talent in India. Browse their official openings and find the team behind your next tech role.",
+    page > 1 ? `/companies?page=${page}` : "/companies",
+  );
+  return {
+    ...metadata,
+    ...(filtered ? { robots: { index: false, follow: true } } : {}),
+  };
+}

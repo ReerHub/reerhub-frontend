@@ -17,22 +17,46 @@ const TYPES: Record<string, string> = {
   per_diem: "PER_DIEM",
   other: "OTHER",
 };
+/** One availability rule for snippets, application controls and structured data. */
+export function jobAvailable(
+  job: Pick<Job, "status" | "publicEligible" | "applicationDeadline">,
+  now = Date.now(),
+) {
+  return (
+    job.status === "active" &&
+    job.publicEligible !== false &&
+    (!job.applicationDeadline ||
+      (Number.isFinite(Date.parse(job.applicationDeadline)) &&
+        Date.parse(job.applicationDeadline) > now))
+  );
+}
+
+// ATS labels sometimes mix work arrangement into a comma-separated address.
+// Omit invalid regions; never infer a state from an office city.
+const geographicRegion = (state?: string) => {
+  const geographic = state
+    ?.split(",")
+    .map((part) => part.trim())
+    .filter(
+      (part) =>
+        part && !/^(?:on[ -]?site|hybrid|(?:fully |100% )?remote)$/i.test(part),
+    )
+    .join(", ");
+  return geographic || undefined;
+};
+
 export function jobPosting(job: Job, description: string) {
-  if (job.publicEligible === false) return null;
+  if (!jobAvailable(job)) return null;
   const posted = job.postedAt && new Date(job.postedAt);
   const locations = job.locations.filter(
-    (l) => l.country && (l.city || l.state),
+    (l) => l.country && (l.city || geographicRegion(l.state)),
   );
   // A normalized remote flag alone is not proof of fully remote eligibility.
   const remote =
     job.remoteType === "remote" &&
     /(?:fully remote|100% remote)/i.test(description);
   if (
-    job.status !== "active" ||
     !["employer", "admin"].includes(job.postedAtProvenance || "") ||
-    (!!job.applicationDeadline &&
-      (!Number.isFinite(Date.parse(job.applicationDeadline)) ||
-        Date.parse(job.applicationDeadline) <= Date.now())) ||
     !job.title ||
     !job.companyId?.name ||
     !description.replace(/<[^>]*>/g, "").trim() ||
@@ -69,7 +93,7 @@ export function jobPosting(job: Job, description: string) {
           address: {
             "@type": "PostalAddress",
             addressLocality: l.city,
-            addressRegion: l.state,
+            addressRegion: geographicRegion(l.state),
             addressCountry: l.country,
           },
         }))

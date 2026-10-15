@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import ts from "typescript";
+import { compileFixture } from "./location-fixtures.mjs";
 
 const source = (path) => readFile(new URL(path, import.meta.url), "utf8");
 const url = (code) =>
@@ -321,4 +322,155 @@ test("original date provenance, deadlines and employer identity remain truthful"
   );
   assert.match(metadata.title, /at Distinct Employer Identity/);
   assert.equal(metadata.openGraph.title, metadata.title);
+});
+
+test("expired or malformed deadlines share one availability decision", async () => {
+  const now = Date.parse("2026-10-15T12:00:00Z");
+  const job = { status: "active", publicEligible: true };
+  assert.equal(jobs.jobAvailable(job, now), true);
+  for (const overrides of [
+    { status: "closed" },
+    { publicEligible: false },
+    { applicationDeadline: "2026-10-15T12:00:00Z" },
+    { applicationDeadline: "2026-10-14T12:00:00Z" },
+    { applicationDeadline: "invalid" },
+  ])
+    assert.equal(jobs.jobAvailable({ ...job, ...overrides }, now), false);
+  assert.equal(
+    jobs.jobAvailable(
+      { ...job, applicationDeadline: "2026-10-16T12:00:00Z" },
+      now,
+    ),
+    true,
+  );
+  const detail = await source("../components/pages/JobDetailContent.tsx");
+  assert.match(detail, /const available = jobAvailable\(job\)/);
+  assert.match(detail, /const canApply = jobAvailable\(job\)/);
+  assert.match(detail, /closed \? "Closed: " : "Unavailable: "/);
+});
+
+test("structured job addresses omit work arrangements but preserve real regions", () => {
+  const job = {
+    title: "Engineer",
+    status: "active",
+    postedAt: "2025-01-01",
+    postedAtProvenance: "employer",
+    applicationUrl: "https://example.com/apply",
+    companyId: { name: "Example" },
+  };
+  for (const state of [
+    "Onsite",
+    "on-site",
+    "Hybrid",
+    " remote ",
+    "fully remote",
+    "100% remote",
+    "Karnataka",
+    "Karnataka, Onsite",
+  ]) {
+    const schema = jobs.jobPosting(
+      { ...job, locations: [{ city: "Bengaluru", state, country: "India" }] },
+      "Build services",
+    );
+    const address = JSON.parse(JSON.stringify(schema)).jobLocation[0].address;
+    assert.equal(address.addressLocality, "Bengaluru");
+    assert.equal(address.addressCountry, "India");
+    assert.equal(
+      address.addressRegion,
+      state.startsWith("Karnataka") ? "Karnataka" : undefined,
+    );
+  }
+});
+
+test("directory pages have distinct canonicals; filters are noindex", () => {
+  assert.equal(
+    seo.companyDirectoryMetadata(1, false).alternates.canonical,
+    "/companies",
+  );
+  const second = seo.companyDirectoryMetadata(2, false);
+  assert.equal(second.alternates.canonical, "/companies?page=2");
+  assert.match(second.title, /Page 2/);
+  assert.equal(second.robots, undefined);
+  assert.equal(seo.companyDirectoryMetadata(2, true).robots.index, false);
+});
+
+test("directory metadata follows pagination without fetching the catalog", async () => {
+  const code = (await source("../app/companies/page.tsx"))
+    .replace(/import[\s\S]*?from "[^"]+";/g, "")
+    .replace("export default async function", "async function");
+  globalThis.directoryMetadataFixture = {
+    companyDirectoryMetadata: seo.companyDirectoryMetadata,
+  };
+  try {
+    const { generateMetadata } = await import(
+      compileFixture(`
+      const {companyDirectoryMetadata}=globalThis.directoryMetadataFixture;
+      const listCompanyPage=()=>{throw Error("metadata must not fetch inventory")};
+      ${code}
+    `)
+    );
+    const metadata = await generateMetadata({
+      searchParams: Promise.resolve({ page: "2" }),
+    });
+    assert.equal(metadata.alternates.canonical, "/companies?page=2");
+    assert.equal(metadata.robots, undefined);
+  } finally {
+    delete globalThis.directoryMetadataFixture;
+  }
+});
+
+test("job snippets distinguish employer closure from unavailable publication", async () => {
+  const code = (
+    await source("../components/pages/JobDetailContent.tsx")
+  ).replace(/import[\s\S]*?from "[^"]+";/g, "");
+  const fixture = {
+    ...jobs,
+    jobMetadata: seo.jobMetadata,
+    concise: seo.concise,
+    getJob: async () => globalThis.jobMetadataFixture.job,
+  };
+  globalThis.jobMetadataFixture = fixture;
+  try {
+    const { generateMetadata } = await import(
+      compileFixture(`
+      const {jobAvailable,deadlineExpired,jobMetadata,concise,getJob}=globalThis.jobMetadataFixture;
+      const parseJobSlug=()=>"012345678901234567890123", jobSlug=()=>"test-role-012345678901234567890123";
+      class NotFoundError extends Error {}
+      ${code}
+    `)
+    );
+    for (const [overrides, prefix, phrase] of [
+      [{ status: "closed" }, "Closed:", "This opening is closed"],
+      [
+        { applicationDeadline: "2000-01-01" },
+        "Closed:",
+        "This opening is closed",
+      ],
+      [
+        { publicEligible: false },
+        "Unavailable:",
+        "This listing is unavailable",
+      ],
+      [
+        { applicationDeadline: "invalid" },
+        "Unavailable:",
+        "This listing is unavailable",
+      ],
+      [{}, "Engineer at", "Read requirements and apply directly"],
+    ]) {
+      fixture.job = {
+        title: "Engineer",
+        status: "active",
+        companyId: { name: "Example" },
+        ...overrides,
+      };
+      const metadata = await generateMetadata({
+        params: Promise.resolve({ jobSlug: "test-role" }),
+      });
+      assert.ok(metadata.title.startsWith(prefix), metadata.title);
+      assert.ok(metadata.description.includes(phrase), metadata.description);
+    }
+  } finally {
+    delete globalThis.jobMetadataFixture;
+  }
 });
