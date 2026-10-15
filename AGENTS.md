@@ -14,6 +14,15 @@ Next.js 16 App Router + React 19 + Tailwind 4 UI for **REERHUB** (reerhub.com) �
 
 Self-contained repo: product, deployment, design, and decisions live in README and `docs/`. Sibling `reerhub-backend` repo is a separate checkout — never assume shared files. Parent folder is workspace only.
 
+## Context loading (every session)
+
+- Start with this file and the current user request; check branch/status before editing. Reuse context already available in this chat. Read only the relevant repository unless the task crosses the API boundary.
+- In a new chat, recover recent work before editing: inspect `git status --short`, `git log -5 --oneline`, and the DECISIONS heading list. Read the latest dated entries and entries relevant to the request (dates may appear anywhere in headings); search for follow-up/superseding entries and outstanding limitations. Use the relevant current guide for implemented behavior. Check open PR/CI state when release status matters; disclose any state you cannot verify. Do not assume a fresh chat remembers previous sessions.
+- Load documentation by task: `README.md` for setup, architecture and product/API workflows; `docs/04-deployment.md` for environments/releases; `docs/design/design-system.md` for UI work; `docs/DECISIONS.md` for historical rationale, prior validation or conflicting guidance. Read relevant sections, not every guide in full.
+- For history, first list headings with `rg -n '^## ' docs/DECISIONS.md`, then search task terms with `rg -n -i 'term|related-term' docs/DECISIONS.md`. Read complete matching entries using bounded `sed -n 'START,ENDp'` ranges. Search synonyms and later related entries before concluding; entries are not necessarily chronological. If scope or conflicts remain unclear, broaden the read, including the full file when needed.
+- Treat this file and current guides as the working summary; decisions retain dated evidence. Check current code/configuration and later explicit decisions when they conflict. Historical release approval never authorizes a new release. Verify branch, CI and deployment state live when relevant; do not reuse dated counts or test results as current proof.
+- Before finishing, update the existing guide affected by a durable change. Keep active constraints here, implementation detail in the relevant guide, and concise dated rationale/validation in DECISIONS. Record supersession explicitly; preserve history. Avoid duplicated narratives, routine session transcripts and new memory/TODO files. Do not claim a check or release that was not performed.
+
 ## Runtime
 
 - **Node 24** (`.nvmrc` + `engines`; Node 20 crashes on jsdom). `npm run dev` → `:3000` (needs backend at `:8000` for data).
