@@ -1,4 +1,8 @@
 export const ANALYTICS_EVENTS = [
+  "search_submit",
+  "empty_results",
+  "signup_prompt_click",
+  "outbound_apply",
   "discovery",
   "login",
   "save_role",
@@ -45,6 +49,11 @@ export function safeAnalyticsEvent(
   return {
     name,
     params: {
+      ...(["zero", "one-to-ten", "eleven-plus"].includes(
+        input.result_bucket as string,
+      )
+        ? { result_bucket: input.result_bucket }
+        : {}),
       ...(PAGE_FAMILIES.includes(input.page_family as PageFamily)
         ? { page_family: input.page_family }
         : {}),

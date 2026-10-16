@@ -5,9 +5,11 @@ import { navigateAwayFromPublicTag, track } from "@/lib/analytics";
 import { loadCheckout } from "@/lib/checkout-script";
 import Link from "@/components/AppLink";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
+  getMatchAvailability,
+  type MatchAvailability,
   beginCheckout,
   cancelSubscription,
   getBilling,
@@ -55,6 +57,33 @@ export default function BillingControls({
   const pathname = usePathname();
   const [billing, setBilling] = useState<BillingState | null>(null);
   const [busy, setBusy] = useState(false);
+  const [availability, setAvailability] = useState<MatchAvailability | null>(
+    null,
+  );
+  const [availabilityError, setAvailabilityError] = useState("");
+  const availabilityPanel = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (availability || availabilityError) availabilityPanel.current?.focus();
+  }, [availability, availabilityError]);
+  const checkAvailability = async () => {
+    if (!user) {
+      const href = `/login?next=${encodeURIComponent(billingPlanHref(planId))}`;
+      if (!navigateAwayFromPublicTag(href)) router.push(href);
+      return;
+    }
+    setBusy(true);
+    setAvailabilityError("");
+    try {
+      setAvailability(await getMatchAvailability());
+    } catch {
+      setAvailability(null);
+      setAvailabilityError(
+        "We couldn’t check current matches. Retry before starting checkout.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [planId, setPlanId] = useState<PlanId>(initialPlan);
   useEffect(() => {
@@ -79,6 +108,17 @@ export default function BillingControls({
     }
     setBusy(true);
     try {
+      // Recheck at the explicit checkout click; stale counts cannot bypass readiness.
+      const fresh = await getMatchAvailability();
+      if (
+        !fresh.profileReady ||
+        (availability?.strongMatchCount !== 0 && fresh.strongMatchCount === 0)
+      ) {
+        setAvailability(fresh);
+        setBusy(false);
+        return;
+      }
+      setAvailability(fresh);
       await loadCheckout();
       const data = await beginCheckout(planId);
       if (data.checkout)
@@ -314,6 +354,92 @@ export default function BillingControls({
           );
         })}
       </div>
+      {!isLive && (availability || availabilityError) && (
+        <section
+          className="surface-panel mt-6 p-6"
+          aria-label="Pro match availability"
+          ref={availabilityPanel}
+          tabIndex={-1}
+          aria-live="polite"
+        >
+          <h2 className="font-semibold text-xl text-ink">
+            Your current match availability
+          </h2>
+          {availabilityError ? (
+            <p className="mt-3" role="alert">
+              {availabilityError}
+            </p>
+          ) : (
+            availability && (
+              <>
+                {!availability.profileReady ? (
+                  <>
+                    <p className="mt-3">
+                      Complete {availability.missingProfileFields.join(", ")} in
+                      your free profile before starting Pro.
+                    </p>
+                    <Link
+                      href={`/dashboard/profile?trialPlan=${planId}`}
+                      className="btn-primary mt-4"
+                    >
+                      Complete free profile
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-3">
+                      {availability.strongMatchCount} verified strong{" "}
+                      {availability.strongMatchCount === 1
+                        ? "match"
+                        : "matches"}{" "}
+                      at 75%+ relevance.
+                    </p>
+                    <p className="mt-2 text-sm">
+                      Checked{" "}
+                      {new Date(availability.checkedAt).toLocaleString(
+                        "en-IN",
+                        { timeZone: "Asia/Kolkata" },
+                      )}{" "}
+                      IST. Availability changes; relevance is not hiring
+                      probability.
+                    </p>
+                    {availability.strongMatchCount === 0 && (
+                      <p className="mt-3">
+                        We recommend continuing free browsing until suitable
+                        roles become available.
+                      </p>
+                    )}
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <Link href="/dashboard/jobs" className="btn-secondary">
+                        Continue free browsing
+                      </Link>
+                      <button
+                        className="btn-primary"
+                        disabled={busy || !!subscription?.checkoutNeedsReview}
+                        onClick={start}
+                      >
+                        {availability.strongMatchCount === 0
+                          ? "Continue anyway · "
+                          : "Start 7-day free trial · "}
+                        {selected.name} {selected.price}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </>
+            )
+          )}
+          {availabilityError && (
+            <button
+              className="btn-secondary mt-4"
+              disabled={busy}
+              onClick={checkAvailability}
+            >
+              Retry availability check
+            </button>
+          )}
+        </section>
+      )}
       <Reveal>
         <div className="grid md:grid-cols-[1fr_.9fr] gap-5 mt-6">
           <section className="bg-white rounded-3xl border border-slate-200 p-7 shadow-card">
@@ -355,7 +481,9 @@ export default function BillingControls({
               </p>
             )}
             <button
-              onClick={isLive ? () => setConfirmCancel(true) : start}
+              onClick={
+                isLive ? () => setConfirmCancel(true) : checkAvailability
+              }
               disabled={
                 loading ||
                 busy ||
@@ -373,7 +501,7 @@ export default function BillingControls({
                   ? subscription?.cancelledAt
                     ? "Renewal cancelled"
                     : "Cancel renewal"
-                  : `Start 7-day free trial · ${selected.name} ${selected.price}`}
+                  : `Check match availability · ${selected.name} ${selected.price}`}
             </button>
             {confirmCancel && (
               <div
@@ -448,18 +576,19 @@ export default function BillingControls({
               Spend your time on the roles that fit.
             </h2>
             <p className="text-white/70 mt-3 max-w-md mx-auto relative">
-              Start your trial, complete your profile, and review your strongest
+              Complete your free profile, check current availability, then
+              choose whether to start your trial and review your strongest
               available matches. Daily emails include only verified Profile
               matches at 75%+ relevance.
             </p>
             <button
-              onClick={start}
+              onClick={checkAvailability}
               disabled={loading || busy || !!subscription?.checkoutNeedsReview}
               className="relative mt-7 inline-block px-8 py-3.5 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 transition-all"
             >
               {busy
                 ? "Please wait…"
-                : `Start 7-day free trial · ${selected.name} ${selected.price}`}
+                : `Check match availability · ${selected.name} ${selected.price}`}
             </button>
             <p className="relative text-xs text-white/50 mt-3">
               First charge after trial · cancel any time

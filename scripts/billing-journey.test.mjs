@@ -49,6 +49,18 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       calls.push("load");
     },
     getBilling: async () => ({ subscription: null }),
+    getMatchAvailability: async () => {
+      if (globalThis.billingJourney.availabilityFailure)
+        throw Error("unavailable");
+      return (
+        globalThis.billingJourney.availability || {
+          profileReady: true,
+          missingProfileFields: [],
+          strongMatchCount: 5,
+          checkedAt: new Date().toISOString(),
+        }
+      );
+    },
     beginCheckout: async (plan) => {
       calls.push(plan);
       if (failure) throw Error("Mock provider unavailable");
@@ -120,8 +132,8 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       "const {toast} = globalThis.billingJourney;",
     )
     .replace(
-      /import \{\s*beginCheckout,[\s\S]*?\} from "@\/lib\/auth";/,
-      "const {beginCheckout,cancelSubscription,getBilling,verifyCheckout} = globalThis.billingJourney;",
+      /import \{\s*getMatchAvailability,[\s\S]*?\} from "@\/lib\/auth";/,
+      "const {getMatchAvailability,beginCheckout,cancelSubscription,getBilling,verifyCheckout} = globalThis.billingJourney;",
     )
     .replace(
       'import { useAuth } from "@/components/AuthProvider";',
@@ -175,7 +187,7 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
     );
     await act(async () =>
       [...document.querySelectorAll("button")]
-        .find((n) => n.textContent.includes("Start 7-day"))
+        .find((n) => n.textContent.includes("Check match availability"))
         .click(),
     );
     const login = new URL(routes.at(-1), "https://reerhub.com");
@@ -203,6 +215,37 @@ test("mock Test-mode checkout preserves selected plan, verifies activation and r
       [...document.querySelectorAll("button")].find((n) =>
         n.textContent.includes("Start 7-day"),
       );
+    const check = () =>
+      [...document.querySelectorAll("button")].find((n) =>
+        n.textContent.includes("Check match availability"),
+      );
+    globalThis.billingJourney.availability = {
+      profileReady: false,
+      missingProfileFields: ["skills"],
+      strongMatchCount: null,
+      checkedAt: new Date().toISOString(),
+    };
+    await act(async () => check().click());
+    assert.match(document.body.textContent, /Complete skills/);
+    assert.equal(calls.length, 0);
+    globalThis.billingJourney.availabilityFailure = true;
+    await act(async () => check().click());
+    assert.match(document.body.textContent, /couldn’t check/);
+    assert.equal(calls.length, 0);
+    globalThis.billingJourney.availabilityFailure = false;
+    globalThis.billingJourney.availability = {
+      profileReady: true,
+      missingProfileFields: [],
+      strongMatchCount: 0,
+      checkedAt: new Date().toISOString(),
+    };
+    await act(async () => check().click());
+    assert.match(document.body.textContent, /Continue anyway/);
+    assert.equal(calls.length, 0);
+    delete globalThis.billingJourney.availability;
+    await act(async () => check().click());
+    assert.match(document.body.textContent, /5 verified strong matches/);
+    assert.equal(calls.length, 0);
     failure = true;
     await act(async () => start().click());
     assert.ok(errors.includes("Mock provider unavailable"));

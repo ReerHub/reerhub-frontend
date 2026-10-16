@@ -222,12 +222,18 @@ function Dashboard({ view }: { view: "discover" | "saved" | "matches" }) {
       </div>
     );
   return (
-    <div className="dashboard-page page-container py-9 sm:py-12">
-      <div className="mb-8 flex flex-wrap items-start justify-between gap-5">
+    <div
+      className={`dashboard-page page-container ${view === "discover" ? "discovery-page py-4 sm:py-8" : "py-9 sm:py-12"}`}
+    >
+      <div
+        className={`flex flex-wrap items-start justify-between ${view === "discover" ? "mb-4 gap-2" : "mb-8 gap-5"}`}
+      >
         <div>
-          <p className="mb-2 text-sm font-semibold text-primary-deep">
-            YOUR WORKSPACE
-          </p>
+          {view !== "discover" && (
+            <p className="mb-2 text-sm font-semibold text-primary-deep">
+              YOUR WORKSPACE
+            </p>
+          )}
           <h1 className="font-display text-3xl font-bold tracking-tight text-ink">
             {view === "matches"
               ? "Your matches"
@@ -235,7 +241,7 @@ function Dashboard({ view }: { view: "discover" | "saved" | "matches" }) {
                 ? "Saved roles"
                 : "Find jobs"}
           </h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
+          <p className="mt-2 text-sm leading-6 text-slate-600">
             {view === "matches"
               ? "A little clarity about where your skills fit."
               : view === "saved"
@@ -243,7 +249,14 @@ function Dashboard({ view }: { view: "discover" | "saved" | "matches" }) {
                 : "Explore official openings and take your next step."}
           </p>
         </div>
-        <Link href="/profile" className="btn-secondary">
+        <Link
+          href="/profile"
+          className={
+            view === "discover"
+              ? "inline-flex min-h-11 items-center gap-2 text-sm text-primary"
+              : "btn-secondary"
+          }
+        >
           <Icon name="user" className="h-4 w-4" />
           Edit my profile
         </Link>

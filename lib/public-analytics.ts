@@ -13,6 +13,11 @@ const publicPaths = new Set([
   "/delhi-jobs",
   "/mumbai-jobs",
   "/remote-jobs",
+  "/react-jobs",
+  "/nodejs-jobs",
+  "/python-jobs",
+  "/java-jobs",
+  "/typescript-jobs",
   "/backend-jobs",
   "/frontend-jobs",
   "/full-stack-jobs",
@@ -42,6 +47,30 @@ export function isPublicAnalyticsPath(pathname: string): boolean {
 /** Reject credentials even if an unexpected link places them on a public route. */
 export function isPublicAnalyticsUrl(url: URL): boolean {
   if (!isPublicAnalyticsPath(url.pathname)) return false;
+  if (
+    (url.pathname === "/jobs" || url.pathname.endsWith("-jobs")) &&
+    url.searchParams.size
+  )
+    return false;
+  if (
+    [...url.searchParams.keys()].some((key) =>
+      [
+        "q",
+        "city",
+        "skills",
+        "techRole",
+        "techTrack",
+        "companyId",
+        "remoteType",
+        "seniority",
+        "earlyCareer",
+        "employmentType",
+        "sort",
+        "hiring",
+      ].includes(key),
+    )
+  )
+    return false;
   return ![...url.searchParams.keys()].some((key) =>
     /token|email|password|secret|code|session|authorization/i.test(key),
   );

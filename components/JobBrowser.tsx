@@ -2,6 +2,7 @@
 
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { track, navigateAwayFromPublicTag } from "@/lib/analytics";
 import toast from "react-hot-toast";
 import CatalogNotice, { catalogInitializing } from "./CatalogNotice";
 import JobCard from "@/components/JobCard";
@@ -112,7 +113,11 @@ function filtersFromSearchParams(
     seniority: sp.get("seniority") ?? "",
     employmentType: sp.get("employmentType") ?? "",
     earlyCareer: sp.get("earlyCareer") ?? "",
-    sort: sp.get("sort") === "az" ? "az" : "",
+    sort: ["az", "posted", "discovered", "updated"].includes(
+      sp.get("sort") || "",
+    )
+      ? sp.get("sort")!
+      : "",
     locationScope: locationScopeFromParams(sp),
   };
 }
@@ -290,6 +295,7 @@ export default function JobBrowser({
       if (pathname === "/dashboard") sp.set("view", "discover");
       const qs = sp.toString();
       const url = `${pathname}${qs ? `?${qs}` : ""}`;
+      if (navigateAwayFromPublicTag(url)) return;
       if (companyId) router.push(url, { scroll: false });
       else window.history.pushState(null, "", url);
     },
@@ -408,6 +414,7 @@ export default function JobBrowser({
     (overrides?: Partial<Filters>) => {
       if (searchTimer.current) clearTimeout(searchTimer.current);
       searchTimer.current = null;
+      track("search_submit", { page_family: "discovery" });
       setSearched(true);
       setLoading(true);
       const next = overrides
@@ -430,6 +437,20 @@ export default function JobBrowser({
     return jobs.filter((j) => savedSet.has(j._id));
   }, [jobs, savedOnly, savedIds, savedSet]);
 
+  useEffect(() => {
+    if (
+      !authLoading &&
+      !loading &&
+      !error &&
+      jobs.length === 0 &&
+      catalog?.catalogStatus === "ready"
+    )
+      track("empty_results", {
+        page_family: "discovery",
+        result_bucket: "zero",
+      });
+  }, [authLoading, loading, error, jobs.length, catalog?.catalogStatus]);
+
   return (
     <div>
       {!loading && !error && <CatalogNotice data={catalog} />}
@@ -451,7 +472,7 @@ export default function JobBrowser({
           onClear={clearAll}
         />
       )}
-      <div className="flex flex-wrap items-end justify-between gap-3 mb-5 mt-10">
+      <div className="flex flex-wrap items-end justify-between gap-3 mb-4 mt-5">
         <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
           {searched ? "Results" : heading}
         </h2>

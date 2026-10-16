@@ -117,7 +117,7 @@ export default function Navbar({ sessionHint = false }) {
             ))}
           </nav>
         )}
-        {user && (
+        {user && pathname !== "/dashboard/jobs" && (
           <form
             className="workspace-top-search focus-field"
             role="search"

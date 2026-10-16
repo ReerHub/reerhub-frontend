@@ -57,6 +57,7 @@ export default function DiscoveryPrompt({
       </div>
       <Link
         href={`/login?next=${encodeURIComponent(next)}`}
+        data-signup-prompt="true"
         className="btn-primary min-h-11 shrink-0 max-w-full text-center"
       >
         {more ? "Sign in to view all roles" : "Create a free account"}
