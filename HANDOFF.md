@@ -1,23 +1,26 @@
 # REERHUB frontend handoff
 
-Updated: 2026-10-16 (Asia/Kolkata). Verify Git and PR state before continuing.
+Updated: 2026-10-16 (Asia/Kolkata). Verify Git/CI before continuing.
 
-## Goal and progress
+## Goal and status
 
-Skill discovery, employer breadcrumbs and crawl reliability are implemented on `feat/discovery-crawl-reliability`. Owner explicitly authorizes this scoped release after passing checks. Backend must ship before frontend. Earlier continuity work is complete (backend #104 / frontend #119); preserve existing startup and approval rules.
+Discovery clarity and pre-trial confidence are implemented on `feat/discovery-trial-confidence`, based on current origin/main. Local validation passed; scoped PR creation/CI and owner merge approval are next. Previous discovery/crawl release (backend #105, frontend #120) remains deployed. No new production release has occurred.
 
-## Completed and verification
+## Completed
 
-- Five skill hubs, company breadcrumbs, lightweight public status API, real missing-company/directory-range responses, and unavailable preflights; canonical job URLs and guest/member boundaries preserved.
-- 2026-10-16: 188 backend tests on disposable localhost MongoDB; 123 frontend regressions; lint/type checks and standard production build passed. Synthetic desktop/mobile, initial HTML, 404/308, and outage/recovery checks passed. No live production outage was induced.
-- Warm fixture reads: one status + one full detail + one related list; local timing is not production performance evidence.
+- Evidence-backed selected-skill explanations, posted/discovered sorts with legacy compatibility, official posting references, verified experience/salary and compact mobile discovery/early detail facts.
+- Authenticated Free/Pro availability count without ranked jobs/history writes; explicit readiness/check/recheck/checkout UI, zero-match warning and selected-plan return from profile.
+- Consent-based bounded public funnel events; no tags/events on member/auth/admin or filtered/noindex pages. No GA/GTM account settings changed; real provider receipt remains unverified.
+- Official Zenoti feed confirms three separate posting IDs; preserved all URLs. Existing skill/city links suffice; no combination routes or data cleanup.
 
-## Next / limitations
+## Verification (2026-10-16)
 
-- Review final diff/CI, release backend then frontend, verify deployed commits and live behavior, and delete merged feature branches locally/remotely. Check PR for actual release status rather than assuming deployment from this checkpoint.
-- Failures after a successful preflight can still occur during streaming. Search/indexing/AI citation gains are not guaranteed.
-- Original homepage copy, design and animations are unchanged. Previous catalog outage status follow-up is superseded by this preflight implementation, subject to the post-preflight race.
+191 backend tests on isolated localhost replica set, 127 frontend tests, both lints, frontend TypeScript and standard Turbopack production build passed. Both audits: zero vulnerabilities. Synthetic desktop/390px/320px checks: no overflow, first job title visible at 390px (y=714), early facts and plan-preserving count-only pre-trial check. No real payment/email/source sync or production write.
 
-## Resume references
+## Next and constraints
 
-README describes the new contract; docs/DECISIONS.md preserves rationale and dated evidence. Companion repository `reerhub-backend` has its own root HANDOFF.md; consult only for shared work. Do not print credentials, run manual source syncs or push directly to main. Future unrelated PRs require owner approval.
+Open/review backend and frontend PRs; require owner approval before merging. Deploy backend first, verify through Render/Vercel MCP and read-only live samples, then remove merged branches locally/remotely. Do not claim production verification from fixtures. Existing ten-result guest cap, public Apply access, original homepage copy/animations and membership terms remain intact. No traffic/conversion outcome is established.
+
+## References / preserved work
+
+README and docs/DECISIONS.md describe contracts and rationale. Companion `reerhub-backend/HANDOFF.md` covers the other half. Preserve backend untracked `data/company-imports/2026-10-15-india-tech-batch-03.json`; it was not imported. Prior local checkpoint updates are incorporated here. Never print credentials or push directly to main.

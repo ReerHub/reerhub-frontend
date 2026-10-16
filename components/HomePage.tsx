@@ -50,6 +50,7 @@ export default function HomePage({
               that moves you.
             </p>
             <form
+              data-public-search="true"
               action="/jobs"
               method="get"
               role="search"

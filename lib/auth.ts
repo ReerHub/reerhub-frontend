@@ -270,6 +270,32 @@ export type Recommendation = {
   };
 };
 
+export type MatchAvailability = {
+  profileReady: boolean;
+  missingProfileFields: string[];
+  strongMatchCount: number | null;
+  checkedAt: string;
+};
+export const getMatchAvailability = async () => {
+  const data = await request<MatchAvailability>(
+    "/recommendations/availability",
+    { signal: AbortSignal.timeout(15000) },
+  );
+  if (
+    !data ||
+    typeof data.profileReady !== "boolean" ||
+    !Array.isArray(data.missingProfileFields) ||
+    !data.missingProfileFields.every((field) => typeof field === "string") ||
+    !Number.isFinite(Date.parse(data.checkedAt)) ||
+    (data.profileReady
+      ? !Number.isSafeInteger(data.strongMatchCount) ||
+        data.strongMatchCount! < 0
+      : data.strongMatchCount !== null)
+  )
+    throw new Error("Match availability is temporarily unavailable");
+  return data;
+};
+
 export const getRecommendations = (
   minScore = 75,
   signal?: AbortSignal,

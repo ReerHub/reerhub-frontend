@@ -49,6 +49,10 @@ const company = {
 const job = {
   _id: "222222222222222222222222",
   title: "Senior Backend Engineer",
+  externalJobId: "REQ-FIXTURE-101",
+  department: "Engineering",
+  matchedSkills: ["Node.js"],
+  salary: { min: 1200000, max: 2000000, currency: "INR", period: "year" },
   companyId: company,
   techTrack: "software",
   techRole: "Backend Engineer",
@@ -748,6 +752,25 @@ const server = http.createServer(async (req, res) => {
   }
   if (path === "/billing") return json({ subscription });
   if (path === "/fixture-stats") return json(fixtureRequests);
+  if (path === "/recommendations/availability") {
+    if (state === "anonymous") return json(null, 401);
+    if (dashboardMode === "error") return json(null, 503);
+    const profileReady =
+      user.profile.skills.length >= 3 &&
+      !!user.profile.techTrack &&
+      !!user.profile.rolePreference &&
+      !!user.profile.locationPreference;
+    return json({
+      profileReady,
+      missingProfileFields: profileReady ? [] : ["at least 3 skills"],
+      strongMatchCount: profileReady
+        ? dashboardMode === "empty"
+          ? 0
+          : 6
+        : null,
+      checkedAt: new Date().toISOString(),
+    });
+  }
   if (path === "/recommendations") {
     fixtureRequests.recommendations++;
     if (fixtureDelay)

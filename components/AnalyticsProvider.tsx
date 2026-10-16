@@ -12,6 +12,7 @@ import {
 } from "@/lib/analytics";
 import { useAuth } from "@/components/AuthProvider";
 import { isPublicAnalyticsPath } from "@/lib/public-analytics";
+import { listenPublicFunnel } from "@/lib/public-funnel";
 import { pageFamily } from "@/lib/analytics-events";
 export default function AnalyticsProvider() {
   const pathname = usePathname();
@@ -45,6 +46,7 @@ export default function AnalyticsProvider() {
     const restored = (event: PageTransitionEvent) => {
       if (event.persisted && publicTagLoaded()) window.location.reload();
     };
+    const unlistenFunnel = listenPublicFunnel(track);
     window.addEventListener("pageshow", restored);
     window.addEventListener("message", analyticsReady);
     const unsubscribe = subscribeConsent(() => {
@@ -54,6 +56,7 @@ export default function AnalyticsProvider() {
     return () => {
       active = false;
       unsubscribe();
+      unlistenFunnel();
       window.removeEventListener("message", analyticsReady);
       window.removeEventListener("pageshow", restored);
     };

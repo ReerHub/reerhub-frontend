@@ -222,6 +222,10 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
   );
   source = source
     .replace(
+      /import \{ resolvePlanId \} from "@\/lib\/billing-plans";/,
+      "const resolvePlanId=()=>'pro-monthly';",
+    )
+    .replace(
       'import { WORKSPACE_NAVIGATION_EVENT } from "@/lib/workspace";',
       'const WORKSPACE_NAVIGATION_EVENT="reerhub-workspace-navigation";',
     )
@@ -230,8 +234,8 @@ test("legacy editor requires explicit preferences, supports discard and failed-s
       "const trackEvent = () => {};",
     )
     .replace(
-      /import \{ useRouter \} from "next\/navigation";/,
-      "const useRouter = () => ({push() {}});",
+      /import \{ useRouter, useSearchParams \} from "next\/navigation";/,
+      "const useRouter = () => ({push() {}}); const useSearchParams=()=>new URLSearchParams();",
     )
     .replace(
       /import Link from "(?:next\/link|@\/components\/AppLink)";/,

@@ -2,7 +2,8 @@
 
 import { track as trackEvent } from "@/lib/analytics";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { resolvePlanId } from "@/lib/billing-plans";
 import { WORKSPACE_NAVIGATION_EVENT } from "@/lib/workspace";
 import Link from "@/components/AppLink";
 import toast from "react-hot-toast";
@@ -73,6 +74,7 @@ function Editor({
   options: ProfileOptions;
 }) {
   const { refresh } = useAuth();
+  const trialPlan = useSearchParams().get("trialPlan");
   const router = useRouter();
   const [leaveTarget, setLeaveTarget] = useState<string | null>(null);
   const leaveDialog = useRef<HTMLDialogElement>(null);
@@ -604,6 +606,14 @@ function Editor({
               <p className={styles.saveError} role="alert">
                 {saveError}
               </p>
+            )}
+            {!dirty && trialPlan && (
+              <Link
+                href={`/dashboard/billing?plan=${resolvePlanId(trialPlan)}`}
+                className={styles.savedLink}
+              >
+                Check Pro match availability ↗
+              </Link>
             )}
             {saved && !dirty && (
               <Link href="/dashboard" className={styles.savedLink}>

@@ -88,7 +88,10 @@ export default function SearchFilters({
   add("seniority", `Level: ${filters.seniority}`);
   add("earlyCareer", `Early career: ${filters.earlyCareer}`);
   add("employmentType", `Employment: ${filters.employmentType}`);
-  add("sort", "Sort: Title A–Z");
+  add(
+    "sort",
+    `Sort: ${filters.sort === "az" ? "Title A–Z" : filters.sort === "discovered" ? "Recently discovered" : "Recently posted"}`,
+  );
   const count = chips.filter((chip) =>
     secondaryKeys.some((key) => key === chip.key),
   ).length;
@@ -159,7 +162,13 @@ export default function SearchFilters({
           />
         </button>
         <p className={styles.scope}>
-          {filters.sort === "az" ? "Title A–Z" : "Newest first"}
+          {filters.q
+            ? "Search relevance"
+            : filters.sort === "az"
+              ? "Title A–Z"
+              : filters.sort === "discovered"
+                ? "Recently discovered"
+                : "Recently posted"}
         </p>
       </div>
       {chips.length > 0 && (
@@ -355,7 +364,8 @@ export default function SearchFilters({
                 value={draft.sort}
                 onChange={(event) => change("sort", event.target.value)}
               >
-                <option value="">Newest first</option>
+                <option value="">Recently posted</option>
+                <option value="discovered">Recently discovered</option>
                 <option value="az">Title A–Z</option>
               </select>
             </label>

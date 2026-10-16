@@ -13,6 +13,12 @@ const initialPublicDocument =
 export function publicTagLoaded() {
   return Boolean(publicTag);
 }
+// Inventory-gated hubs need a fresh document so their server robots decision
+// is known before any previously loaded third-party tag can run there.
+const inventoryGatedNavigation = (url: URL) =>
+  /^\/(?:react|nodejs|python|java|typescript|fresher|internship)-jobs$/.test(
+    url.pathname,
+  ) && url.pathname !== window.location.pathname;
 export function navigateAwayFromPublicTag(
   href: string,
   replace = false,
@@ -21,7 +27,8 @@ export function navigateAwayFromPublicTag(
   const target = new URL(href, window.location.href);
   if (
     target.origin !== window.location.origin ||
-    !isPublicAnalyticsUrl(target)
+    !isPublicAnalyticsUrl(target) ||
+    inventoryGatedNavigation(target)
   ) {
     if (replace) window.location.replace(target.href);
     else window.location.assign(target.href);
@@ -179,7 +186,7 @@ export function startAnalytics(id: string) {
         const url = new URL(link.href);
         if (
           url.origin === window.location.origin &&
-          !isPublicAnalyticsUrl(url)
+          (!isPublicAnalyticsUrl(url) || inventoryGatedNavigation(url))
         ) {
           event.preventDefault();
           event.stopPropagation();
@@ -221,6 +228,10 @@ export function track(
 ) {
   if (
     !analyticsConsent() ||
+    document
+      .querySelector('meta[name="robots"]')
+      ?.getAttribute("content")
+      ?.includes("noindex") ||
     !isPublicAnalyticsUrl(new URL(window.location.href))
   )
     return;
@@ -233,7 +244,14 @@ export function track(
     (window as TagWindow).dataLayer!.push({
       event: payload.name,
       ...payload.params,
-      ...publicPageFields(),
+      ...([
+        "search_submit",
+        "empty_results",
+        "signup_prompt_click",
+        "outbound_apply",
+      ].includes(name)
+        ? {}
+        : publicPageFields()),
     });
     return;
   }

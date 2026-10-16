@@ -1,3 +1,4 @@
+import { experienceLabel, salaryLabel } from "@/lib/job-facts";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Link from "@/components/AppLink";
 import type { Metadata } from "next";
@@ -169,6 +170,8 @@ export default async function JobDetailContent({
     },
     { label: "Employment", value: job.employmentType },
     { label: "Department", value: job.department },
+    { label: "Posting reference", value: job.externalJobId },
+    { label: "Employer salary", value: salaryLabel(job.salary) || undefined },
     { label: "Seniority", value: job.seniority },
     {
       label: "Experience",
@@ -351,6 +354,7 @@ export default async function JobDetailContent({
               <div className="surface-panel p-5">
                 <a
                   href={job.applicationUrl}
+                  data-official-apply={canApply ? "true" : undefined}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-primary w-full"
@@ -371,6 +375,37 @@ export default async function JobDetailContent({
             )}
           </div>
 
+          <section
+            className="surface-panel p-5 mb-4"
+            aria-label="Essential job facts"
+          >
+            <h2 className="font-semibold text-ink">Before you apply</h2>
+            <dl className="mt-3 grid gap-3 sm:grid-cols-2 text-sm">
+              <div>
+                <dt className="text-slate-500">Location</dt>
+                <dd>{locationLabel(job)}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Experience</dt>
+                <dd>
+                  {experienceLabel(job) ||
+                    "Requirement not verified — review the official description"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Work mode</dt>
+                <dd className="capitalize">
+                  {job.remoteType && job.remoteType !== "unknown"
+                    ? job.remoteType
+                    : "Not specified"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Employer salary</dt>
+                <dd>{salaryLabel(job.salary) || "Not specified"}</dd>
+              </div>
+            </dl>
+          </section>
           {(job.skills ?? []).length > 0 && (
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-card mb-4">
               <h2 className="font-bold text-slate-900 text-[15px] mb-4">
@@ -467,6 +502,7 @@ export default async function JobDetailContent({
               </p>
               <a
                 href={job.applicationUrl}
+                data-official-apply={canApply ? "true" : undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-electric text-white rounded-xl font-semibold text-[15px] hover:bg-electric-dark active:bg-electric-deep transition-all shadow-sm"

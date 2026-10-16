@@ -136,6 +136,10 @@ test("company listings upgrade previews, paginate, stay scoped and retry failure
     "utf8",
   );
   source = source
+    .replace(
+      /import \{ track, navigateAwayFromPublicTag \} from "@\/lib\/analytics";/,
+      "const track=()=>{}; const navigateAwayFromPublicTag=()=>false;",
+    )
     .replace('"./CatalogNotice"', JSON.stringify(catalogNoticeUrl))
     .replace('"@/lib/location-scope"', JSON.stringify(scopeUrl))
     .replace(
@@ -374,6 +378,10 @@ test("company directory pagination renders crawlable URLs with filters and membe
     "utf8",
   );
   source = source
+    .replace(
+      /import \{ track, navigateAwayFromPublicTag \} from "@\/lib\/analytics";/,
+      "const track=()=>{}; const navigateAwayFromPublicTag=()=>false;",
+    )
     .replace(
       /import CatalogNotice,[^;]+;/,
       "const CatalogNotice=()=>null; const catalogInitializing=()=>false;",

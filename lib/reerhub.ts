@@ -78,6 +78,9 @@ export type Job = CatalogMetadata & {
   isIndiaRole?: boolean;
   locations: { city?: string; state?: string; country?: string }[];
   skills?: string[];
+  matchedSkills?: string[];
+  externalJobId?: string;
+  salary?: { min?: number; max?: number; currency?: string; period?: string };
   applicationUrl?: string;
   sourceUrl: string;
   postedAt?: string;

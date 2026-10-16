@@ -57,6 +57,8 @@ test("private/admin/auth/error URLs are excluded even with consent", () => {
     "/faq",
     "/billing",
     "/backend-jobs",
+    "/react-jobs",
+    "/typescript-jobs",
     "/companies/test-company",
     "/jobs/engineer-test-1234567890abcdef12345678",
   ])
@@ -75,13 +77,13 @@ test("private/admin/auth/error URLs are excluded even with consent", () => {
     eligibility.isPublicAnalyticsUrl(
       new URL("https://reerhub.com/jobs?q=React&_dbg=1"),
     ),
-    true,
+    false,
   );
 });
 test("main-document GTM requires consent; safe defaults precede one loader and pageviews omit query/fragment", async () => {
   const dom = new JSDOM(
     '<title>Public jobs</title><a href="/login?next=/dashboard">Sign in</a>',
-    { url: "https://reerhub.com/jobs?q=React#results" },
+    { url: "https://reerhub.com/jobs#results" },
   );
   const previous = new Map();
   for (const [key, value] of Object.entries({
@@ -110,6 +112,18 @@ test("main-document GTM requires consent; safe defaults precede one loader and p
     const analytics = await import(compileFixture(source));
     analytics.startAnalytics("GTM-SYNTHETIC1");
     assert.equal(document.querySelectorAll("script").length, 0);
+    for (const name of [
+      "search_submit",
+      "empty_results",
+      "signup_prompt_click",
+      "outbound_apply",
+    ])
+      analytics.track(name, { page_family: "discovery" });
+    assert.equal(
+      window.dataLayer,
+      undefined,
+      "Rejected consent sends no funnel events",
+    );
     consent.saveConsent(true);
     analytics.startAnalytics("bad");
     assert.equal(document.querySelectorAll("script").length, 0);
@@ -152,6 +166,14 @@ test("main-document GTM requires consent; safe defaults precede one loader and p
       page_referrer: "",
       page_title: "Public jobs",
     });
+    const robots = document.createElement("meta");
+    robots.name = "robots";
+    robots.content = "noindex,follow";
+    document.head.appendChild(robots);
+    const beforeNoindex = window.dataLayer.length;
+    analytics.track("outbound_apply", {});
+    assert.equal(window.dataLayer.length, beforeNoindex);
+    robots.remove();
     dom.reconfigure({
       url: "https://reerhub.com/dashboard/profile?token=private",
     });
