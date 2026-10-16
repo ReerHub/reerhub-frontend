@@ -10,7 +10,7 @@ export default function PrivacyPage() {
   return (
     <LegalDocument
       title="Privacy policy"
-      updated="October 14, 2026"
+      updated="October 16, 2026"
       sections={[
         { id: "business-identity", label: "Business identity" },
         { id: "what-we-collect", label: "What we collect" },
@@ -43,6 +43,16 @@ export default function PrivacyPage() {
           <strong> Usage data:</strong> roles you save, pages you visit, and
           basic technical logs (IP address, browser type) for security and
           debugging.
+        </p>
+        <p className="mt-4">
+          Resume uploads are processed temporarily to suggest matching-profile
+          facts. We do not retain the PDF or raw extracted text, send it to an
+          external AI service, or use it for model training. You must confirm or
+          correct the suggested skills and experience and choose your job
+          preferences before saving. We retain only the profile details you save
+          and basic import-version and confirmation-time metadata. Discarding
+          the uploaded file does not delete your confirmed profile; you can
+          update it or delete your account using the controls below.
         </p>
         <p className="mt-4">
           Contact form submissions include the name, email address, topic and

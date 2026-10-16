@@ -67,7 +67,7 @@ export default function ProfileSettings({
     <section className={styles.settings} aria-labelledby="settings-title">
       <div className={styles.settingsHeader}>
         <h2 id="settings-title">Account settings</h2>
-        <p>The details that keep your account yours.</p>
+        <p>Sign-in, data and account controls.</p>
       </div>
       {user.membership?.isPro && (
         <div className={styles.settingsRow}>

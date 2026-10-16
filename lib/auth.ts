@@ -105,7 +105,9 @@ async function doFetch(path: string, init?: RequestInit) {
     ...init,
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      ...(init?.body instanceof FormData
+        ? {}
+        : { "Content-Type": "application/json" }),
       ...(csrf ? { "x-csrf-token": csrf } : {}),
       ...(init?.headers || {}),
     },
@@ -175,12 +177,20 @@ export type ProfileUpdate = Omit<
   Partial<AuthUser["profile"]>,
   "techTrack" | "experienceYears"
 > & {
+  resumeConfirmed?: true;
   name?: string;
   avatarUrl?: string;
   techTrack?: string | null;
   experienceYears?: number | null;
   notificationPreferences?: AuthUser["notificationPreferences"];
 };
+
+export const extractResumeRequest = <T>(form: FormData, signal: AbortSignal) =>
+  request<T>("/users/me/resume-extraction", {
+    method: "POST",
+    body: form,
+    signal,
+  });
 
 export const updateMe = (body: ProfileUpdate) =>
   request<AuthUser>("/users/me", {

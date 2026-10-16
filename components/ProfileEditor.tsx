@@ -24,6 +24,9 @@ import {
 import ProfileSettings from "@/components/ProfileSettings";
 import styles from "@/app/profile/Profile.module.css";
 
+import ResumeUpload from "@/components/ResumeUpload";
+import type { ResumeDraft } from "@/lib/resume";
+
 const signalFields = [
   "techTrack",
   "roles",
@@ -80,6 +83,12 @@ function Editor({
   const leaveDialog = useRef<HTMLDialogElement>(null);
   const allowNavigation = useRef(false);
   const pendingNavigation = useRef<(() => void) | null>(null);
+  const [step, setStep] = useState<
+    "summary" | "upload" | "facts" | "preferences"
+  >(() => (user.profile.skills?.length ? "summary" : "upload"));
+  const [extraction, setExtraction] = useState<ResumeDraft | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
+  const [uploadBusy, setUploadBusy] = useState(false);
   const [draft, setDraft] = useState(() => draftFromUser(user));
   const [baseline, setBaseline] = useState(() =>
     profilePayload(draftFromUser(user)),
@@ -96,7 +105,7 @@ function Editor({
   const dirty =
     JSON.stringify(profilePayload(effective)) !== JSON.stringify(baseline) ||
     Object.keys(profileErrors(effective)).length > 0;
-  const locked = busy || settingsBusy;
+  const locked = busy || settingsBusy || uploadBusy;
   const signals = profileSignals({
     ...user.profile,
     ...draft,
@@ -198,12 +207,49 @@ function Editor({
       setTrackTarget(value);
     else change("techTrack", value);
   }
+  useEffect(() => {
+    const heading = document.querySelector<HTMLElement>(
+      "#resume-profile-form h2",
+    );
+    heading?.setAttribute("tabindex", "-1");
+    heading?.focus();
+  }, [step]);
   function focusField(field: string) {
-    document.getElementById(`pf-${field}`)?.focus();
+    if (!user.profile.skills?.length && !extraction) return;
+    setStep(
+      ["roles", "cities", "techTrack", "techRoles", "targetLocations"].includes(
+        field,
+      )
+        ? "preferences"
+        : "facts",
+    );
+    requestAnimationFrame(() =>
+      document.getElementById(`pf-${field}`)?.focus(),
+    );
   }
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     const current = draft;
+    if (
+      extraction &&
+      profileSignals({
+        ...draft,
+        experienceYears: draft.experienceYears.trim()
+          ? Number(draft.experienceYears)
+          : undefined,
+      }).some((signal) => !signal.complete)
+    ) {
+      setSaveError(
+        "Choose your engineering track, role preference and locations before saving.",
+      );
+      return;
+    }
+    if (step !== "preferences") return;
+    if (extraction && !confirmed) {
+      setSaveError("Confirm extracted facts before saving.");
+      setStep("facts");
+      return;
+    }
     const invalid = {
       ...profileErrors(current),
     };
@@ -215,13 +261,18 @@ function Editor({
     setBusy(true);
     setSaveError("");
     try {
-      const updated = await updateMe(changedProfilePayload(current, baseline));
+      const updated = await updateMe({
+        ...changedProfilePayload(current, baseline),
+        ...(extraction ? { resumeConfirmed: true as const } : {}),
+      });
       if (profileSignals(updated.profile).every((signal) => signal.complete))
         trackEvent("profile_ready", { page_family: "account" }, updated.id);
       const clean = draftFromUser(updated);
       setDraft(clean);
       setBaseline(profilePayload(clean));
       setSaved(true);
+      setExtraction(null);
+      setStep("summary");
       await refresh();
       toast.success("Profile saved");
     } catch (error) {
@@ -249,6 +300,9 @@ function Editor({
     setErrors({});
     setSaveError("");
     setSaved(false);
+    setExtraction(null);
+    setConfirmed(false);
+    setStep("summary");
   }
   function fieldError(field: string) {
     return errors[field] ? (
@@ -269,9 +323,8 @@ function Editor({
       </Link>
       <header className={styles.header}>
         <div>
-          <span className={styles.eyebrow}>YOUR CAREER, YOUR DIRECTION</span>
-          <h1>Edit profile</h1>
-          <p>A few details. A clearer direction for your next role.</p>
+          <h1>Profile &amp; preferences</h1>
+          <p>Your experience, skills and next role—all in one place.</p>
         </div>
         <div className={styles.identity}>
           <span className={styles.avatar} aria-hidden="true">
@@ -283,344 +336,549 @@ function Editor({
           </div>
         </div>
       </header>
-      <div className={styles.layout}>
-        <aside className={styles.readiness} aria-label="Profile readiness">
-          <span className={styles.eyebrow}>YOUR PROFILE SIGNALS</span>
-          <h2>{complete === 5 ? "Ready for matching" : "Make it yours"}</h2>
-          <p>
-            {complete === 5
-              ? "Your essentials are complete. Available roles still depend on current openings."
-              : "Start with the essentials. You can save and finish later."}
-          </p>
-          <div className={styles.progressLabel}>
-            <strong>{complete} of 5 complete</strong>
-            <span>{complete * 20}%</span>
-          </div>
-          <div
-            className={styles.progress}
-            role="progressbar"
-            aria-label="Profile essentials"
-            aria-valuemin={0}
-            aria-valuemax={5}
-            aria-valuenow={complete}
-          >
-            <span style={{ width: `${complete * 20}%` }} />
-          </div>
-          <ul>
-            {signals.map((signal, index) => (
-              <li key={signal.label}>
+      {step !== "summary" && (
+        <ol className={styles.steps} aria-label="Profile setup progress">
+          {[
+            { value: "upload", label: "Upload resume" },
+            { value: "facts", label: "Check details" },
+            { value: "preferences", label: "Job preferences" },
+          ].map((item, index) => (
+            <li
+              key={item.value}
+              aria-current={step === item.value ? "step" : undefined}
+            >
+              <span aria-hidden="true">{index + 1}</span>
+              {item.label}
+            </li>
+          ))}
+        </ol>
+      )}
+      <div
+        className={styles.layout}
+        style={
+          step !== "summary"
+            ? { gridTemplateColumns: "minmax(0,1fr)" }
+            : undefined
+        }
+      >
+        {step === "summary" && (
+          <aside className={styles.readiness} aria-label="Profile readiness">
+            <span className={styles.eyebrow}>PROFILE COMPLETENESS</span>
+            <h2>
+              {complete === 5 ? "Ready for matching" : "Finish your profile"}
+            </h2>
+            <p>
+              {complete === 5
+                ? "Your profile has the essentials for matching."
+                : "Add the missing details to guide your matches."}
+            </p>
+            <div className={styles.progressLabel}>
+              <strong>{complete} of 5 complete</strong>
+              <span>{complete * 20}%</span>
+            </div>
+            <div
+              className={styles.progress}
+              role="progressbar"
+              aria-label="Profile essentials"
+              aria-valuemin={0}
+              aria-valuemax={5}
+              aria-valuenow={complete}
+            >
+              <span style={{ width: `${complete * 20}%` }} />
+            </div>
+            <ul>
+              {signals.map((signal, index) => (
+                <li key={signal.label}>
+                  <button
+                    type="button"
+                    onClick={() => focusField(signalFields[index])}
+                    disabled={locked}
+                  >
+                    <span
+                      className={
+                        signal.complete ? styles.checkComplete : styles.check
+                      }
+                    >
+                      {signal.complete ? (
+                        <Icon name="check" className="h-3.5 w-3.5" />
+                      ) : (
+                        index + 1
+                      )}
+                    </span>
+                    <span>{signal.label}</span>
+                    <span className={styles.signalState}>
+                      {signal.complete ? "Done" : "Add"}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {next >= 0 && (
+              <div className={styles.next}>
+                <span>UP NEXT</span>
                 <button
                   type="button"
-                  onClick={() => focusField(signalFields[index])}
+                  disabled={locked}
+                  onClick={() => focusField(signalFields[next])}
+                >
+                  Add {signals[next].label.toLowerCase()}{" "}
+                  <span aria-hidden="true">↗</span>
+                </button>
+              </div>
+            )}
+            <p className={styles.readinessNote}>
+              Pro uses these details to rank available roles. Match scores are
+              not hiring chances.
+            </p>
+          </aside>
+        )}
+        <form
+          id="resume-profile-form"
+          onSubmit={submit}
+          noValidate
+          className={styles.form}
+        >
+          {step === "summary" && (
+            <section className={styles.section}>
+              <h2>Your saved profile</h2>
+              <span className={styles.summaryLabel}>Skills</span>
+              <ul className={styles.summarySkills} aria-label="Saved skills">
+                {user.profile.skills?.length ? (
+                  user.profile.skills.map((skill) => (
+                    <li key={skill}>{skill}</li>
+                  ))
+                ) : (
+                  <li>No skills saved</li>
+                )}
+              </ul>
+              <p className={styles.summaryExperience}>
+                {user.profile.experienceYears == null
+                  ? "Experience unknown"
+                  : `${user.profile.experienceYears} years of experience`}
+              </p>
+              <dl className={styles.summaryPreferences}>
+                <div>
+                  <dt>Roles</dt>
+                  <dd>
+                    {user.profile.rolePreference === "any"
+                      ? "Any role in your field"
+                      : user.profile.techRoles?.join(", ") || "Not selected"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Location</dt>
+                  <dd>
+                    {user.profile.locationPreference === "all-india"
+                      ? "All India"
+                      : user.profile.targetLocations?.join(", ") ||
+                        "Not selected"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Work mode</dt>
+                  <dd>
+                    {(
+                      {
+                        onsite: "Onsite",
+                        hybrid: "Hybrid",
+                        remote: "Remote",
+                        unknown: "Any",
+                      } as Record<string, string>
+                    )[user.profile.remoteType || "unknown"] || "Any"}
+                  </dd>
+                </div>
+              </dl>
+              <div className={styles.saveActions}>
+                <button
+                  type="button"
+                  className={styles.primary}
+                  onClick={() => setStep("upload")}
                   disabled={locked}
                 >
-                  <span
-                    className={
-                      signal.complete ? styles.checkComplete : styles.check
-                    }
-                  >
-                    {signal.complete ? (
-                      <Icon name="check" className="h-3.5 w-3.5" />
-                    ) : (
-                      index + 1
-                    )}
-                  </span>
-                  <span>{signal.label}</span>
-                  <span className={styles.signalState}>
-                    {signal.complete ? "Done" : "Add"}
-                  </span>
+                  Update resume
                 </button>
-              </li>
-            ))}
-          </ul>
-          {next >= 0 && (
-            <div className={styles.next}>
-              <span>UP NEXT</span>
-              <button
-                type="button"
-                disabled={locked}
-                onClick={() => focusField(signalFields[next])}
-              >
-                Add {signals[next].label.toLowerCase()}{" "}
-                <span aria-hidden="true">↗</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className={styles.secondary}
+                  onClick={() => {
+                    setConfirmed(true);
+                    setStep("facts");
+                  }}
+                  disabled={locked}
+                >
+                  Review saved facts
+                </button>
+                <button
+                  type="button"
+                  className={styles.secondary}
+                  onClick={() => setStep("preferences")}
+                  disabled={locked}
+                >
+                  Change job preferences
+                </button>
+              </div>
+            </section>
           )}
-          <p className={styles.readinessNote}>
-            {dirty
-              ? "Save changes to update your profile."
-              : user.membership?.isPro
-                ? "These details guide your Pro matches."
-                : complete === 5
-                  ? "These essentials can guide your matches if you choose Pro."
-                  : "Complete these essentials to guide matches if you choose Pro."}{" "}
-            Scores describe relevance, not hiring chances.
-          </p>
-        </aside>
-        <form onSubmit={submit} noValidate className={styles.form}>
-          <fieldset disabled={locked} className={styles.section}>
-            <legend className="sr-only">Your next role</legend>
-            <SectionTitle
-              number="01"
-              title="Your next role"
-              description="Tell us where you want to go, not just where you are now."
-            />
-            <div className={styles.field}>
-              <label htmlFor="pf-techTrack">Your engineering track</label>
-              <select
-                id="pf-techTrack"
-                value={draft.techTrack}
-                onChange={(event) => chooseTrack(event.target.value)}
-                {...inputProps("techTrack")}
-              >
-                <option value="">Choose your focus</option>
-                {options.tracks.map((item) => (
-                  <option key={item.value} value={item.value}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-              <p>
-                {track?.description ||
-                  "Choose an area you know or would like to work in."}
-              </p>
-            </div>
-            <fieldset
-              className={styles.preferenceGroup}
-              disabled={!track || locked}
-            >
-              <legend>Roles you are open to</legend>
-              <label>
-                <input
-                  id="pf-roles"
-                  type="radio"
-                  name="role-preference"
-                  checked={draft.rolePreference === "any"}
-                  onChange={() => {
-                    change("rolePreference", "any");
-                    change("techRoles", []);
-                  }}
-                />
-                Any role in this track
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="role-preference"
-                  checked={draft.rolePreference === "selected"}
-                  onChange={() => change("rolePreference", "selected")}
-                />
-                Choose preferred roles
-              </label>
-              <p className={styles.hint}>
-                {!draft.rolePreference &&
-                  "Choose a role preference to complete this essential. "}
-                Not sure about a job title? Any role is a good place to start.
-              </p>
-              {draft.rolePreference === "selected" && (
-                <ProfileOptionPicker
-                  id="pf-techRoles"
-                  label="Preferred roles"
-                  options={track?.roles || []}
-                  values={draft.techRoles}
-                  limit={3}
-                  onChange={(values) => change("techRoles", values)}
-                  error={errors.techRoles}
-                />
-              )}
-            </fieldset>
-            <div className={styles.field}>
-              <label htmlFor="pf-name">Your name</label>
-              <input
-                id="pf-name"
-                value={draft.name}
-                onChange={(event) => change("name", event.target.value)}
-                autoComplete="name"
-                maxLength={120}
-                {...inputProps("name")}
+          {step === "upload" && (
+            <>
+              <ResumeUpload
+                disabled={settingsBusy || busy}
+                onBusy={setUploadBusy}
+                onDraft={(result) => {
+                  setExtraction(result);
+                  setConfirmed(false);
+                  const suggested = options.tracks.find((track) =>
+                    track.roles.some((role) =>
+                      result.facts.roleCandidates.includes(role.value),
+                    ),
+                  );
+                  setDraft((previous) => ({
+                    ...previous,
+                    skills: result.facts.skills.slice(0, 10),
+                    experienceYears:
+                      result.facts.experience.minYears?.toString() ?? "",
+                    techTrack: previous.techTrack || suggested?.value || "",
+                  }));
+                  setStep("facts");
+                }}
               />
-              {fieldError("name")}
-            </div>
-          </fieldset>
-          <fieldset disabled={locked} className={styles.section}>
-            <legend className="sr-only">Your skills</legend>
-            <SectionTitle
-              number="02"
-              title="Your skills"
-              description="Choose the tools and skills you would use in your next role."
-            />
-            <ProfileOptionPicker
-              id="pf-skills"
-              label="Core skills"
-              options={options.skills}
-              values={draft.skills}
-              limit={10}
-              onChange={(values) => change("skills", values)}
-              error={errors.skills}
-              suggestions={track?.suggestedSkills || []}
-            />
-            <p className={styles.hint}>
-              Select at least 3 skills to complete your matching essentials.
-              Alternate names lead to the same skill.
-            </p>
-          </fieldset>
-          <fieldset disabled={locked} className={styles.section}>
-            <legend className="sr-only">Your work preferences</legend>
-            <SectionTitle
-              number="03"
-              title="Your work preferences"
-              description="A little context helps put the right opportunities in focus."
-            />
-            <div className={styles.twoFields}>
-              <div className={styles.field}>
-                <label htmlFor="pf-experienceYears">
-                  Experience <span>Years</span>
-                </label>
-                <input
-                  id="pf-experienceYears"
-                  type="number"
-                  min="0"
-                  max="60"
-                  step="any"
-                  inputMode="decimal"
-                  placeholder="e.g. 0 or 2.5"
-                  value={draft.experienceYears}
-                  onChange={(event) =>
-                    change("experienceYears", event.target.value)
-                  }
-                  {...inputProps("experienceYears")}
-                />
-                <p>Just starting out? Enter 0.</p>
-                {fieldError("experienceYears")}
-              </div>
-            </div>
-            <fieldset className={styles.preferenceGroup}>
-              <legend>Where would you like to work?</legend>
-              <label>
-                <input
-                  id="pf-cities"
-                  type="radio"
-                  name="location-preference"
-                  checked={draft.locationPreference === "all-india"}
-                  onChange={() => {
-                    change("locationPreference", "all-india");
-                    change("targetLocations", []);
-                  }}
-                />
-                All India
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="location-preference"
-                  checked={draft.locationPreference === "selected"}
-                  onChange={() => change("locationPreference", "selected")}
-                />
-                Choose preferred cities
-              </label>
-              {draft.locationPreference === "selected" && (
-                <ProfileOptionPicker
-                  id="pf-targetLocations"
-                  label="Preferred cities"
-                  options={options.cities}
-                  values={draft.targetLocations}
-                  limit={3}
-                  onChange={(values) => change("targetLocations", values)}
-                  error={errors.targetLocations}
-                />
-              )}
-              <p className={styles.hint}>
-                {!draft.locationPreference &&
-                  "Choose All India or preferred cities to complete this essential. "}
-                Preferences help rank jobs. Roles in other cities can still
-                appear; remote roles do not need a matching office city.
-              </p>
-            </fieldset>
-            <fieldset className={styles.modeGroup}>
-              <legend>Preferred work mode</legend>
-              <div>
-                {[
-                  { value: "unknown", label: "Any" },
-                  { value: "onsite", label: "Onsite" },
-                  { value: "hybrid", label: "Hybrid" },
-                  { value: "remote", label: "Remote" },
-                ].map((mode) => (
-                  <label
-                    key={mode.value}
-                    className={
-                      draft.remoteType === mode.value ? styles.selectedMode : ""
-                    }
-                  >
-                    <input
-                      type="radio"
-                      name="work-mode"
-                      value={mode.value}
-                      checked={draft.remoteType === mode.value}
-                      onChange={() => change("remoteType", mode.value)}
-                    />
-                    <span>{mode.label}</span>
-                  </label>
-                ))}
-              </div>
-              <p className={styles.hint}>
-                Work mode helps rank your matches; it does not hide other
-                opportunities.
-              </p>
-            </fieldset>
-          </fieldset>
-          <div className={styles.saveBar}>
-            <div className={styles.saveStatus} role="status">
-              <strong>
-                {busy
-                  ? "Saving your profile…"
-                  : dirty
-                    ? "Unsaved changes"
-                    : saved
-                      ? "Changes saved"
-                      : "Your profile is up to date"}
-              </strong>
-              <span>
-                {dirty
-                  ? "You can save even if your profile is incomplete."
-                  : "You can update these details any time."}
-              </span>
-            </div>
-            <div className={styles.saveActions}>
               <button
                 type="button"
                 className={styles.secondary}
-                disabled={locked || !dirty}
+                disabled={locked}
                 onClick={discard}
               >
-                Discard changes
+                Cancel
               </button>
-              <button
-                type="submit"
-                className={styles.primary}
-                disabled={locked || !dirty}
+            </>
+          )}
+          {step === "facts" && (
+            <section className={styles.section}>
+              <h2>Check your details</h2>
+              <p>Review and correct these details before continuing.</p>
+              {extraction && (
+                <p className={styles.notice}>
+                  {extraction.facts.experience.minYears === null
+                    ? "Experience was not found. Enter your total below."
+                    : `Experience draft: ${extraction.facts.experience.minYears}${extraction.facts.experience.maxYears === null ? "+" : extraction.facts.experience.maxYears === extraction.facts.experience.minYears ? "" : `–${extraction.facts.experience.maxYears}`} years. Please confirm the total.`}
+                </p>
+              )}
+            </section>
+          )}
+          {step === "preferences" && (
+            <fieldset disabled={locked} className={styles.section}>
+              <legend className="sr-only">Your next role</legend>
+              <SectionTitle
+                number="01"
+                title="Role preferences"
+                description="Choose your field and the roles you want."
+              />
+              <div className={styles.field}>
+                <label htmlFor="pf-techTrack">Your field</label>
+                <select
+                  id="pf-techTrack"
+                  value={draft.techTrack}
+                  onChange={(event) => chooseTrack(event.target.value)}
+                  {...inputProps("techTrack")}
+                >
+                  <option value="">Choose your focus</option>
+                  {options.tracks.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <fieldset
+                className={styles.preferenceGroup}
+                disabled={!track || locked}
               >
-                {busy ? "Saving…" : "Save changes"}
-              </button>
+                <legend>Roles you are open to</legend>
+                <label>
+                  <input
+                    id="pf-roles"
+                    type="radio"
+                    name="role-preference"
+                    checked={draft.rolePreference === "any"}
+                    onChange={() => {
+                      change("rolePreference", "any");
+                      change("techRoles", []);
+                    }}
+                  />
+                  Any role in this field
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="role-preference"
+                    checked={draft.rolePreference === "selected"}
+                    onChange={() => change("rolePreference", "selected")}
+                  />
+                  Choose preferred roles
+                </label>
+
+                {draft.rolePreference === "selected" && (
+                  <ProfileOptionPicker
+                    id="pf-techRoles"
+                    label="Preferred roles"
+                    options={track?.roles || []}
+                    values={draft.techRoles}
+                    limit={3}
+                    onChange={(values) => change("techRoles", values)}
+                    error={errors.techRoles}
+                  />
+                )}
+              </fieldset>
+            </fieldset>
+          )}
+          {step === "facts" && (
+            <fieldset disabled={locked} className={styles.section}>
+              <legend className="sr-only">Your skills</legend>
+              <SectionTitle
+                number="01"
+                title="Skills"
+                description="Select skills you can use professionally."
+              />
+              <ProfileOptionPicker
+                id="pf-skills"
+                label="Core skills"
+                options={options.skills}
+                values={draft.skills}
+                limit={15}
+                hint="5 minimum · 10 recommended · 15 maximum"
+                onChange={(values) => change("skills", values)}
+                error={errors.skills}
+                suggestions={track?.suggestedSkills || []}
+              />
+            </fieldset>
+          )}
+          {(step === "facts" || step === "preferences") && (
+            <fieldset disabled={locked} className={styles.section}>
+              <legend className="sr-only">Your work preferences</legend>
+              <SectionTitle
+                number="02"
+                title={
+                  step === "facts" ? "Work experience" : "Location & work mode"
+                }
+                description={
+                  step === "facts"
+                    ? "Total professional experience, excluding internships and projects."
+                    : "Choose where and how you prefer to work."
+                }
+              />
+              {step === "facts" && (
+                <div className={styles.twoFields}>
+                  <div className={styles.field}>
+                    <label htmlFor="pf-experienceYears">
+                      Total experience <span>Years</span>
+                    </label>
+                    <input
+                      id="pf-experienceYears"
+                      type="number"
+                      min="0"
+                      max="60"
+                      step="any"
+                      inputMode="decimal"
+                      placeholder="e.g. 0 or 2.5"
+                      value={draft.experienceYears}
+                      onChange={(event) =>
+                        change("experienceYears", event.target.value)
+                      }
+                      {...inputProps("experienceYears")}
+                    />
+                    <p>
+                      No professional experience? Enter 0. Use 2.5 for 2 years,
+                      6 months.
+                    </p>
+                    {fieldError("experienceYears")}
+                  </div>
+                </div>
+              )}
+              {step === "preferences" && (
+                <>
+                  <fieldset className={styles.preferenceGroup}>
+                    <legend>Where would you like to work?</legend>
+                    <label>
+                      <input
+                        id="pf-cities"
+                        type="radio"
+                        name="location-preference"
+                        checked={draft.locationPreference === "all-india"}
+                        onChange={() => {
+                          change("locationPreference", "all-india");
+                          change("targetLocations", []);
+                        }}
+                      />
+                      All India
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="location-preference"
+                        checked={draft.locationPreference === "selected"}
+                        onChange={() =>
+                          change("locationPreference", "selected")
+                        }
+                      />
+                      Choose preferred cities
+                    </label>
+                    {draft.locationPreference === "selected" && (
+                      <ProfileOptionPicker
+                        id="pf-targetLocations"
+                        label="Preferred cities"
+                        options={options.cities}
+                        values={draft.targetLocations}
+                        limit={3}
+                        onChange={(values) => change("targetLocations", values)}
+                        error={errors.targetLocations}
+                      />
+                    )}
+                  </fieldset>
+                  <fieldset className={styles.modeGroup}>
+                    <legend>Preferred work mode</legend>
+                    <div>
+                      {[
+                        { value: "unknown", label: "Any" },
+                        { value: "onsite", label: "Onsite" },
+                        { value: "hybrid", label: "Hybrid" },
+                        { value: "remote", label: "Remote" },
+                      ].map((mode) => (
+                        <label
+                          key={mode.value}
+                          className={
+                            draft.remoteType === mode.value
+                              ? styles.selectedMode
+                              : ""
+                          }
+                        >
+                          <input
+                            type="radio"
+                            name="work-mode"
+                            value={mode.value}
+                            checked={draft.remoteType === mode.value}
+                            onChange={() => change("remoteType", mode.value)}
+                          />
+                          <span>{mode.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <p className={styles.hint}>
+                      Location and work mode guide ranking; other opportunities
+                      may still appear.
+                    </p>
+                  </fieldset>
+                </>
+              )}
+            </fieldset>
+          )}
+          {step === "facts" && (
+            <section className={styles.confirmation}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={confirmed}
+                  onChange={(event) => setConfirmed(event.target.checked)}
+                />{" "}
+                I checked the skills and experience above.
+              </label>
+              <div className={styles.saveActions}>
+                <button
+                  type="button"
+                  className={styles.secondary}
+                  onClick={discard}
+                >
+                  Discard changes
+                </button>
+                <button
+                  type="button"
+                  className={styles.primary}
+                  disabled={
+                    locked ||
+                    !confirmed ||
+                    draft.skills.length < 5 ||
+                    !draft.experienceYears.trim() ||
+                    Boolean(profileErrors(draft).experienceYears)
+                  }
+                  onClick={() => setStep("preferences")}
+                >
+                  Continue to job preferences
+                </button>
+              </div>
+            </section>
+          )}
+          {(step === "preferences" ||
+            (step === "summary" &&
+              Boolean(trialPlan || saved || saveError))) && (
+            <div className={styles.saveBar}>
+              <div className={styles.saveStatus} role="status">
+                <strong>
+                  {busy
+                    ? "Saving your profile…"
+                    : dirty
+                      ? "Unsaved changes"
+                      : saved
+                        ? "Changes saved"
+                        : "Your profile is up to date"}
+                </strong>
+                <span>
+                  {dirty
+                    ? extraction
+                      ? "Your changes are saved only when you select Save changes."
+                      : "Save when you’re ready. You can finish later."
+                    : "You can update these details any time."}
+                </span>
+              </div>
+              {step === "preferences" && (
+                <div className={styles.saveActions}>
+                  <button
+                    type="button"
+                    className={styles.secondary}
+                    disabled={locked}
+                    onClick={() =>
+                      setStep(extraction || dirty ? "facts" : "summary")
+                    }
+                  >
+                    {extraction || dirty
+                      ? "Back to details"
+                      : "Back to profile"}
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.secondary}
+                    disabled={locked || !dirty || step !== "preferences"}
+                    onClick={discard}
+                  >
+                    Discard changes
+                  </button>
+                  <button
+                    type="submit"
+                    className={styles.primary}
+                    disabled={locked || !dirty || step !== "preferences"}
+                  >
+                    {busy ? "Saving…" : "Save changes"}
+                  </button>
+                </div>
+              )}
+              {saveError && (
+                <p className={styles.saveError} role="alert">
+                  {saveError}
+                </p>
+              )}
+              {!dirty && trialPlan && (
+                <Link
+                  href={`/dashboard/billing?plan=${resolvePlanId(trialPlan)}`}
+                  className={styles.savedLink}
+                >
+                  Check Pro match availability ↗
+                </Link>
+              )}
+              {saved && !dirty && (
+                <Link href="/dashboard" className={styles.savedLink}>
+                  Go to dashboard <span aria-hidden="true">→</span>
+                </Link>
+              )}
             </div>
-            {saveError && (
-              <p className={styles.saveError} role="alert">
-                {saveError}
-              </p>
-            )}
-            {!dirty && trialPlan && (
-              <Link
-                href={`/dashboard/billing?plan=${resolvePlanId(trialPlan)}`}
-                className={styles.savedLink}
-              >
-                Check Pro match availability ↗
-              </Link>
-            )}
-            {saved && !dirty && (
-              <Link href="/dashboard" className={styles.savedLink}>
-                Go to dashboard <span aria-hidden="true">→</span>
-              </Link>
-            )}
-          </div>
+          )}
         </form>
       </div>
       <dialog
@@ -704,7 +962,11 @@ function Editor({
           </button>
         </div>
       </dialog>
-      <ProfileSettings user={user} disabled={busy} onBusy={setSettingsBusy} />
+      <ProfileSettings
+        user={user}
+        disabled={busy || uploadBusy}
+        onBusy={setSettingsBusy}
+      />
     </div>
   );
 }

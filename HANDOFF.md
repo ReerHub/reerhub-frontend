@@ -1,26 +1,21 @@
 # REERHUB frontend handoff
 
-Updated: 2026-10-16 (Asia/Kolkata). Verify Git/CI before continuing.
+Updated: 2026-10-16 (Asia/Kolkata). Verify Git/CI/deployments before release work.
 
-## Goal and status
+## Current release
 
-Discovery clarity and pre-trial confidence are implemented on `feat/discovery-trial-confidence`, based on current origin/main. Local validation passed; scoped PR creation/CI and owner merge approval are next. Previous discovery/crawl release (backend #105, frontend #120) remains deployed. No new production release has occurred.
+Owner approved pushing/merging backend #108 and frontend #122 after browser testing, superseding the prior local-review hold. `feat/resume-first-profile` is based on main `a06acc6`. CI/release/production verification are in progress; approval is not proof of completion. Deploy compatible backend first, frontend second, verify production, then delete merged branches. No unrelated release is authorized.
 
-## Completed
+## Implemented
 
-- Evidence-backed selected-skill explanations, posted/discovered sorts with legacy compatibility, official posting references, verified experience/salary and compact mobile discovery/early detail facts.
-- Authenticated Free/Pro availability count without ranked jobs/history writes; explicit readiness/check/recheck/checkout UI, zero-match warning and selected-plan return from profile.
-- Consent-based bounded public funnel events; no tags/events on member/auth/admin or filtered/noindex pages. No GA/GTM account settings changed; real provider receipt remains unverified.
-- Official Zenoti feed confirms three separate posting IDs; preserved all URLs. Existing skill/city links suffice; no combination routes or data cleanup.
+Resume-first matching profile: upload bounded text PDF, confirm/correct skills and experience, then explicitly choose roles/location/work mode. Existing users have a saved summary and review/preference shortcuts. Five distinct skills required for readiness/import confirmation, around ten recommended, fifteen maximum. Unknown experience stays blank and blocks imported-profile completion; user confirmation is attestation, not verified employment. Explicit Save is the only profile write. Failed/cancelled uploads preserve saved fields; drafts stay in component memory. No PDF/raw-text persistence, external AI, private analytics tags or automatic checkout.
 
-## Verification (2026-10-16)
+Simplified page wording/hierarchy, three-step indicator, saved-skill tags and preference summary. Idle save buttons removed from summary; back/save/discard and unsaved guards retained. Mobile save controls stay in document flow. Account settings remain separate; homepage and public/private/billing boundaries preserved.
 
-191 backend tests on isolated localhost replica set, 127 frontend tests, both lints, frontend TypeScript and standard Turbopack production build passed. Both audits: zero vulnerabilities. Synthetic desktop/390px/320px checks: no overflow, first job title visible at 390px (y=714), early facts and plan-preserving count-only pre-trial check. No real payment/email/source sync or production write.
+## Validation — 2026-10-16
 
-## Next and constraints
+128 frontend regressions passed; full lint/types and standard production build passed. Desktop/390px/320px browser checks had no horizontal overflow. Fresh local browser profile: synthetic PDF produced seven skills/two years; confirmation/five-skill gates and missing preferences blocked appropriately; save/reload preserved five selected skills, two years, All India/Hybrid. Reference PDF populated ten skills but unknown experience; left unsaved and completion blocked. Accuracy/human benchmark labels remain unverified; see backend handoff.
 
-Open/review backend and frontend PRs; require owner approval before merging. Deploy backend first, verify through Render/Vercel MCP and read-only live samples, then remove merged branches locally/remotely. Do not claim production verification from fixtures. Existing ten-result guest cap, public Apply access, original homepage copy/animations and membership terms remain intact. No traffic/conversion outcome is established.
+## Local QA / preserved work
 
-## References / preserved work
-
-README and docs/DECISIONS.md describe contracts and rationale. Companion `reerhub-backend/HANDOFF.md` covers the other half. Preserve backend untracked `data/company-imports/2026-10-15-india-tech-batch-03.json`; it was not imported. Prior local checkpoint updates are incorporated here. Never print credentials or push directly to main.
+Frontend3019 uses real isolated backend8818. `/api/v1/local-qa/login` selects original test account; `?fresh=1` creates a distinct empty one. Reference draft currently open; preserve it and local saved profiles. No production writes, scheduler, email or payments in QA. Do not run destructive/full DB tests there. Preserve backend unrelated research JSON and ignored evaluation data. Companion: `../reerhub-backend/HANDOFF.md`.
