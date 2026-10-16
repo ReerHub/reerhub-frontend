@@ -69,7 +69,7 @@ export async function generateMetadata({
       title: "Job unavailable | REERHUB",
       description:
         "Job information is temporarily unavailable. Try again or explore current openings on REERHUB.",
-      robots: { index: false, follow: false },
+      alternates: { canonical: `/jobs/${(await params).jobSlug}` },
     };
   }
 }
@@ -247,6 +247,9 @@ export default async function JobDetailContent({
         items={[
           { name: "Home", path: "/" },
           { name: "Jobs", path: "/jobs" },
+          ...(company.slug
+            ? [{ name: companyName, path: `/companies/${company.slug}` }]
+            : []),
           { name: job.title, path: canonical },
         ]}
       />

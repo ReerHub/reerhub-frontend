@@ -94,6 +94,7 @@ export function memberHref(href: string): string {
         ...(key === "remote-jobs" ? { remoteType: "remote" } : {}),
         ...(landing
           ? {
+              ...(landing.skill ? { skills: landing.skill } : {}),
               techTrack: landing.track,
               techRole: landing.role,
               ...(landing.earlyCareer

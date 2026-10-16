@@ -113,12 +113,19 @@ async function api(path: string): Promise<Feed> {
 export async function sitemapEntries(): Promise<Entry[]> {
   const entries: Entry[] = STATIC.map((path) => ({ url: `${SITE}/${path}` }));
   // These four reads are independent; later cursor pages remain sequential.
-  const [freshers, internships, companies, firstJobs] = await Promise.all([
-    api("/jobs?earlyCareer=fresher&limit=1"),
-    api("/jobs?earlyCareer=internship&limit=1"),
-    api("/companies"),
-    api("/jobs/sitemap?limit=1000"),
-  ]);
+  const skillLandings = Object.entries(JOB_LANDINGS).filter(
+    ([, item]) => item.skill,
+  );
+  const [freshers, internships, companies, firstJobs, ...skillFeeds] =
+    await Promise.all([
+      api("/jobs?earlyCareer=fresher&limit=1"),
+      api("/jobs?earlyCareer=internship&limit=1"),
+      api("/companies"),
+      api("/jobs/sitemap?limit=1000"),
+      ...skillLandings.map(([, item]) =>
+        api(`/jobs?skills=${encodeURIComponent(item.skill!)}&limit=1`),
+      ),
+    ]);
   for (const [path, inventory] of [
     ["fresher-jobs", freshers.editorialInventory],
     ["internship-jobs", internships.editorialInventory],
@@ -126,6 +133,12 @@ export async function sitemapEntries(): Promise<Entry[]> {
     if (editorialReady(JOB_LANDINGS[path], inventory))
       entries.push({ url: `${SITE}/${path}` });
   }
+  skillLandings.forEach(([slug, landing], index) => {
+    if (!skillFeeds[index].editorialInventory)
+      throw new Error("Skill inventory unavailable");
+    if (editorialReady(landing, skillFeeds[index].editorialInventory))
+      entries.push({ url: `${SITE}/${slug}` });
+  });
   if (!Array.isArray(companies.data))
     throw new Error("Invalid companies sitemap feed");
   for (const row of companies.data) {

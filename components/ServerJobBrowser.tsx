@@ -12,8 +12,10 @@ export default async function ServerJobBrowser({
   remoteOnly,
   locationScope = "india",
   initialData: suppliedData,
+  filters = {},
 }: {
   heading: string;
+  filters?: Record<string, string>;
   track?: TechTrack;
   city?: string;
   remoteOnly?: boolean;
@@ -21,6 +23,7 @@ export default async function ServerJobBrowser({
   locationScope?: import("@/lib/location-scope").LocationScope;
 }) {
   const initialFilters = {
+    ...filters,
     ...(city ? { city } : {}),
     ...(remoteOnly ? { remoteType: "remote" } : {}),
   };

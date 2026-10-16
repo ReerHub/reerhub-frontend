@@ -101,3 +101,29 @@ test("engineering role links exist in initial rendered HTML", async () => {
     assert.ok(html.includes(`href="/${slug}"`), `missing rendered ${slug}`);
   }
 });
+
+test("curated skills use exact filters and require complete cross-employer inventory", () => {
+  for (const [slug, skill] of [
+    ["react", "React"],
+    ["nodejs", "Node.js"],
+    ["python", "Python"],
+    ["java", "Java"],
+    ["typescript", "TypeScript"],
+  ]) {
+    const landing = JOB_LANDINGS[`${slug}-jobs`];
+    assert.equal(landingQuery(landing).skills, skill);
+    assert.equal(
+      editorialReady(landing, { activeRoles: 4, employers: 2 }),
+      false,
+    );
+    assert.equal(
+      editorialReady(landing, { activeRoles: 5, employers: 1 }),
+      false,
+    );
+    assert.equal(
+      editorialReady(landing, { activeRoles: 5, employers: 2 }),
+      true,
+    );
+    assert.equal(editorialReady(landing), false);
+  }
+});

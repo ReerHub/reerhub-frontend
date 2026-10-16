@@ -1,4 +1,4 @@
-import { jobUrl } from "@/lib/reerhub";
+import { publicRouteResponse } from "@/lib/public-route-status";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isDedicatedAdminHost, isSharedAdminTestHost } from "@/lib/admin-host";
@@ -31,45 +31,7 @@ const adminRewrite = (req: NextRequest, pathname: string) => {
   );
 };
 
-// Resolve missing jobs before the loading boundary streams HTTP 200. Only an
-// authoritative API 404 hides the page; outages still reach its error boundary.
-async function jobDetailResponse(req: NextRequest, response: NextResponse) {
-  const slug = req.nextUrl.pathname.slice("/jobs/".length);
-  const jobId = /(?:^|-)([a-f0-9]{24})$/.exec(slug)?.[1];
-  if (jobId) {
-    try {
-      const backend = (
-        process.env.API_URL || "http://localhost:8000/api/v1"
-      ).replace(/\/+$/, "");
-      const result = await fetch(`${backend}/jobs/${jobId}`, {
-        cache: "no-store",
-        signal: AbortSignal.timeout(5000),
-      });
-      if (result.ok) {
-        const { data } = await result.json();
-        if (data?._id === jobId && data.title && data.companyId?.name) {
-          const canonical = jobUrl(data);
-          if (req.nextUrl.pathname !== canonical) {
-            const target = req.nextUrl.clone();
-            target.pathname = canonical;
-            return NextResponse.redirect(target, 308);
-          }
-        }
-        return response;
-      }
-      await result.body?.cancel();
-      if (result.status !== 404) return response;
-    } catch {
-      return response;
-    }
-  }
-  const url = req.nextUrl.clone();
-  url.pathname = "/__reerhub_not_found";
-  url.search = "";
-  return unindexed(NextResponse.rewrite(url, { status: 404 }));
-}
-
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   if (
     !req.nextUrl.pathname.startsWith("/api/") &&
     !req.nextUrl.pathname.startsWith("/admin") &&
@@ -144,6 +106,8 @@ export function proxy(req: NextRequest) {
   }
 
   if (!PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
+    const preflight = await publicRouteResponse(req);
+    if (preflight) return preflight;
     const response = NextResponse.next();
     const publicResponse =
       sharedTestHost ||
@@ -151,9 +115,29 @@ export function proxy(req: NextRequest) {
       /^\/(?:login|verify-magic|verify-email)(?:\/|$)/.test(pathname)
         ? unindexed(response)
         : response;
-    return /^\/jobs\/[^/]+$/.test(pathname)
-      ? jobDetailResponse(req, publicResponse)
-      : publicResponse;
+    const filters = [
+      "q",
+      "companyId",
+      "city",
+      "remoteType",
+      "techTrack",
+      "techRole",
+      "skills",
+      "seniority",
+      "employmentType",
+      "earlyCareer",
+      "sort",
+      "page",
+    ];
+    if (
+      pathname !== "/companies" &&
+      (pathname === "/jobs" || /^\/[^/]+-jobs$/.test(pathname)) &&
+      filters.some((key) => req.nextUrl.searchParams.has(key)) &&
+      !publicResponse.headers.has("X-Robots-Tag")
+    ) {
+      publicResponse.headers.set("X-Robots-Tag", "noindex, follow");
+    }
+    return publicResponse;
   }
   const session =
     req.cookies.get("accessToken")?.value ||

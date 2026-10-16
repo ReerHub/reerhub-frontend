@@ -212,6 +212,10 @@ const server = http.createServer(async (req, res) => {
         success: status < 400,
         data: value,
         pagination: meta,
+        ...(path === "/jobs" &&
+        (url.searchParams.has("skills") || url.searchParams.has("earlyCareer"))
+          ? { editorialInventory: { activeRoles: 1, employers: 1 } }
+          : {}),
         ...([
           "/home",
           "/jobs",
@@ -229,6 +233,33 @@ const server = http.createServer(async (req, res) => {
       }),
     );
   };
+  if (path === "/discovery/status") {
+    if (catalogMode === "unavailable") return json(null, 503);
+    const kind = url.searchParams.get("kind");
+    if (kind === "company")
+      return json(
+        { slug: company.slug },
+        url.searchParams.get("slug") === company.slug ? 200 : 404,
+      );
+    if (kind === "job")
+      return json(
+        { _id: job._id, title: job.title, companyId: { name: company.name } },
+        url.searchParams.get("id") === job._id ? 200 : 404,
+      );
+    if (kind === "directory")
+      return json(
+        { totalPages: 1 },
+        Number(url.searchParams.get("page") || 1) > 1 &&
+          !url.searchParams.get("q")
+          ? 404
+          : 200,
+      );
+    return json({
+      catalogStatus: "ready",
+      catalogHasVerifiedJobs: true,
+      editorialInventory: { activeRoles: 1, employers: 1 },
+    });
+  }
   if (path === "/fixture-metrics") {
     if (req.method === "POST") performanceMetrics.push(data);
     return json(performanceMetrics);

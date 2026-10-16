@@ -48,7 +48,7 @@ const job = (i) => ({
 const feeds = (url, init) => {
   assert.equal(init.cache, "no-store");
   assert.ok(init.signal);
-  if (url.includes("earlyCareer="))
+  if (url.includes("earlyCareer=") || url.includes("skills="))
     return Response.json({
       data: [],
       editorialInventory: { activeRoles: 0, employers: 0 },
@@ -205,7 +205,7 @@ test("independent sources begin together; full company inventory and early-caree
       pending.push(() =>
         resolve(
           Response.json(
-            url.includes("earlyCareer=")
+            url.includes("earlyCareer=") || url.includes("skills=")
               ? {
                   data: [],
                   editorialInventory: { activeRoles: 5, employers: 2 },
@@ -223,7 +223,7 @@ test("independent sources begin together; full company inventory and early-caree
     });
   try {
     const read = sitemap.sitemapEntries();
-    assert.equal(started.length, 4);
+    assert.equal(started.length, 9);
     for (const resolve of pending) resolve();
     const entries = await read;
     assert.equal(

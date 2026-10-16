@@ -359,6 +359,12 @@ test("admin host routes stay isolated and required public config remains accessi
   const proxySource = compile(
     await readFile(new URL("../proxy.ts", import.meta.url), "utf8"),
   )
+    .replaceAll(
+      '"@/lib/public-route-status"',
+      JSON.stringify(
+        moduleUrl("export const publicRouteResponse=async()=>null;"),
+      ),
+    )
     .replaceAll('"@/lib/reerhub"', JSON.stringify(jobUrls))
     .replaceAll('"@/lib/admin-host"', JSON.stringify(moduleUrl(hosts)))
     .replaceAll(
@@ -377,7 +383,10 @@ test("admin host routes stay isolated and required public config remains accessi
         },
       }),
     );
-  assert.equal(route("reerhub.com", "/jobs").headers.get("x-robots-tag"), null);
+  assert.equal(
+    (await route("reerhub.com", "/jobs")).headers.get("x-robots-tag"),
+    null,
+  );
   for (const [host, path] of [
     ["staging.reerhub.com", "/jobs"],
     ["admin.reerhub.com", "/auth"],
@@ -388,7 +397,7 @@ test("admin host routes stay isolated and required public config remains accessi
     ["reerhub.com", "/billing/success"],
   ]) {
     assert.equal(
-      route(host, path).headers.get("x-robots-tag"),
+      (await route(host, path)).headers.get("x-robots-tag"),
       "noindex, nofollow",
     );
   }
@@ -401,7 +410,7 @@ test("admin host routes stay isolated and required public config remains accessi
       "/admin-api/admin/overview",
     ])
       assert.match(
-        route(host, path).headers.get("x-middleware-rewrite"),
+        (await route(host, path)).headers.get("x-middleware-rewrite"),
         /__reerhub_not_found/,
       );
   for (const host of [
@@ -409,31 +418,40 @@ test("admin host routes stay isolated and required public config remains accessi
     "127.0.0.1:3000",
     "staging.reerhub.com",
   ]) {
-    assert.equal(route(host, "/").headers.get("x-middleware-next"), "1");
+    assert.equal(
+      (await route(host, "/")).headers.get("x-middleware-next"),
+      "1",
+    );
     assert.match(
-      route(host, "/admin/auth").headers.get("x-middleware-rewrite"),
+      (await route(host, "/admin/auth")).headers.get("x-middleware-rewrite"),
       /admin-auth/,
     );
     assert.match(
-      route(host, "/admin/dashboard").headers.get("x-middleware-rewrite"),
+      (await route(host, "/admin/dashboard")).headers.get(
+        "x-middleware-rewrite",
+      ),
       /admin-dashboard/,
     );
     assert.equal(
-      route(host, "/admin-dashboard", true).headers.get("x-middleware-next"),
+      (await route(host, "/admin-dashboard", true)).headers.get(
+        "x-middleware-next",
+      ),
       "1",
     );
   }
   assert.match(
-    route("admin.reerhub.com", "/auth").headers.get("x-middleware-rewrite"),
+    (await route("admin.reerhub.com", "/auth")).headers.get(
+      "x-middleware-rewrite",
+    ),
     /admin-auth/,
   );
   for (const path of ["/api/config", "/reerhub-icon-logo.png"])
     assert.equal(
-      route("admin.reerhub.com", path).headers.get("x-middleware-next"),
+      (await route("admin.reerhub.com", path)).headers.get("x-middleware-next"),
       "1",
     );
   assert.match(
-    route("reerhub.com", "/admin-dashboard", true).headers.get(
+    (await route("reerhub.com", "/admin-dashboard", true)).headers.get(
       "x-middleware-rewrite",
     ),
     /__reerhub_not_found/,

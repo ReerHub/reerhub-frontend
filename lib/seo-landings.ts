@@ -1,6 +1,7 @@
 import type { TechTrack } from "./reerhub";
 export type Landing = {
   title: string;
+  skill?: string;
   track?: TechTrack;
   role?: string;
   earlyCareer?: "fresher" | "internship";
@@ -10,6 +11,76 @@ export type Landing = {
   editorialComplete: boolean;
 };
 export const JOB_LANDINGS: Record<string, Landing> = {
+  "react-jobs": {
+    title: "React jobs in India",
+    skill: "React",
+    description:
+      "Explore official React openings with confirmed India eligibility. Review employer requirements and apply directly.",
+    intro:
+      "Discover official openings whose employer descriptions mention React. These roles can involve interfaces and component-driven applications; a skill match alone does not establish role, experience or location eligibility.",
+    guidance: [
+      "Read the official description to distinguish required skills from preferences and understand the responsibilities.",
+      "Check experience, office expectations and India eligibility before applying. Missing salary or deadline information stays unknown.",
+      "Use accurate examples of your work when applying through the employer’s official link. Listings and skill matches do not guarantee interviews.",
+    ],
+    editorialComplete: true,
+  },
+  "nodejs-jobs": {
+    title: "Node.js jobs in India",
+    skill: "Node.js",
+    description:
+      "Explore official Node.js openings with confirmed India eligibility. Review employer requirements and apply directly.",
+    intro:
+      "Discover official openings whose employer descriptions mention Node.js. These roles can involve server-side JavaScript services and APIs; a skill match alone does not establish role, experience or location eligibility.",
+    guidance: [
+      "Read the official description to distinguish required skills from preferences and understand the responsibilities.",
+      "Check experience, office expectations and India eligibility before applying. Missing salary or deadline information stays unknown.",
+      "Use accurate examples of your work when applying through the employer’s official link. Listings and skill matches do not guarantee interviews.",
+    ],
+    editorialComplete: true,
+  },
+  "python-jobs": {
+    title: "Python jobs in India",
+    skill: "Python",
+    description:
+      "Explore official Python openings with confirmed India eligibility. Review employer requirements and apply directly.",
+    intro:
+      "Discover official openings whose employer descriptions mention Python. These roles can involve software, automation, data and AI systems; a skill match alone does not establish role, experience or location eligibility.",
+    guidance: [
+      "Read the official description to distinguish required skills from preferences and understand the responsibilities.",
+      "Check experience, office expectations and India eligibility before applying. Missing salary or deadline information stays unknown.",
+      "Use accurate examples of your work when applying through the employer’s official link. Listings and skill matches do not guarantee interviews.",
+    ],
+    editorialComplete: true,
+  },
+  "java-jobs": {
+    title: "Java jobs in India",
+    skill: "Java",
+    description:
+      "Explore official Java openings with confirmed India eligibility. Review employer requirements and apply directly.",
+    intro:
+      "Discover official openings whose employer descriptions mention Java. These roles can involve JVM applications and backend services; a skill match alone does not establish role, experience or location eligibility.",
+    guidance: [
+      "Read the official description to distinguish required skills from preferences and understand the responsibilities.",
+      "Check experience, office expectations and India eligibility before applying. Missing salary or deadline information stays unknown.",
+      "Use accurate examples of your work when applying through the employer’s official link. Listings and skill matches do not guarantee interviews.",
+    ],
+    editorialComplete: true,
+  },
+  "typescript-jobs": {
+    title: "TypeScript jobs in India",
+    skill: "TypeScript",
+    description:
+      "Explore official TypeScript openings with confirmed India eligibility. Review employer requirements and apply directly.",
+    intro:
+      "Discover official openings whose employer descriptions mention TypeScript. These roles can involve typed frontend and backend applications; a skill match alone does not establish role, experience or location eligibility.",
+    guidance: [
+      "Read the official description to distinguish required skills from preferences and understand the responsibilities.",
+      "Check experience, office expectations and India eligibility before applying. Missing salary or deadline information stays unknown.",
+      "Use accurate examples of your work when applying through the employer’s official link. Listings and skill matches do not guarantee interviews.",
+    ],
+    editorialComplete: true,
+  },
   "backend-jobs": {
     description:
       "Find backend engineering jobs in India from official employers. Explore API, services and systems roles, read requirements and apply directly.",
@@ -132,6 +203,7 @@ export const landingQuery = (
   landing: Landing,
 ): Record<string, string | number> => ({
   limit: 10,
+  ...(landing.skill ? { skills: landing.skill } : {}),
   ...(landing.track ? { techTrack: landing.track } : {}),
   ...(landing.role ? { techRole: landing.role } : {}),
   ...(landing.earlyCareer ? { earlyCareer: landing.earlyCareer } : {}),
@@ -140,7 +212,7 @@ export const editorialReady = (
   landing: Landing,
   inventory?: { activeRoles: number; employers: number },
 ) =>
-  !landing.earlyCareer ||
+  (!landing.earlyCareer && !landing.skill) ||
   (landing.editorialComplete &&
     !!inventory &&
     inventory.activeRoles >= 5 &&

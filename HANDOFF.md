@@ -1,26 +1,23 @@
 # REERHUB frontend handoff
 
-Updated: 2026-10-16 (Asia/Kolkata). Dated checkpoint; verify live state before acting.
+Updated: 2026-10-16 (Asia/Kolkata). Verify Git and PR state before continuing.
 
-## Goal and status
+## Goal and progress
 
-Lean session continuity: implementation prepared on `docs/lean-session-handoff`, based on `origin/main` at `f3568a1`. Documentation only. Read the PR for current CI/review/merge state; this checkpoint does not authorize merge.
+Skill discovery, employer breadcrumbs and crawl reliability are implemented on `feat/discovery-crawl-reliability`. Owner explicitly authorizes this scoped release after passing checks. Backend must ship before frontend. Earlier continuity work is complete (backend #104 / frontend #119); preserve existing startup and approval rules.
 
-## Completed
+## Completed and verification
 
-- Added this compact resume point and handoff-first startup/update rules in `AGENTS.md`.
-- Kept architecture and durable history in existing guides. No memory packages or graph tools installed.
-- Git inspection on 2026-10-16 confirmed base `f3568a1` includes merged SEO PR #118; historical test/deployment evidence is not a fresh production check.
+- Five skill hubs, company breadcrumbs, lightweight public status API, real missing-company/directory-range responses, and unavailable preflights; canonical job URLs and guest/member boundaries preserved.
+- 2026-10-16: 188 backend tests on disposable localhost MongoDB; 123 frontend regressions; lint/type checks and standard production build passed. Synthetic desktop/mobile, initial HTML, 404/308, and outage/recovery checks passed. No live production outage was induced.
+- Warm fixture reads: one status + one full detail + one related list; local timing is not production performance evidence.
 
-## Next steps and blockers
+## Next / limitations
 
-- Review this documentation PR and current CI; obtain explicit owner approval before merge. After an approved merge, verify deployment/production and delete its feature branch locally/remotely.
-- At the next meaningful task boundary, replace this completed-task status with the actual goal, progress, remaining work and verification evidence; preserve durable decisions separately.
-- Prior SEO follow-up: catalog outage HTTP 503 handling remains unresolved; see the focused SEO entry in `docs/DECISIONS.md` before changing streaming/error behavior.
-- No implementation blocker identified. Production has not been rechecked for this documentation task.
+- Review final diff/CI, release backend then frontend, verify deployed commits and live behavior, and delete merged feature branches locally/remotely. Check PR for actual release status rather than assuming deployment from this checkpoint.
+- Failures after a successful preflight can still occur during streaming. Search/indexing/AI citation gains are not guaranteed.
+- Original homepage copy, design and animations are unchanged. Previous catalog outage status follow-up is superseded by this preflight implementation, subject to the post-preflight race.
 
-## Relevant context and verification
+## Resume references
 
-- Changed: `AGENTS.md`, `HANDOFF.md`, `docs/DECISIONS.md`. Load README or decision entries only for the task at hand.
-- Cross-repository companion: `reerhub-backend` has its own root `HANDOFF.md`; consult it only for shared work and when that checkout is available.
-- Verification: initial branch/status and recent commits inspected on 2026-10-16. Documentation validation and CI results belong in the PR; recheck them before release. No application tests or production writes performed locally for this documentation-only change.
+README describes the new contract; docs/DECISIONS.md preserves rationale and dated evidence. Companion repository `reerhub-backend` has its own root HANDOFF.md; consult only for shared work. Do not print credentials, run manual source syncs or push directly to main. Future unrelated PRs require owner approval.

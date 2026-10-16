@@ -133,3 +133,37 @@ test("home, authentication, admin, unknown paths and implicit details get no inv
   ])
     assert.equal(pageBreadcrumbs(path), null);
 });
+
+test("company job trail stays aligned with public schema and member destinations", () => {
+  const items = [
+    { name: "Home", path: "/" },
+    { name: "Jobs", path: "/jobs" },
+    { name: "Notion", path: "/companies/notion" },
+    { name: "Software Engineer", path: "/jobs/notion-role" },
+  ];
+  const doc = render("/jobs/notion-role", { items });
+  assert.equal(
+    doc.querySelector('a[href="/companies/notion"]').textContent,
+    "Notion",
+  );
+  const schema = JSON.parse(doc.querySelector("script").textContent);
+  assert.deepEqual(
+    schema.itemListElement.map((i) => i.name),
+    items.map((i) => i.name),
+  );
+  const member = render("/dashboard/jobs/notion-role", { items });
+  assert.ok(member.querySelector('a[href="/dashboard/companies/notion"]'));
+  assert.equal(member.querySelector("script"), null);
+});
+
+test("skill hubs map to member discovery without losing URL context", async () => {
+  const { memberHref } = await import(workspaceUrl);
+  const mapped = new URL(
+    memberHref("/react-jobs?city=Pune#roles"),
+    "https://reerhub.com",
+  );
+  assert.equal(mapped.pathname, "/dashboard/jobs");
+  assert.equal(mapped.searchParams.get("skills"), "React");
+  assert.equal(mapped.searchParams.get("city"), "Pune");
+  assert.equal(mapped.hash, "#roles");
+});
