@@ -208,7 +208,10 @@ const server = http.createServer(async (req, res) => {
   if (profileName !== undefined) user.name = profileName;
   let body = "";
   for await (const chunk of req) body += chunk;
-  const data = body ? JSON.parse(body) : {};
+  const data =
+    body && req.headers["content-type"]?.includes("application/json")
+      ? JSON.parse(body)
+      : {};
   const json = (value, status = 200, meta) => {
     res.writeHead(status, { "Content-Type": "application/json" });
     res.end(
@@ -722,6 +725,23 @@ const server = http.createServer(async (req, res) => {
     return json({ loggedOut: true });
   }
 
+  if (path === "/users/me/resume-extraction" && req.method === "POST") {
+    if (state === "anonymous") return json(null, 401);
+    if (profileMode === "error")
+      return json({ message: "Synthetic extraction failure" }, 422);
+    return json({
+      extractionVersion: 1,
+      pages: 1,
+      facts: {
+        skills: ["React", "Node.js", "TypeScript", "SQL"],
+        roleCandidates: ["Backend Engineer"],
+        experience: { minYears: null, maxYears: null, status: "unknown" },
+        employmentIntervals: [],
+        excludedIntervalCount: 1,
+        textQuality: "text-extracted",
+      },
+    });
+  }
   if (path === "/profile-options") return json(PROFILE_OPTIONS);
   if (path === "/users/me" || path === "/users/session") {
     if (path === "/users/session" && state === "anonymous") return json(null);
@@ -740,7 +760,10 @@ const server = http.createServer(async (req, res) => {
       if (data.name !== undefined) profileName = data.name;
       const fields = Object.fromEntries(
         Object.entries(data).filter(
-          ([key]) => !["name", "notificationPreferences"].includes(key),
+          ([key]) =>
+            !["name", "notificationPreferences", "resumeConfirmed"].includes(
+              key,
+            ),
         ),
       );
       profilePatch = { ...profilePatch, ...fields };

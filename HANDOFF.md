@@ -1,26 +1,23 @@
 # REERHUB frontend handoff
 
-Updated: 2026-10-16 (Asia/Kolkata). Verify Git/CI before continuing.
+Updated: 2026-10-16 (Asia/Kolkata). Verify current Git/CI before release work.
 
-## Goal and status
+## Current task / merge hold
 
-Discovery clarity and pre-trial confidence are implemented on `feat/discovery-trial-confidence`, based on current origin/main. Local validation passed; scoped PR creation/CI and owner merge approval are next. Previous discovery/crawl release (backend #105, frontend #120) remains deployed. No new production release has occurred.
+Resume-first onboarding implemented on `feat/resume-first-profile`, based on main `a06acc6`. Owner requires local testing with real reference resumes and fresh approval before either PR merge; earlier scoped merge authorization is superseded. No frontend production change has been released. Production remains discovery/trial PR #121 at a06acc6; backend main is benchmark #107 at 88fcf85. Feature branches must remain until approved release/verification.
 
-## Completed
+## Implemented
 
-- Evidence-backed selected-skill explanations, posted/discovered sorts with legacy compatibility, official posting references, verified experience/salary and compact mobile discovery/early detail facts.
-- Authenticated Free/Pro availability count without ranked jobs/history writes; explicit readiness/check/recheck/checkout UI, zero-match warning and selected-plan return from profile.
-- Consent-based bounded public funnel events; no tags/events on member/auth/admin or filtered/noindex pages. No GA/GTM account settings changed; real provider receipt remains unverified.
-- Official Zenoti feed confirms three separate posting IDs; preserved all URLs. Existing skill/city links suffice; no combination routes or data cleanup.
+New/empty matching profile starts with PDF upload; existing users see a saved summary. Short fact confirmation and explicit role/location preferences replace the long matching form. Canonical pickers, partial saves, unsaved-navigation guards, account identity/settings/export/deletion and trial-plan links remain. Unknown experience stays blank; an imported draft needs confirmed facts and complete essentials to Save. Upload failure/cancellation leaves saved fields unchanged. No PDF/raw text/localStorage persistence, private analytics tags, external AI, automatic checkout or scoring changes. Privacy notice and existing guides updated.
 
-## Verification (2026-10-16)
+## Validation — 2026-10-16
 
-191 backend tests on isolated localhost replica set, 127 frontend tests, both lints, frontend TypeScript and standard Turbopack production build passed. Both audits: zero vulnerabilities. Synthetic desktop/390px/320px checks: no overflow, first job title visible at 390px (y=714), early facts and plan-preserving count-only pre-trial check. No real payment/email/source sync or production write.
+127 frontend regressions passed, including legacy preservation, failed-save retry, unknown experience, confirmation gate and imported-profile save. Lint/types/standard production build and audit passed. Browser tested synthetic upload/unknown blocking, explicit preferences and isolated save; desktop/390px/320px had no overflow or private analytics scripts. Backend full suite 204 and four later focused tests passed; production PDF parser read 223/226 reference PDFs with 96 unknown experience; all originals unchanged. Counts do not prove accuracy. Eight-profile/48-pair human labels remain pending.
 
-## Next and constraints
+## Ready for owner local test
 
-Open/review backend and frontend PRs; require owner approval before merging. Deploy backend first, verify through Render/Vercel MCP and read-only live samples, then remove merged branches locally/remotely. Do not claim production verification from fixtures. Existing ten-result guest cap, public Apply access, original homepage copy/animations and membership terms remain intact. No traffic/conversion outcome is established.
+Real frontend runs at 127.0.0.1:3019 with API_URL=http://127.0.0.1:8818/api/v1. Open http://127.0.0.1:3019/api/v1/local-qa/login for the synthetic Resume Local QA account. This uses the real parser and isolated local profile DB via backend resumeLocalQa.js, not synthetic ui-fixtures extraction responses. Upload PDFs, compare/correct facts, choose preferences, save and reload; no production changes or payment/email actions. Reopen login to reset test upload budget/session. Do not run full/destructive DB tests during owner review. See backend README/HANDOFF for restart instructions. Fixture-generated tsconfig additions are tool-owned and must be restored before commit.
 
-## References / preserved work
+## Preserved work
 
-README and docs/DECISIONS.md describe contracts and rationale. Companion `reerhub-backend/HANDOFF.md` covers the other half. Preserve backend untracked `data/company-imports/2026-10-15-india-tech-batch-03.json`; it was not imported. Prior local checkpoint updates are incorporated here. Never print credentials or push directly to main.
+Original homepage/public boundaries unchanged. Preserve both local handoff updates and backend unrelated company research JSON. Companion: `../reerhub-backend/HANDOFF.md`. No merges until owner approves after testing.
