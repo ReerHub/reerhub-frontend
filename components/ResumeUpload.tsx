@@ -18,14 +18,10 @@ export default function ResumeUpload({
   return (
     <section className={styles.section} aria-labelledby="resume-title">
       <h2 id="resume-title">Start with your resume</h2>
-      <p>
-        Upload a text-based PDF, up to 5 MB and 10 pages. Check the extracted
-        skills and experience, then choose the jobs you want.
-      </p>
-      <p>
-        We process your file temporarily. We do not store the PDF or raw text.
-        Only the profile details you confirm are saved. No external AI service
-        receives your resume.
+      <p>Text-based PDF · Up to 5 MB · Maximum 10 pages</p>
+      <p className={styles.notice}>
+        Your PDF is discarded after processing. Only the details you confirm and
+        save are kept.
       </p>
       <label className={styles.field}>
         Choose PDF resume

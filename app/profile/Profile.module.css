@@ -876,3 +876,59 @@
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
 }
+
+/* A compact, readable profile flow, with guidance beside its related control. */
+.page { max-width: 1040px; }
+.header { margin-top: 8px; margin-bottom: 24px; }
+.header h1 { font-size: clamp(28px, 3vw, 38px); }
+.section > h2 { font-size: 22px; font-weight: 700; letter-spacing: -.025em; line-height: 1.3; margin-bottom: 8px; }
+.section > p { color: #675d75; font-size: 14px; line-height: 1.65; max-width: 65ch; }
+.sectionTitle { margin-bottom: 20px; }
+.sectionTitle p, .field p, .hint { font-size: 13px; line-height: 1.6; }
+.sectionTitle > span { width: 30px; height: 30px; border-radius: 9px; }
+.form { grid-row: auto; }
+.steps { display: flex; gap: 12px; list-style: none; padding: 0; margin: 0 0 24px; }
+.steps li { display: flex; align-items: center; gap: 8px; flex: 1; font-size: 13px; color: #675d75; padding-bottom: 14px; border-bottom: 2px solid #e6dfed; }
+.steps li > span { display: grid; place-items: center; width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%; background: #f1ebff; font-size: 12px; }
+.steps li[aria-current="step"] { color: #5034b5; font-weight: 650; border-color: #6d4aff; }
+.steps li[aria-current="step"] > span { background: #6d4aff; color: white; }
+.section .notice { margin-top: 16px; padding: 12px 16px; border-left: 3px solid #bba6ff; border-radius: 0 10px 10px 0; background: #f8f5ff; font-size: 13px; }
+.summaryLabel { display: block; font-size: 12px; color: #675d75; margin-top: 24px; margin-bottom: 10px; font-weight: 600; }
+.summarySkills { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.summarySkills li { padding: 7px 12px; border-radius: 8px; background: #f1ebff; color: #5034b5; font-size: 13px; overflow-wrap: anywhere; max-width: 100%; }
+.section .summaryExperience { margin: 20px 0 24px; font-weight: 600; color: #241e30; }
+.saveActions { flex-wrap: wrap; }
+.confirmation { padding: 8px 0 24px; }
+.confirmation > label { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.6; cursor: pointer; padding: 10px 0; }
+.confirmation input { width: 18px; height: 18px; margin-top: 3px; accent-color: #6d4aff; flex-shrink: 0; }
+.confirmation .saveActions { justify-content: flex-end; margin-top: 16px; }
+.readiness { padding: 22px 28px; }
+.readiness h2 { margin: 8px 0 4px; }
+.readiness .progressLabel { margin-top: 16px; }
+.readiness .readinessNote { padding-top: 10px; margin-top: 10px; }
+.primary, .secondary { font-size: 13px; }
+@media (max-width: 600px) {
+  .header { gap: 14px; padding-bottom: 18px; }
+  .header p { font-size: 14px; }
+  .identity .avatar { width: 32px; height: 32px; }
+  .steps { gap: 8px; margin-bottom: 18px; }
+  .steps li { align-items: flex-start; flex-direction: column; font-size: 12px; gap: 7px; line-height: 1.4; }
+  .section { padding: 20px; border-radius: 18px; }
+  .readiness { padding: 20px; }
+  .sectionTitle { gap: 10px; }
+  .sectionTitle h2 { font-size: 18px; }
+  .saveActions button { flex: 1 1 140px; }
+  .confirmation .saveActions { flex-direction: column-reverse; }
+  .confirmation .saveActions button { flex: auto; width: 100%; }
+  .field input[type="number"], .field select { font-size: 16px; }
+}
+
+.summaryPreferences { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 0 0 24px; padding-top: 16px; border-top: 1px solid #e6dfed; }
+.summaryPreferences dt { font-size: 12px; color: #675d75; margin-bottom: 5px; }
+.summaryPreferences dd { font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .summaryPreferences { grid-template-columns: 1fr; gap: 12px; } }
+
+.section h2 { scroll-margin-top: 100px; }
+@media (max-width: 600px) {
+  .saveBar { position: static; }
+}

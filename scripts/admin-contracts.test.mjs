@@ -319,7 +319,7 @@ test("public profile guidance treats zero experience as complete, not missing", 
     techTrack: "software",
     rolePreference: "selected",
     techRoles: ["Backend Engineer"],
-    skills: ["Node.js", "SQL", "TypeScript"],
+    skills: ["Node.js", "SQL", "TypeScript", "React", "Docker"],
     experienceYears: 0,
     remoteType: "remote",
     locationPreference: "all-india",
@@ -339,7 +339,7 @@ test("public profile guidance treats zero experience as complete, not missing", 
   }
   assert.equal(
     profileSignals({ ...complete, skills: ["SQL"] }).find(
-      (signal) => signal.label === "3+ skills",
+      (signal) => signal.label === "5+ skills",
     ).complete,
     false,
   );

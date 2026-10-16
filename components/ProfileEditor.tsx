@@ -323,11 +323,8 @@ function Editor({
       </Link>
       <header className={styles.header}>
         <div>
-          <span className={styles.eyebrow}>YOUR CAREER, YOUR DIRECTION</span>
-          <h1>Your matching profile</h1>
-          <p>
-            Upload your resume. Confirm the facts. Choose your next direction.
-          </p>
+          <h1>Profile &amp; preferences</h1>
+          <p>Your experience, skills and next role—all in one place.</p>
         </div>
         <div className={styles.identity}>
           <span className={styles.avatar} aria-hidden="true">
@@ -339,6 +336,23 @@ function Editor({
           </div>
         </div>
       </header>
+      {step !== "summary" && (
+        <ol className={styles.steps} aria-label="Profile setup progress">
+          {[
+            { value: "upload", label: "Upload resume" },
+            { value: "facts", label: "Check details" },
+            { value: "preferences", label: "Job preferences" },
+          ].map((item, index) => (
+            <li
+              key={item.value}
+              aria-current={step === item.value ? "step" : undefined}
+            >
+              <span aria-hidden="true">{index + 1}</span>
+              {item.label}
+            </li>
+          ))}
+        </ol>
+      )}
       <div
         className={styles.layout}
         style={
@@ -349,12 +363,14 @@ function Editor({
       >
         {step === "summary" && (
           <aside className={styles.readiness} aria-label="Profile readiness">
-            <span className={styles.eyebrow}>YOUR PROFILE SIGNALS</span>
-            <h2>{complete === 5 ? "Ready for matching" : "Make it yours"}</h2>
+            <span className={styles.eyebrow}>PROFILE COMPLETENESS</span>
+            <h2>
+              {complete === 5 ? "Ready for matching" : "Finish your profile"}
+            </h2>
             <p>
               {complete === 5
-                ? "Your essentials are complete. Available roles still depend on current openings."
-                : "Start with the essentials. You can save and finish later."}
+                ? "Your profile has the essentials for matching."
+                : "Add the missing details to guide your matches."}
             </p>
             <div className={styles.progressLabel}>
               <strong>{complete} of 5 complete</strong>
@@ -411,14 +427,8 @@ function Editor({
               </div>
             )}
             <p className={styles.readinessNote}>
-              {dirty
-                ? "Save changes to update your profile."
-                : user.membership?.isPro
-                  ? "These details guide your Pro matches."
-                  : complete === 5
-                    ? "These essentials can guide your matches if you choose Pro."
-                    : "Complete these essentials to guide matches if you choose Pro."}{" "}
-              Scores describe relevance, not hiring chances.
+              Pro uses these details to rank available roles. Match scores are
+              not hiring chances.
             </p>
           </aside>
         )}
@@ -431,12 +441,53 @@ function Editor({
           {step === "summary" && (
             <section className={styles.section}>
               <h2>Your saved profile</h2>
-              <p>{user.profile.skills?.join(", ") || "No skills saved"}</p>
-              <p>
-                {user.profile.experienceYears === undefined
+              <span className={styles.summaryLabel}>Skills</span>
+              <ul className={styles.summarySkills} aria-label="Saved skills">
+                {user.profile.skills?.length ? (
+                  user.profile.skills.map((skill) => (
+                    <li key={skill}>{skill}</li>
+                  ))
+                ) : (
+                  <li>No skills saved</li>
+                )}
+              </ul>
+              <p className={styles.summaryExperience}>
+                {user.profile.experienceYears == null
                   ? "Experience unknown"
                   : `${user.profile.experienceYears} years of experience`}
               </p>
+              <dl className={styles.summaryPreferences}>
+                <div>
+                  <dt>Roles</dt>
+                  <dd>
+                    {user.profile.rolePreference === "any"
+                      ? "Any role in your field"
+                      : user.profile.techRoles?.join(", ") || "Not selected"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Location</dt>
+                  <dd>
+                    {user.profile.locationPreference === "all-india"
+                      ? "All India"
+                      : user.profile.targetLocations?.join(", ") ||
+                        "Not selected"}
+                  </dd>
+                </div>
+                <div>
+                  <dt>Work mode</dt>
+                  <dd>
+                    {(
+                      {
+                        onsite: "Onsite",
+                        hybrid: "Hybrid",
+                        remote: "Remote",
+                        unknown: "Any",
+                      } as Record<string, string>
+                    )[user.profile.remoteType || "unknown"] || "Any"}
+                  </dd>
+                </div>
+              </dl>
               <div className={styles.saveActions}>
                 <button
                   type="button"
@@ -503,19 +554,13 @@ function Editor({
           )}
           {step === "facts" && (
             <section className={styles.section}>
-              <h2>Confirm your skills and experience</h2>
-              <p>
-                Skill mentions do not establish proficiency. Choose up to ten
-                skills you can use professionally. Correct missing or uncertain
-                facts before continuing.
-              </p>
+              <h2>Check your details</h2>
+              <p>Review and correct these details before continuing.</p>
               {extraction && (
-                <p>
+                <p className={styles.notice}>
                   {extraction.facts.experience.minYears === null
-                    ? "We could not establish your experience. Enter it below; unknown does not mean zero."
-                    : `Estimated experience: ${extraction.facts.experience.minYears}–${extraction.facts.experience.maxYears} years. Please confirm the total.`}{" "}
-                  Overlapping jobs are not counted twice; detected projects and
-                  internships are excluded.
+                    ? "Experience was not found. Enter your total below."
+                    : `Experience draft: ${extraction.facts.experience.minYears}${extraction.facts.experience.maxYears === null ? "+" : extraction.facts.experience.maxYears === extraction.facts.experience.minYears ? "" : `–${extraction.facts.experience.maxYears}`} years. Please confirm the total.`}
                 </p>
               )}
             </section>
@@ -525,11 +570,11 @@ function Editor({
               <legend className="sr-only">Your next role</legend>
               <SectionTitle
                 number="01"
-                title="Your next role"
-                description="Tell us where you want to go, not just where you are now."
+                title="Role preferences"
+                description="Choose your field and the roles you want."
               />
               <div className={styles.field}>
-                <label htmlFor="pf-techTrack">Your engineering track</label>
+                <label htmlFor="pf-techTrack">Your field</label>
                 <select
                   id="pf-techTrack"
                   value={draft.techTrack}
@@ -543,10 +588,6 @@ function Editor({
                     </option>
                   ))}
                 </select>
-                <p>
-                  {track?.description ||
-                    "Choose an area you know or would like to work in."}
-                </p>
               </div>
               <fieldset
                 className={styles.preferenceGroup}
@@ -564,7 +605,7 @@ function Editor({
                       change("techRoles", []);
                     }}
                   />
-                  Any role in this track
+                  Any role in this field
                 </label>
                 <label>
                   <input
@@ -575,11 +616,7 @@ function Editor({
                   />
                   Choose preferred roles
                 </label>
-                <p className={styles.hint}>
-                  {!draft.rolePreference &&
-                    "Choose a role preference to complete this essential. "}
-                  Not sure about a job title? Any role is a good place to start.
-                </p>
+
                 {draft.rolePreference === "selected" && (
                   <ProfileOptionPicker
                     id="pf-techRoles"
@@ -598,43 +635,42 @@ function Editor({
             <fieldset disabled={locked} className={styles.section}>
               <legend className="sr-only">Your skills</legend>
               <SectionTitle
-                number="02"
-                title="Your skills"
-                description="Choose the tools and skills you would use in your next role."
+                number="01"
+                title="Skills"
+                description="Select skills you can use professionally."
               />
               <ProfileOptionPicker
                 id="pf-skills"
                 label="Core skills"
                 options={options.skills}
                 values={draft.skills}
-                limit={10}
+                limit={15}
+                hint="5 minimum · 10 recommended · 15 maximum"
                 onChange={(values) => change("skills", values)}
                 error={errors.skills}
                 suggestions={track?.suggestedSkills || []}
               />
-              <p className={styles.hint}>
-                Select at least 3 skills to complete your matching essentials.
-                Alternate names lead to the same skill.
-              </p>
             </fieldset>
           )}
           {(step === "facts" || step === "preferences") && (
             <fieldset disabled={locked} className={styles.section}>
               <legend className="sr-only">Your work preferences</legend>
               <SectionTitle
-                number="03"
+                number="02"
                 title={
-                  step === "facts"
-                    ? "Confirm experience"
-                    : "Your work preferences"
+                  step === "facts" ? "Work experience" : "Location & work mode"
                 }
-                description="A little context helps put the right opportunities in focus."
+                description={
+                  step === "facts"
+                    ? "Total professional experience, excluding internships and projects."
+                    : "Choose where and how you prefer to work."
+                }
               />
               {step === "facts" && (
                 <div className={styles.twoFields}>
                   <div className={styles.field}>
                     <label htmlFor="pf-experienceYears">
-                      Experience <span>Years</span>
+                      Total experience <span>Years</span>
                     </label>
                     <input
                       id="pf-experienceYears"
@@ -650,7 +686,10 @@ function Editor({
                       }
                       {...inputProps("experienceYears")}
                     />
-                    <p>Just starting out? Enter 0.</p>
+                    <p>
+                      No professional experience? Enter 0. Use 2.5 for 2 years,
+                      6 months.
+                    </p>
                     {fieldError("experienceYears")}
                   </div>
                 </div>
@@ -694,13 +733,6 @@ function Editor({
                         error={errors.targetLocations}
                       />
                     )}
-                    <p className={styles.hint}>
-                      {!draft.locationPreference &&
-                        "Choose All India or preferred cities to complete this essential. "}
-                      Preferences help rank jobs. Roles in other cities can
-                      still appear; remote roles do not need a matching office
-                      city.
-                    </p>
                   </fieldset>
                   <fieldset className={styles.modeGroup}>
                     <legend>Preferred work mode</legend>
@@ -731,8 +763,8 @@ function Editor({
                       ))}
                     </div>
                     <p className={styles.hint}>
-                      Work mode helps rank your matches; it does not hide other
-                      opportunities.
+                      Location and work mode guide ranking; other opportunities
+                      may still appear.
                     </p>
                   </fieldset>
                 </>
@@ -740,7 +772,7 @@ function Editor({
             </fieldset>
           )}
           {step === "facts" && (
-            <section className={styles.section}>
+            <section className={styles.confirmation}>
               <label>
                 <input
                   type="checkbox"
@@ -763,7 +795,7 @@ function Editor({
                   disabled={
                     locked ||
                     !confirmed ||
-                    draft.skills.length < 3 ||
+                    draft.skills.length < 5 ||
                     !draft.experienceYears.trim() ||
                     Boolean(profileErrors(draft).experienceYears)
                   }
@@ -774,7 +806,9 @@ function Editor({
               </div>
             </section>
           )}
-          {(step === "preferences" || step === "summary") && (
+          {(step === "preferences" ||
+            (step === "summary" &&
+              Boolean(trialPlan || saved || saveError))) && (
             <div className={styles.saveBar}>
               <div className={styles.saveStatus} role="status">
                 <strong>
@@ -789,28 +823,42 @@ function Editor({
                 <span>
                   {dirty
                     ? extraction
-                      ? "Confirm all essentials before saving. Your saved profile is unchanged."
-                      : "You can save even if your profile is incomplete."
+                      ? "Your changes are saved only when you select Save changes."
+                      : "Save when you’re ready. You can finish later."
                     : "You can update these details any time."}
                 </span>
               </div>
-              <div className={styles.saveActions}>
-                <button
-                  type="button"
-                  className={styles.secondary}
-                  disabled={locked || !dirty || step !== "preferences"}
-                  onClick={discard}
-                >
-                  Discard changes
-                </button>
-                <button
-                  type="submit"
-                  className={styles.primary}
-                  disabled={locked || !dirty || step !== "preferences"}
-                >
-                  {busy ? "Saving…" : "Save changes"}
-                </button>
-              </div>
+              {step === "preferences" && (
+                <div className={styles.saveActions}>
+                  <button
+                    type="button"
+                    className={styles.secondary}
+                    disabled={locked}
+                    onClick={() =>
+                      setStep(extraction || dirty ? "facts" : "summary")
+                    }
+                  >
+                    {extraction || dirty
+                      ? "Back to details"
+                      : "Back to profile"}
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.secondary}
+                    disabled={locked || !dirty || step !== "preferences"}
+                    onClick={discard}
+                  >
+                    Discard changes
+                  </button>
+                  <button
+                    type="submit"
+                    className={styles.primary}
+                    disabled={locked || !dirty || step !== "preferences"}
+                  >
+                    {busy ? "Saving…" : "Save changes"}
+                  </button>
+                </div>
+              )}
               {saveError && (
                 <p className={styles.saveError} role="alert">
                   {saveError}

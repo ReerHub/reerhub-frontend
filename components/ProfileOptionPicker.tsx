@@ -19,6 +19,7 @@ export default function ProfileOptionPicker({
   onChange,
   error,
   suggestions = [],
+  hint,
 }: {
   id: string;
   label: string;
@@ -28,6 +29,7 @@ export default function ProfileOptionPicker({
   onChange: (values: string[]) => void;
   error?: string;
   suggestions?: string[];
+  hint?: string;
 }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -208,10 +210,9 @@ export default function ProfileOptionPicker({
         )}
       </div>
       <p id={`${id}-hint`}>
-        Select up to {limit}.{" "}
         {values.length >= limit
-          ? "Limit reached—remove one to add another."
-          : "Search, then select from the list."}
+          ? "Limit reached. Remove one to add another."
+          : hint || `Select up to ${limit} from the list.`}
       </p>
       {error && (
         <p className={styles.error} id={`error-${id}`} role="alert">
@@ -220,7 +221,7 @@ export default function ProfileOptionPicker({
       )}
       {suggestions.some((value) => !values.includes(value)) && (
         <div className={styles.suggestions}>
-          <span>Suggestions for your track · select only what you know</span>
+          <span>Suggested skills</span>
           <div>
             {suggestions
               .filter((value) => !values.includes(value))

@@ -112,7 +112,7 @@ test("validation and readiness reflect explicit broad preferences", () => {
   const broad = {
     techTrack: "software",
     rolePreference: "any",
-    skills: ["React", "Node.js", "Python"],
+    skills: ["React", "Node.js", "Python", "SQL", "Docker"],
     experienceYears: 0,
     locationPreference: "all-india",
     remoteType: "unknown",
@@ -126,7 +126,7 @@ test("legacy profiles do not invent saved broad preferences", () => {
     ...user,
     profile: {
       techTrack: "software",
-      skills: ["React", "Node.js", "Deployment"],
+      skills: ["React", "Node.js", "Deployment", "SQL", "Docker"],
       experienceYears: 5,
     },
   };
@@ -179,7 +179,7 @@ test("resume-first existing profiles preserve facts and support explicit prefere
     ...user,
     profile: {
       techTrack: "software",
-      skills: ["React", "Node.js", "Deployment"],
+      skills: ["React", "Node.js", "Deployment", "SQL", "Docker"],
       experienceYears: 5,
     },
     membership: { isPro: true },
@@ -216,7 +216,7 @@ test("resume-first existing profiles preserve facts and support explicit prefere
       if (fail) throw new Error("Fixture save failed");
       if (payload.resumeConfirmed) {
         assert.equal(payload.experienceYears, 2);
-        assert.deepEqual(payload.skills, ["Node.js", "Python", "React"]);
+        assert.deepEqual(payload.skills, ["Docker", "Node.js", "Python", "React", "SQL"]);
         return { ...legacy, profile: { ...legacy.profile, ...payload } };
       }
       assert.deepEqual(payload, {
@@ -234,7 +234,7 @@ test("resume-first existing profiles preserve facts and support explicit prefere
   source = source
     .replace(
       /import ResumeUpload from "@\/components\/ResumeUpload";/,
-      "const ResumeUpload = ({onDraft}) => <div><button type='button' onClick={()=>onDraft({facts:{skills:['React','Node.js','Python'],roleCandidates:['Backend Engineer'],experience:{minYears:null,maxYears:null}}})}>Fixture unknown upload</button><button type='button' onClick={()=>onDraft({facts:{skills:['React','Node.js','Python'],roleCandidates:['Backend Engineer'],experience:{minYears:2,maxYears:2}}})}>Fixture known upload</button></div>;",
+      "const ResumeUpload = ({onDraft}) => <div><button type='button' onClick={()=>onDraft({facts:{skills:['React','Node.js','Python','SQL','Docker'],roleCandidates:['Backend Engineer'],experience:{minYears:null,maxYears:null}}})}>Fixture unknown upload</button><button type='button' onClick={()=>onDraft({facts:{skills:['React','Node.js','Python','SQL','Docker'],roleCandidates:['Backend Engineer'],experience:{minYears:2,maxYears:2}}})}>Fixture known upload</button></div>;",
     )
     .replace(
       /import \{ resolvePlanId \} from "@\/lib\/billing-plans";/,
@@ -393,7 +393,7 @@ test("resume-first existing profiles preserve facts and support explicit prefere
         .getAttribute("aria-valuenow"),
       "3",
     );
-    assert.ok(button("Save changes").disabled);
+    assert.equal(button("Save changes"), undefined);
     await act(async () => {
       button("Change job preferences").click();
       await settle();
@@ -414,7 +414,7 @@ test("resume-first existing profiles preserve facts and support explicit prefere
       await settle();
     });
     assert.equal(calls, 2);
-    assert.ok(button("Save changes").disabled);
+    assert.equal(button("Save changes"), undefined);
     assert.deepEqual(savedUser.profile.skills, legacy.profile.skills);
     assert.equal(savedUser.profile.rolePreference, "any");
     assert.equal(savedUser.profile.locationPreference, "all-india");
@@ -428,7 +428,7 @@ test("resume-first existing profiles preserve facts and support explicit prefere
         .getAttribute("aria-valuenow"),
       "5",
     );
-    assert.ok(button("Save changes").disabled);
+    assert.equal(button("Save changes"), undefined);
     await act(async () => {
       root.render(
         createElement(Component, {
@@ -500,4 +500,22 @@ test("partial profile updates preserve unchanged fields and explicit clears", ()
   assert.ok(
     !Object.hasOwn(changedProfilePayload(draft, baseline), "experienceYears"),
   );
+});
+
+
+test("skill policy requires five for readiness and allows at most fifteen selections", () => {
+  const catalog = Array.from({ length: 16 }, (_, i) => ({ value: `Skill ${i}`, label: `Skill ${i}`, aliases: [] }));
+  const skills = catalog.map(option => option.value);
+  const ready = count => profileSignals({ ...user.profile, skills: skills.slice(0, count) }).find(signal => signal.label === "5+ skills").complete;
+  assert.equal(ready(4), false);
+  assert.equal(ready(5), true);
+  assert.equal(ready(10), true);
+  assert.equal(ready(15), true);
+  assert.equal(selectOption(skills.slice(0, 14), skills[14], catalog, 15).values.length, 15);
+  assert.ok(selectOption(skills.slice(0, 15), skills[15], catalog, 15).error);
+  const draft = draftFromUser(user);
+  draft.skills = skills.slice(0, 15);
+  assert.equal(profileErrors(draft).skills, undefined);
+  draft.skills = skills;
+  assert.match(profileErrors(draft).skills, /15/);
 });

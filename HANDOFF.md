@@ -1,23 +1,21 @@
 # REERHUB frontend handoff
 
-Updated: 2026-10-16 (Asia/Kolkata). Verify current Git/CI before release work.
+Updated: 2026-10-16 (Asia/Kolkata). Verify Git/CI/deployments before release work.
 
-## Current task / merge hold
+## Current release
 
-Resume-first onboarding implemented on `feat/resume-first-profile`, based on main `a06acc6`. Owner requires local testing with real reference resumes and fresh approval before either PR merge; earlier scoped merge authorization is superseded. No frontend production change has been released. Production remains discovery/trial PR #121 at a06acc6; backend main is benchmark #107 at 88fcf85. Feature branches must remain until approved release/verification.
+Owner approved pushing/merging backend #108 and frontend #122 after browser testing, superseding the prior local-review hold. `feat/resume-first-profile` is based on main `a06acc6`. CI/release/production verification are in progress; approval is not proof of completion. Deploy compatible backend first, frontend second, verify production, then delete merged branches. No unrelated release is authorized.
 
 ## Implemented
 
-New/empty matching profile starts with PDF upload; existing users see a saved summary. Short fact confirmation and explicit role/location preferences replace the long matching form. Canonical pickers, partial saves, unsaved-navigation guards, account identity/settings/export/deletion and trial-plan links remain. Unknown experience stays blank; an imported draft needs confirmed facts and complete essentials to Save. Upload failure/cancellation leaves saved fields unchanged. No PDF/raw text/localStorage persistence, private analytics tags, external AI, automatic checkout or scoring changes. Privacy notice and existing guides updated.
+Resume-first matching profile: upload bounded text PDF, confirm/correct skills and experience, then explicitly choose roles/location/work mode. Existing users have a saved summary and review/preference shortcuts. Five distinct skills required for readiness/import confirmation, around ten recommended, fifteen maximum. Unknown experience stays blank and blocks imported-profile completion; user confirmation is attestation, not verified employment. Explicit Save is the only profile write. Failed/cancelled uploads preserve saved fields; drafts stay in component memory. No PDF/raw-text persistence, external AI, private analytics tags or automatic checkout.
+
+Simplified page wording/hierarchy, three-step indicator, saved-skill tags and preference summary. Idle save buttons removed from summary; back/save/discard and unsaved guards retained. Mobile save controls stay in document flow. Account settings remain separate; homepage and public/private/billing boundaries preserved.
 
 ## Validation — 2026-10-16
 
-127 frontend regressions passed, including legacy preservation, failed-save retry, unknown experience, confirmation gate and imported-profile save. Lint/types/standard production build and audit passed. Browser tested synthetic upload/unknown blocking, explicit preferences and isolated save; desktop/390px/320px had no overflow or private analytics scripts. Backend full suite 204 and four later focused tests passed; production PDF parser read 223/226 reference PDFs with 96 unknown experience; all originals unchanged. Counts do not prove accuracy. Eight-profile/48-pair human labels remain pending.
+128 frontend regressions passed; full lint/types and standard production build passed. Desktop/390px/320px browser checks had no horizontal overflow. Fresh local browser profile: synthetic PDF produced seven skills/two years; confirmation/five-skill gates and missing preferences blocked appropriately; save/reload preserved five selected skills, two years, All India/Hybrid. Reference PDF populated ten skills but unknown experience; left unsaved and completion blocked. Accuracy/human benchmark labels remain unverified; see backend handoff.
 
-## Ready for owner local test
+## Local QA / preserved work
 
-Real frontend runs at 127.0.0.1:3019 with API_URL=http://127.0.0.1:8818/api/v1. Open http://127.0.0.1:3019/api/v1/local-qa/login for the synthetic Resume Local QA account. This uses the real parser and isolated local profile DB via backend resumeLocalQa.js, not synthetic ui-fixtures extraction responses. Upload PDFs, compare/correct facts, choose preferences, save and reload; no production changes or payment/email actions. Reopen login to reset test upload budget/session. Do not run full/destructive DB tests during owner review. See backend README/HANDOFF for restart instructions. Fixture-generated tsconfig additions are tool-owned and must be restored before commit.
-
-## Preserved work
-
-Original homepage/public boundaries unchanged. Preserve both local handoff updates and backend unrelated company research JSON. Companion: `../reerhub-backend/HANDOFF.md`. No merges until owner approves after testing.
+Frontend3019 uses real isolated backend8818. `/api/v1/local-qa/login` selects original test account; `?fresh=1` creates a distinct empty one. Reference draft currently open; preserve it and local saved profiles. No production writes, scheduler, email or payments in QA. Do not run destructive/full DB tests there. Preserve backend unrelated research JSON and ignored evaluation data. Companion: `../reerhub-backend/HANDOFF.md`.

@@ -12,7 +12,7 @@ export function profileSignals(profile: AuthUser["profile"]) {
           (profile.rolePreference === "selected" &&
             Boolean(profile.techRoles?.length))),
     },
-    { label: "3+ skills", complete: new Set(profile.skills || []).size >= 3 },
+    { label: "5+ skills", complete: new Set(profile.skills || []).size >= 5 },
     {
       label: "Experience",
       complete:

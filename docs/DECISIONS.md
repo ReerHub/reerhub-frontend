@@ -429,3 +429,13 @@ Owner chose and authorized upload → short confirmation → role/location choic
 Backend PDF processing ships first; frontend uses private multipart extraction and retains original auth/refresh/CSRF semantics. No PDF/raw text retention or external AI service. Existing profiles do not require migration/re-upload. Pro availability and explicit checkout remain unchanged. The offline parser's human accuracy/job-pair review is still pending; this UI requires each user to correct/confirm their own facts and makes no match-quality improvement claim. Scoped merges are authorized after validation, with explicit owner approval to release before separate benchmark labels while requiring every user to confirm/correct their facts; later changes need fresh approval.
 
 Owner subsequently requires proper local testing with the reference resumes before either merge. This supersedes the earlier scoped merge authorization. Local frontend API_URL points to the guarded real backend QA API on 8818, not the synthetic browser-fixture extraction handler. A synthetic account persists confirmed fields only to the isolated local test database. Both PRs must remain unmerged until the owner approves after local testing.
+
+
+## 2026-10-16 — Clearer profile presentation (local, unmerged)
+
+Simplified Profile & preferences without changing extraction, scoring, consent or save rules. Saved skills use tags, with explicit role/location/work-mode summaries. Editing shows three setup steps and short guidance beside each control; skills state the five-minimum/ten-recommended/fifteen-maximum policy once. Unknown experience and confirmation remain explicit. Idle summary save buttons are omitted; editable steps retain save/discard and back navigation. Mobile save actions remain in document flow so they do not cover fields. Account and destructive-action controls remain separate. Owner local review and fresh approval are still required before merging draft PR #122 (backend #108).
+
+
+## 2026-10-16 — Owner approved browser-tested release
+
+Owner explicitly requested pushing and merging backend #108/frontend #122 after fresh-account browser testing, superseding the earlier local-review hold. Synthetic PDF extraction returned seven skills/two years; the confirmation and five-skill gates, explicit preferences, save and reload passed. A reference PDF populated ten skills but unknown experience; completion was correctly blocked. This is flow validation, not corpus accuracy or matching-quality evidence. Backend deploys first, required CI remains mandatory, and production verification precedes feature-branch deletion.

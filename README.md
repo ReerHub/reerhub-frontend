@@ -41,7 +41,7 @@ The homepage matching example uses clearly fictional software/data profiles and 
 Three calm sections: Your next role, Your skills, Your work preferences. Name remains editable; account settings sit separately below.
 
 - Choose one of nine technology tracks first; choose Any role in this track or up to three catalog roles.
-- Search/select up to ten canonical skills. Aliases such as React.js/NodeJS help search but do not become duplicate saved skills. Track suggestions are optional; arbitrary custom values are not accepted.
+- Select 5–15 canonical skills for matching readiness; around ten relevant skills are recommended. Aliases such as React.js/NodeJS help search but do not become duplicate saved skills. Track suggestions are optional; arbitrary custom values are not accepted.
 - Choose All India or up to three searchable catalog cities, with aliases such as Bangalore/Bengaluru.
 - Enter experience, including zero and fractions (0–60 years), and choose Any/Onsite/Hybrid/Remote work mode.
 - Compact checkbox popovers show removable chips, counts, selection limits, no-result messages and keyboard focus. Escape/Done/outside interaction close them; lists are bounded and scrollable rather than expanding the whole form.

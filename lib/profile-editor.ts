@@ -116,6 +116,6 @@ export function profileErrors(draft: ProfileDraft): Record<string, string> {
   if (draft.techRoles.length > 3) errors.techRoles = "Select up to 3 roles.";
   if (draft.targetLocations.length > 3)
     errors.targetLocations = "Select up to 3 cities.";
-  if (draft.skills.length > 10) errors.skills = "Select up to 10 skills.";
+  if (draft.skills.length > 15) errors.skills = "Select up to 15 skills.";
   return errors;
 }

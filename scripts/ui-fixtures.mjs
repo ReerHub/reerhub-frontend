@@ -779,13 +779,13 @@ const server = http.createServer(async (req, res) => {
     if (state === "anonymous") return json(null, 401);
     if (dashboardMode === "error") return json(null, 503);
     const profileReady =
-      user.profile.skills.length >= 3 &&
+      user.profile.skills.length >= 5 &&
       !!user.profile.techTrack &&
       !!user.profile.rolePreference &&
       !!user.profile.locationPreference;
     return json({
       profileReady,
-      missingProfileFields: profileReady ? [] : ["at least 3 skills"],
+      missingProfileFields: profileReady ? [] : ["at least 5 skills"],
       strongMatchCount: profileReady
         ? dashboardMode === "empty"
           ? 0
