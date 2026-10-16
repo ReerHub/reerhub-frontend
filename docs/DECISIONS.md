@@ -2,6 +2,13 @@
 
 Historical evidence, not a startup checklist. Use the context-loading procedure in `../AGENTS.md` to locate and read complete relevant entries, including later superseding decisions. Entries are not guaranteed to be chronological; current code and live checks establish current behavior and release state.
 
+
+## 2026-10-16 — Compact cross-tool handoff
+
+Owner requested one root HANDOFF.md per repository to preserve useful task state across coding tools without copying architecture or transcripts. Startup now reads the checkpoint and Git state before loading relevant guides/history; missing or stale checkpoints require targeted recovery. Checkpoints are agent-maintained, dated, capped at a 400-word target and never establish current release approval. This explicitly supersedes the earlier prohibition on a separate memory file only for this single resume checkpoint; existing guides and dated decisions remain authoritative. No memory service or code graph is installed, and no measured token saving is claimed.
+
+Validation and current PR/CI state are recorded in the documentation PR. Existing merge approval and post-verification branch cleanup rules remain in force.
+
 ## 2026-10-15 — Selective session context
 
 Owner requested lower recurring token use without reducing work quality, with PR review and approval before merge. AGENTS now routes documentation reads by task and requires heading/keyword searches plus complete relevant entries, supersession checks and broader reads when uncertain. Existing constraints and historical entries are preserved; no separate memory file duplicates current guides. Documentation review and history-preservation checks validate this change; application behavior and runtime tests are unchanged. Token savings depend on the task and are not measured billing savings. This entry does not authorize merge or deployment.
