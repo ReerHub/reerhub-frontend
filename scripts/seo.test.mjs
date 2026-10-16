@@ -173,7 +173,7 @@ test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors",
   const id = "abcdefabcdefabcdefabcdef";
   try {
     globalThis.fetch = async (u) => {
-      if (u.includes("earlyCareer="))
+      if (u.includes("earlyCareer=") || u.includes("skills="))
         return Response.json({
           data: [],
           editorialInventory: { activeRoles: 0, employers: 0 },
@@ -198,8 +198,10 @@ test("sitemap follows cursor beyond anonymous cap and rejects repeated cursors",
     calls = 0;
     globalThis.fetch = async (u) =>
       Response.json(
-        u.includes("/companies") || u.includes("earlyCareer=")
-          ? { data: [] }
+        u.includes("/companies") ||
+          u.includes("earlyCareer=") ||
+          u.includes("skills=")
+          ? { data: [], editorialInventory: { activeRoles: 0, employers: 0 } }
           : { data: [], nextCursor: id },
       );
     await assert.rejects(sitemap.sitemapEntries(), /Invalid sitemap cursor/);
@@ -214,7 +216,19 @@ test("deleted job URLs return real 404s before streaming, without hiding outages
   const reerhubUrl = url(
     reerhubSource.slice(reerhubSource.indexOf("export const slugify")),
   );
+  const statusUrl = url(
+    (await source("../lib/public-route-status.ts"))
+      .replace('"./seo-landings"', JSON.stringify(landingsUrl))
+      .replace('"./reerhub"', JSON.stringify(reerhubUrl))
+      .replace(
+        '"next/server"',
+        JSON.stringify(
+          new URL("../node_modules/next/server.js", import.meta.url).href,
+        ),
+      ),
+  );
   const proxySource = (await source("../proxy.ts"))
+    .replace('"@/lib/public-route-status"', JSON.stringify(statusUrl))
     .replace('"@/lib/reerhub"', JSON.stringify(reerhubUrl))
     .replace('"@/lib/admin-host"', JSON.stringify(hostUrl))
     .replace(
@@ -237,7 +251,8 @@ test("deleted job URLs return real 404s before streaming, without hiding outages
     let calls = 0;
     globalThis.fetch = async (input, options) => {
       calls++;
-      assert.ok(String(input).endsWith(`/jobs/${id}`));
+      assert.equal(new URL(input).searchParams.get("id"), id);
+      assert.ok(String(input).includes("/discovery/status?kind=job"));
       assert.equal(options.cache, "no-store");
       assert.ok(options.signal);
       return new Response("{}", { status: 404 });
@@ -255,10 +270,11 @@ test("deleted job URLs return real 404s before streaming, without hiding outages
     assert.equal(calls, 2);
     for (const status of [200, 429, 503]) {
       globalThis.fetch = async () => new Response("{}", { status });
-      assert.equal((await route(id)).headers.get("x-middleware-next"), "1");
+      assert.equal((await route(id)).status, 503);
     }
     globalThis.fetch = async () =>
       Response.json({
+        success: true,
         data: {
           _id: id,
           title: "Backend Engineer",
@@ -280,7 +296,7 @@ test("deleted job URLs return real 404s before streaming, without hiding outages
     globalThis.fetch = async () => {
       throw new Error("unavailable");
     };
-    assert.equal((await route(id)).headers.get("x-middleware-next"), "1");
+    assert.equal((await route(id)).status, 503);
   } finally {
     globalThis.fetch = originalFetch;
   }

@@ -5,11 +5,24 @@ import ServerJobBrowser from "@/components/ServerJobBrowser";
 import PageHeader from "@/components/PageHeader";
 import Icon from "@/components/ui/Icon";
 import { locationScopeFromParams } from "@/lib/location-scope";
-export const metadata = pageMetadata(
+const metadata = pageMetadata(
   "Tech Jobs in India",
   "Engineering and AI jobs with confirmed India eligibility, from official employer sources.",
   "/jobs",
 );
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  return {
+    ...metadata,
+    ...(Object.keys(params).some((key) => params[key])
+      ? { robots: { index: false, follow: true } }
+      : {}),
+  };
+}
 export default async function Page({
   searchParams,
 }: {
@@ -21,6 +34,26 @@ export default async function Page({
       Object.entries(params).filter(
         (entry): entry is [string, string] => entry[1] !== undefined,
       ),
+    ),
+  );
+  const filterKeys = [
+    "q",
+    "companyId",
+    "city",
+    "remoteType",
+    "techTrack",
+    "techRole",
+    "skills",
+    "seniority",
+    "employmentType",
+    "earlyCareer",
+    "sort",
+  ];
+  const filters = Object.fromEntries(
+    filterKeys.flatMap((key) =>
+      typeof params[key] === "string" && params[key]!.length <= 100
+        ? [[key, params[key]!]]
+        : [],
     ),
   );
   return (
@@ -50,6 +83,7 @@ export default async function Page({
         <Suspense fallback={<div className="skeleton h-56 rounded-2xl" />}>
           <ServerJobBrowser
             heading="All open roles"
+            filters={filters}
             locationScope={locationScope}
           />
         </Suspense>

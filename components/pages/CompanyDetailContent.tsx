@@ -10,7 +10,7 @@ import {
   DataUnavailableError,
 } from "@/lib/reerhub";
 import { readCompany as getCompany } from "@/lib/server-reads";
-import { pageMetadata, SITE, concise, NOINDEX } from "@/lib/seo";
+import { pageMetadata, SITE, concise } from "@/lib/seo";
 import {
   locationScopeFromParams,
   locationScopeLabel,
@@ -38,7 +38,6 @@ export async function generateMetadata({
           "Explore official company openings.",
           `/companies/${slug}`,
         ),
-        ...NOINDEX,
       };
     throw error;
   }

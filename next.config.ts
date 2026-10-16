@@ -30,6 +30,11 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: "/full-stack-developer-jobs",
+        destination: "/full-stack-jobs",
+        permanent: true,
+      },
       { source: "/signup", destination: "/login", permanent: false },
       {
         source: "/forgot-password",

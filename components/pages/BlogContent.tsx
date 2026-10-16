@@ -208,6 +208,15 @@ export function BlogArticleContent({
               </p>
             )}
           </section>
+          <nav
+            aria-label="Explore relevant roles"
+            className="flex flex-wrap gap-3 my-8"
+          >
+            <Link href="/frontend-jobs">Frontend roles</Link>
+            <Link href="/backend-jobs">Backend roles</Link>
+            <Link href="/react-jobs">React openings</Link>
+            <Link href="/python-jobs">Python openings</Link>
+          </nav>
           <aside className={styles.authorBio}>
             <p className={styles.blogEyebrow}>ABOUT THE AUTHOR</p>
             <h2>REERHUB TECHNOLOGIES</h2>

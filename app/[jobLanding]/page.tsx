@@ -27,8 +27,12 @@ export async function generateMetadata({
   const { jobLanding: slug } = await params;
   const landing = JOB_LANDINGS[slug];
   if (!landing) return { robots: { index: false, follow: false } };
-  const data = landing.earlyCareer ? await readInventory(slug) : undefined;
-  const launched = editorialReady(landing, data?.editorialInventory);
+  const data =
+    landing.earlyCareer || landing.skill
+      ? await readInventory(slug)
+      : undefined;
+  const launched =
+    data === null || editorialReady(landing, data?.editorialInventory);
   return {
     ...pageMetadata(landing.title, landing.description, `/${slug}`),
     ...(!launched ? { robots: { index: false, follow: true } } : {}),
@@ -62,13 +66,13 @@ export default async function LandingPage({
             ? "Current opening counts are temporarily unavailable."
             : `${total} active ${landing.earlyCareer ? "evidence-qualified " : ""}openings. Details and official Apply links are public.`}
         </p>
-        {landing.earlyCareer &&
+        {(landing.earlyCareer || landing.skill) &&
+          data &&
           !editorialReady(landing, data?.editorialInventory) && (
             <p className="mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm leading-7">
-              We’re building verified early-career coverage. This page remains
-              outside search indexing until it has enough confirmed openings
-              across employers. Browse the available roles below; no unknown
-              experience requirement is labeled fresher-friendly.
+              We’re expanding our coverage of these roles. Review the available
+              openings below and check each employer’s requirements before
+              applying.
             </p>
           )}
         <Suspense fallback={<p>Loading job filters…</p>}>
@@ -76,6 +80,7 @@ export default async function LandingPage({
             heading="Current official openings"
             initialCategory={landing.track}
             initialFilters={{
+              ...(landing.skill ? { skills: landing.skill } : {}),
               ...(landing.role ? { techRole: landing.role } : {}),
               ...(landing.earlyCareer
                 ? { earlyCareer: landing.earlyCareer }
@@ -114,6 +119,13 @@ export default async function LandingPage({
           <Link href="/pune-jobs" className="btn-secondary">
             Pune
           </Link>
+          {Object.entries(JOB_LANDINGS)
+            .filter(([, item]) => item.skill)
+            .map(([key, item]) => (
+              <Link key={key} href={`/${key}`} className="btn-secondary">
+                {item.skill} jobs
+              </Link>
+            ))}
           <Link href="/remote-jobs" className="btn-secondary">
             Remote in India
           </Link>

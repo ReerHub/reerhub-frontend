@@ -51,6 +51,23 @@ export default function Page() {
             </Link>
           ))}
         </nav>
+        <nav aria-label="Jobs by skill" className="mb-7 flex flex-wrap gap-2">
+          {[
+            ["react", "React"],
+            ["nodejs", "Node.js"],
+            ["python", "Python"],
+            ["java", "Java"],
+            ["typescript", "TypeScript"],
+          ].map(([slug, name]) => (
+            <Link
+              href={`/${slug}-jobs`}
+              key={slug}
+              className="btn-secondary text-xs"
+            >
+              {name} jobs
+            </Link>
+          ))}
+        </nav>
         <Suspense fallback={<div className="skeleton h-56 rounded-2xl" />}>
           <ServerJobBrowser
             track="software"
