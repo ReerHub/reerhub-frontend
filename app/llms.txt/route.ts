@@ -38,6 +38,11 @@ REERHUB TECHNOLOGIES operates REERHUB as a sole proprietorship. Personal profile
 - [Delhi NCR](${SITE}/delhi-jobs): Tech roles across Delhi, Gurgaon and Noida.
 - [Mumbai](${SITE}/mumbai-jobs): Tech roles in Mumbai.
 
+## Resume Builder
+
+- [REERHUB Resume Builder](${SITE}/resume): A resume editor within REERHUB with three free single-column templates and watermark-free PDF downloads. No sign-in is required for local drafts and downloads. The same REERHUB account adds explicit cloud saving and named versions. Resume documents remain separate from matching profiles. Pro AI writing assistance is not yet enabled and awaits evaluation.
+- [Resume templates](${SITE}/resume/templates): Classic, Modern and Technical layouts, A4 or US Letter. No ATS score or hiring guarantee.
+
 ## Product and matching
 
 - [ReerHub blog](${SITE}/blog): Practical guides for reading tech job listings and understanding job-search evidence.

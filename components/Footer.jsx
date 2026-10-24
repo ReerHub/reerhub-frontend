@@ -34,6 +34,7 @@ const columns = [
       ["/billing", "Pricing"],
       ["/about", "About REERHUB"],
       ["/blog", "Blog"],
+      ["/resume", "Resume Builder"],
       ["/how-it-works", "How it works"],
       ["/matching-methodology", "Matching methodology"],
       ["/contact", "Contact and help"],

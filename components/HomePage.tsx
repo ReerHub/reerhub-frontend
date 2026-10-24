@@ -1,5 +1,6 @@
 import Link from "@/components/AppLink";
 import { HomeAccountAction, HomeGuestNote } from "./HomeAccountAction";
+import ResumeBuilderPromotion from "./ResumeBuilderPromotion";
 import HomeJobPreview from "./HomeJobPreview";
 import CompanyLogo from "@/components/CompanyLogo";
 import HomeHeroScene from "./HomeHeroScene";
@@ -315,6 +316,7 @@ export default function HomePage({
           </div>
         </div>
       </section>
+      <ResumeBuilderPromotion />
       <section className={`${styles.benefits} page-container`}>
         <div className={styles.benefitHeading}>
           <p className={styles.eyebrow}>MADE FOR YOUR MOMENT</p>

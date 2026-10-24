@@ -56,8 +56,24 @@ test("missing counts are not fabricated zeros, and genuine zeros remain availabl
 
 const linkMock =
   "const Link=({children,href,prefetch,...props})=><a href={href} {...props}>{children}</a>;";
+const promotionSource = (await read("../components/ResumeBuilderPromotion.tsx"))
+  .replace('import Link from "next/link";', linkMock)
+  .replace(
+    'import Image from "next/image";',
+    "const Image=({src,alt,width,height})=><img src={src} alt={alt} width={width} height={height}/>;",
+  )
+  .replace(
+    /import BrandWordmark from [^;]+;/,
+    "const BrandWordmark=()=> <strong>REERHUB</strong>;",
+  )
+  .replace(
+    /import styles from [^;]+;/,
+    "const styles=new Proxy({}, {get:(_,key)=>key});",
+  );
+const promotionUrl = compileFixture(promotionSource);
 let homeSource = await read("../components/HomePage.tsx");
 homeSource = homeSource
+  .replace('"./ResumeBuilderPromotion"', JSON.stringify(promotionUrl))
   .replace('import Link from "@/components/AppLink";', linkMock)
   .replace(
     /import \{ HomeAccountAction, HomeGuestNote \} from "\.\/HomeAccountAction";/,
@@ -246,4 +262,25 @@ test("catalog stats use server counts and offline feedback is limited to supplie
     [],
   );
   assert.equal(empty.querySelector(".catalogStats dd").textContent, "0");
+});
+
+test("resume promotion names the parent brand and provides honest free creation links", () => {
+  const document = renderHome(
+    { jobs: [], companies: [], totalJobs: 0, totalCompanies: 0 },
+    [],
+  );
+  const promo = document.querySelector(
+    '[aria-labelledby="resume-builder-heading"]',
+  );
+  assert.ok(promo);
+  assert.match(promo.textContent, /REERHUB.*RESUME BUILDER/s);
+  assert.match(promo.textContent, /No sign-up needed/);
+  assert.match(promo.textContent, /ILLUSTRATIVE EXAMPLE/);
+  const links = [...promo.querySelectorAll("a")].map(
+    (a) => new URL(a.href, "https://reerhub.com"),
+  );
+  assert.ok(links.some((a) => a.pathname === "/resume/editor"));
+  assert.ok(links.some((a) => a.pathname === "/resume/templates"));
+  assert.ok(links.every((a) => ["https://reerhub.com"].includes(a.origin)));
+  assert.doesNotMatch(promo.textContent, /guaranteed|ATS score|trusted by/i);
 });

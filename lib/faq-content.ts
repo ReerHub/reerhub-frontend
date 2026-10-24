@@ -38,6 +38,27 @@ export const FAQ_CATEGORIES: FaqCategory[] = [
     ]),
   },
   {
+    id: "resume-builder",
+    title: "Resume Builder",
+    items: items([
+      [
+        "resume-free",
+        "Is REERHUB Resume Builder free?",
+        "Yes. REERHUB Resume Builder provides three free templates and watermark-free PDF downloads without signing in. Open Resume Builder from the main navigation or at reerhub.com/resume. A shared REERHUB account adds cloud saving, duplication and named versions.",
+      ],
+      [
+        "resume-profile",
+        "Does my resume change my matching profile?",
+        "No. Resume Builder documents are separate from your REERHUB matching profile. Saving or editing a resume does not automatically update profile preferences or job recommendations.",
+      ],
+      [
+        "resume-ai",
+        "Can AI write my resume?",
+        "Pro writing assistance is planned but remains disabled until provider evaluation qualifies. When available, you will review suggestions before applying them. You remain responsible for confirming your experience; the builder does not guarantee interviews or ATS outcomes.",
+      ],
+    ]),
+  },
+  {
     id: "discovering-jobs",
     title: "Finding and applying for jobs",
     items: items([

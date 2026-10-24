@@ -45,15 +45,24 @@ test("FAQ answers are complete server HTML, unique and exactly match public JSON
   const dom = new JSDOM(renderToStaticMarkup(createElement(page.default)));
   const document = dom.window.document;
   assert.equal(document.querySelectorAll("h1").length, 1);
-  assert.equal(document.querySelectorAll("details[data-faq]").length, 41);
-  assert.equal(new Set(faqs.ALL_FAQS.map((item) => item.id)).size, 41);
-  assert.equal(new Set(faqs.ALL_FAQS.map((item) => item.question)).size, 41);
+  assert.equal(
+    document.querySelectorAll("details[data-faq]").length,
+    faqs.ALL_FAQS.length,
+  );
+  assert.equal(
+    new Set(faqs.ALL_FAQS.map((item) => item.id)).size,
+    faqs.ALL_FAQS.length,
+  );
+  assert.equal(
+    new Set(faqs.ALL_FAQS.map((item) => item.question)).size,
+    faqs.ALL_FAQS.length,
+  );
   const schema = JSON.parse(
     document.querySelector('script[type="application/ld+json"]').textContent,
   );
   assert.equal(schema["@type"], "FAQPage");
   assert.equal(schema.url, "https://reerhub.com/faq");
-  assert.equal(schema.mainEntity.length, 41);
+  assert.equal(schema.mainEntity.length, faqs.ALL_FAQS.length);
   for (const [i, faq] of faqs.ALL_FAQS.entries()) {
     const detail = document.getElementById(faq.id);
     assert.equal(detail.querySelector("h3").textContent, faq.question);
@@ -64,7 +73,10 @@ test("FAQ answers are complete server HTML, unique and exactly match public JSON
   const member = new JSDOM(
     renderToStaticMarkup(createElement(page.default, { memberView: true })),
   );
-  assert.equal(member.window.document.querySelectorAll("details[data-faq]").length, 41);
+  assert.equal(
+    member.window.document.querySelectorAll("details[data-faq]").length,
+    faqs.ALL_FAQS.length,
+  );
   assert.equal(
     member.window.document.querySelectorAll(
       'script[type="application/ld+json"]',

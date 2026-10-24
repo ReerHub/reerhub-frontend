@@ -112,7 +112,10 @@ export async function proxy(req: NextRequest) {
     const publicResponse =
       sharedTestHost ||
       (process.env.SITE_URL || "").includes("staging") ||
-      /^\/(?:login|verify-magic|verify-email)(?:\/|$)/.test(pathname)
+      /^\/(?:login|verify-magic|verify-email|resume-builder|resume-builder-library)(?:\/|$)/.test(
+        pathname,
+      ) ||
+      /^\/resume\/(?:editor|library)(?:\/|$)/.test(pathname)
         ? unindexed(response)
         : response;
     const filters = [

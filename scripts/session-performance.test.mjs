@@ -71,3 +71,65 @@ test("session reads deduplicate and anonymous sessions do not attempt refresh", 
     globalThis.fetch = original;
   }
 });
+
+test("resume transport shares authenticated errors, CSRF and expected-owner headers", async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = async (path, init) => {
+    if (path.endsWith("/auth/csrf"))
+      return Response.json({ data: { csrfToken: "fixture" } });
+    assert.equal(init.headers["x-csrf-token"], "fixture");
+    assert.equal(init.headers["x-resume-owner"], "expected-member");
+    assert.equal(init.cache, "no-store");
+    return Response.json({ message: "Account changed" }, { status: 409 });
+  };
+  try {
+    await assert.rejects(
+      auth.authenticatedRequest("/resumes", {
+        method: "POST",
+        cache: "no-store",
+        headers: { "x-resume-owner": "expected-member" },
+      }),
+      (error) => error.status === 409 && error.message === "Account changed",
+    );
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test("cross-tab hints contain no identity and ignore self/invalid messages", async () => {
+  const original = globalThis.BroadcastChannel;
+  const channels = [];
+  globalThis.BroadcastChannel = class {
+    constructor(name) {
+      this.name = name;
+      channels.push(this);
+    }
+    postMessage(value) {
+      this.message = value;
+    }
+    close() {
+      this.closed = true;
+    }
+  };
+  try {
+    const sync = await import(
+      `data:text/javascript;base64,${Buffer.from(await compile("../lib/session-sync.ts")).toString("base64")}`
+    );
+    let checks = 0;
+    const unsubscribe = sync.subscribeSessionChange(() => checks++);
+    sync.notifySessionChange();
+    const [receiver, sender] = channels;
+    assert.deepEqual(Object.keys(sender.message).sort(), ["source", "type"]);
+    receiver.onmessage({ data: sender.message });
+    receiver.onmessage({ data: { type: "unknown", source: "other-tab" } });
+    assert.equal(checks, 0);
+    receiver.onmessage({
+      data: { type: "check-session", source: "other-tab" },
+    });
+    assert.equal(checks, 1);
+    unsubscribe();
+    assert.ok(receiver.closed && sender.closed);
+  } finally {
+    globalThis.BroadcastChannel = original;
+  }
+});

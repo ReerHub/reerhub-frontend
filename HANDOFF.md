@@ -1,21 +1,17 @@
 # REERHUB frontend handoff
 
-Updated: 2026-10-16 (Asia/Kolkata). Verify Git/CI/deployments before release work.
+Updated:2026-10-25 (Asia/Kolkata).
 
-## Current release
+## Active: same-app Resume Builder release
 
-Owner approved pushing/merging backend #108 and frontend #122 after browser testing, superseding the prior local-review hold. `feat/resume-first-profile` is based on main `a06acc6`. CI/release/production verification are in progress; approval is not proof of completion. Deploy compatible backend first, frontend second, verify production, then delete merged branches. No unrelated release is authorized.
+Owner superseded standalone/subdomain plan: this frontend/repository owns `/resume` and editor/templates/library/privacy children. Branch `feat/resume-builder-entry` from currentmain9cca00d; local changes await final build/PR. Owner explicitly authorized push, passing-CI merges, live checks and merged-feature cleanup. Preserve main/develop. Backend PR122 passed322 tests and merged558016d, now live on Render; health200 and unsigned resumes401/private-no-store verified.
 
-## Implemented
+Migrated builder pages/components/libs, scoped CSS/chrome, existing AuthProvider/CSRF/serialized refresh, owner-bound requests, identity-keyed workspaces/confirmations, guest/local recovery, explicit migration, CAS autosave/conflicts, versions/restore, library/duplicate/delete and three template PDF export. Added free local Review/JD tech-vocabulary comparison after official competitor research. Keep AI disabled until its real synthetic qualification passes; no provider/real-resume calls. Homepage/nav/footer/FAQ/SEO/sitemap/llms use same-origin paths. Legacy returns redirect locally. Original siblingprototype is preserved, not a deployment target.
 
-Resume-first matching profile: upload bounded text PDF, confirm/correct skills and experience, then explicitly choose roles/location/work mode. Existing users have a saved summary and review/preference shortcuts. Five distinct skills required for readiness/import confirmation, around ten recommended, fifteen maximum. Unknown experience stays blank and blocks imported-profile completion; user confirmation is attestation, not verified employment. Explicit Save is the only profile write. Failed/cancelled uploads preserve saved fields; drafts stay in component memory. No PDF/raw-text persistence, external AI, private analytics tags or automatic checkout.
+Fresh local checks:22 resume tests and131 existing/frontend regressions pass; lint, fresh types and standard Next production build (76 generated pages) pass after compatible patch updates. Retain Next/config16.4.3, ESLint9/TS6 holds; incorporated compatible pending frontendPR124 floors. Actual browser tests pass guest recovery/download/extracted PDF, explicit upload, autosave, mobile390/320px design and Edit/Preview, named restore and two-tab conflict/save-as-new. Account switch clears private fields and pending confirmations, secondary library isolation and cross-tab logout pass. Production checks remain before completion.
 
-Simplified page wording/hierarchy, three-step indicator, saved-skill tags and preference summary. Idle save buttons removed from summary; back/save/discard and unsaved guards retained. Mobile save controls stay in document flow. Account settings remain separate; homepage and public/private/billing boundaries preserved.
+GitHub branch audit: old frontend feature remoteheads already deleted; local merged branches have PRproof. Backend durablequeue/resume feature branches are merged. Backend dependencyPR121 passed CI, merged3c5c3d and is live; backend remote cleanup leaves main/develop only; frontendPR124 is obsolete/insecure as-is and will be superseded by checked compatible updates here. Do not merge its older Next patch. Vercel MCPteam access remains403; direct production reads authorized and available. Before frontendrelease /resume is404, expected.
 
-## Validation — 2026-10-16
+## Preserve
 
-128 frontend regressions passed; full lint/types and standard production build passed. Desktop/390px/320px browser checks had no horizontal overflow. Fresh local browser profile: synthetic PDF produced seven skills/two years; confirmation/five-skill gates and missing preferences blocked appropriately; save/reload preserved five selected skills, two years, All India/Hybrid. Reference PDF populated ten skills but unknown experience; left unsaved and completion blocked. Accuracy/human benchmark labels remain unverified; see backend handoff.
-
-## Local QA / preserved work
-
-Frontend3019 uses real isolated backend8818. `/api/v1/local-qa/login` selects original test account; `?fresh=1` creates a distinct empty one. Reference draft currently open; preserve it and local saved profiles. No production writes, scheduler, email or payments in QA. Do not run destructive/full DB tests there. Preserve backend unrelated research JSON and ignored evaluation data. Companion: `../reerhub-backend/HANDOFF.md`.
+Unrelated backend company researchJSON, ignored evaluation/private files, owner QAfrontend3019/backend8818/Mongo27031. Synthetic builder QAAPI8820/Mongo27045, disposable backend suite27046; never run destructive tests against Atlas/ownerQA. Prior profile releasePR122/8c52f06 and backend108 are historical; preserve explicit profile Save/no raw-PDF retention. See counterpart backendHANDOFF and README for contract/release gates.

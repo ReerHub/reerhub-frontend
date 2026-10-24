@@ -59,6 +59,10 @@ export default function Navbar({ sessionHint = false }) {
     { href: "/how-it-works", label: "How it works" },
     { href: "/blog", label: "Blog" },
     {
+      href: "/resume",
+      label: "Resume Builder",
+    },
+    {
       href: "/billing",
       label: user?.membership?.isPro ? "Manage Pro" : "Pricing",
     },

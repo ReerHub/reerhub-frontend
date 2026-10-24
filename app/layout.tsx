@@ -7,12 +7,9 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
 import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
-import Navbar from "@/components/Navbar";
-import MemberWorkspace from "@/components/MemberWorkspace";
-import Footer from "@/components/Footer";
+import SiteChrome from "@/components/SiteChrome";
 import PublicAnalyticsBoundary from "@/components/PublicAnalyticsBoundary";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
-import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/components/AuthProvider";
 import { isDedicatedAdminHost } from "@/lib/admin-host";
 import PerformanceProbe from "@/components/PerformanceProbe";
@@ -63,25 +60,15 @@ export default async function RootLayout({
             </a>
             <AnalyticsProvider />
             <PublicAnalyticsBoundary>
-              <Navbar sessionHint={sessionHint} />
-              <main
-                id="main-content"
-                className="min-h-dvh relative pt-[72px]"
-                tabIndex={-1}
+              <SiteChrome
+                sessionHint={sessionHint}
+                canonicalOrigin={SITE}
+                analyticsAvailable={analyticsConfig().available}
               >
-                <MemberWorkspace
-                  sessionHint={sessionHint}
-                  canonicalOrigin={SITE}
-                >
-                  {children}
-                </MemberWorkspace>
-              </main>
-              <Footer />
+                {children}
+              </SiteChrome>
             </PublicAnalyticsBoundary>
           </AuthProvider>
-        )}
-        {!isAdminHost && (
-          <CookieConsent analyticsAvailable={analyticsConfig().available} />
         )}
         <noscript>
           <style>{`.reveal { opacity: 1 !important; transform: none !important; } .faq-controls, .privacy-panel { display: none !important; }`}</style>

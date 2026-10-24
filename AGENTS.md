@@ -68,3 +68,8 @@ Use meaningful unit/integration tests for changed behavior, with explicit isolat
 ## Docs discipline (minimal by design)
 
 `docs/` holds exactly three entries: `DECISIONS.md`, `04-deployment.md` (env matrix mirrors `.env.example`), and `design/` (the active design system). README covers current setup, product behavior, admin/import workflows, architecture, and deployment. Preserve dated historical results in DECISIONS and label superseded blockers; never imply a local fixture proves production behavior. Update these existing guides when behavior changes. The owner-requested root `HANDOFF.md` is the single mutable resume checkpoint; it does not expand `docs/`. Do NOT create additional doc files, TODO lists, or issue logs without a triggering incident or user-visible requirement.
+
+
+## Resume Builder (same frontend)
+
+The owner replaced the standalone app/subdomain plan: all active implementation is here under `app/resume`, `components/resume` and `lib/resume`, sharing this app/deployment and root AuthProvider. Public pages: /resume, /resume/templates, /resume/privacy. Guest editor and authenticated library live at /resume/editor and /resume/library and stay noindex/outside all general analytics. Preserve scoped CSS, single main/chrome, captured owner headers, keyed private workspace/confirmations, explicit guest upload, CAS saves and profile separation. Free local Review/JD vocabulary guidance never invents facts or claims an ATS score. Run test:resume plus existing checks; pretest/prebuild generate ignored PDFworker/fonts in public/resume-assets. Keep AI disabled until qualified synthetic evaluation. See README for capabilities/contracts. Original sibling prototype is preserved only and must not be deployed.

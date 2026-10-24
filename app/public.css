@@ -1634,31 +1634,140 @@
   }
 }
 
-.public-site .faq-layout { padding-top:32px; display:grid; grid-template-columns:240px minmax(0,1fr); gap:48px; }
-.public-site .faq-categories { position:sticky; top:96px; align-self:start; display:grid; gap:6px; padding:16px; background:#f5f1ff; border:1px solid #e7dff7; border-radius:24px; }
-.public-site .faq-categories a { padding:12px; border-radius:12px; color:#372580; font-size:14px; line-height:1.5; }
-.public-site .faq-categories a:hover { background:#eae2ff; }
-.public-site .faq-answers { min-width:0; max-width:920px; }
-.public-site .faq-controls { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:32px; }
-.public-site .faq-category { margin-bottom:40px; scroll-margin-top:96px; }
-.public-site .faq-answer { padding:20px 24px; scroll-margin-top:96px; }
-.public-site .faq-answer summary { display:flex; justify-content:space-between; align-items:center; gap:16px; min-height:44px; cursor:pointer; list-style:none; }
-.public-site .faq-answer summary::-webkit-details-marker { display:none; }
-.public-site .faq-answer summary h3 { font-size:16px; font-weight:600; line-height:1.6; }
-.public-site .faq-answer summary span { flex-shrink:0; color:#6d4aff; font-size:24px; transition:transform 160ms; }
-.public-site .faq-answer[open] summary span { transform:rotate(45deg); }
-.public-site .faq-answer p { margin-top:16px; color:#61566f; line-height:1.9; }
-.public-site .faq-permalink { display:inline-flex; align-items:center; min-height:44px; margin-top:8px; color:#5031bc; font-size:13px; text-decoration:underline; }
-@media(max-width:1023px) { .public-site .faq-layout { grid-template-columns:1fr; gap:28px; } .public-site .faq-categories { position:static; grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(max-width:389px) { .public-site .faq-categories { grid-template-columns:1fr; } .public-site .faq-answer { padding:16px; } }
-@media(prefers-reduced-motion:reduce) { .public-site .faq-answer summary span { transition:none; } }
+.public-site .faq-layout {
+  padding-top: 32px;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 48px;
+}
+.public-site .faq-categories {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  background: #f5f1ff;
+  border: 1px solid #e7dff7;
+  border-radius: 24px;
+}
+.public-site .faq-categories a {
+  padding: 12px;
+  border-radius: 12px;
+  color: #372580;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.public-site .faq-categories a:hover {
+  background: #eae2ff;
+}
+.public-site .faq-answers {
+  min-width: 0;
+  max-width: 920px;
+}
+.public-site .faq-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.public-site .faq-category {
+  margin-bottom: 40px;
+  scroll-margin-top: 96px;
+}
+.public-site .faq-answer {
+  padding: 20px 24px;
+  scroll-margin-top: 96px;
+}
+.public-site .faq-answer summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+}
+.public-site .faq-answer summary::-webkit-details-marker {
+  display: none;
+}
+.public-site .faq-answer summary h3 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.public-site .faq-answer summary span {
+  flex-shrink: 0;
+  color: #6d4aff;
+  font-size: 24px;
+  transition: transform 160ms;
+}
+.public-site .faq-answer[open] summary span {
+  transform: rotate(45deg);
+}
+.public-site .faq-answer p {
+  margin-top: 16px;
+  color: #61566f;
+  line-height: 1.9;
+}
+.public-site .faq-permalink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 8px;
+  color: #5031bc;
+  font-size: 13px;
+  text-decoration: underline;
+}
+@media (max-width: 1023px) {
+  .public-site .faq-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .public-site .faq-categories {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 389px) {
+  .public-site .faq-categories {
+    grid-template-columns: 1fr;
+  }
+  .public-site .faq-answer {
+    padding: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site .faq-answer summary span {
+    transition: none;
+  }
+}
 
-.public-site .faq-topics { display:none; }
-@media(max-width:1023px) {
- .public-site .faq-layout > .faq-categories { display:none; }
- .public-site .faq-topics { display:block; padding:16px 20px; }
- .public-site .faq-topics summary { display:flex; justify-content:space-between; align-items:center; min-height:44px; cursor:pointer; font-weight:600; }
- .public-site .faq-topics > .faq-categories { margin-top:12px; padding:8px; border:0; background:transparent; }
+.public-site .faq-topics {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .public-site .faq-layout > .faq-categories {
+    display: none;
+  }
+  .public-site .faq-topics {
+    display: block;
+    padding: 16px 20px;
+  }
+  .public-site .faq-topics summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .public-site .faq-topics > .faq-categories {
+    margin-top: 12px;
+    padding: 8px;
+    border: 0;
+    background: transparent;
+  }
 }
 
 /* Informational pages share the calm pastel introductions; admin remains isolated. */
@@ -1676,11 +1785,36 @@
 }
 
 @media (min-width: 640px) {
-  .public-site .footer-bottom { align-items: center; }
+  .public-site .footer-bottom {
+    align-items: center;
+  }
 }
-.public-site .footer-copyright { flex-shrink: 0; }
-.public-site .footer-copyright p { margin: 0; line-height: 1.5; }
+.public-site .footer-copyright {
+  flex-shrink: 0;
+}
+.public-site .footer-copyright p {
+  margin: 0;
+  line-height: 1.5;
+}
 
 /* Composite search fields draw focus once, around the complete field. */
-.public-site .focus-field:focus-within { border-color: #6d4aff; outline: 2px solid #6d4aff; outline-offset: 0; }
-.public-site .focus-field input:is(:focus, :focus-visible) { outline: none; box-shadow: none; }
+.public-site .focus-field:focus-within {
+  border-color: #6d4aff;
+  outline: 2px solid #6d4aff;
+  outline-offset: 0;
+}
+.public-site .focus-field input:is(:focus, :focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Keep the expanded product navigation comfortable on smaller desktops. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .public-site .site-nav .nav-inner > nav {
+    margin-left: 0;
+  }
+  .public-site .site-nav .nav-link {
+    padding-inline: 6px;
+    white-space: nowrap;
+  }
+}
