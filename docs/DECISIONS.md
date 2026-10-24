@@ -463,3 +463,12 @@ Official Teal/Rezi/Novorésumé/Kickresume research supported adding free action
 Local integrated browser checks pass guest recovery/PDF extraction, explicit migration, cloud saving, named restoration and concurrent-tab save-as-new; mobile390/320px actual viewport checks pass Edit/Preview switching and no overflow. This supersedes the earlier ineffective viewport-override blocker. Backend PR122 merged558016d after passing CI and is live on the confirmed Render production service; health200 and unsigned resume401/private-no-store verified. Frontend release validation continues; do not infer deployed frontend from local screenshots.
 
 Integrated release verification on 2026-10-25: all153 frontend tests, lint, fresh types and standard build (76 generated pages) pass. Account switching cancels pending confirmations and clears previous private documents; secondary-account library and cross-tab logout pass. Backend dependency PR121 is live at3c5c3d after CI; merged backend branches are cleaned up. Frontend production remains pending until its PR is merged and verified.
+
+
+## 2026-10-25 — Integrated Resume Builder production verification
+
+Frontend PR#125 merged as `6a2a131` and its Vercel production deployment check succeeded. Backend PRs#122/#121/#123 are merged; latest production commit is `666073c`. This supersedes the preceding frontend-production-pending status. Public resume routes return200 with same-origin canonicals; editor/library emit noindex/nofollow without public canonicals. Worker/fonts/share image/robots/llms/sitemap return200. The same-origin unsigned resume API returns401 with private/no-store.
+
+Live guest editing, local Review/JD comparison, reload recovery and actual PDF download passed. Extracted PDF text contains candidate/headline and excludes the pasted job description. Authenticated production cloud writes were not exercised; migration, autosave, restoration, conflicts and account isolation have isolated synthetic fixture evidence only. Paid AI remains disabled until actual synthetic provider qualification. These checks do not imply Search Console indexing, real-provider quality or real candidate-data mutations.
+
+Live390/320px checks also passed Edit/Preview switching without overflow; the parent homepage promotion is live.
