@@ -332,6 +332,12 @@ test("llms guidance uses absolute links to real public routes and accurate membe
   );
   assert.ok(links.length >= 25);
   for (const link of links) {
+    if (link.origin === "https://resume.reerhub.com") {
+      assert.ok(["/", "/templates"].includes(link.pathname));
+      assert.equal(link.hash, "");
+      assert.equal(link.search, "");
+      continue;
+    }
     assert.equal(link.origin, origin);
     assert.equal(link.hash, "");
     assert.equal(link.search, "");

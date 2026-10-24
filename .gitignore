@@ -42,3 +42,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated from pinned resume renderer/font dependencies before dev/build/tests.
+/public/resume-assets/

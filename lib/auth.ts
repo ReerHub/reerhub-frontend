@@ -78,6 +78,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
   return readBody<T>(res);
 }
+/** One transport and refresh queue for Jobs and Resume Builder. */
+export const authenticatedRequest = request;
+
 let refreshing: Promise<boolean> | undefined;
 let sessionRevision = 0;
 async function refreshSession() {
