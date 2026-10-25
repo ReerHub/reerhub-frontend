@@ -161,3 +161,6 @@
 @media (prefers-reduced-motion: reduce) {
   .public-site .faq-answer summary { transition: none; }
 }
+
+/* One global navigation above the resume product's own document toolbar. */
+.resume-site-content { padding-top: 72px; }

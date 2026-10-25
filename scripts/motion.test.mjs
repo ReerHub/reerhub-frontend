@@ -258,6 +258,12 @@ test("public navigation restores scroll, tracks home glass and keeps other route
     );
     assert.equal(document.querySelector("#mobile-navigation"), null);
     assert.equal(document.activeElement, toggle);
+    window.testPathname = "/resume/editor";
+    await act(async () => root.render(createElement(Navbar)));
+    assert.ok(document.querySelector('nav[aria-label="Primary"] a[href="/jobs"]'));
+    assert.ok(document.querySelector('nav[aria-label="Primary"] a[href="/resume"][aria-current="page"]'));
+    assert.equal(document.querySelector('a[href="/login?next=%2Fresume%2Feditor"]').textContent, "Sign in");
+    window.testPathname = "/jobs";
     for (const pro of [false, true]) {
       window.testUser = { name: "Sample member", membership: { isPro: pro } };
       await act(async () => root.render(createElement(Navbar)));
@@ -280,6 +286,9 @@ test("public navigation restores scroll, tracks home glass and keeps other route
         links.length,
       );
       assert.ok(document.querySelector('a[href="/dashboard/matches"]'));
+      assert.ok(document.querySelector('nav[aria-label="Products"] a[href="/resume"]'));
+      assert.equal(links.filter((a) => a.getAttribute("href") === "/resume").length, 1);
+
       assert.equal(
         links.some((a) => a.getAttribute("href") === "/companies"),
         false,

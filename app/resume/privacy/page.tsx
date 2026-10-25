@@ -1,6 +1,5 @@
 import Link from "next/link";
 import UsagePreferences from "@/components/resume/UsagePreferences";
-import Brand from "@/components/resume/Brand";
 import { publicMetadata, safeJsonLd, breadcrumb } from "@/lib/resume/seo";
 export const metadata = publicMetadata(
   "Resume privacy and data controls",
@@ -10,10 +9,6 @@ export const metadata = publicMetadata(
 export default function Privacy() {
   return (
     <>
-      <header className="marketing-nav">
-        <Brand />
-        <Link href="/resume/editor">Back to the builder</Link>
-      </header>
       <main id="main-content" className="prose">
         <script
           type="application/ld+json"

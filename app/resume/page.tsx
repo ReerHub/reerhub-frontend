@@ -43,16 +43,6 @@ export default function Home() {
           ]),
         }}
       />
-      <header className="marketing-nav">
-        <Brand />
-        <nav aria-label="Main">
-          <Link href="/resume/templates">Templates</Link>
-          <Link href="/resume/library">My resumes</Link>
-          <Link className="button dark small" href="/resume/editor">
-            Start building <ArrowUpRight size={16} />
-          </Link>
-        </nav>
-      </header>
       <main id="main-content">
         <section className="hero">
           <div className="hero-copy">

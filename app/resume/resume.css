@@ -2081,3 +2081,12 @@
 .resume-app .review-pane[hidden] {
   display: none;
 }
+
+/* The common ReerHub navigation occupies the first 72px on every product. */
+.resume-app .builder { height: calc(100dvh - 72px); }
+.resume-app .builder-main { height: calc(100dvh - 148px); }
+.resume-app .editor-product-label { font-size: 0.875rem; font-weight: 600; }
+@media (max-width: 800px) {
+  .resume-app .builder-main { height: calc(100dvh - 140px); }
+  .resume-app .editor-product-label { font-size: 0.75rem; }
+}
