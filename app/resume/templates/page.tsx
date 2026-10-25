@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Brand from "@/components/resume/Brand";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { publicMetadata, safeJsonLd, breadcrumb, SITE } from "@/lib/resume/seo";
 export const metadata = publicMetadata(
   "Free single-column resume templates",
@@ -10,12 +9,6 @@ export const metadata = publicMetadata(
 export default function Templates() {
   return (
     <>
-      <header className="marketing-nav">
-        <Brand />
-        <Link className="button dark small" href="/resume/editor">
-          Start building <ArrowRight size={16} />
-        </Link>
-      </header>
       <main id="main-content" className="templates-main">
         <script
           type="application/ld+json"

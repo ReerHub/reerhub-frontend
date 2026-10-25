@@ -10,7 +10,6 @@ import {
   FileText,
   RefreshCw,
 } from "lucide-react";
-import Brand from "./Brand";
 
 import { api as requestResume, json, type User } from "@/lib/resume/api";
 import type { ResumeSummary } from "@/lib/resume/document";
@@ -133,17 +132,6 @@ export default function Library({
   }
   return (
     <>
-      <header className="marketing-nav">
-        <Brand />
-        <nav>
-          <a href={`${jobsUrl}/jobs`}>
-            Explore jobs <ArrowUpRight size={14} />
-          </a>
-          <Link className="button primary small" href="/resume/editor">
-            <Plus size={16} /> New resume
-          </Link>
-        </nav>
-      </header>
       <main id="main-content" className="library-main">
         <span className="eyebrow">ROOM FOR EVERY NEXT STEP</span>
         <div className="library-heading">

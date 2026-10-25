@@ -17,7 +17,13 @@ export default function SiteChrome({
   analyticsAvailable: boolean;
 }) {
   const path = usePathname();
-  if (path === "/resume" || path.startsWith("/resume/")) return children;
+  if (path === "/resume" || path.startsWith("/resume/"))
+    return (
+      <>
+        <Navbar sessionHint={sessionHint} />
+        <div className="resume-site-content">{children}</div>
+      </>
+    );
   return (
     <>
       <Navbar sessionHint={sessionHint} />

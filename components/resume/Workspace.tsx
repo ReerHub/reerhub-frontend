@@ -20,11 +20,6 @@ export default function Workspace({ library = false }: { library?: boolean }) {
   return library ? (
     <Library key={id || "guest"} user={user} jobsUrl="" />
   ) : (
-    <Editor
-      key={id || "guest"}
-      user={user}
-      onSignOut={auth.logout}
-      jobsUrl=""
-    />
+    <Editor key={id || "guest"} user={user} jobsUrl="" />
   );
 }

@@ -68,8 +68,12 @@ export default function Navbar({ sessionHint = false }) {
     },
     ...(user ? [{ href: "/dashboard", label: "My dashboard" }] : []),
   ];
+  const productLinks = [
+    { href: user ? "/dashboard/jobs" : "/jobs", label: "Jobs" },
+    { href: "/resume", label: "Resume Builder" },
+  ];
   const neutral = loading && sessionHint;
-  const mobileLinks = user || neutral ? [] : links;
+  const mobileLinks = neutral ? [] : user ? productLinks : links;
   const signOut = () =>
     requestWorkspaceNavigation("/", () => {
       void logout().then(() => window.location.assign(window.location.origin));
@@ -121,35 +125,54 @@ export default function Navbar({ sessionHint = false }) {
             ))}
           </nav>
         )}
-        {user && pathname !== "/dashboard/jobs" && (
-          <form
-            className="workspace-top-search focus-field"
-            role="search"
-            aria-label="Search workspace jobs"
-            onSubmit={(event) => {
-              event.preventDefault();
-              const q = String(
-                new FormData(event.currentTarget).get("q") || "",
-              ).trim();
-              const href = `/dashboard/jobs${q ? `?q=${encodeURIComponent(q)}` : ""}`;
-              requestWorkspaceNavigation(href, () => {
-                close();
-                router.push(href);
-              });
-            }}
+        {user && (
+          <nav
+            aria-label="Products"
+            className="hidden items-center gap-1 lg:flex"
           >
-            <Icon name="search" className="h-4 w-4" />
-            <input
-              name="q"
-              type="search"
-              aria-label="Search jobs or skills"
-              placeholder="Search jobs or skills…"
-            />
-            <button type="submit" aria-label="Search workspace">
-              <Icon name="arrow" className="h-4 w-4" />
-            </button>
-          </form>
+            {productLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`nav-link ${isActive(href) ? "is-active" : ""}`}
+                aria-current={isActive(href) ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
         )}
+        {user &&
+          !pathname.startsWith("/resume") &&
+          pathname !== "/dashboard/jobs" && (
+            <form
+              className="workspace-top-search focus-field"
+              role="search"
+              aria-label="Search workspace jobs"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const q = String(
+                  new FormData(event.currentTarget).get("q") || "",
+                ).trim();
+                const href = `/dashboard/jobs${q ? `?q=${encodeURIComponent(q)}` : ""}`;
+                requestWorkspaceNavigation(href, () => {
+                  close();
+                  router.push(href);
+                });
+              }}
+            >
+              <Icon name="search" className="h-4 w-4" />
+              <input
+                name="q"
+                type="search"
+                aria-label="Search jobs or skills"
+                placeholder="Search jobs or skills…"
+              />
+              <button type="submit" aria-label="Search workspace">
+                <Icon name="arrow" className="h-4 w-4" />
+              </button>
+            </form>
+          )}
         <div className="flex items-center gap-2">
           {loading ? (
             <div className="skeleton h-10 w-20 rounded-xl" />
@@ -186,6 +209,7 @@ export default function Navbar({ sessionHint = false }) {
                   </div>
                   {[
                     ["/dashboard", "My dashboard", "grid"],
+                    ["/resume/library", "My resumes", "grid"],
                     ["/dashboard/profile", "Profile & preferences", "user"],
                     [
                       "/dashboard/billing",
@@ -213,12 +237,15 @@ export default function Navbar({ sessionHint = false }) {
           ) : (
             <>
               <Link
-                href="/login"
+                href={`/login?next=${encodeURIComponent(pathname)}`}
                 className="nav-link hidden min-h-11 items-center sm:inline-flex"
               >
                 Sign in
               </Link>
-              <Link href="/login" className="btn-primary text-sm">
+              <Link
+                href={`/login?next=${encodeURIComponent(pathname)}`}
+                className="btn-primary text-sm"
+              >
                 Join free
               </Link>
             </>
@@ -259,7 +286,9 @@ export default function Navbar({ sessionHint = false }) {
             <div className="mobile-workspace-links mt-3 border-t border-slate-100 pt-3">
               <p className="workspace-label">YOUR WORKSPACE</p>
               {[
-                ...workspaceLinks(!!user.membership?.isPro),
+                ...workspaceLinks(!!user.membership?.isPro).filter(
+                  ({ href }) => href !== "/dashboard/jobs",
+                ),
                 { href: "/dashboard/how-it-works", label: "How it works" },
               ].map(({ href, label }) => (
                 <Link

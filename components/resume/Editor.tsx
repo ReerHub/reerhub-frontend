@@ -21,9 +21,8 @@ import {
   Trash2,
   Undo2,
   X,
-  LogOut,
 } from "lucide-react";
-import Brand from "./Brand";
+import { WORKSPACE_NAVIGATION_EVENT } from "@/lib/workspace";
 import {
   api as requestResume,
   ApiError,
@@ -66,11 +65,9 @@ type Revision = { id: string; name: string; createdAt: string };
 export default function Editor({
   jobsUrl,
   user,
-  onSignOut,
 }: {
   jobsUrl: string;
   user: User | null;
-  onSignOut: () => Promise<void>;
 }) {
   const api = useCallback(
     <T,>(path: string, init?: RequestInit) =>
@@ -501,40 +498,6 @@ export default function Editor({
     setSuggestion(null);
     setStatus("Summary applied — Undo is available");
   }
-  async function logout() {
-    if (
-      dirty &&
-      !(await ask(
-        "You have unsaved changes. Download or save them before signing out. Sign out anyway?",
-      ))
-    )
-      return;
-    setBusy(true);
-    try {
-      await onSignOut();
-      epoch.current++;
-      owner.current = null;
-      guestStorageEnabled.current = false;
-      setCloud(null);
-      setDraft({
-        title: "Untitled resume",
-        document: blankDocument(),
-        example: false,
-      });
-      setDirty(false);
-      setSuggestion(null);
-      setUndo(null);
-      setUsage(null);
-      setRevisions([]);
-      setSessionState("Guest workspace");
-      setStatus("Signed out");
-      window.history.replaceState(null, "", "/resume/editor");
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  }
   useEffect(() => {
     if (!dirty) return;
     const onClick = (event: MouseEvent) => {
@@ -559,8 +522,26 @@ export default function Editor({
         }
       });
     };
+    const onNavigation = (event: Event) => {
+      event.preventDefault();
+      const { proceed } = (event as CustomEvent<{ proceed: () => void }>)
+        .detail;
+      void ask(
+        "You have unsaved changes. Save or download them before leaving. Leave anyway?",
+      ).then((leave) => {
+        if (leave) {
+          leaveAllowed.current = true;
+          setDirty(false);
+          proceed();
+        }
+      });
+    };
     document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
+    window.addEventListener(WORKSPACE_NAVIGATION_EVENT, onNavigation);
+    return () => {
+      document.removeEventListener("click", onClick, true);
+      window.removeEventListener(WORKSPACE_NAVIGATION_EVENT, onNavigation);
+    };
   }, [dirty, ask]);
   useEffect(() => {
     if (panel === "content" && reviewFocus.current) {
@@ -576,7 +557,9 @@ export default function Editor({
   return (
     <div className="builder">
       <header className="builder-header">
-        <Brand />
+        <Link href="/resume" className="editor-product-label">
+          Resume Builder
+        </Link>
         <div className="document-title">
           <input
             aria-label="Resume title"
@@ -588,23 +571,6 @@ export default function Editor({
         </div>
         <nav aria-label="Workspace">
           <Link href="/resume/library">My resumes</Link>
-          {user ? (
-            <button
-              className="icon-button"
-              aria-label="Sign out"
-              disabled={busy}
-              onClick={logout}
-            >
-              <LogOut size={17} />
-            </button>
-          ) : (
-            <a
-              className="button outline small"
-              href={`${jobsUrl}/login?next=%2Fresume%2Feditor`}
-            >
-              Sign in
-            </a>
-          )}
         </nav>
       </header>
       <main id="main-content" className="builder-main">
@@ -621,6 +587,9 @@ export default function Editor({
         </div>
         <div
           className={`editing-pane ${tab === "preview" ? "mobile-hidden" : ""}`}
+          role="region"
+          aria-label="Resume content editor"
+          tabIndex={0}
         >
           <div className="editor-top">
             <Link className="back-link" href="/resume">
