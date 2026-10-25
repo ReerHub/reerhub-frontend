@@ -17,3 +17,5 @@ Resume Builder125/6a2a131 and docs126/110e6c5 passed CI and deployed. Backend la
 ## Preserve
 
 Keep main/develop, unrelated backend company researchJSON, ignored evaluation/private files and owner QAfrontend3019/backend8818/Mongo27031. Synthetic QA uses API8820/Mongo27045; disposable backend suite uses27046. Never run destructive tests against Atlas/ownerQA. Prior profile releasePR122/8c52f06 and backend108 are historical; preserve explicit profile Save/no raw-PDF retention. See backend HANDOFF/README for contracts and qualification gates.
+
+User reported clipped Highlights while PR128 awaitedmerge. Reproduced desktop pane1161px versus workspace652px. Added grid/flex minimum-size constraints, keyboard-focusable editor region and corrected wrapper minimum height. Wheel scrolling reaches Highlights and editing works with syntheticdata. PR128 will include this fix after fresh build/CI.

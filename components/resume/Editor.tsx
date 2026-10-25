@@ -587,6 +587,9 @@ export default function Editor({
         </div>
         <div
           className={`editing-pane ${tab === "preview" ? "mobile-hidden" : ""}`}
+          role="region"
+          aria-label="Resume content editor"
+          tabIndex={0}
         >
           <div className="editor-top">
             <Link className="back-link" href="/resume">
