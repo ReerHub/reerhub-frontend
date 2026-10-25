@@ -1,0 +1,163 @@
+/* Shared craft refinements. Product identity and admin chrome remain independent. */
+.public-site {
+  --craft-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --craft-surface: #ffffff;
+  --craft-border: #e8e2ef;
+  font-optical-sizing: auto;
+}
+
+/* Editorial hierarchy without turning task screens into marketing pages. */
+.public-site .page-heading {
+  background:
+    radial-gradient(ellipse at 90% 0%, #eee7ff99, transparent 65%),
+    linear-gradient(180deg, #fffefa, #faf8fd);
+  border-bottom-color: var(--craft-border);
+}
+.public-site .page-heading h1 {
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+}
+.public-site .page-heading p {
+  max-width: 62ch;
+  line-height: 1.65;
+  color: #675d75;
+}
+.public-site .page-heading-kicker {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  letter-spacing: 0.1em;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+.public-site :where(.surface-panel, .profile-form, .auth-card, .job-detail-panel) {
+  border-color: var(--craft-border);
+  box-shadow: 0 2px 4px #241e3003, 0 12px 36px #241e3005;
+}
+.public-site :where(.job-card, .company-card) {
+  background: var(--craft-surface);
+  border-color: var(--craft-border);
+  border-radius: 1.25rem;
+  transition:
+    border-color 180ms var(--craft-ease),
+    box-shadow 180ms var(--craft-ease);
+}
+/* Lists stay spatially stable while the surface signals interactivity. */
+.public-site :where(.job-card, .company-card):hover {
+  transform: none;
+  border-color: #cabbe7;
+  box-shadow: 0 3px 8px #241e3005, 0 12px 28px #241e3009;
+}
+.public-site :where(.job-card, .company-card):focus-within {
+  border-color: #6d4aff;
+}
+.public-site .workspace-link.is-active {
+  background: #eee7ff;
+  box-shadow: inset 0 0 0 1px #6d4aff16;
+  color: #5034b5;
+}
+.public-site :where(.account-popover, .mobile-nav-panel) {
+  transform-origin: top right;
+  scrollbar-gutter: stable;
+}
+.public-site :where(.btn-primary, .btn-secondary, .account-trigger, .job-save) {
+  touch-action: manipulation;
+  transition:
+    background-color 160ms var(--craft-ease),
+    border-color 160ms var(--craft-ease),
+    box-shadow 160ms var(--craft-ease),
+    transform 160ms var(--craft-ease);
+}
+/* Touch-down feedback is immediate; no input is locked during transitions. */
+.public-site :where(.btn-primary, .btn-secondary, .account-trigger, .job-save):not(:disabled):active {
+  transform: scale(0.98);
+  transition-duration: 0ms;
+}
+.public-site :where(input, select, textarea) {
+  scroll-margin-block: 6rem;
+}
+.public-site :where(input, textarea)::placeholder {
+  color: #81768d;
+  opacity: 1;
+}
+
+/* Blur is progressive enhancement; solid surfaces remain the baseline. */
+@supports ((backdrop-filter: blur(24px)) or (-webkit-backdrop-filter: blur(24px))) {
+  .public-site .site-nav :where(.account-popover, .mobile-nav-panel) {
+    background: #fffefaee;
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    backdrop-filter: blur(24px) saturate(140%);
+    box-shadow: 0 8px 16px #241e3005, 0 24px 64px #241e3014;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .public-site .site-nav[data-scrolled="true"],
+  .public-site .site-nav :where(.account-popover, .mobile-nav-panel),
+  .public-site .auth-card {
+    background: #fffefa;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) {
+  .public-site :where(.site-nav, .account-popover, .mobile-nav-panel, .auth-card,
+    .job-card, .company-card, .surface-panel, .profile-form) {
+    background: #fffefa;
+    border-color: #675d75;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .public-site .workspace-link.is-active {
+    outline: 2px solid currentColor;
+    outline-offset: -2px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site :where(.btn-primary, .btn-secondary, .account-trigger, .job-save,
+    .job-card, .company-card) {
+    transition: none;
+  }
+  .public-site :where(.btn-primary, .btn-secondary, .account-trigger, .job-save):not(:disabled):active {
+    transform: none;
+    filter: brightness(0.94);
+  }
+}
+
+/* One typographic rhythm also reaches editorial, pricing and support modules. */
+.public-site :where(h1, h2, h3) {
+  font-optical-sizing: auto;
+}
+.public-site :where(h2, h3) {
+  text-wrap: balance;
+  letter-spacing: -0.025em;
+}
+.public-site :where(.legal-page, .job-description) {
+  line-height: 1.75;
+  overflow-wrap: break-word;
+}
+.public-site .faq-answer {
+  border-bottom-color: var(--craft-border);
+}
+.public-site .faq-answer[open] {
+  background: linear-gradient(90deg, #f6f2ff99, transparent);
+  border-radius: 1rem;
+}
+.public-site .faq-answer summary {
+  border-radius: 0.75rem;
+  transition: background-color 160ms var(--craft-ease);
+}
+.public-site .faq-answer summary:hover {
+  background: #f1ebff80;
+}
+.public-site .site-footer a {
+  text-underline-offset: 0.2em;
+}
+@media (prefers-contrast: more) {
+  .public-site .faq-answer[open] {
+    background: #fffefa;
+    box-shadow: inset 0 0 0 1px #675d75;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site .faq-answer summary { transition: none; }
+}

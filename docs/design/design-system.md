@@ -141,3 +141,10 @@ The owner subsequently authorized PRs, merge and production verification after l
 ### Parent and Resume Builder promotion — 2026-10-24
 
 Use REERHUB as the parent wordmark and REERHUB Resume Builder as the product label. Reciprocal home-page promotions use original brand artwork, spacious type, warm white and restrained lavender (builder) or mint (Jobs) surfaces. Keep job discovery as the parent homepage's primary purpose and preserve existing hero motion. A labelled illustrative resume may explain the builder; never fabricate employer activity, ATS outcomes, ratings or endorsements. Promotions remain server rendered, have clear creation/discovery links, 44px targets, focus and reduced-motion/contrast support. Free creation/download facts stay distinct from disabled, evaluation-gated AI assistance.
+
+
+## Apple Design across the website — 2026-10-25
+
+Owner extended the Apple Design skill from Resume Builder to the whole website. Use its purpose, hierarchy, immediate response, spatial consistency and accessibility principles for all future public/member UI work. Preserve ReerHub typography, violet/pastel identity, original wordmark, homepage scenes and product contracts. Admin retains its independent operational palette.
+
+Shared refinements live in app/apple-design.css after public.css: editorial introductions, quiet card surfaces without moving job lists, restrained active workspace emphasis, anchored menu materials, immediate touch-down feedback and coherent editorial hierarchy. Prefer existing components over parallel page designs. Reduced-motion press feedback uses brightness instead of scale; reduced transparency uses solid surfaces, and increased contrast adds defined boundaries. No new animation library or gesture is needed for static pages. This is local implementation, not production deployment evidence.

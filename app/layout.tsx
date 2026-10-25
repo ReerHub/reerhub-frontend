@@ -3,6 +3,7 @@ import { analyticsConfig } from "@/lib/analytics-config";
 import "./globals.css";
 import "./admin.css";
 import "./public.css";
+import "./apple-design.css";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
 import { ReactNode } from "react";
